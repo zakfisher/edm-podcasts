@@ -7,7 +7,21 @@
     "start": "node app/server/index.js"
   },
   "dependencies": {
-    "express": "~3.4.x"
+    "express": "~3.4.x",
+    "gulp": "latest",
+    "browserify": "latest",
+    "gulp-browserify": "latest",
+    "gulp-sass": "latest",
+    "gulp-concat": "latest",
+    "gulp-express": "latest",
+    "gulp-ngmin": "latest",
+    "gulp-ngmin": "latest",
+    "gulp-plumber": "latest",
+    "gulp-clean": "latest",
+    "gulp-jshint": "latest",
+    "gulp-livereload": "latest",
+    "jshint-stylish": "latest",
+    "gulp-watch": "latest"
   },
   "engines": {
     "node": "0.10.x"
