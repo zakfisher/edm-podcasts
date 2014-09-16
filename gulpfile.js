@@ -16,7 +16,7 @@ var gulp = require('gulp'),
 var paths = {
   app: ["./app"],
   modules: ["./app/modules"],
-  client: ["./app/modules/client"],
+  app: ["./app/modules/app"],
   images: [
     "./app/modules/**/*.png",
     "./app/modules/**/*.jpg",
@@ -26,7 +26,7 @@ var paths = {
 };
 
 gulp.task('clean', function () {
-  return gulp.src('app/public/assets', {
+  return gulp.src(['app/public/assets', 'app/public/images'], {
       read: false
     })
     .pipe(clean());
@@ -46,18 +46,13 @@ gulp.task('lint', function () {
     .pipe(jshint.reporter(stylish));
 });
 
-gulp.task('views', function () {
-  return gulp.src([paths.client + '**/*.html'])
-    .pipe(gulp.dest('app/public/assets/templates'));
-});
-
 gulp.task('images', function () {
   return gulp.src(paths.images)
-    .pipe(gulp.dest('app/public/assets'));
+    .pipe(gulp.dest('app/public/images'));
 });
 
 gulp.task('js', function () {
-  return gulp.src('app/client.js')
+  return gulp.src('app/app.js')
     .pipe(plumber())
     .pipe(browserify({
       transform: [stringify('.html')]
@@ -67,14 +62,21 @@ gulp.task('js', function () {
 
 
 //Tasks
-gulp.task('default', ['clean', 'sass', 'lint', 'js']);
+gulp.task('default', ['clean', 'sass', 'lint', 'js', 'images']);
 
 gulp.task('watch', function () {
   livereload.listen();
-  gulp.watch('app/**/*.scss', ['sass']);
-  gulp.watch('app/modules/*.html', ['views']);
-  gulp.watch(paths.images, ['images']);
-  gulp.watch(['app/client.js', 'app/modules/**/*.js'], ['lint', 'js']);
-  gulp.watch('app/public/**')
-    .on('change', livereload.changed);
+  watch('app/**/*.scss', function () {
+    gulp.start('sass');
+  });
+  watch(paths.images, function () {
+    gulp.start('images');
+  });
+  watch(['app/app.js', 'app/modules/**/*.js', 'app/modules/**/*.html'], function () {
+    console.log('go');
+    gulp.start(['lint', 'js']);
+  });
+  watch('app/public/**', function () {
+    livereload.changed();
+  });
 });

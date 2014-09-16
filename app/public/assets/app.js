@@ -9,8 +9,7 @@ var app = angular.module('wfWayfinding', [
     'ngTouch',
 
     // App Modules
-    require('./modules/home').name,
-    require('./modules/test').name
+    require('./modules/home').name
 
   ]);
 
@@ -22,41 +21,23 @@ app.config(function ($urlRouterProvider) {
 // Debug
 var launchTime = Date();
 console.log('Launched at', launchTime);
-},{"./modules/home":3,"./modules/test":4}],2:[function(require,module,exports){
-module.exports = "";
+},{"./modules/home":3}],2:[function(require,module,exports){
+module.exports = "<p>Hi I am the home controller</p>";
 
 },{}],3:[function(require,module,exports){
 module.exports = angular.module('wfWayfinding_home', [])
 
 //Controllers
 .controller('Home', function ($scope) {
-  console.log("Home Controller");
+  console.log("Home Controller", $scope);
 })
 
 //Routes / States
 .config(function ($stateProvider) {
   $stateProvider.state('home', {
     url: '/',
-    template: require('./home.html'),
+    template: require('./index.html'),
     controller: 'Home'
   });
 });
-},{"./home.html":2}],4:[function(require,module,exports){
-module.exports = angular.module('wfWayfinding_test', [])
-
-//Controllers
-.controller('Test', function ($scope) {
-  console.log("Test Page");
-})
-
-//Routes / States
-.config(function ($stateProvider) {
-  $stateProvider.state('test', {
-    url: '/test',
-    template: require('./test.html'),
-    controller: 'Test'
-  });
-});
-},{"./test.html":5}],5:[function(require,module,exports){
-module.exports=require(2)
-},{}]},{},[1])
+},{"./index.html":2}]},{},[1])

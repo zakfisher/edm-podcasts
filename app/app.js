@@ -8,8 +8,7 @@ var app = angular.module('wfWayfinding', [
     'ngTouch',
 
     // App Modules
-    require('./modules/home').name,
-    require('./modules/test').name
+    require('./modules/home').name
 
   ]);
 
