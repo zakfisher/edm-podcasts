@@ -9,6 +9,8 @@ var gulp = require('gulp'),
   livereload = require('gulp-livereload'),
   browserify = require('gulp-browserify'),
   stylish = require('jshint-stylish'),
+  brfs = require('brfs'),
+  stringify = require('stringify'),
   watch = require('gulp-watch');
 
 var paths = {
@@ -32,12 +34,14 @@ gulp.task('clean', function () {
 
 gulp.task('sass', function () {
   return gulp.src(['./app/application.scss'])
+    .pipe(plumber())
     .pipe(sass())
     .pipe(gulp.dest('./app/public/assets'));
 });
 
 gulp.task('lint', function () {
   return gulp.src(paths.modules + '/**/*.js')
+    .pipe(plumber())
     .pipe(jshint())
     .pipe(jshint.reporter(stylish));
 });
@@ -54,7 +58,10 @@ gulp.task('images', function () {
 
 gulp.task('js', function () {
   return gulp.src('app/client.js')
-    .pipe(browserify())
+    .pipe(plumber())
+    .pipe(browserify({
+      transform: [stringify('.html')]
+    }))
     .pipe(gulp.dest('./app/public/assets'));
 });
 
@@ -67,6 +74,7 @@ gulp.task('watch', function () {
   gulp.watch('app/**/*.scss', ['sass']);
   gulp.watch('app/modules/*.html', ['views']);
   gulp.watch(paths.images, ['images']);
-  gulp.watch('app/modules/**/*.js', ['lint', 'js']);
-  gulp.watch('app/public/**').on('change', livereload.changed);
+  gulp.watch(['app/client.js', 'app/modules/**/*.js'], ['lint', 'js']);
+  gulp.watch('app/public/**')
+    .on('change', livereload.changed);
 });

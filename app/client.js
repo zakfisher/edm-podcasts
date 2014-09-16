@@ -1,2 +1,23 @@
-var mytest = require('./modules/mytest/mytest');
-console.log(mytest(10));
+var app = angular.module('wfWayfinding', [
+    // Plugins
+    'famous.angular',
+    'ngAnimate',
+    'ui.router',
+    'ngResource',
+    'ngSanitize',
+    'ngTouch',
+
+    // App Modules
+    require('./modules/home').name,
+    require('./modules/test').name
+
+  ]);
+
+//Routing fallback to home
+app.config(function ($urlRouterProvider) {
+  $urlRouterProvider.otherwise('/');
+});
+
+// Debug
+var launchTime = Date();
+console.log('Launched at', launchTime);

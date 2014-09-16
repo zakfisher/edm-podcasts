@@ -19,8 +19,10 @@
     "gulp-plumber": "latest",
     "gulp-clean": "latest",
     "gulp-jshint": "latest",
+    "stringify": "latest",
     "gulp-livereload": "latest",
     "jshint-stylish": "latest",
+    "brfs": "latest",
     "gulp-watch": "latest"
   },
   "engines": {
