@@ -1,18 +1,17 @@
 module.exports = angular.module('wfWayfinding_home', [])
 
 .controller('Home', function ($scope, $famous) {
-  $scope.perspectiveOrigin = [0, 100];
+  $scope.perspectiveOrigin = ['50%', '50%'];
 
   var MouseSync = $famous['famous/inputs/MouseSync'];
   var Transitionable = $famous['famous/transitions/Transitionable'];
   var mouseSync = new MouseSync();
 
 
-  console.log($scope);
-
   var color = function () {
     var c = "rgba(" +
-      Math.floor(Math.random() * 255) +
+      // Math.floor(Math.random() * 255) +
+      255 +
       ', ' +
       Math.floor(Math.random() * 255) +
       ', ' +
@@ -21,14 +20,16 @@ module.exports = angular.module('wfWayfinding_home', [])
     return c;
   }
 
-  color();
-
   var zz = function () {
     // return (Math.random() * 100) - 100;
     return 0;
   };
 
+  $scope.yRotation = 0;
 
+  $scope.getYRotation = function () {
+    return $scope.yRotation;
+  };
 
   $scope.toggleScaleOfGridItem = function (i) {
     var gitem = $scope.grids[i];
@@ -57,21 +58,13 @@ module.exports = angular.module('wfWayfinding_home', [])
   };
 
 
-  $scope.grids = [
-    makeGridItem(),
-    makeGridItem(),
-    makeGridItem(),
-    makeGridItem(),
-    makeGridItem(),
-    makeGridItem(),
-    makeGridItem(),
-    makeGridItem(),
-    makeGridItem(),
-    makeGridItem()
-  ];
+  $scope.grids = [];
+  for (var i = 100 - 1; i >= 0; i--) {
+    $scope.grids.push(makeGridItem());
+  };
 
   $scope.myGridLayoutOptions = {
-    dimensions: [3, Math.ceil($scope.grids.length / 3)], // specifies number of columns and rows
+    dimensions: [10, 10], // specifies number of columns and rows
   };
 
 })

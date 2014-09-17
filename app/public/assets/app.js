@@ -23,24 +23,23 @@ app.config(function ($urlRouterProvider, $locationProvider) {
 var launchTime = Date();
 console.log('Launched at', launchTime);
 },{"./modules/home":3}],2:[function(require,module,exports){
-module.exports = "<fa-app fa-perspective=\"300\" fa-perspective-origin=\"perspectiveOrigin\">\n  <fa-modifier fa-size=\"[500, 600]\" fa-rotate=\"[0, 0, 0]\" fa-origin=\"[0.5, 0.5]\">\n    <fa-grid-layout fa-options=\"myGridLayoutOptions\">\n      <fa-modifier ng-repeat=\"grid in grids\" fa-translate=\"[0, 0, grid.z]\" fa-rotate=\"grid.scale.get()\">\n        <fa-surface fa-background-color=\"grid.bgColor\" ng-mousedown=\"toggleScaleOfGridItem($index)\" ng-touchstart=\"toggleScaleOfGridItem($index)\"  class=\"dbl-sided\">{{grid.label}}</fa-surface>\n      </fa-modifier>\n    </fa-grid-layout>\n  </fa-modifier>\n</fa-app>";
+module.exports = "<fa-app fa-perspective=\"300\" fa-perspective-origin=\"perspectiveOrigin\">\n  <fa-surface>\n    <input type=\"range\" ng-model=\"yRotation\">\n    <input type=\"text\" ng-model=\"yRotation\">\n  </fa-surface>\n  <fa-modifier fa-size=\"[500, 500]\" fa-rotate-y=\"rotateY(yRotation)\" fa-origin=\"[0.5, 0.5]\">\n    <fa-grid-layout fa-options=\"myGridLayoutOptions\">\n      <fa-modifier ng-repeat=\"grid in grids\" fa-translate=\"[0, 0, grid.z]\" fa-rotate=\"grid.scale.get()\">\n        <fa-surface fa-background-color=\"grid.bgColor\" ng-mouseover=\"toggleScaleOfGridItem($index)\" ng-touchstart=\"toggleScaleOfGridItem($index)\"  class=\"dbl-sided\">{{grid.label}}</fa-surface>\n      </fa-modifier>\n    </fa-grid-layout>\n  </fa-modifier>\n</fa-app>";
 
 },{}],3:[function(require,module,exports){
 module.exports = angular.module('wfWayfinding_home', [])
 
 .controller('Home', function ($scope, $famous) {
-  $scope.perspectiveOrigin = [0, 100];
+  $scope.perspectiveOrigin = ['50%', '50%'];
 
   var MouseSync = $famous['famous/inputs/MouseSync'];
   var Transitionable = $famous['famous/transitions/Transitionable'];
   var mouseSync = new MouseSync();
 
 
-  console.log($scope);
-
   var color = function () {
     var c = "rgba(" +
-      Math.floor(Math.random() * 255) +
+      // Math.floor(Math.random() * 255) +
+      255 +
       ', ' +
       Math.floor(Math.random() * 255) +
       ', ' +
@@ -49,14 +48,16 @@ module.exports = angular.module('wfWayfinding_home', [])
     return c;
   }
 
-  color();
-
   var zz = function () {
     // return (Math.random() * 100) - 100;
     return 0;
   };
 
+  $scope.yRotation = 0;
 
+  $scope.getYRotation = function () {
+    return $scope.yRotation;
+  };
 
   $scope.toggleScaleOfGridItem = function (i) {
     var gitem = $scope.grids[i];
@@ -85,21 +86,13 @@ module.exports = angular.module('wfWayfinding_home', [])
   };
 
 
-  $scope.grids = [
-    makeGridItem(),
-    makeGridItem(),
-    makeGridItem(),
-    makeGridItem(),
-    makeGridItem(),
-    makeGridItem(),
-    makeGridItem(),
-    makeGridItem(),
-    makeGridItem(),
-    makeGridItem()
-  ];
+  $scope.grids = [];
+  for (var i = 100 - 1; i >= 0; i--) {
+    $scope.grids.push(makeGridItem());
+  };
 
   $scope.myGridLayoutOptions = {
-    dimensions: [3, Math.ceil($scope.grids.length / 3)], // specifies number of columns and rows
+    dimensions: [10, 10], // specifies number of columns and rows
   };
 
 })

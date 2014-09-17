@@ -1,8 +1,12 @@
 <fa-app fa-perspective="300" fa-perspective-origin="perspectiveOrigin">
-  <fa-modifier fa-size="[500, 600]" fa-rotate="[0, 0, 0]" fa-origin="[0.5, 0.5]">
+  <fa-surface>
+    <input type="range" ng-model="yRotation">
+    <input type="text" ng-model="yRotation">
+  </fa-surface>
+  <fa-modifier fa-size="[500, 500]" fa-rotate-y="rotateY(yRotation)" fa-origin="[0.5, 0.5]">
     <fa-grid-layout fa-options="myGridLayoutOptions">
       <fa-modifier ng-repeat="grid in grids" fa-translate="[0, 0, grid.z]" fa-rotate="grid.scale.get()">
-        <fa-surface fa-background-color="grid.bgColor" ng-mousedown="toggleScaleOfGridItem($index)" ng-touchstart="toggleScaleOfGridItem($index)"  class="dbl-sided">{{grid.label}}</fa-surface>
+        <fa-surface fa-background-color="grid.bgColor" ng-mouseover="toggleScaleOfGridItem($index)" ng-touchstart="toggleScaleOfGridItem($index)"  class="dbl-sided">{{grid.label}}</fa-surface>
       </fa-modifier>
     </fa-grid-layout>
   </fa-modifier>
