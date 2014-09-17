@@ -23,7 +23,7 @@ app.config(function ($urlRouterProvider, $locationProvider) {
 var launchTime = Date();
 console.log('Launched at', launchTime);
 },{"./modules/home":3}],2:[function(require,module,exports){
-module.exports = "<fa-app fa-perspective=\"300\" fa-perspective-origin=\"perspectiveOrigin\">\n  <fa-surface>\n    <input type=\"range\" ng-model=\"rangeInput1\">\n  </fa-surface>\n  <fa-modifier fa-size=\"[500, 500]\" fa-rotate-y=\"rotateY(yRotation)\" fa-origin=\"[0.5, 0.5]\">\n    <fa-grid-layout fa-options=\"myGridLayoutOptions\">\n      <fa-modifier ng-repeat=\"grid in grids\" fa-translate=\"[0, 0, grid.z]\" fa-rotate=\"grid.scale.get()\">\n        <fa-surface fa-background-color=\"grid.bgColor\" ng-mouseover=\"toggleGridItem($index, $event)\" fa-touchstart=\"toggleScaleOfGridItem($index)\"  class=\"dbl-sided\">{{grid.label}}</fa-surface>\n      </fa-modifier>\n    </fa-grid-layout>\n  </fa-modifier>\n</fa-app>";
+module.exports = "<fa-app fa-perspective=\"300\" fa-perspective-origin=\"perspectiveOrigin\">\n  <fa-modifier fa-size=\"[500, 500]\" fa-rotate-y=\"rotateY(yRotation)\" fa-origin=\"[0.5, 0.5]\">\n    <fa-grid-layout fa-options=\"myGridLayoutOptions\">\n      <fa-modifier ng-repeat=\"grid in grids\" fa-translate=\"[0, 0, grid.z]\" fa-rotate=\"grid.scale.get()\">\n        <fa-surface fa-background-color=\"grid.bgColor\" fa-start=\"toggleScaleOfGridItem($index)\"  class=\"dbl-sided\">{{grid.label}}</fa-surface>\n      </fa-modifier>\n    </fa-grid-layout>\n  </fa-modifier>\n</fa-app>";
 
 },{}],3:[function(require,module,exports){
 module.exports = angular.module('wfWayfinding_home', [])
