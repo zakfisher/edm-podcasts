@@ -23,7 +23,7 @@ app.config(function ($urlRouterProvider, $locationProvider) {
 var launchTime = Date();
 console.log('Launched at', launchTime);
 },{"./modules/home":3}],2:[function(require,module,exports){
-module.exports = "<fa-app fa-perspective=\"300\" fa-perspective-origin=\"perspectiveOrigin\">\n  <fa-modifier fa-size=\"[500, 500]\" fa-rotate-y=\"rotateY(yRotation)\" fa-origin=\"[0.5, 0.5]\">\n    <fa-grid-layout fa-options=\"myGridLayoutOptions\">\n      <fa-modifier ng-repeat=\"grid in grids\" fa-translate=\"[0, 0, grid.z]\" fa-rotate=\"grid.scale.get()\">\n        <fa-surface fa-background-color=\"grid.bgColor\" fa-start=\"toggleScaleOfGridItem($index)\"  class=\"dbl-sided\">{{grid.label}}</fa-surface>\n      </fa-modifier>\n    </fa-grid-layout>\n  </fa-modifier>\n</fa-app>";
+module.exports = "<fa-app fa-perspective=\"300\" fa-perspective-origin=\"perspectiveOrigin\">\n  <fa-modifier fa-size=\"[500, 500]\" fa-origin=\"[0.5, 0.5]\">\n    <fa-grid-layout fa-options=\"myGridLayoutOptions\">\n      <fa-modifier ng-repeat=\"grid in grids\" fa-translate=\"[0, 0, grid.z]\" fa-rotate=\"grid.scale.get()\">\n        <fa-surface fa-background-color=\"grid.bgColor\" fa-touchstart=\"toggleGridItem($index, $event)\" ng-mousedown=\"toggleGridItem($index, $event)\"  class=\"dbl-sided\">{{grid.label}}</fa-surface>\n      </fa-modifier>\n    </fa-grid-layout>\n  </fa-modifier>\n</fa-app>";
 
 },{}],3:[function(require,module,exports){
 module.exports = angular.module('wfWayfinding_home', [])
@@ -31,10 +31,7 @@ module.exports = angular.module('wfWayfinding_home', [])
 .controller('Home', function ($scope, $famous) {
   $scope.perspectiveOrigin = ['50%', '50%'];
 
-  var MouseSync = $famous['famous/inputs/MouseSync'];
   var Transitionable = $famous['famous/transitions/Transitionable'];
-  var mouseSync = new MouseSync();
-
 
   $scope.toggleGridItem = function (i, e) {
     e.preventDefault();
@@ -49,7 +46,7 @@ module.exports = angular.module('wfWayfinding_home', [])
       gitem.scaled = false;
     }
     gitem.scale.set(scale, {
-      duration: 500,
+      duration: 200,
       curve: 'easeOut'
     });
   };
@@ -75,14 +72,13 @@ module.exports = angular.module('wfWayfinding_home', [])
     };
   };
 
-
   $scope.grids = [];
-  for (var i = 100 - 1; i >= 0; i--) {
+  for (var i = 25 - 1; i >= 0; i--) {
     $scope.grids.push(makeGridItem());
   };
 
   $scope.myGridLayoutOptions = {
-    dimensions: [10, 10], // specifies number of columns and rows
+    dimensions: [5, 5], // specifies number of columns and rows
   };
 
 })

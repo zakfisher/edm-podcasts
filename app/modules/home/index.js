@@ -3,10 +3,7 @@ module.exports = angular.module('wfWayfinding_home', [])
 .controller('Home', function ($scope, $famous) {
   $scope.perspectiveOrigin = ['50%', '50%'];
 
-  var MouseSync = $famous['famous/inputs/MouseSync'];
   var Transitionable = $famous['famous/transitions/Transitionable'];
-  var mouseSync = new MouseSync();
-
 
   $scope.toggleGridItem = function (i, e) {
     e.preventDefault();
@@ -21,7 +18,7 @@ module.exports = angular.module('wfWayfinding_home', [])
       gitem.scaled = false;
     }
     gitem.scale.set(scale, {
-      duration: 500,
+      duration: 200,
       curve: 'easeOut'
     });
   };
@@ -47,14 +44,13 @@ module.exports = angular.module('wfWayfinding_home', [])
     };
   };
 
-
   $scope.grids = [];
-  for (var i = 100 - 1; i >= 0; i--) {
+  for (var i = 25 - 1; i >= 0; i--) {
     $scope.grids.push(makeGridItem());
   };
 
   $scope.myGridLayoutOptions = {
-    dimensions: [10, 10], // specifies number of columns and rows
+    dimensions: [5, 5], // specifies number of columns and rows
   };
 
 })
