@@ -13,7 +13,8 @@ var app = angular.module('wfWayfinding', [
   ]);
 
 //Routing fallback to home
-app.config(function ($urlRouterProvider) {
+app.config(function ($urlRouterProvider, $locationProvider) {
+  $locationProvider.html5Mode(true)
   $urlRouterProvider.otherwise('/');
 });
 

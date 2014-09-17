@@ -21,6 +21,7 @@ var paths = {
     "./app/modules/**/*.png",
     "./app/modules/**/*.jpg",
     "./app/modules/**/*.jpeg",
+    "./app/modules/**/*.svg",
     "./app/modules/**/*.gif"
   ]
 };
