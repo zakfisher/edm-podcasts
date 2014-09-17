@@ -8,30 +8,9 @@ module.exports = angular.module('wfWayfinding_home', [])
   var mouseSync = new MouseSync();
 
 
-  var color = function () {
-    var c = "rgba(" +
-      // Math.floor(Math.random() * 255) +
-      255 +
-      ', ' +
-      Math.floor(Math.random() * 255) +
-      ', ' +
-      Math.floor(Math.random() * 255) +
-      ", 1)";
-    return c;
-  }
-
-  var zz = function () {
-    // return (Math.random() * 100) - 100;
-    return 0;
-  };
-
-  $scope.yRotation = 0;
-
-  $scope.getYRotation = function () {
-    return $scope.yRotation;
-  };
-
-  $scope.toggleScaleOfGridItem = function (i) {
+  $scope.toggleGridItem = function (i, e) {
+    e.preventDefault();
+    e.stopPropagation();
     var gitem = $scope.grids[i];
     var scale;
     if (!gitem.scaled) {
@@ -47,10 +26,21 @@ module.exports = angular.module('wfWayfinding_home', [])
     });
   };
 
+  var generateColor = function () {
+    var c = "rgba(" +
+      255 +
+      ', ' +
+      Math.floor(Math.random() * 255) +
+      ', ' +
+      Math.floor(Math.random() * 255) +
+      ", 1)";
+    return c;
+  };
+
   var makeGridItem = function () {
     return {
-      bgColor: color(),
-      z: zz(),
+      bgColor: generateColor(),
+      z: 0,
       scale: new Transitionable([0, 0, 0]),
       scaled: true,
       label: ""
