@@ -117,7 +117,7 @@ module.exports = angular.module('wfWayfinding_mobiletest1', [])
   });
 });
 },{"./index.html":4}],6:[function(require,module,exports){
-module.exports = "<fa-app>\n<fa-modifier fa-size=\"[500, 500]\" fa-origin=\"[0.5, 0.5]\">\n  <fa-surface fa-background-color=\"white\" fa-size=\"[true, true]\">\n  Retrieve location for beacon {{major}} / {{minor}}\n  </fa-surface>\n  </fa-modifier>\n</fa-app>";
+module.exports = "<fa-app>\n  <fa-surface fa-background-color=\"white\" fa-size=\"[true, true]\">\n  Retrieve location for beacon {{major}} / {{minor}}\n  </fa-surface>\n\n</fa-app>";
 
 },{}],7:[function(require,module,exports){
 // Wayfinding Map Module
