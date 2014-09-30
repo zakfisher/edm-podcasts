@@ -18,7 +18,11 @@ First ensure you have npm, bower and gulp installed globally. Then
 
 ###Deploying to Chrome store
 
-`gulp release` will increase the version number in the npm package and the app manifest.json, then zip up the current state of the app (you may have to build the latest first). You will find "Wayfinding-[version number].zip" in ./dist ready to be deployed to the chrome store. Currently the app is managed with the westfield.andriod@gmail.com account
+`gulp release` will increase the version number in the npm package and the app manifest.json, then zip up the current state of the app (you may have to build the latest first). You will find "Wayfinding-[version number].zip" in ./dist ready to be deployed to the chrome store.
+
+By default the point release is incremented. To increment minor and major versions use `gulp release-minor` and `gulp release-major`
+
+Currently the app is managed with the westfield.andriod@gmail.com account
 
 ###Node express server
 
