@@ -1,8 +1,8 @@
 #Westfield Wayfinding Kiosk Prototype
 
-- Chome app. (for browser and Chromebox)
 - Tablet Interface
 - Directory Interface
+- Builds to a Chrome html app. (runs browser and installable Chromebox app)
 
 ###Running Locally
 
