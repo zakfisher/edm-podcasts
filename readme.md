@@ -22,7 +22,7 @@ First ensure you have npm, bower and gulp installed globally. Then
 
 By default the point release is incremented. To increment minor and major versions use `gulp release-minor` and `gulp release-major`
 
-Currently the app is managed with the westfield.andriod@gmail.com account
+Currently the app is managed with the westfield.andriod@gmail.com account (that's not a typo)
 
 ###Node express server
 
