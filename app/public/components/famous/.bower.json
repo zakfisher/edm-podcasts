@@ -16,12 +16,12 @@
   "license": "MPL-2.0",
   "private": true,
   "_cacheHeaders": {
-    "ETag": "W/\"1741772942\"",
-    "Last-Modified": "Mon, 15 Sep 2014 17:40:35 GMT",
+    "ETag": "W/\"954006164\"",
+    "Last-Modified": "Thu, 25 Sep 2014 23:33:34 GMT",
     "Content-Length": "135592",
     "Content-Type": "application/octet-stream"
   },
-  "_release": "e-tag:W/\"1741772",
+  "_release": "e-tag:W/\"9540061",
   "_source": "http://code.famo.us/famous/global/0.2.2/famous-global-0.2.2.tar.gz",
   "_target": "*",
   "_originalSource": "http://code.famo.us/famous/global/0.2.2/famous-global-0.2.2.tar.gz"

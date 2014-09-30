@@ -1,6 +1,6 @@
 {
   "name": "wayfinding_prototype",
-  "version": "0.1.0",
+  "version": "0.0.5",
   "description": "Westfield Wayfinding Protytype",
   "main": "app/server/index.js",
   "scripts": {
@@ -11,10 +11,11 @@
     "gulp": "latest",
     "browserify": "latest",
     "gulp-browserify": "latest",
+    "gulp-json-editor": "latest",
     "gulp-sass": "latest",
+    "gulp-zip": "latest",
     "gulp-concat": "latest",
     "gulp-express": "latest",
-    "gulp-ngmin": "latest",
     "gulp-ngmin": "latest",
     "gulp-plumber": "latest",
     "gulp-clean": "latest",

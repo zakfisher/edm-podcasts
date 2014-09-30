@@ -1,5 +1,8 @@
 var gulp = require('gulp'),
+  pkg = require('./package.json'),
+  chromeAppManifest = require('./app/public/manifest.json'),
   sass = require('gulp-sass'),
+  jeditor = require('gulp-json-editor'),
   concat = require('gulp-concat'),
   ngmin = require('gulp-ngmin'),
   clean = require('gulp-clean'),
@@ -11,6 +14,7 @@ var gulp = require('gulp'),
   stylish = require('jshint-stylish'),
   brfs = require('brfs'),
   stringify = require('stringify'),
+  zip = require('gulp-zip'),
   watch = require('gulp-watch');
 
 var paths = {
@@ -52,7 +56,7 @@ gulp.task('images', function () {
     .pipe(gulp.dest('app/public/images'));
 });
 
-gulp.task('js', function () {
+gulp.task('app-js', function () {
   return gulp.src('app/app.js')
     .pipe(plumber())
     .pipe(browserify({
@@ -61,9 +65,77 @@ gulp.task('js', function () {
     .pipe(gulp.dest('./app/public/assets'));
 });
 
+gulp.task('background-js', function () {
+  return gulp.src('app/background.js')
+    .pipe(plumber())
+    .pipe(browserify({
+      transform: [stringify('.html')]
+    }))
+    .pipe(gulp.dest('./app/public'));
+});
+
+var makeRelease = function(rtype){
+  var v,
+    currentVersion = pkg.version.split('.');
+  switch(rtype){
+    case 'point':
+      v = parseInt(currentVersion[2], 10);
+      v++;
+      currentVersion[2] = v;
+      break;
+    case 'minor':
+      v = parseInt(currentVersion[1], 10);
+      v++;
+      currentVersion[1] = v;
+      currentVersion[2] = 0;
+      break;
+    case 'major':
+      v = parseInt(currentVersion[0], 10);
+      v++;
+      currentVersion = [v, 0, 0];
+      break;
+  }
+  currentVersion = currentVersion.join('.');
+  //Update NPM Package
+  gulp.src("./package.json")
+    .pipe(jeditor({
+      'version': currentVersion
+    }))
+    .pipe(gulp.dest("./"));
+
+  //Update Chrome Package
+  gulp.src("./app/public/manifest.json")
+    .pipe(jeditor({
+      'version': currentVersion
+    }))
+    .pipe(gulp.dest("./app/public"))
+
+  //Zip up release
+  gulp.src('app/public/**/*')
+    .pipe(zip('Wayfinding-'+currentVersion+'.zip'))
+    .pipe(gulp.dest('dist'));
+
+  console.log('Version number now at', currentVersion);
+
+};
+
+gulp.task('release-major', function () { makeRelease('major'); });
+gulp.task('release-minor', function () { makeRelease('minor'); });
+gulp.task('release', function () { makeRelease('point'); });
+
+gulp.task('zip', function () {
+  gulp.src('app/public/**/*')
+   .pipe(zip('Wayfinding-'+pkg.version+'.zip'))
+   .pipe(gulp.dest('dist'));
+});
 
 //Tasks
-gulp.task('default', ['clean', 'sass', 'lint', 'js', 'images']);
+gulp.task('default', function(){
+  console.log('\n\nAvailable Gulp Tasks:\n\nbuild: js, lint, sass etc.\nwatch: builds on file change, livereload support\nrelease, release-minor, release-major: zips up app package to ./dist\n\n');
+  console.log('See gulpfile.js for more\n\n');
+})
+
+gulp.task('build', ['clean', 'sass', 'lint', 'app-js','background-js', 'images']);
 
 gulp.task('watch', function () {
   livereload.listen();
@@ -75,7 +147,7 @@ gulp.task('watch', function () {
   });
   watch(['app/app.js', 'app/modules/**/*.js', 'app/modules/**/*.html'], function () {
     console.log('go');
-    gulp.start(['lint', 'js']);
+    gulp.start(['lint', 'js', 'background-js']);
   });
   watch('app/public/**', function () {
     livereload.changed();

@@ -1,5 +1,5 @@
 var leap = require('leapjs');
-
+var pkg = require('../package.json');
 
 var app = angular.module('wfWayfinding', [
     // Plugins
