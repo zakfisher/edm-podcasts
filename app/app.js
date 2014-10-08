@@ -1,4 +1,3 @@
-var leap = require('leapjs');
 var pkg = require('../package.json');
 
 var app = angular.module('wfWayfinding', [
@@ -13,14 +12,14 @@ var app = angular.module('wfWayfinding', [
     // App Modules
     require('./modules/home').name,
     require('./modules/mobiletest1').name,
-    require('./modules/pair-from-kiosk').name
-
+    require('./modules/pair-from-kiosk').name,
+    require('./modules/menu').name
   ]);
 
 //Routing fallback to home
 app.config(function ($urlRouterProvider, $locationProvider) {
-  $locationProvider.html5Mode(true)
-  $urlRouterProvider.otherwise('/');
+  $locationProvider.html5Mode(true);
+  $urlRouterProvider.otherwise('/mobiletest1');
 });
 
 // Debug
