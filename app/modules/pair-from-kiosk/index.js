@@ -1,5 +1,6 @@
-// Wayfinding Map Module
-//
+// Wayfinding Pair from Kiosk demo page
+// Just echos back the major and minor keys from the url generated from scanning the beacon
+
 module.exports = angular.module('wayfindingPairFromKiosk', [])
 
 .controller('PairFromKiosk', function ($scope, $famous, $stateParams) {
