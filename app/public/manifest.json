@@ -13,6 +13,6 @@
       "persistant": true
     }
   },
-  "permissions": ["webview", "storage", "alarms", "unlimitedStorage", "power"],
+  "permissions": ["webview", "storage", "alarms", "unlimitedStorage", "power", "fullscreen"],
   "kiosk_enabled": true
 }

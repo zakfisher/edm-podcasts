@@ -25,3 +25,6 @@ app.config(function ($urlRouterProvider, $locationProvider) {
 // Debug
 var launchTime = Date();
 console.log('Launched at', launchTime);
+
+// Go Fullscreen
+chrome.app.window.current().fullscreen();
