@@ -1,6 +1,6 @@
 {
   "name": "wayfinding_prototype",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Westfield Wayfinding Protytype",
   "main": "app/server/index.js",
   "scripts": {

@@ -1,7 +1,7 @@
 {
   "name": "Westfield Wayfinding Prototype",
   "update_url": "https://clients2.google.com/service/update2/crx",
-  "version": "0.2.1",
+  "version": "0.0.7",
   "manifest_version": 2,
   "icons": {
     "16": "icon-16.png",
