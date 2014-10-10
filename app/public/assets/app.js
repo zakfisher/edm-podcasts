@@ -13,7 +13,6 @@ var app = angular.module('wfWayfinding', [
     // App Modules
     require('./modules/home').name,
     require('./modules/mobiletest1').name,
-    require('./modules/pair-from-kiosk').name,
     require('./modules/menu').name
   ]);
 
@@ -29,7 +28,7 @@ console.log('Launched at', launchTime);
 
 // Go Fullscreen
 chrome.app.window.current().fullscreen();
-},{"../package.json":9,"./modules/home":3,"./modules/menu":4,"./modules/mobiletest1":6,"./modules/pair-from-kiosk":8}],2:[function(require,module,exports){
+},{"../package.json":7,"./modules/home":3,"./modules/menu":4,"./modules/mobiletest1":6}],2:[function(require,module,exports){
 module.exports = "<div>\n  <h1>{{message}}</h1>\n  <p>\n    <a ui-sref=\"mobiletest1\">Mobile 3D Test</a>\n  </p>\n</div>";
 
 },{}],3:[function(require,module,exports){
@@ -140,32 +139,9 @@ module.exports = angular.module('wfWayfinding_mobiletest1', [])
   });
 });
 },{"./index.html":5}],7:[function(require,module,exports){
-module.exports = "<fa-app>\n  <fa-surface fa-background-color=\"white\" fa-size=\"[true, true]\">\n  Retrieve location for beacon {{major}} / {{minor}}\n  </fa-surface>\n\n</fa-app>";
-
-},{}],8:[function(require,module,exports){
-// Wayfinding Pair from Kiosk demo page
-// Just echos back the major and minor keys from the url generated from scanning the beacon
-
-module.exports = angular.module('wayfindingPairFromKiosk', [])
-
-.controller('PairFromKiosk', function ($scope, $famous, $stateParams) {
-  console.log('PairFromKiosk', $stateParams);
-  $scope.major = $stateParams.major;
-  $scope.minor = $stateParams.minor;
-})
-
-//Routes / States
-.config(function ($stateProvider) {
-  $stateProvider.state('pair-from-kiosk', {
-    url: '/pair-from-kiosk/:major/:minor',
-    template: require('./index.html'),
-    controller: 'PairFromKiosk'
-  });
-});
-},{"./index.html":7}],9:[function(require,module,exports){
 module.exports={
   "name": "wayfinding_prototype",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Westfield Wayfinding Protytype",
   "main": "app/server/index.js",
   "scripts": {

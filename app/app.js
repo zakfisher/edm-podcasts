@@ -12,7 +12,6 @@ var app = angular.module('wfWayfinding', [
     // App Modules
     require('./modules/home').name,
     require('./modules/mobiletest1').name,
-    require('./modules/pair-from-kiosk').name,
     require('./modules/menu').name
   ]);
 
