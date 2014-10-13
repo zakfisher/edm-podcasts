@@ -36,3 +36,9 @@ fa-app {
 webview {
   height: 100%;
   width: 100%; }
+
+button {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+  font-size: 100%; }
