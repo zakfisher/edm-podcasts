@@ -10,12 +10,12 @@
     "express": "~3.4.x",
     "gulp": "latest",
     "browserify": "latest",
+    "brfs": "latest",
     "gulp-browserify": "latest",
     "gulp-json-editor": "latest",
     "gulp-sass": "latest",
     "gulp-zip": "latest",
     "gulp-concat": "latest",
-    "gulp-express": "latest",
     "gulp-ngmin": "latest",
     "gulp-plumber": "latest",
     "gulp-clean": "latest",
@@ -23,7 +23,6 @@
     "stringify": "latest",
     "gulp-livereload": "latest",
     "jshint-stylish": "latest",
-    "brfs": "latest",
     "gulp-watch": "latest"
   },
   "engines": {
