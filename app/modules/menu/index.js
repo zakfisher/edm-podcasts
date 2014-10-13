@@ -1,18 +1,21 @@
-module.exports = (function () {
+module.exports = angular.module('KioskMenu', [])
 
-  var app = angular.module('wfMenu', []);
+.controller('KioskMenuController', function ($scope) {
+  console.log('menu controller');
 
-  app.controller('MenuController', function ($scope) {
-    console.log('menu controller');
-  });
+  $scope.menuActive = true;
 
-  app.config(function ($stateProvider) {
-    $stateProvider.state('menutest', {
-      url: '/menutest',
-      // template: require('./index.html'),
-      controller: 'MenuController'
-    });
-  });
+  $scope.toggleMenu = function () {
+    $scope.menuActive = !$scope.menuActive;
+    console.log('set menuActive', $scope.menuActive);
+  };
 
-  return app;
-}());
+})
+
+.directive('kioskmenu', function () {
+  return {
+    restrict: 'E',
+    controller: 'KioskMenuController',
+    template: require('./menu.html')
+  };
+});

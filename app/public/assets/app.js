@@ -12,14 +12,14 @@ var app = angular.module('wfWayfinding', [
 
     // App Modules
     require('./modules/home').name,
-    require('./modules/mobiletest1').name,
+    require('./modules/jibestream-map').name,
     require('./modules/menu').name
   ]);
 
 //Routing fallback to home
 app.config(function ($urlRouterProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
-  $urlRouterProvider.otherwise('/mobiletest1');
+  $urlRouterProvider.otherwise('/');
 });
 
 // Debug
@@ -27,18 +27,21 @@ var launchTime = Date();
 console.log('Launched at', launchTime);
 
 // Go Fullscreen
-chrome.app.window.current().fullscreen();
-},{"../package.json":7,"./modules/home":3,"./modules/menu":4,"./modules/mobiletest1":6}],2:[function(require,module,exports){
-module.exports = "<div>\n  <h1>{{message}}</h1>\n  <p>\n    <a ui-sref=\"mobiletest1\">Mobile 3D Test</a>\n  </p>\n</div>";
+try {
+  // chrome.app.window.current().fullscreen();
+} catch (e) {
+  console.warn('Chrome fullscreen command not available.')
+}
+},{"../package.json":8,"./modules/home":3,"./modules/jibestream-map":4,"./modules/menu":6}],2:[function(require,module,exports){
+module.exports = "<jmap></jmap>";
 
 },{}],3:[function(require,module,exports){
-// Wayfinding Map Module
-//
+// Wayfinding Home View
+
 module.exports = angular.module('wayfindingMap', [])
 
-.controller('MapHome', function ($scope, $famous) {
-  $scope.message = "Wayfinding Prototype";
-  console.log('the map controller');
+.controller('KioskHome', function ($scope, $famous) {
+  $scope.message = "Wayfinding Prototype Home";
 })
 
 //Routes / States
@@ -46,99 +49,54 @@ module.exports = angular.module('wayfindingMap', [])
   $stateProvider.state('map', {
     url: '/',
     template: require('./index.html'),
-    controller: 'MapHome'
+    controller: 'KioskHome'
   });
 });
 },{"./index.html":2}],4:[function(require,module,exports){
-module.exports = (function () {
+// Jibestream Integration
 
-  var app = angular.module('wfMenu', []);
+module.exports = angular.module('JibestreamMap', [])
 
-  app.controller('MenuController', function ($scope) {
-    console.log('menu controller');
-  });
+.controller('JibestreamMapController', function ($scope) {
+  console.log('init jibestream map');
+})
 
-  app.config(function ($stateProvider) {
-    $stateProvider.state('menutest', {
-      url: '/menutest',
-      // template: require('./index.html'),
-      controller: 'MenuController'
-    });
-  });
-
-  return app;
-}());
-},{}],5:[function(require,module,exports){
-module.exports = "<fa-app fa-perspective=\"300\" fa-perspective-origin=\"perspectiveOrigin\">\n  <fa-modifier fa-size=\"[500, 500]\" fa-origin=\"[0.5, 0.5]\">\n    <fa-grid-layout fa-options=\"myGridLayoutOptions\">\n      <fa-modifier ng-repeat=\"grid in grids\" fa-translate=\"[0, 0, grid.z]\" fa-rotate=\"grid.scale.get()\">\n        <fa-surface fa-background-color=\"grid.bgColor\" fa-touchstart=\"toggleGridItem($index, $event)\" ng-mousedown=\"toggleGridItem($index, $event)\"  class=\"dbl-sided\">{{grid.label}}</fa-surface>\n      </fa-modifier>\n    </fa-grid-layout>\n  </fa-modifier>\n</fa-app>";
+.directive('jmap', function () {
+  return {
+    restrict: 'E',
+    controller: 'JibestreamMapController',
+    template: require('./jmap.html')
+  };
+});
+},{"./jmap.html":5}],5:[function(require,module,exports){
+module.exports = "<fa-modifier fa-size=\"[1280, 720]\" fa-origin=\"[0.5, 0.5]\">\n  <fa-surface fa-background-color=\"'#444'\" fa-color=\"'#fff'\">\n    <p>Jibestream Map</p>\n    <p>\n      <button>+</button>\n    </p>\n  </fa-surface>\n</fa-modifier>";
 
 },{}],6:[function(require,module,exports){
-module.exports = angular.module('wfWayfinding_mobiletest1', [])
+module.exports = angular.module('KioskMenu', [])
 
-.controller('MobileTest1', function ($scope, $famous) {
-  $scope.perspectiveOrigin = ['50%', '50%'];
+.controller('KioskMenuController', function ($scope) {
+  console.log('menu controller');
 
-  var Transitionable = $famous['famous/transitions/Transitionable'];
+  $scope.menuActive = true;
 
-  $scope.toggleGridItem = function (i, e) {
-    e.preventDefault();
-    e.stopPropagation();
-    var gitem = $scope.grids[i];
-    var scale;
-    if (!gitem.scaled) {
-      scale = [0, 0, 0];
-      gitem.scaled = true;
-    } else {
-      scale = [1, 1, 1];
-      // scale = [0, 0, 0]
-      gitem.scaled = false;
-    }
-    gitem.scale.set(scale, {
-      duration: 200,
-      curve: 'easeOut'
-    });
-  };
-
-  var generateColor = function () {
-    var c = "rgba(" +
-      255 +
-      ', ' +
-      Math.floor(Math.random() * 255) +
-      ', ' +
-      Math.floor(Math.random() * 255) +
-      ", 1)";
-    return c;
-  };
-
-  var makeGridItem = function () {
-    return {
-      bgColor: generateColor(),
-      z: 0,
-      scale: new Transitionable([0, 0, 0]),
-      scaled: true,
-      label: ""
-    };
-  };
-
-  $scope.grids = [];
-  for (var i = 25 - 1; i >= 0; i--) {
-    $scope.grids.push(makeGridItem());
-  }
-
-  $scope.myGridLayoutOptions = {
-    dimensions: [5, 5], // specifies number of columns and rows
+  $scope.toggleMenu = function () {
+    $scope.menuActive = !$scope.menuActive;
+    console.log('set menuActive', $scope.menuActive);
   };
 
 })
 
-//Routes / States
-.config(function ($stateProvider) {
-  $stateProvider.state('mobiletest1', {
-    url: '/mobiletest1',
-    template: require('./index.html'),
-    controller: 'MobileTest1'
-  });
+.directive('kioskmenu', function () {
+  return {
+    restrict: 'E',
+    controller: 'KioskMenuController',
+    template: require('./menu.html')
+  };
 });
-},{"./index.html":5}],7:[function(require,module,exports){
+},{"./menu.html":7}],7:[function(require,module,exports){
+module.exports = "<fa-surface>\n  <button ng-click=\"toggleMenu()\">Menu</button>\n</fa-surface>";
+
+},{}],8:[function(require,module,exports){
 module.exports={
   "name": "wayfinding_prototype",
   "version": "0.0.7",
@@ -151,12 +109,12 @@ module.exports={
     "express": "~3.4.x",
     "gulp": "latest",
     "browserify": "latest",
+    "brfs": "latest",
     "gulp-browserify": "latest",
     "gulp-json-editor": "latest",
     "gulp-sass": "latest",
     "gulp-zip": "latest",
     "gulp-concat": "latest",
-    "gulp-express": "latest",
     "gulp-ngmin": "latest",
     "gulp-plumber": "latest",
     "gulp-clean": "latest",
@@ -164,7 +122,6 @@ module.exports={
     "stringify": "latest",
     "gulp-livereload": "latest",
     "jshint-stylish": "latest",
-    "brfs": "latest",
     "gulp-watch": "latest"
   },
   "engines": {

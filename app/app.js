@@ -11,14 +11,14 @@ var app = angular.module('wfWayfinding', [
 
     // App Modules
     require('./modules/home').name,
-    require('./modules/mobiletest1').name,
+    require('./modules/jibestream-map').name,
     require('./modules/menu').name
   ]);
 
 //Routing fallback to home
 app.config(function ($urlRouterProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
-  $urlRouterProvider.otherwise('/mobiletest1');
+  $urlRouterProvider.otherwise('/');
 });
 
 // Debug
@@ -26,4 +26,8 @@ var launchTime = Date();
 console.log('Launched at', launchTime);
 
 // Go Fullscreen
-chrome.app.window.current().fullscreen();
+try {
+  // chrome.app.window.current().fullscreen();
+} catch (e) {
+  console.warn('Chrome fullscreen command not available.')
+}

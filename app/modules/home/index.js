@@ -1,10 +1,9 @@
-// Wayfinding Map Module
-//
+// Wayfinding Home View
+
 module.exports = angular.module('wayfindingMap', [])
 
-.controller('MapHome', function ($scope, $famous) {
-  $scope.message = "Wayfinding Prototype";
-  console.log('the map controller');
+.controller('KioskHome', function ($scope, $famous) {
+  $scope.message = "Wayfinding Prototype Home";
 })
 
 //Routes / States
@@ -12,6 +11,6 @@ module.exports = angular.module('wayfindingMap', [])
   $stateProvider.state('map', {
     url: '/',
     template: require('./index.html'),
-    controller: 'MapHome'
+    controller: 'KioskHome'
   });
 });
