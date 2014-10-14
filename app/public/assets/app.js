@@ -33,7 +33,7 @@ try {
   console.warn('Chrome fullscreen command not available.')
 }
 },{"../package.json":8,"./modules/home":3,"./modules/jibestream-map":4,"./modules/menu":6}],2:[function(require,module,exports){
-module.exports = "<jmap></jmap>";
+module.exports = "<fa-modifier fa-size=\"[1280, 720]\" fa-origin=\"[0.5, 0.5]\">\n  <fa-surface fa-background-color=\"'#444'\" fa-color=\"'#fff'\">\n    <jmap></jmap>\n  </fa-surface>\n</fa-modifier>";
 
 },{}],3:[function(require,module,exports){
 // Wayfinding Home View
@@ -69,7 +69,7 @@ module.exports = angular.module('JibestreamMap', [])
   };
 });
 },{"./jmap.html":5}],5:[function(require,module,exports){
-module.exports = "<fa-modifier fa-size=\"[1280, 720]\" fa-origin=\"[0.5, 0.5]\">\n  <fa-surface fa-background-color=\"'#444'\" fa-color=\"'#fff'\">\n    <p>Jibestream Map</p>\n    <p>\n      <button>+</button>\n    </p>\n  </fa-surface>\n</fa-modifier>";
+module.exports = "<p>Jibestream Map</p>\n<p>\n  <button>+</button>\n</p>";
 
 },{}],6:[function(require,module,exports){
 module.exports = angular.module('KioskMenu', [])
