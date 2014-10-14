@@ -74,27 +74,47 @@ module.exports = "<p>Jibestream Map</p>\n<p>\n  <button>+</button>\n</p>";
 },{}],6:[function(require,module,exports){
 module.exports = angular.module('KioskMenu', [])
 
-.controller('KioskMenuController', function ($scope) {
-  console.log('menu controller');
+.service('KioskMenu', function () {
+  var menu = {};
+  menu.active = true;
 
-  $scope.menuActive = true;
-
-  $scope.toggleMenu = function () {
-    $scope.menuActive = !$scope.menuActive;
-    console.log('set menuActive', $scope.menuActive);
+  menu.toggle = function () {
+    console.log('toggle menu');
+    menu.active = !menu.active;
   };
 
+  return menu;
 })
 
 .directive('kioskmenu', function () {
   return {
     restrict: 'E',
-    controller: 'KioskMenuController',
-    template: require('./menu.html')
+    template: require('./menu.html'),
+    controller: function ($scope, KioskMenu) {
+      $scope.menu = KioskMenu;
+      $scope.menuItems = [
+        {
+          label: 'Item 1'
+        },
+        {
+          label: 'Item 2'
+        },
+        {
+          label: 'Item 3'
+        },
+        {
+          label: 'Item 4'
+        }
+      ];
+      $scope.menuLayoutOptions = {
+        dimensions: [1, $scope.menuItems.length],
+      };
+
+    }
   };
 });
 },{"./menu.html":7}],7:[function(require,module,exports){
-module.exports = "<fa-surface>\n  <button ng-click=\"toggleMenu()\">Menu</button>\n</fa-surface>";
+module.exports = "Menu Toggle Button\n<fa-surface>\n  <button ng-click=\"menu.toggle()\">Menu</button>\n</fa-surface>\n<!-- Menu -->\n<fa-modifier fa-size=\"[100, 100]\" fa-translate=\"[0, 40]\">\n  <fa-grid-layout fa-options=\"menuLayoutOptions\">\n      <fa-modifier ng-repeat=\"item in menuItems\" fa-translate=\"[0, 0, grid.z]\" fa-rotate=\"grid.scale.get()\">\n        <fa-surface fa-background-color=\"grid.bgColor\" fa-touchstart=\"launch(item)\" ng-mousedown=\"launch(item)\" class=\"dbl-sided\">\n          {{item.label}}\n        </fa-surface>\n      </fa-modifier>\n    </fa-grid-layout>\n</fa-modifier>";
 
 },{}],8:[function(require,module,exports){
 module.exports={
@@ -119,6 +139,7 @@ module.exports={
     "gulp-plumber": "latest",
     "gulp-clean": "latest",
     "gulp-jshint": "latest",
+    "gulp-notify": "latest",
     "stringify": "latest",
     "gulp-livereload": "latest",
     "jshint-stylish": "latest",
