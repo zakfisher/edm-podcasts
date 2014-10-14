@@ -20,6 +20,7 @@
     "gulp-plumber": "latest",
     "gulp-clean": "latest",
     "gulp-jshint": "latest",
+    "gulp-notify": "latest",
     "stringify": "latest",
     "gulp-livereload": "latest",
     "jshint-stylish": "latest",
