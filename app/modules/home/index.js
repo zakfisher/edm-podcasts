@@ -10,7 +10,7 @@ module.exports = angular.module('wayfindingMap', [])
 .config(function ($stateProvider) {
   $stateProvider.state('map', {
     url: '/',
-    template: require('./index.html'),
+    template: require('./home.html'),
     controller: 'KioskHome'
   });
 });
