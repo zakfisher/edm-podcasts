@@ -1,7 +1,7 @@
 {
   "name": "Westfield Wayfinding Prototype",
   "update_url": "https://clients2.google.com/service/update2/crx",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "manifest_version": 2,
   "icons": {
     "16": "icon-16.png",
@@ -13,6 +13,7 @@
       "persistant": true
     }
   },
-  "permissions": ["webview", "storage", "alarms", "unlimitedStorage", "power", "fullscreen"],
+  "bluetooth": {},
+  "permissions": ["webview", "storage", "alarms", "unlimitedStorage", "power", "fullscreen", "system.cpu"],
   "kiosk_enabled": true
 }
