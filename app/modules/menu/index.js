@@ -1,21 +1,41 @@
 module.exports = angular.module('KioskMenu', [])
 
-.controller('KioskMenuController', function ($scope) {
-  console.log('menu controller');
+.service('KioskMenu', function () {
+  var menu = {};
+  menu.active = true;
 
-  $scope.menuActive = true;
-
-  $scope.toggleMenu = function () {
-    $scope.menuActive = !$scope.menuActive;
-    console.log('set menuActive', $scope.menuActive);
+  menu.toggle = function () {
+    console.log('toggle menu');
+    menu.active = !menu.active;
   };
 
+  return menu;
 })
 
 .directive('kioskmenu', function () {
   return {
     restrict: 'E',
-    controller: 'KioskMenuController',
-    template: require('./menu.html')
+    template: require('./menu.html'),
+    controller: function ($scope, KioskMenu) {
+      $scope.menu = KioskMenu;
+      $scope.menuItems = [
+        {
+          label: 'Item 1'
+        },
+        {
+          label: 'Item 2'
+        },
+        {
+          label: 'Item 3'
+        },
+        {
+          label: 'Item 4'
+        }
+      ];
+      $scope.menuLayoutOptions = {
+        dimensions: [1, $scope.menuItems.length],
+      };
+
+    }
   };
 });

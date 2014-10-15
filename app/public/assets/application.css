@@ -6,7 +6,8 @@ body {
 body {
   margin: 0;
   font-family: sans-serif;
-  background-color: #222; }
+  background-color: #222;
+  background-image: url('/dev-bg.png'); }
 
 .center-box {
   padding: 15px 50px 15px 50px;

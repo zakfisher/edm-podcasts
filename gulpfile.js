@@ -14,6 +14,7 @@ var gulp = require('gulp'),
   brfs = require('brfs'),
   stringify = require('stringify'),
   zip = require('gulp-zip'),
+  notify = require('gulp-notify'),
   watch = require('gulp-watch');
 
 var paths = {
@@ -47,7 +48,19 @@ gulp.task('lint', function () {
   return gulp.src(paths.modules + '/**/*.js')
     .pipe(plumber())
     .pipe(jshint())
-    .pipe(jshint.reporter(stylish));
+    .pipe(jshint.reporter(stylish))
+    .pipe(notify(function (file) {
+      if (file.jshint.success) {
+        // Don't show something if success
+        return false;
+      }
+      var errors = file.jshint.results.map(function (data) {
+        if (data.error) {
+          return "(" + data.error.line + ':' + data.error.character + ') ' + data.error.reason;
+        }
+      }).join("\n");
+      return file.relative + " (" + file.jshint.results.length + " errors)\n" + errors;
+    }));
 });
 
 gulp.task('images', function () {
