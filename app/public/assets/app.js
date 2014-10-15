@@ -85,68 +85,84 @@ module.exports = angular.module('wayfindingMap', [])
 });
 },{"./home.html":4}],6:[function(require,module,exports){
 // Jibestream Integration
-
 module.exports = angular.module('JibestreamMap', [])
 
-.controller('JibestreamMapController', function ($scope) {
+.controller('JibestreamMapController', function ($scope, $element) {
   console.log('init jibestream map');
+
+  var mapObject;
+
+  JMap.addListener("StandAloneMapsReady", onJmapReady);
+  JMap.addListener(JMap.MODULE_READY, onMapCreated);
+  JMap.initMapsStandAlone("http://jibestream2.cloudapp.net:8082", {deviceId:21744, languageCode:"en"});
+
+  function onJmapReady(){
+    mapObject = new JMap.Building($element.find("#map-container"), 1280,720
+    	/*Add styling params here*/);
+  }
+
+  function onMapCreated(){
+    //console.log("Ready to do stuff!");
+    $("#loading-container").remove();
+    TweenLite.set($("#map-container"), {alpha:1});
+    mapObject.setDefaultLocation();
+  }
+
+
+  /*Exposed Calls*/
+
+  function resetMap(){
+    mapObject.resetAllMaps();
+  }
+
+  function wayFindToDestinationByID(wfID){
+    mapObject.startWayfinding(JMap.getDesinationById(wfID));
+  }
+
+
+
+
+
+
 })
 
 .directive('jmap', function () {
+  // var jmapController = new JibestreamMapController({}, $("#container"));
   return {
     restrict: 'E',
     controller: 'JibestreamMapController',
     template: require('./jmap.html')
   };
 });
-},{"./jmap.html":7}],7:[function(require,module,exports){
-module.exports = "<p>Jibestream Map</p>\n<p>\n  <button>+</button>\n</p>";
+},{"./jmap.html":5}],5:[function(require,module,exports){
+module.exports = "<style>\n\n/* Eventually use famous */\n\n/* Minified CSS - Less lines and can be replaced quickly. This is only for the loader animation. */\n#floatingCirclesG{position:relative;width:150px;height:150px;-webkit-transform:scale(0.6);transform:scale(0.6);display:block;margin:285px auto 0;}.f_circleG{position:absolute;background-color:#FFF;height:27px;width:27px;-webkit-border-radius:14px;-webkit-animation-name:f_fadeG;-webkit-animation-duration:.8s;-webkit-animation-iteration-count:infinite;-webkit-animation-direction:linear;border-radius:14px;animation-name:f_fadeG;animation-duration:.8s;animation-iteration-count:infinite;animation-direction:linear}#frotateG_01{left:0;top:61px;-webkit-animation-delay:.3s;animation-delay:.3s}#frotateG_02{left:18px;top:18px;-webkit-animation-delay:.4s;animation-delay:.4s}#frotateG_03{left:61px;top:0;-webkit-animation-delay:.5s;animation-delay:.5s}#frotateG_04{right:18px;top:18px;-webkit-animation-delay:.6s;animation-delay:.6s}#frotateG_05{right:0;top:61px;-webkit-animation-delay:.7s;animation-delay:.7s}#frotateG_06{right:18px;bottom:18px;-webkit-animation-delay:.8s;animation-delay:.8s}#frotateG_07{left:61px;bottom:0;-webkit-animation-delay:.9s;animation-delay:.9s}#frotateG_08{left:18px;bottom:18px;-webkit-animation-delay:1s;animation-delay:1s}@-webkit-keyframes f_fadeG{0%{background-color:#000}100%{background-color:#FFF}}@keyframes f_fadeG{0%{background-color:#000}100%{background-color:#FFF}}\n\n#loading-container{\n\twidth: 100%;\n\theight:100%;\n\tbackground-color: #444;\n\tz-index:2;\n}\n\n#map-container{\n    width: 100%;\n    height:100%;\n    opacity: 0;\n}\n</style>\n\n<div id=\"loading-container\">\n\t<div id=\"floatingCirclesG\">\n\t\t<div class=\"f_circleG\" id=\"frotateG_01\"></div><div class=\"f_circleG\" id=\"frotateG_02\"></div><div class=\"f_circleG\" id=\"frotateG_03\"></div><div class=\"f_circleG\" id=\"frotateG_04\"></div><div class=\"f_circleG\" id=\"frotateG_05\"></div><div class=\"f_circleG\" id=\"frotateG_06\"></div><div class=\"f_circleG\" id=\"frotateG_07\"></div><div class=\"f_circleG\" id=\"frotateG_08\"></div>\n\t</div>\n</div>\n\n\n<div id=\"map-container\"></div>";
 
-},{}],8:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 module.exports = angular.module('KioskMenu', [])
 
-.service('KioskMenu', function () {
-  var menu = {};
-  menu.active = true;
+.controller('KioskMenuController', function ($scope) {
+  console.log('menu controller');
 
-  menu.toggle = function () {
-    console.log('toggle menu');
-    menu.active = !menu.active;
+  $scope.menuActive = true;
+
+  $scope.toggleMenu = function () {
+    $scope.menuActive = !$scope.menuActive;
+    console.log('set menuActive', $scope.menuActive);
   };
 
-  return menu;
 })
 
 .directive('kioskmenu', function () {
   return {
     restrict: 'E',
-    template: require('./menu.html'),
-    controller: function ($scope, KioskMenu) {
-      $scope.menu = KioskMenu;
-      $scope.menuItems = [
-        {
-          label: 'Item 1'
-        },
-        {
-          label: 'Item 2'
-        },
-        {
-          label: 'Item 3'
-        },
-        {
-          label: 'Item 4'
-        }
-      ];
-      $scope.menuLayoutOptions = {
-        dimensions: [1, $scope.menuItems.length],
-      };
-    }
+    controller: 'KioskMenuController',
+    template: require('./menu.html')
   };
 });
-},{"./menu.html":9}],9:[function(require,module,exports){
-module.exports = "<!-- Menu Toggle Button -->\n<fa-surface>\n  <button ng-click=\"menu.toggle()\">Menu</button>\n</fa-surface>\n<!-- Menu -->\n<fa-modifier fa-size=\"[100, 100]\" fa-translate=\"[0, 40]\">\n  <fa-grid-layout fa-options=\"menuLayoutOptions\" ng-show=\"menu.active\">\n      <fa-modifier ng-repeat=\"item in menuItems\" fa-translate=\"[0, 0, grid.z]\" fa-rotate=\"grid.scale.get()\">\n        <fa-surface fa-background-color=\"grid.bgColor\" fa-touchstart=\"launch(item)\" ng-mousedown=\"launch(item)\" class=\"dbl-sided\">\n          {{item.label}}\n        </fa-surface>\n      </fa-modifier>\n    </fa-grid-layout>\n</fa-modifier>";
+},{"./menu.html":7}],7:[function(require,module,exports){
+module.exports = "<fa-surface>\n  <button ng-click=\"toggleMenu()\">Menu</button>\n</fa-surface>";
 
-},{}],10:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 module.exports={
   "name": "wayfinding_prototype",
   "version": "0.0.8",
