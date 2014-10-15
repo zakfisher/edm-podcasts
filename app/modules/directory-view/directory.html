@@ -1,0 +1,7 @@
+<fa-grid-layout fa-options="directoryLayoutOptions">
+  <fa-modifier ng-repeat="item in directoryItems">
+    <fa-surface fa-background-color="grid.bgColor" fa-touchstart="launch(item)" ng-mousedown="launch(item)">
+      {{item.label}}
+    </fa-surface>
+  </fa-modifier>
+</fa-grid-layout>

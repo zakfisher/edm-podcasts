@@ -35,7 +35,6 @@ module.exports = angular.module('KioskMenu', [])
       $scope.menuLayoutOptions = {
         dimensions: [1, $scope.menuItems.length],
       };
-
     }
   };
 });
