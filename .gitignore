@@ -1,3 +1,4 @@
 node_modules
 dist
+app/public/assets/app.js
 **/*/Thumbs.db
