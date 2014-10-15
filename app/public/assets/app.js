@@ -2,22 +2,23 @@
 var pkg = require('../package.json');
 
 var app = angular.module('wfWayfinding', [
-    // Plugins
-    'famous.angular',
-    'ngAnimate',
-    'ui.router',
-    'ngResource',
-    'ngSanitize',
-    'ngTouch',
+  // Plugins & Libraries
+  'famous.angular',
+  'ngAnimate',
+  'ui.router',
+  'ngResource',
+  'ngSanitize',
+  'ngTouch',
 
-    // App Modules
-    require('./modules/home').name,
-    require('./modules/directory-view').name,
-    require('./modules/jibestream-map').name,
-    require('./modules/menu').name
-  ]);
+  // Kiosk App Modules
+  // '.name' is provided by angular.module, index.js is picked up as the included file
+  require('./modules/home').name,
+  require('./modules/directory-view').name,
+  require('./modules/jibestream-map').name,
+  require('./modules/menu').name
+]);
 
-//Routing fallback to home
+// Route fallback to home rather than 404'ing
 app.config(function ($urlRouterProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
   $urlRouterProvider.otherwise('/');
@@ -27,12 +28,26 @@ app.config(function ($urlRouterProvider, $locationProvider) {
 var launchTime = Date();
 console.log('Launched at', launchTime);
 
-// Go Fullscreen
+// Chrome app setup
 try {
   // chrome.app.window.current().fullscreen();
+  chrome.bluetooth.getDevices(function (x) {
+    console.log(x);
+  });
+  chrome.bluetooth.getAdapterState(function (a) {
+    console.log(a);
+  });
+  chrome.system.cpu.getInfo(function (c) {
+    console.log('cpu', c);
+  })
 } catch (e) {
-  console.warn('Chrome fullscreen command not available.')
+  console.warn('Chrome command not available', e);
 }
+
+
+//Todo, retrieve content then initialise
+
+angular.bootstrap(document, ['wfWayfinding']);
 },{"../package.json":10,"./modules/directory-view":3,"./modules/home":5,"./modules/jibestream-map":6,"./modules/menu":8}],2:[function(require,module,exports){
 module.exports = "<fa-grid-layout fa-options=\"directoryLayoutOptions\">\n  <fa-modifier ng-repeat=\"item in directoryItems\">\n    <fa-surface fa-background-color=\"grid.bgColor\" fa-touchstart=\"launch(item)\" ng-mousedown=\"launch(item)\">\n      {{item.label}}\n    </fa-surface>\n  </fa-modifier>\n</fa-grid-layout>\n";
 
@@ -125,7 +140,6 @@ module.exports = angular.module('KioskMenu', [])
       $scope.menuLayoutOptions = {
         dimensions: [1, $scope.menuItems.length],
       };
-
     }
   };
 });
@@ -135,7 +149,7 @@ module.exports = "<!-- Menu Toggle Button -->\n<fa-surface>\n  <button ng-click=
 },{}],10:[function(require,module,exports){
 module.exports={
   "name": "wayfinding_prototype",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Westfield Wayfinding Protytype",
   "main": "app/server/index.js",
   "scripts": {
