@@ -11,6 +11,7 @@ var app = angular.module('wfWayfinding', [
 
     // App Modules
     require('./modules/home').name,
+    require('./modules/directory-view').name,
     require('./modules/jibestream-map').name,
     require('./modules/menu').name
   ]);
