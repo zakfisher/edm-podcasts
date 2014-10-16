@@ -1236,12 +1236,13 @@ var __extends = this.__extends || function (d, b) {
         /****************************** Init functions ****************************/
         /**************************************************************************/
 
-        function Building(container, width, height) {
+        function Building(container, width, height, styles) {
         	$("body").append("<style>.point{width:15px;height:15px;position:absolute}#map-mainview{position:absolute;width:100%;height:100%}.map-floor{position:absolute;height:100%;width:100%}.map-floor-base.inactive{pointer-events:none}.map-floor-base{position:absolute;transform-origin:0 0 0;-webit-perspective:1000px;display:block;left:0;top:0}.map-floor-container-base,.map-floor-legendsview-base,.map-floor-legendsview-base img{position:absolute}.map-floor-legendsview-base img.yahPoint{position:absolute;-webkit-transform-origin:50% 0;transform-origin:50% 0}.legendItem{background-size:100%;display:none}.legendItemActive{background:rgba(0,0,0,.2);border:4px solid #fff;border-radius:100px;display:block!important}.bubbleText{text-align:center;position:absolute;color:#fff;font-size:25px;width:250px;height:60px;line-height:30px;display:inline-block;vertical-align:middle}#bubbleLeft>img{pointer-events:none}.pathView{position:absolute;z-index:10;pointer-events:none}.pathView img{position:absolute}.legendLabelItem{position:absolute;font-size:12px;white-space:nowrap}.legendsLabelsView{position:absolute}.map-floor-container-base .landmarks{position:absolute;z-index:10;font-family:Helvetica,Arial,Verdana;font-size:12px;color:#fff;transform-origin:0 0 0}.map-floor-container-base .landmarks .item{position:absolute;text-align:center;display:none;padding:0;margin:0}.map-floor-container-base .landmarks .item.legends img{position:absolute;top:-15px!important;left:-15px!important;width:30px!important;height:30px!important}.map-floor-container-base .landmarks .lable div{position:absolute;font-size:20px;width:auto;text-align:center;background:none!important;color:#ccc}.map-floor-container-base .landmarks .mark .text{background-color:#000}.map-floor-container-base .landmarks .step.item img{top:-7px!important;left:-7px!important}.map-floor-container-base .landmarks #bubbleLeft.item,.map-floor-container-base .landmarks #yah.item,.map-floor-container-base .landmarks .item.mover{z-index:3!important}.map-floor-container-base .landmarks .item.mover img{position:absolute;top:-25px!important;left:-25px!important;padding:2px;border:1px solid #fff;border-radius:12px;background-color:#E32723;width:50px;height:50px}.map-floor-container-base .landmarks #bubbleLeft.item img,.map-floor-container-base .landmarks #yah.item img{bottom:-20px!important;left:-20px!important;width:40px;height:40px}.map-floor-container-base .landmarks .item>div{left:-15.5px!important;font-size:14px}</style>");
         	console.log("New Building");
             this.container = container;
             this.containerWidth = width;
             this.containerHeight = height;
+            this.styles = styles;
             this.floors = {};
             this.midList = {};
             this.waitTime = 800;//in milliseconds. Applies to pause between multifloor wayfinding this
@@ -1280,19 +1281,23 @@ var __extends = this.__extends || function (d, b) {
 
             this.timeouts = [];
 
+            // this.parseStyles();
+
             this.onBuildingData();
         };
+
+        // Building.prototype.parseStyles = function(){
+        // 	console.log(this.styles);
+        // };
 
         Building.prototype.onLabelsLoaded = function(labels) {
             console.log("Lables", labels);
             for(var i = 0; i < labels.length; i++) {
                 if(labels[i]['description'] == "yah") {
                     this.yahImage = labels[i]['filePath'];
-                    // //console.log("YAH IMAGE", _this.yahImage);
+                    //console.log("YAH IMAGE", _this.yahImage);
                 }
             }
-            // this.setYah();
-            // this.clearYah();
         };
 
         Building.prototype.setCustomVariables = function(){
@@ -1800,7 +1805,7 @@ var __extends = this.__extends || function (d, b) {
             });
             for (var i = 0, n = maps.length; i < n; i++) {
 
-                var fl = new JMap.Floor(maps[i].mapId, this.container, this.containerWidth, this.containerHeight);
+                var fl = new JMap.Floor(maps[i].mapId, this.container, this.containerWidth, this.containerHeight, this.styles);
                 fl.floorTitle = maps[i].locationName;
                 fl.setGridReference(maps[i].grid);
                 fl.loadImage(maps[i].uri);
@@ -2143,13 +2148,13 @@ var __extends = this.__extends || function (d, b) {
 
 
       var Floor = (function () {
-        function Floor(id, container, width, height) {
-            //set require variables
+        function Floor(id, container, width, height, style) {
             that = this;
             this.id = id;
             this.container = container;
             this.containerWidth = width;
             this.containerHeight = height;
+            this.styles = style;
             this.view = document.createElement("DIV");
             this.view.id = "map-floor-" + id;
             this.view.className = "map-floor";
@@ -2265,8 +2270,8 @@ var __extends = this.__extends || function (d, b) {
                     _this.applyPanAndZoom(true);
                     _this.loadLegends();
                 // }, 5000);
+	            TweenLite.set(_this.mapView,{alpha:0.5});
 
-				JMap.fire("floorLoaded");
             };
             this.mapView.src = JMap.serverUrl + url;
             // this.img = bmp;
@@ -2274,24 +2279,76 @@ var __extends = this.__extends || function (d, b) {
 
 
         Floor.prototype.loadSVG = function (url) {
-        	return;
+        	// return;
             var _this = this;
-            var svg = '<div class="item mark" id="svg-' + _this.id + '" data-position="0,0" data-show-at-zoom="0" data-allow-drag="false" data-allow-scale="true"></div>';
+            var compsDir = "/components/jibestream-sdk/";
+            var svg = '<div class="item mark svgLayer" id="svg-' + _this.id + '" data-position="0,0" data-show-at-zoom="0" data-allow-drag="false" data-allow-scale="true"></div>';
             var n;
             setTimeout(function(){
                 $(_this.mapView).smoothZoom("addLandmark", [svg]);
-                $( '#svg-' + _this.id ).load(JMap.serverUrl + url, null, function(resp, status, xhr) {
-                    var $body = $('#svg-' + _this.id ).find('*');
+                // $( '#svg-' + _this.id ).load(JMap.serverUrl + url, null, function(resp, status, xhr) {
+                $( '#svg-' + _this.id ).load(compsDir + url.substring(url.lastIndexOf("/"), url.length), null, function(resp, status, xhr) {
+                    console.log("LOADED");
+                    // var $body = $('#svg-' + _this.id ).find('*');
+                    
                     $('#svg-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
                     $( '#svg-' + _this.id ).show().css('opacity',1);
+                    console.log("APPLYING!", _this.styles);
                     _this.addDragHandler(_this);
-                    for (var i = 0; i < $body.length; i++) {
-                        var poly = $body[i];
-                        $(poly).css('fill-opacity','0');
+
+                    //parse SVG and apply custom Styling
+                    for (var i = 0; i < _this.styles.mapStyles.mapLayers.length; i++) {
+                    	var currentStyle = _this.styles.mapStyles.mapLayers[i];
+                    	var $group = $('#svg-' + _this.id ).find("#" + currentStyle.name).find("*");
+                    	currentStyle.group = $group;
+                    	console.log("APPLYING STYLE TO ", currentStyle.name, currentStyle);
+                    	for(var j = 0; j < $group.length; j++){
+                    		var p = $group[j];
+                    		if(currentStyle.colorFill)$(p).css("fill", currentStyle.colorFill);
+                    		if(currentStyle.strokeColor)$(p).css("stroke", currentStyle.strokeColor);
+                    		if(currentStyle.strokeWidth)$(p).css("stroke-width", currentStyle.strokeWidth);
+                    	}
                     };
+
+					JMap.fire("floorLoaded");
+                
                 });
             },2000);
-        }
+        };
+
+    //      Floor.prototype.loadSVG = function (url) {
+    //     	// return;
+    //         var _this = this;
+    //         var svg = '<div class="item mark" id="svg-' + _this.id + '" data-position="0,0" data-show-at-zoom="0" data-allow-drag="false" data-allow-scale="true"></div>';
+    //         var n;
+    //         $(_this.mapView).smoothZoom("addLandmark", [svg]);
+
+    //         $.ajax({url:JMap.serverUrl + url,
+    //         	type:"GET",
+				// // contentType:"application/xml",
+				// dataType: 'html',
+				// headers: {
+		  //           'Accept': '*',
+		  //           'Content-Type': '*'
+		  //       }, 
+    //         	success:function(resp) {
+    //         		console.log(resp);
+    //         		return;
+	   //              $( '#svg-' + _this.id ).load(JMap.serverUrl + url, null, function(resp, status, xhr) {
+	   //                  var $body = $('#svg-' + _this.id ).find('*');
+	   //                  $('#svg-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
+	   //                  $( '#svg-' + _this.id ).show().css('opacity',1);
+	   //                  _this.addDragHandler(_this);
+	   //                  for (var i = 0; i < $body.length; i++) {
+	   //                      var poly = $body[i];
+	   //                      $(poly).css('fill-opacity','0');
+	   //                  };
+	   //              });
+	   //          }
+
+    //         });
+    //     };
+
 
 
         /****Resizes the bitmap to fit the canvas and positions it in the center of the canvas****/
@@ -5833,7 +5890,8 @@ else
 		/*Relocate the landmarks according to main image's position
 		***********************************************************************************************************************/
 		updateLocations: function (_x, _y, _sc, loc) {	
-		
+			// console.log("SMOOTH ZOOM THIS");
+			// console.log(this);
 			if (this.onLANDMARK !== ''){
 				if (_sc >= this.show_at_zoom) {
 					if (!this._landmark) {
@@ -5862,34 +5920,39 @@ else
 						wScaled = loc[p].w2pad;
 						hScaled = loc[p].h2;
 					}
-					if (lpx > -wScaled && lpx < this.sW + wScaled && ((lpy > -hScaled && lpy < this.sH + hScaled && loc[p].lab) || (lpy > 0 && lpy < this.sH + (hScaled*2) && !loc[p].lab))) {
-						if (!loc[p].vis) {
-							loc[p].vis = true;							
-							if(prop_transform) {											
-								loc[p].ob.stop()
-									.css('display', 'block')
-									.animate({
-										opacity: 1
-									}, 300);
-							} else {
-								loc[p].ob.show();
+
+					if(loc[p].ob.hasClass("svgLayer") !== true){
+					//	console.log(loc[p]);
+						//don't hide svg Layer when scrolling origin point out of view
+						if (lpx > -wScaled && lpx < this.sW + wScaled && ((lpy > -hScaled && lpy < this.sH + hScaled && loc[p].lab) || (lpy > 0 && lpy < this.sH + (hScaled*2) && !loc[p].lab))) {
+							if (!loc[p].vis) {
+								loc[p].vis = true;							
+								if(prop_transform) {											
+									loc[p].ob.stop()
+										.css('display', 'block')
+										.animate({
+											opacity: 1
+										}, 300);
+								} else {
+									loc[p].ob.show();
+								}
 							}
-						}
-					} else {
-						if (loc[p].vis) {
-							loc[p].vis = false;
-							if(prop_transform) {
-								loc[p].ob.stop()
-									.animate({
-										opacity: 0
-									}, 200, function() {
-										$(this).hide();
-									});
-							} else {
-								loc[p].ob.hide();								
+						} else {
+							if (loc[p].vis) {
+								loc[p].vis = false;
+								if(prop_transform) {
+									loc[p].ob.stop()
+										.animate({
+											opacity: 0
+										}, 200, function() {
+											$(this).hide();
+										});
+								} else {
+									loc[p].ob.hide();								
+								}
 							}
-						}
-					}			
+						}			
+					}
 				} else {					
 					if (loc[p].vis) {	
 						loc[p].vis = false;
