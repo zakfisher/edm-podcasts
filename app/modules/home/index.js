@@ -4,6 +4,9 @@ module.exports = angular.module('wayfindingMap', [])
 
 .controller('KioskHome', function ($scope, $famous) {
   $scope.message = "Wayfinding Prototype Home";
+  $scope.bound = {
+    tilt: 0
+  };
 })
 
 //Routes / States

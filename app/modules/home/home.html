@@ -1,5 +1,10 @@
-<fa-modifier fa-size="[1280, 720]" fa-origin="[0.5, 0.5]">
-  <fa-surface fa-background-color="'#444'" fa-color="'#fff'">
+<fa-modifier fa-size="[1280, 720]" fa-origin="[0.5, 0.5]" fa-rotate-x="bound.tilt">
+  <fa-surface>
     <jmap></jmap>
+  </fa-surface>
+</fa-modifier>
+<fa-modifier fa-size="[100, 100]" fa-origin="[0.5, 0]">
+  <fa-surface>
+    <input type="range" ng-model="bound.tilt" min=0 max=1 step=0.01 value=0>
   </fa-surface>
 </fa-modifier>
