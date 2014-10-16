@@ -2,18 +2,25 @@
 module.exports = angular.module('JibestreamMap', [])
 
 .controller('JibestreamMapController', function ($scope, $element) {
-  console.log('init jibestream map');
+  console.log('init jibestream map -- ');
 
+  
   var mapObject;
+  console.log(JMap);
+
 
   JMap.addListener("StandAloneMapsReady", onJmapReady);
+  console.log("Can use jquery");
   JMap.addListener(JMap.MODULE_READY, onMapCreated);
+  console.log("Second listener");
   JMap.initMapsStandAlone("http://jibestream2.cloudapp.net:8082", {deviceId:21744, languageCode:"en"});
 
   function onJmapReady(){
-    mapObject = new JMap.Building($element.find("#map-container"), 1280,720
-    	/*Add styling params here*/);
+    alert("Build maps");
+    mapObject = new JMap.Building($element.find("#map-container"), 1280,720);
+      /*Add styling params here*/
   }
+
 
   function onMapCreated(){
     //console.log("Ready to do stuff!");
@@ -24,15 +31,13 @@ module.exports = angular.module('JibestreamMap', [])
 
 
   /*Exposed Calls*/
-
   function resetMap(){
     mapObject.resetAllMaps();
   }
 
-  function wayFindToDestinationByID(wfID){
-    mapObject.startWayfinding(JMap.getDesinationById(wfID));
-  }
-
+  // function wayFindToDestinationByID(wfID){
+  //   mapObject.startWayfinding("Kiosk", JMap.getDesinationById(wfID));
+  // }
 
 
 

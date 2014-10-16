@@ -13,4 +13,4 @@ app.listen(app.get('port'), function () {
 
 //Fall back to angular routes
 app.get('/', routes.index);
-app.get('*', routes.index);
+// app.get('*', routes.index);
