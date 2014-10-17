@@ -6,19 +6,30 @@ module.exports = angular.module('JibestreamMap', [])
 
   
   var mapObject;
-  console.log(JMap);
+  // console.log(JMap);
 
 
   JMap.addListener("StandAloneMapsReady", onJmapReady);
-  console.log("Can use jquery");
+  // console.log("Can use jquery");
   JMap.addListener(JMap.MODULE_READY, onMapCreated);
-  console.log("Second listener");
+  // console.log("Second listener------");
   JMap.initMapsStandAlone("http://jibestream2.cloudapp.net:8082", {deviceId:21744, languageCode:"en"});
 
   function onJmapReady(){
-    alert("Build maps");
-    mapObject = new JMap.Building($element.find("#map-container"), 1280,720);
-      /*Add styling params here*/
+    // alert("Build maps");
+    // mapObject = new JMap.Building($element.find("#map-container"), 1280,720);
+    // console.log("Got here");
+
+    $.ajax({
+      url:"/components/jibestream-sdk/jibestreamConfig.json", 
+      type:"GET",
+      dataType:"json",
+      complete: function(response){
+        console.log("Success", response);
+        var stylingData = JSON.parse(response.responseText);
+        mapObject = new JMap.Building($element.find("#map-container"), 1280,720,stylingData);
+      }
+    });
   }
 
 
