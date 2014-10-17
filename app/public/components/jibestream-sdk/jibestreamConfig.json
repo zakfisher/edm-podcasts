@@ -56,9 +56,11 @@
 		"iconStyles":{
 			"youarehere":{
 				"url":"/components/jibestream-sdk/images/youarehere.png",
+				"width":"83px",
+				"height":"100px",
 				"offset":{
-					"x":"83px",
-					"y":"200px"
+					"x":"41px",
+					"y":"100px"
 				}
 			}
 

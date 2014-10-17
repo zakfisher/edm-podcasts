@@ -71,7 +71,7 @@ var JMap = {
 
 
 	initMapsStandAlone:function(serverUrl, debugDevice){
-		console.log("Init Standalone maps");
+		// console.log("Init Standalone maps");
 		if(serverUrl)JMap.serverUrl = serverUrl;
 		if(debugDevice !== undefined){
 	        JMap.storage.device = debugDevice;
@@ -304,7 +304,7 @@ var JMap = {
 						parsedResult[i].keywordsAr=parsedResult[i].keywords?parsedResult[i].keywords.toLowerCase().split(','):[];
 					}
 					JMap.storage.destinations = parsedResult;
-					console.log("DESTINATIONS", JMap.storage.destinations);
+					// console.log("DESTINATIONS", JMap.storage.destinations);
 					callback(JMap.storage.destinations);
 				}});
 		}else{
@@ -451,11 +451,11 @@ var JMap = {
 		if(JMap.storage.maps === undefined)JMap.storage.maps = {};
 		if(JMap.storage.maps.data === undefined){
             //$.get(JMap.serverUrl + '/rest/maps/all', null, function (res) {
-            console.log(JMap.serverUrl + '/rest/web/maps/all/' + JMap.storage.device.deviceId);
+            // console.log(JMap.serverUrl + '/rest/web/maps/all/' + JMap.storage.device.deviceId);
             $.get(JMap.serverUrl + '/rest/web/maps/all/' + JMap.storage.device.deviceId, null, function (res) {
                 
-                console.log('MAPS');
-                console.log(res);
+                // console.log('MAPS');
+                // console.log(res);
                 // JMap.storage.maps = {};
                 JMap.storage.maps.data = res;
                 JMap.storage.maps.model = new JMap.BuildingModelGrid();
@@ -511,7 +511,7 @@ var JMap = {
 	 * @param {Function} callback This function gets called once the data has been retrieved and passes it to the function as a parameter(Array).
 	 */
 	getMapData:function(callback){
-		console.log("Getting map data");
+		// console.log("Getting map data");
 		if(JMap.storage.maps === undefined)JMap.storage.maps = {};
 		if(JMap.storage.maps.mapbuilderData === undefined){
 			$.ajax({
@@ -521,8 +521,8 @@ var JMap = {
 			        text: "application/json"
 			    },
 				success:function (res) {
-					console.log("MapData");
-					console.log(res);
+					// console.log("MapData");
+					// console.log(res);
 				// $.get('/rest/maps/mapbuilderdata', null, function (res) {
 					JMap.storage.maps.mapbuilderData = res;
 					// console.log(JMap.storage.maps.mapbuilderData);
@@ -1030,7 +1030,7 @@ var JMap = {
 				callback(JMap.storage.destinationCategory[id]);
 			});
     	}else{
-    		console.log("CACHED");
+    		// console.log("CACHED");
 			callback(JMap.storage.destinationCategory[id]);
     	}
     },
@@ -1048,7 +1048,7 @@ var JMap = {
             	eventType:type,
             	componentId:Number(compId)
             };
-            console.log("REQUEST", trig_dev);
+            // console.log("REQUEST", trig_dev);
             $.ajax({
                 url: ' /rest/web/triggerads/' + JMap.storage.device.deviceId + '/' + JMap.storage.device.languageCode + '/' + type + '/' + compId,
                 data: JSON.stringify(trig_dev),
@@ -1060,7 +1060,7 @@ var JMap = {
 		            'Content-Type': 'application/json'
 		        },
             }).done(function (res) {
-            	console.log("TRIGGERED RESULT", res);
+            	// console.log("TRIGGERED RESULT", res);
                 if (res[0]){
                 	callback(res);
                 }
@@ -1113,7 +1113,7 @@ var JMap = {
          }).done(function (res) {
             if (res) {
                 var out = [];
-                console.log('Event Logged');
+                // console.log('Event Logged');
             }
             if(onResult !== undefined)onResult(out);
          });
@@ -1237,21 +1237,31 @@ var __extends = this.__extends || function (d, b) {
         /**************************************************************************/
 
         function Building(container, width, height, styles) {
-        	$("body").append("<style>.point{width:15px;height:15px;position:absolute}#map-mainview{position:absolute;width:100%;height:100%}.map-floor{position:absolute;height:100%;width:100%}.map-floor-base.inactive{pointer-events:none}.map-floor-base{position:absolute;transform-origin:0 0 0;-webit-perspective:1000px;display:block;left:0;top:0}.map-floor-container-base,.map-floor-legendsview-base,.map-floor-legendsview-base img{position:absolute}.map-floor-legendsview-base img.yahPoint{position:absolute;-webkit-transform-origin:50% 0;transform-origin:50% 0}.legendItem{background-size:100%;display:none}.legendItemActive{background:rgba(0,0,0,.2);border:4px solid #fff;border-radius:100px;display:block!important}.bubbleText{text-align:center;position:absolute;color:#fff;font-size:25px;width:250px;height:60px;line-height:30px;display:inline-block;vertical-align:middle}#bubbleLeft>img{pointer-events:none}.pathView{position:absolute;z-index:10;pointer-events:none}.pathView img{position:absolute}.legendLabelItem{position:absolute;font-size:12px;white-space:nowrap}.legendsLabelsView{position:absolute}.map-floor-container-base .landmarks{position:absolute;z-index:10;font-family:Helvetica,Arial,Verdana;font-size:12px;color:#fff;transform-origin:0 0 0}.map-floor-container-base .landmarks .item{position:absolute;text-align:center;display:none;padding:0;margin:0}.map-floor-container-base .landmarks .item.legends img{position:absolute;top:-15px!important;left:-15px!important;width:30px!important;height:30px!important}.map-floor-container-base .landmarks .lable div{position:absolute;font-size:20px;width:auto;text-align:center;background:none!important;color:#ccc}.map-floor-container-base .landmarks .mark .text{background-color:#000}.map-floor-container-base .landmarks .step.item img{top:-7px!important;left:-7px!important}.map-floor-container-base .landmarks #bubbleLeft.item,.map-floor-container-base .landmarks #yah.item,.map-floor-container-base .landmarks .item.mover{z-index:3!important}.map-floor-container-base .landmarks .item.mover img{position:absolute;top:-25px!important;left:-25px!important;padding:2px;border:1px solid #fff;border-radius:12px;background-color:#E32723;width:50px;height:50px}.map-floor-container-base .landmarks #bubbleLeft.item img,.map-floor-container-base .landmarks #yah.item img{bottom:-20px!important;left:-20px!important;width:40px;height:40px}.map-floor-container-base .landmarks .item>div{left:-15.5px!important;font-size:14px}</style>");
-        	console.log("New Building");
+            this.styles = styles;
+        	this.addExtraStyles();
+
             this.container = container;
             this.containerWidth = width;
             this.containerHeight = height;
-            this.styles = styles;
             this.floors = {};
             this.midList = {};
             this.waitTime = 800;//in milliseconds. Applies to pause between multifloor wayfinding this
             this.currentFloor = null;
-            console.log("Pre init");
             if (this.container)this.init();
             this.currentLegendId = null;
 
 
+        }
+
+
+        Building.prototype.addExtraStyles = function(){
+        	var iconStyles = this.styles.mapStyles.iconStyles;
+        	var addedStyles = "<style>";
+        	addedStyles += ".point{width:15px;height:15px;position:absolute}#map-mainview{position:absolute;width:100%;height:100%}.map-floor{position:absolute;height:100%;width:100%}.map-floor-base.inactive{pointer-events:none}.map-floor-base{position:absolute;transform-origin:0 0 0;-webit-perspective:1000px;display:block;left:0;top:0}.map-floor-container-base,.map-floor-legendsview-base,.map-floor-legendsview-base img{position:absolute}.map-floor-legendsview-base img.yahPoint{position:absolute;-webkit-transform-origin:50% 0;transform-origin:50% 0}.legendItem{background-size:100%;display:none}.legendItemActive{background:rgba(0,0,0,.2);border:4px solid #fff;border-radius:100px;display:block!important}.bubbleText{text-align:center;position:absolute;color:#fff;font-size:25px;width:250px;height:60px;line-height:30px;display:inline-block;vertical-align:middle}#bubbleLeft>img{pointer-events:none}.pathView{position:absolute;z-index:10;pointer-events:none}.pathView img{position:absolute}.legendLabelItem{position:absolute;font-size:12px;white-space:nowrap}.legendsLabelsView{position:absolute}.map-floor-container-base .landmarks{position:absolute;z-index:10;font-family:Helvetica,Arial,Verdana;font-size:12px;color:#fff;transform-origin:0 0 0}.map-floor-container-base .landmarks .item{position:absolute;text-align:center;display:none;padding:0;margin:0}.map-floor-container-base .landmarks .item.legends img{position:absolute;top:-15px!important;left:-15px!important;width:30px!important;height:30px!important}.map-floor-container-base .landmarks .lable div{position:absolute;font-size:20px;width:auto;text-align:center;background:none!important;color:#ccc}.map-floor-container-base .landmarks .mark .text{background-color:#000}.map-floor-container-base .landmarks .step.item img{top:-7px!important;left:-7px!important}.map-floor-container-base .landmarks #bubbleLeft.item,.map-floor-container-base .landmarks #yah.item,.map-floor-container-base .landmarks .item.mover{z-index:3!important}.map-floor-container-base .landmarks .item.mover img{position:absolute;top:-25px!important;left:-25px!important;padding:2px;border:1px solid #fff;border-radius:12px;background-color:#E32723;width:50px;height:50px}.map-floor-container-base .landmarks #bubbleLeft.item img,.map-floor-container-base .landmarks .item>div{left:-15.5px!important;font-size:14px}";
+        	addedStyles += ".map-floor-container-base .landmarks #yah.item img{top:" + (iconStyles.youarehere?"-" + iconStyles.youarehere.offset.y:"-20px") + "!important;left:" + (iconStyles.youarehere?"-" + iconStyles.youarehere.offset.x:"-20px") + "!important;width:" + (iconStyles.youarehere?iconStyles.youarehere.width:"40px") + ";height:" + (iconStyles.youarehere?iconStyles.youarehere.height:"40px") + "}";
+        	
+        	addedStyles += "</style>";
+        	$("body").append(addedStyles);
         }
 
         Building.prototype.init = function () {
@@ -1291,13 +1301,21 @@ var __extends = this.__extends || function (d, b) {
         // };
 
         Building.prototype.onLabelsLoaded = function(labels) {
-            console.log("Lables", labels);
+            // console.log("Lables", labels);
             for(var i = 0; i < labels.length; i++) {
                 if(labels[i]['description'] == "yah") {
                     this.yahImage = labels[i]['filePath'];
                     //console.log("YAH IMAGE", _this.yahImage);
                 }
             }
+
+            //Use local config
+            var iconStyles = this.styles.mapStyles.iconStyles;
+            console.log(iconStyles);
+            if(iconStyles.youarehere)this.yahImage = iconStyles.youarehere.url; 
+            if(iconStyles.destination)this.destinationImage = iconStyles.destination.url; 
+
+
         };
 
         Building.prototype.setCustomVariables = function(){
@@ -1315,7 +1333,6 @@ var __extends = this.__extends || function (d, b) {
 
 
         Building.prototype.displayLegend = function (value){
-            //console.log("Display Legend");
             var maps = JMap.storage.maps.data;
             for (var i = 0, n = maps.length; i < n; i++) {
                 var fl = this.floors[maps[i].mapId];
@@ -1325,7 +1342,6 @@ var __extends = this.__extends || function (d, b) {
 
 
         Building.prototype.displayLabels = function (){
-            //console.log("Display Legend");
             var maps = JMap.storage.maps.data;
             var labels = [];
             var _this = this;
@@ -1432,7 +1448,6 @@ var __extends = this.__extends || function (d, b) {
 
         Building.prototype.clearAllTimeouts = function (){
             while(this.timeouts.length > 0){
-                //console.log("Clearing timeout");
                 clearTimeout(this.timeouts.pop());
             }
         };
@@ -1501,20 +1516,11 @@ var __extends = this.__extends || function (d, b) {
         /**************************************************************************/
 
         Building.prototype.startWayFinding = function (startDestinationObj, endDestinationObj, useElevator) {
-            // this.removePath();
             this.resetAllMaps();
-
-            
-            
-            //console.log("Starting wayfinding --->", startDestinationObj, endDestinationObj);
-            
             if(startDestinationObj === undefined || endDestinationObj === undefined){
-                //console.error("One of the destinations used for wayfinding is undefined -- ", "startDestinationObj ->", startDestinationObj, " endDestinationObj ->", endDestinationObj);
                 return;
             }
 
-            // console.log("(*^%*&%$*&%$*&%$(*&%)(*&+()&)*(&^_*^_(*&()&_)(**(&^_)*^)(*&(*^&_&^(*^&^123");
-            // console.log(endDestinationObj);
 
             if(startDestinationObj.clientId && !startDestinationObj.jids)this.setNewYah(startDestinationObj);
             if(endDestinationObj.clientId && !endDestinationObj.jids)this.setNewEndPoint(endDestinationObj);
@@ -1527,7 +1533,6 @@ var __extends = this.__extends || function (d, b) {
         Building.prototype.setNewYah = function(start){
             this.clearYah();
             this.destYah = (typeof start === "string")?JMap.storage.maps.model.getYah():JMap.storage.maps.model.getWPByJid(start.clientId);
-            //console.log(this.destYah);
             this.setYah();
             $(this.floors[this.destYah.mapid].mapView).trigger("updateYah");
 
@@ -1535,7 +1540,6 @@ var __extends = this.__extends || function (d, b) {
             var wp = JMap.storage.maps.model.getWPByJid(start.clientId);
             if(wp)this.switchFloor(wp.mapid);
 
-            //console.log("SETTING THE NEW YAH!!!");
         };
 
         Building.prototype.setNewEndPoint = function(end){
@@ -1550,13 +1554,11 @@ var __extends = this.__extends || function (d, b) {
             var floorInfo = [];
             for(var i = 0; i < this.pathData.length; i++){
                 if(this.pathData[i].steps.length === 0){
-                    //console.log("PATH BLOCKED");
                     return;
                 }
                 floorInfo.push({name:this.floors[this.pathData[i].mapid].description, mapid:this.pathData[i].mapid});
             }
             if(floorInfo.length === 1)floorInfo.push(floorInfo[0]);
-            //console.log(floorInfo);
             JMap.fire("wayfindingFloorInfo", [floorInfo]);
 
             var floorsInvolved = this.determinFloorsInvolved();
@@ -1603,24 +1605,19 @@ var __extends = this.__extends || function (d, b) {
         Building.prototype.determinFloorsInvolved = function (){
 			if(!this.pathData || !this.pathData[0]) return null;
             var numFloors = [this.pathData[0].mapid];
-            //console.log(this.pathData);
             if(this.pathData.length === 1){
-                //console.log("Returning 1");
                 return numFloors;
             }
             var idStart = {id:this.pathData[0].mapid, seq:this.floors[this.pathData[0].mapid].sequence};
             var idEnd = {id:this.pathData[1].mapid, seq:this.floors[this.pathData[1].mapid].sequence};
             var direction = idEnd.seq < idStart.seq? "up":"down";
-            //console.log(idStart, idEnd);
 
             for(var i = 0, len = JMap.storage.maps.data.length; i < len; i++){
                 // check if sequence is between
                 var flData = JMap.storage.maps.data[i];
-                //console.log(flData, direction);
                 switch(direction){
                     case "up":
                         if(flData.floorSequence < idStart.seq && flData.floorSequence > idEnd.seq)numFloors.push(flData.mapId);
-                        //console.log();
                         break;
                     case "down":
                         if(flData.floorSequence > idStart.seq && flData.floorSequence < idEnd.seq)numFloors.push(flData.mapId);
@@ -1633,9 +1630,7 @@ var __extends = this.__extends || function (d, b) {
 
 
        Building.prototype.pathAnimationComplete = function (){
-            //console.log("TRIGGERING -- pathComplete");
             this.clearAllTimeouts();
-            // JMap.fire("pathAnimationComplete");
             this.currentFloor.addDragHandler();
         };
 
@@ -1693,12 +1688,10 @@ var __extends = this.__extends || function (d, b) {
             var floorNameSwitchSpeed = (animationDuration * 1000) / 2;
 
             if (!this.currentFloor || this.currentFloor.id == floorId) return 100;
-            //console.log(' showing new floor ' + floorId);
             var oldview = this.currentFloor.view;
             var oldId = this.currentFloor.id;
             var newFloor = this.floors[floorId];
             if (!newFloor) {
-                //console.error("No floor by the id: " + floorId);
                 return;
             }
             $(".map-floor-base").addClass("inactive");
@@ -2266,10 +2259,9 @@ var __extends = this.__extends || function (d, b) {
                 _this.mapImage = this;
                 _this.mapContainer.style.width = this.width;
                 _this.mapContainer.style.height = this.height;
-                // setTimeout(function(){
-                    _this.applyPanAndZoom(true);
-                    _this.loadLegends();
-                // }, 5000);
+                _this.applyPanAndZoom(true);
+                _this.loadLegends();
+                _this.setStoreLabels();
 	            TweenLite.set(_this.mapView,{alpha:0.5});
 
             };
@@ -2293,7 +2285,7 @@ var __extends = this.__extends || function (d, b) {
                     
                     $('#svg-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
                     $( '#svg-' + _this.id ).show().css('opacity',1);
-                    console.log("APPLYING!", _this.styles);
+                    // console.log("APPLYING!", _this.styles);
                     _this.addDragHandler(_this);
 
                     //parse SVG and apply custom Styling
@@ -2301,7 +2293,8 @@ var __extends = this.__extends || function (d, b) {
                     	var currentStyle = _this.styles.mapStyles.mapLayers[i];
                     	var $group = $('#svg-' + _this.id ).find("#" + currentStyle.name).find("*");
                     	currentStyle.group = $group;
-                    	console.log("APPLYING STYLE TO ", currentStyle.name, currentStyle);
+
+                    	// console.log("APPLYING STYLE TO ", currentStyle.name, currentStyle);
                     	for(var j = 0; j < $group.length; j++){
                     		var p = $group[j];
                     		if(currentStyle.colorFill)$(p).css("fill", currentStyle.colorFill);
@@ -2313,41 +2306,26 @@ var __extends = this.__extends || function (d, b) {
 					JMap.fire("floorLoaded");
                 
                 });
-            },2000);
+            },50);
         };
 
-    //      Floor.prototype.loadSVG = function (url) {
-    //     	// return;
-    //         var _this = this;
-    //         var svg = '<div class="item mark" id="svg-' + _this.id + '" data-position="0,0" data-show-at-zoom="0" data-allow-drag="false" data-allow-scale="true"></div>';
-    //         var n;
-    //         $(_this.mapView).smoothZoom("addLandmark", [svg]);
+        Floor.prototype.setStoreLabels = function(){
+        	var destinations = JMap.getDestinationsByFloorId(this.id);
+        	var destLabels = [];
+        	for(var i = 0; i < destinations.length; i++){
+        		var wp = JMap.storage.maps.model.getWPByJid(destinations[i].clientId);
+        		console.log();
 
-    //         $.ajax({url:JMap.serverUrl + url,
-    //         	type:"GET",
-				// // contentType:"application/xml",
-				// dataType: 'html',
-				// headers: {
-		  //           'Accept': '*',
-		  //           'Content-Type': '*'
-		  //       }, 
-    //         	success:function(resp) {
-    //         		console.log(resp);
-    //         		return;
-	   //              $( '#svg-' + _this.id ).load(JMap.serverUrl + url, null, function(resp, status, xhr) {
-	   //                  var $body = $('#svg-' + _this.id ).find('*');
-	   //                  $('#svg-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
-	   //                  $( '#svg-' + _this.id ).show().css('opacity',1);
-	   //                  _this.addDragHandler(_this);
-	   //                  for (var i = 0; i < $body.length; i++) {
-	   //                      var poly = $body[i];
-	   //                      $(poly).css('fill-opacity','0');
-	   //                  };
-	   //              });
-	   //          }
-
-    //         });
-    //     };
+	        	this.legendsObj.labelsids.push(destinations[i].id.toString());
+                this.legendsObj.labelselementsArray.push(this.createLegendLabel({
+                	id:destinations[i].id.toString(),
+                	x:wp.x,
+                	y:wp.y,
+                	label:destinations[i].name
+                }));
+            }
+            $(this.mapView).smoothZoom("addLandmark", this.legendsObj.labelselementsArray);
+        };
 
 
 
@@ -2483,9 +2461,9 @@ var __extends = this.__extends || function (d, b) {
             matrix = matrix.split(',');
             matrix = matrix[0].split('(');
             matrix = Number(matrix[1]);
-            console.log("Tol", tolerance);
-            console.log("x", pX);
-            console.log("y", pY);
+            // console.log("Tol", tolerance);
+            // console.log("x", pX);
+            // console.log("y", pY);
 
             // valX = (map.width() / (map.width() * matrix[1])) * pX;
             // valY = (map.height() / (map.height() * matrix[1])) * pY;
@@ -2501,17 +2479,17 @@ var __extends = this.__extends || function (d, b) {
             valY = pY / matrix;
 
 
-            console.log('Matrix', valY, valX, 'MAP OFFSET X', mapOffset.left );
+            // console.log('Matrix', valY, valX, 'MAP OFFSET X', mapOffset.left );
 
 
             var nearPoints = this.mapObjData.getPointsInBounds((valX - tolerance), (valY - tolerance), (valX + tolerance), (valY + tolerance), valX, valY);
 
-            console.log(nearPoints)
+            // console.log(nearPoints)
             return nearPoints;
         };
 
         Floor.prototype.getDestinationInBox = function(x, y, width, height) {
-            console.log(x, y, width, height);
+            // console.log(x, y, width, height);
             var blur = 10;
             var nearPoints = this.mapObjData.getPointsInBounds((x-blur), (y-blur), (x + width + blur),  (y + height + blur), (x + (width / 2)), (y + (height / 2)));
             return nearPoints;
@@ -2602,7 +2580,7 @@ var __extends = this.__extends || function (d, b) {
 
 
 
-            console.log("EVENT", evt.originalEvent.touches.length)
+            // console.log("EVENT", evt.originalEvent.touches.length)
 
             if(this.useSVGHitzones == 1) {
                 $('#svg-' + _this.id).on("touchstart", $.proxy(this.dragMove, this));
@@ -2617,7 +2595,7 @@ var __extends = this.__extends || function (d, b) {
         Floor.prototype.onToolTipClicked = function(e){JMap.fire("DESTINATION_CLICK", [JMap.getDestinationById(this.nameToolTip.getAttribute("data-id"))]);};
 
         Floor.prototype.dragMove = function(evt) {
-            console.log(evt)
+            // console.log(evt)
             // if(this.isZooming === true)return;
 
             this.isZooming =  true;
@@ -2666,7 +2644,7 @@ var __extends = this.__extends || function (d, b) {
             
             var polygonBounds = eleTag.getBoundingClientRect();
             polygonBounds = this.convertBoundingRect(polygonBounds);
-            console.log('POLYGON', polygonBounds);
+            // console.log('POLYGON', polygonBounds);
             
             var testZone = document.createElement("DIV");
             testZone.style.position = "absolute";
@@ -2680,7 +2658,7 @@ var __extends = this.__extends || function (d, b) {
 
             var nearPoints = this.getDestinationInBox(polygonBounds.left,polygonBounds.top,polygonBounds.width,polygonBounds.height);
 
-            console.log("NEARPOINTS",nearPoints);
+            // console.log("NEARPOINTS",nearPoints);
             
             //var nearPoints = this.getDestinationsNearCoor(evtX, evtY, 50);
             
@@ -2696,12 +2674,12 @@ var __extends = this.__extends || function (d, b) {
                         
 
                         if(this.floorDestinations[j].clickRadius > 0) {
-                            console.log(this.floorDestinations[j].name, nearPoints[i].distance);
+                            // console.log(this.floorDestinations[j].name, nearPoints[i].distance);
                             if(this.floorDestinations[j].clickRadius > nearPoints[i].distance) {
                                 
                                 allNearLocations.push(this.floorDestinations[j]);
                             } else {
-                                console.log(this.floorDestinations[j].name, nearPoints[i].distance);
+                                // console.log(this.floorDestinations[j].name, nearPoints[i].distance);
                             }
                             
                         } else {
@@ -2733,7 +2711,7 @@ var __extends = this.__extends || function (d, b) {
                 }
             }
 
-            console.log("Clean", nearLocations);
+            // console.log("Clean", nearLocations);
             JMap.fire('SHOW_DESTINATION', nearLocations);
 
             if(nearLocations.length > 1) {
@@ -2789,12 +2767,12 @@ var __extends = this.__extends || function (d, b) {
             var globalPoint = this.mapToGlobal(x, y);
             var eleTag = document.elementFromPoint(globalPoint.x, globalPoint.y);
             if(eleTag.tagName != "polygon" && eleTag.tagName != "rect" && eleTag.tagName != "path") {
-                console.log(eleTag);
+                // console.log(eleTag);
                 return;
             }
 
             var $body = $('#svg-' + this.id).find('*');
-            console.log($body)
+            // console.log($body)
             for(var i = 0; i < $body.length; i++) {
                 if(eleTag != $body[i]) {
                     $body[i].style.fillOpacity = 0;
@@ -2821,7 +2799,7 @@ var __extends = this.__extends || function (d, b) {
             var flagOffsetY = 0;
             var oEvtTouch = evt.originalEvent.changedTouches[0];
 
-            console.log(oEvtTouch.clientX, oEvtTouch.clientY, this.clickTolerance);
+            // console.log(oEvtTouch.clientX, oEvtTouch.clientY, this.clickTolerance);
 
 
             
@@ -2863,7 +2841,7 @@ var __extends = this.__extends || function (d, b) {
             var intersect = null;
             var convertedPoint = null;
 
-            console.log("Clean", nearLocations);
+            // console.log("Clean", nearLocations);
 
             if(nearLocations.length > 1) {
                 // alert(nearLocations[0]["name"]);
@@ -3027,28 +3005,28 @@ var __extends = this.__extends || function (d, b) {
 
         Floor.prototype.showBubble = function (bubbleText) {//Shows bubble at the last point of the path
             var lastP = this.currentPath.points[this.currentPath.points.length - 1];
-            var b = "<div id='bubbleLeft' class='item mark' data-show-at-zoom='0' data-position='" + (lastP.x * this.scaleOffset) + "," + (lastP.y * this.scaleOffset) + "' data-allow-scale='false' data-allow-drag='false'><img src='" + JMap.serverUrl + (JMap.getLabelById("searchDestination").filePath) + "' /></div>";
+            var b = "<div id='bubbleLeft' class='item mark' data-show-at-zoom='0' data-position='" + (lastP.x * this.scaleOffset) + "," + (lastP.y * this.scaleOffset) + "' data-allow-scale='false' data-allow-drag='false'><img src='" + (JMap.getLabelById("searchDestination").filePath) + "' /></div>";
             this.pathView.push(b);
             $(this.mapView).smoothZoom("addLandmark", [b]);
         };
 
         Floor.prototype.showBubbleByWP = function (bubble, wp) {
-            var b = "<div id='bubbleLeft' class='item mark' data-show-at-zoom='0' data-position='" + (wp.x * this.scaleOffset) + "," + (wp.y * this.scaleOffset) + "' data-allow-scale='false' data-allow-drag='false'><img src='" + JMap.serverUrl + (JMap.getLabelById((icon?icon:"yah")).filePath) + "' /></div>";
+            var b = "<div id='bubbleLeft' class='item mark' data-show-at-zoom='0' data-position='" + (wp.x * this.scaleOffset) + "," + (wp.y * this.scaleOffset) + "' data-allow-scale='false' data-allow-drag='false'><img src='" + (JMap.getLabelById((icon?icon:"yah")).filePath) + "' /></div>";
             this.pathView.push("bubbleLeft");
             $(this.mapView).smoothZoom("addLandmark", [b]);
         };
 
         Floor.prototype.showMoverByWP = function (url, wp) {
-            console.log("URL");
-            console.log(url);
-            var b = "<div id='mover" + this.id + "' class='item mark mover' data-show-at-zoom='0' data-position='" + (wp.x * this.scaleOffset) + "," + (wp.y * this.scaleOffset) + "' data-allow-scale='true' data-allow-drag='false'><img src='" + JMap.serverUrl + url + "' width='100' height='100' /></div>";
+            // console.log("URL");
+            // console.log(url);
+            var b = "<div id='mover" + this.id + "' class='item mark mover' data-show-at-zoom='0' data-position='" + (wp.x * this.scaleOffset) + "," + (wp.y * this.scaleOffset) + "' data-allow-scale='true' data-allow-drag='false'><img src='" +  url + "' width='100' height='100' /></div>";
             this.pathView.push("mover" + this.id);
             $(this.mapView).smoothZoom("addLandmark", [b]);
         };
 
         Floor.prototype.putYahByCoor = function (x, y, url) {
             this.yahCoord = {x:x*this.scaleOffset, y:y*this.scaleOffset, url:url};
-            this.yah = "<div id='yah' class='item mark yahpoint' data-show-at-zoom='0' data-position='" + this.yahCoord.x + "," + this.yahCoord.y + "' data-allow-drag='true' data-allow-scale='false'><img src='" + (JMap.serverUrl + this.yahCoord.url) + "' /></div>";
+            this.yah = "<div id='yah' class='item mark yahpoint' data-show-at-zoom='0' data-position='" + this.yahCoord.x + "," + this.yahCoord.y + "' data-allow-drag='true' data-allow-scale='false'><img src='" + (this.yahCoord.url) + "' /></div>";
             //console.log(_this.yah);
             $(this.mapView).smoothZoom("addLandmark", [this.yah]);
         };
@@ -3064,7 +3042,7 @@ var __extends = this.__extends || function (d, b) {
             var mapObj = this.mapView;
             var map_width = $(mapObj).width();
             var map_height = $(mapObj).height();
-            console.log(map_width,map_height);
+            // console.log(map_width,map_height);
             //console.log(this.currentScale);
             //console.log(mapViewOffset);
 
@@ -3135,7 +3113,7 @@ var __extends = this.__extends || function (d, b) {
         Floor.prototype.renderLabels = function (res, name, fl) {
             // console.log('FLOOR', floor)
             var _this = this;
-            console.log("THIS IS: ", name, fl )
+            // console.log("THIS IS: ", name, fl )
             var out = [];
             var i, n;
             if (res !== []) {
@@ -3422,7 +3400,7 @@ var BuildingModelGrid = (function () {
          */
         BuildingModelGrid.prototype.findWay = function (wpfrom, wpto, elevator) {
 			if(!wpfrom || !wpto) return [];
-            console.log("FINDING WAY");
+            // console.log("FINDING WAY");
             this._mover = [];
             var ar = [];
             var fl = this.getFloorById(wpfrom.mapid);
@@ -3433,7 +3411,7 @@ var BuildingModelGrid = (function () {
             else {
                 var mov = this.getMoverClosest(wpfrom, wpto,elevator);
                 if (!mov) {
-                    console.log('EEEERRRROOORRR   no mover   from: '+wpfrom.mapid +'   to : '+wpto.id);
+                    // console.log('EEEERRRROOORRR   no mover   from: '+wpfrom.mapid +'   to : '+wpto.id);
                     return [];
                 }
                 this._mover.push(mov);
@@ -3498,7 +3476,7 @@ var BuildingModelGrid = (function () {
 
         BuildingModelGrid.prototype.getPathLength = function (fromid, toid, mapid) {
             var fl = this.getFloorById(mapid);
-            console.log(fromid, toid, mapid);
+            // console.log(fromid, toid, mapid);
             return fl.grid.getPathLength(fromid, toid);
         };
 
@@ -3509,12 +3487,12 @@ var BuildingModelGrid = (function () {
             var length = 1000000;
             for (var i = 0, n = this.movers.length; i < n; i++) {
                 var mov = this.movers[i];
-				console.log('Looking for mover ------------------------------------------------------------->',mov);
+				// console.log('Looking for mover ------------------------------------------------------------->',mov);
 				if(elevator && mov.type !== 1)continue;
 
                 var con1 = this.isConnected(wpfrom.mapid, mov.connections);
                 var con2 = this.isConnected(wpto.mapid, mov.connections);
-                console.log(con1, con2);
+                // console.log(con1, con2);
 
                 if (con1 && con2 && con1.wp) {
                     var dist = this.getPathLength(wpfrom.id, con1.wpid, wpfrom.mapid);
@@ -3565,7 +3543,7 @@ var BuildingModelGrid = (function () {
         BuildingModelGrid.prototype.loadMapbuilderData = function () {
             var _this = this;
             JMap.getMapData(function(res){
-                console.log("Map data", res);
+                // console.log("Map data", res);
                 return _this.onData(res);
             });
             JMap.getPeopleMovers(function(res){
@@ -3596,7 +3574,7 @@ var BuildingModelGrid = (function () {
             this.paths = res.paths;
             this.waypoints = res.waypoints;
 
-            console.log(res);
+            // console.log(res);
             this.parseData();
             this.parseGrid();
 
@@ -3635,8 +3613,8 @@ var BuildingModelGrid = (function () {
                     if (!floor.dots)
                         floor.dots = [];
                     floor.dots.push(dot);
-                } else
-                    console.log(' EEEERRRROOR no floor with id :' + wp.mapid);
+                } //else
+                    // console.log(' EEEERRRROOR no floor with id :' + wp.mapid);
             }
             this.WPS = objWP;
             var arP = this.paths;
@@ -3648,13 +3626,13 @@ var BuildingModelGrid = (function () {
                 dot = objD[p.mapid + ' ' + p.wpid1];
                 if (dot)
                     dot.join.push(p.wpid2);
-else
-                    console.log('Errrrrrrrrrrroooorrrrrr   no VoDot for ' + p.mapid + ' ' + p.wpid1);
+// else
+                    // console.log('Errrrrrrrrrrroooorrrrrr   no VoDot for ' + p.mapid + ' ' + p.wpid1);
                 dot = objD[p.mapid + ' ' + p.wpid2];
                 if (dot)
                     dot.join.push(p.wpid1);
-else
-                    console.log('Errrrrrrrrrrroooorrrrrr   no VoDot for ' + p.mapid + ' ' + p.wpid1);
+// else
+                    // console.log('Errrrrrrrrrrroooorrrrrr   no VoDot for ' + p.mapid + ' ' + p.wpid1);
             }
         };
 
@@ -3673,8 +3651,8 @@ else
         };
 
         BuildingModelGrid.prototype.loadStructure = function () {
-            console.log("JMAPS DATA");
-            console.log(JMap.storage.maps.data);
+            // console.log("JMAPS DATA");
+            // console.log(JMap.storage.maps.data);
             this.onStructure(JMap.storage.maps.data);
             /*var _this = this;
             $.get(JMap.serverUrl + '/rest/maps/all', null, function (res) {
