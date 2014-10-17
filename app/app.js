@@ -44,6 +44,38 @@ try {
 }
 
 
-//Todo, retrieve content then initialise
+//Todo, retrieve config then initialise
+
+app.value('config', {
+  centre: {
+    title: 'World Trade Centre',
+    style: 'premium'
+  },
+  kiosk_id: 2348576,
+  navigationItems: [
+    {
+      title: 'Shopping',
+      type: 'directory-view',
+      options: {
+
+      }
+    },
+    {
+      title: 'Dining',
+      type: 'directory-view',
+      options: {}
+    },
+    {
+      title: 'Transit',
+      type: 'transit',
+      options: {}
+    },
+    {
+      title: 'Dining',
+      type: 'directory-view',
+      options: {}
+    },
+  ]
+});
 
 angular.bootstrap(document, ['wfWayfinding']);

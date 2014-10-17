@@ -16,22 +16,9 @@ module.exports = angular.module('KioskMenu', [])
   return {
     restrict: 'E',
     template: require('./menu.html'),
-    controller: function ($scope, KioskMenu) {
+    controller: function ($scope, KioskMenu, config) {
       $scope.menu = KioskMenu;
-      $scope.menuItems = [
-        {
-          label: 'Item 1'
-        },
-        {
-          label: 'Item 2'
-        },
-        {
-          label: 'Item 3'
-        },
-        {
-          label: 'Item 4'
-        }
-      ];
+      $scope.menuItems = config.navigationItems;
       $scope.menuLayoutOptions = {
         dimensions: [1, $scope.menuItems.length],
       };
