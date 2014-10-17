@@ -924,7 +924,7 @@ var JMap = {
     		var wp = JMap.storage.maps.model.getWPByJid(id);
     		// console.log(wp);
     		if(!wp){
-    			console.log("No waypoint assign to this id");
+    			console.log("No waypoint assign to this id: " + id);
     			return;
     		}
     		return JMap.storage.maps.model.getFloorById(wp.mapid);
@@ -1249,17 +1249,19 @@ var __extends = this.__extends || function (d, b) {
             this.currentFloor = null;
             if (this.container)this.init();
             this.currentLegendId = null;
-
-
         }
 
 
         Building.prototype.addExtraStyles = function(){
         	var iconStyles = this.styles.mapStyles.iconStyles;
+        	var labelStyle = this.styles.mapStyles.labelStyle;
+        	console.log(labelStyle);
         	var addedStyles = "<style>";
-        	addedStyles += ".point{width:15px;height:15px;position:absolute}#map-mainview{position:absolute;width:100%;height:100%}.map-floor{position:absolute;height:100%;width:100%}.map-floor-base.inactive{pointer-events:none}.map-floor-base{position:absolute;transform-origin:0 0 0;-webit-perspective:1000px;display:block;left:0;top:0}.map-floor-container-base,.map-floor-legendsview-base,.map-floor-legendsview-base img{position:absolute}.map-floor-legendsview-base img.yahPoint{position:absolute;-webkit-transform-origin:50% 0;transform-origin:50% 0}.legendItem{background-size:100%;display:none}.legendItemActive{background:rgba(0,0,0,.2);border:4px solid #fff;border-radius:100px;display:block!important}.bubbleText{text-align:center;position:absolute;color:#fff;font-size:25px;width:250px;height:60px;line-height:30px;display:inline-block;vertical-align:middle}#bubbleLeft>img{pointer-events:none}.pathView{position:absolute;z-index:10;pointer-events:none}.pathView img{position:absolute}.legendLabelItem{position:absolute;font-size:12px;white-space:nowrap}.legendsLabelsView{position:absolute}.map-floor-container-base .landmarks{position:absolute;z-index:10;font-family:Helvetica,Arial,Verdana;font-size:12px;color:#fff;transform-origin:0 0 0}.map-floor-container-base .landmarks .item{position:absolute;text-align:center;display:none;padding:0;margin:0}.map-floor-container-base .landmarks .item.legends img{position:absolute;top:-15px!important;left:-15px!important;width:30px!important;height:30px!important}.map-floor-container-base .landmarks .lable div{position:absolute;font-size:20px;width:auto;text-align:center;background:none!important;color:#ccc}.map-floor-container-base .landmarks .mark .text{background-color:#000}.map-floor-container-base .landmarks .step.item img{top:-7px!important;left:-7px!important}.map-floor-container-base .landmarks #bubbleLeft.item,.map-floor-container-base .landmarks #yah.item,.map-floor-container-base .landmarks .item.mover{z-index:3!important}.map-floor-container-base .landmarks .item.mover img{position:absolute;top:-25px!important;left:-25px!important;padding:2px;border:1px solid #fff;border-radius:12px;background-color:#E32723;width:50px;height:50px}.map-floor-container-base .landmarks #bubbleLeft.item img,.map-floor-container-base .landmarks .item>div{left:-15.5px!important;font-size:14px}";
+        	addedStyles += ".point{width:15px;height:15px;position:absolute}#map-mainview{position:absolute;width:100%;height:100%}.map-floor{position:absolute;height:100%;width:100%}.map-floor-base.inactive{pointer-events:none}.map-floor-base{position:absolute;transform-origin:0 0 0;-webit-perspective:1000px;display:block;left:0;top:0}.map-floor-container-base,.map-floor-legendsview-base,.map-floor-legendsview-base img{position:absolute}.map-floor-legendsview-base img.yahPoint{position:absolute;-webkit-transform-origin:50% 0;transform-origin:50% 0}.legendItem{background-size:100%;display:none}.legendItemActive{background:rgba(0,0,0,.2);border:4px solid #fff;border-radius:100px;display:block!important}.bubbleText{text-align:center;position:absolute;color:#fff;font-size:25px;width:250px;height:60px;line-height:30px;display:inline-block;vertical-align:middle}#bubbleLeft>img{pointer-events:none}.pathView{position:absolute;z-index:10;pointer-events:none}.pathView img{position:absolute}.legendLabelItem{position:absolute;font-size:12px;white-space:nowrap}.legendsLabelsView{position:absolute}.map-floor-container-base .landmarks{position:absolute;z-index:10;font-family:Helvetica,Arial,Verdana;font-size:12px;color:#fff;transform-origin:0 0 0}.map-floor-container-base .landmarks .item{position:absolute;text-align:center;display:none;padding:0;margin:0}.map-floor-container-base .landmarks .item.legends img{position:absolute;top:-15px!important;left:-15px!important;width:30px!important;height:30px!important}.map-floor-container-base .landmarks .lable div{position:absolute;font-size:20px;width:auto;text-align:center;background:none!important;color:#ccc}.map-floor-container-base .landmarks .mark .text{background-color:#000}.map-floor-container-base .landmarks .step.item img{top:-7px!important;left:-7px!important}.map-floor-container-base .landmarks #bubbleLeft.item,.map-floor-container-base .landmarks #yah.item,.map-floor-container-base .landmarks .item.mover{z-index:3!important}.map-floor-container-base .landmarks .item.mover img{position:absolute;top:-25px!important;left:-25px!important;padding:2px;border:1px solid #fff;border-radius:12px;background-color:#E32723;width:50px;height:50px}";
+        	if(labelStyle) addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img,.map-floor-container-base .landmarks .item>div{font-size:" + labelStyle.fontSize + ";color:" + labelStyle.color + ";width:" + labelStyle.maxWidth + "}";
+        	else addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img,.map-floor-container-base .landmarks .item>div{font-size:14px;color:#fff;}";
+        	addedStyles += ".map-floor-container-base .landmarks .item.legends{z-index:4!important}";
         	addedStyles += ".map-floor-container-base .landmarks #yah.item img{top:" + (iconStyles.youarehere?"-" + iconStyles.youarehere.offset.y:"-20px") + "!important;left:" + (iconStyles.youarehere?"-" + iconStyles.youarehere.offset.x:"-20px") + "!important;width:" + (iconStyles.youarehere?iconStyles.youarehere.width:"40px") + ";height:" + (iconStyles.youarehere?iconStyles.youarehere.height:"40px") + "}";
-        	
         	addedStyles += "</style>";
         	$("body").append(addedStyles);
         }
@@ -2280,7 +2282,7 @@ var __extends = this.__extends || function (d, b) {
                 $(_this.mapView).smoothZoom("addLandmark", [svg]);
                 // $( '#svg-' + _this.id ).load(JMap.serverUrl + url, null, function(resp, status, xhr) {
                 $( '#svg-' + _this.id ).load(compsDir + url.substring(url.lastIndexOf("/"), url.length), null, function(resp, status, xhr) {
-                    console.log("LOADED");
+                    // console.log("LOADED");
                     // var $body = $('#svg-' + _this.id ).find('*');
                     
                     $('#svg-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
@@ -2314,14 +2316,32 @@ var __extends = this.__extends || function (d, b) {
         	var destLabels = [];
         	for(var i = 0; i < destinations.length; i++){
         		var wp = JMap.storage.maps.model.getWPByJid(destinations[i].clientId);
-        		console.log();
+        		var zl;
+        		switch(destinations[i].sponsoredRating){
+        			case 0:
+        				zl = "0";
+        				break;
+        			case 25:
+        				zl = "60";
+        				break;
+        			case 50:
+        				zl = "20";
+        				break;
+        			case 75:
+        				zl = "0";
+        				break;
+        			default:
+        				zl = "110";
+        				break;
+        		}
 
 	        	this.legendsObj.labelsids.push(destinations[i].id.toString());
                 this.legendsObj.labelselementsArray.push(this.createLegendLabel({
                 	id:destinations[i].id.toString(),
                 	x:wp.x,
                 	y:wp.y,
-                	label:destinations[i].name
+                	label:destinations[i].name,
+                	zl:zl
                 }));
             }
             $(this.mapView).smoothZoom("addLandmark", this.legendsObj.labelselementsArray);
@@ -3169,7 +3189,7 @@ var __extends = this.__extends || function (d, b) {
         
         Floor.prototype.createLegendLabel = function(legendItemData){
             // console.log("LEGEND ITEM DATA", legendItemData)
-            var cont = "<div id='" + legendItemData.id.toString() + legendItemData.x.toString() + legendItemData.y.toString() + "' name='" + legendItemData.id.toString() + "' class='item mark legends labelsOn-" + that.id + "' data-show-at-zoom='0' data-allow-scale='true' data-position='"+  ((legendItemData.x + 25) * this.scaleOffset) + "," + ((legendItemData.y + 25) * this.scaleOffset) + "'>";
+            var cont = "<div id='" + legendItemData.id.toString() + legendItemData.x.toString() + legendItemData.y.toString() + "' name='" + legendItemData.id.toString() + "' class='item mark legends labelsOn-" + that.id + "' data-show-at-zoom='" + legendItemData.zl + "' data-allow-scale='true' data-position='"+  ((legendItemData.x) * this.scaleOffset) + "," + ((legendItemData.y) * this.scaleOffset) + "'>";
             cont += "<div>" + legendItemData.label + "</div></div>";// width='100' height='100'
             return cont;
         };
@@ -5034,6 +5054,7 @@ else
 			if (ob.hasClass('mark')) {
 				var imgw = ob.find('img').css('vertical-align', 'bottom').width();
 				$(ob.children()[0]).css({
+					'width':ob.width,
 					'position': 'absolute',
 					'left': (-ob.width()/2),
 					'bottom': parseInt(ob.css('padding-bottom'))*2

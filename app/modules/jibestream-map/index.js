@@ -6,7 +6,7 @@ module.exports = angular.module('JibestreamMap', [])
 
   
   var mapObject;
-  console.log(JMap);
+  // console.log(JMap);
 
 
   JMap.addListener("StandAloneMapsReady", onJmapReady);
@@ -18,7 +18,7 @@ module.exports = angular.module('JibestreamMap', [])
   function onJmapReady(){
     // alert("Build maps");
     // mapObject = new JMap.Building($element.find("#map-container"), 1280,720);
-    console.log("Got here");
+    // console.log("Got here");
 
     $.ajax({
       url:"/components/jibestream-sdk/jibestreamConfig.json", 

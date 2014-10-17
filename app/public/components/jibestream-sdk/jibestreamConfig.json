@@ -63,8 +63,11 @@
 					"y":"100px"
 				}
 			}
-
+		},
+		"labelStyle":{
+			"font-size":"20px",
+			"color":"#333",
+			"maxWidth":"150px"
 		}
 	}
-
 }
