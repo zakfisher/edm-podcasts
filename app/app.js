@@ -51,7 +51,8 @@ app.value('config', {
     title: 'World Trade Centre',
     style: 'premium'
   },
-  kiosk_id: 2348576,
+  kioskID: 2348576,
+  initialState: 0,
   navigationItems: [
     {
       title: 'Shopping',
@@ -76,6 +77,11 @@ app.value('config', {
       options: {}
     },
   ]
+});
+
+$(document.body).on('mousewheel', function (e) {
+  e.preventDefault();
+  e.stopPropagation();
 });
 
 angular.bootstrap(document, ['wfWayfinding']);
