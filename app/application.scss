@@ -1,33 +1,11 @@
 body {
-  font-family: 'helvetica neue', 'helvetica', 'arial', 'sans';
-  font-size: 90%;
-  // cursor: none;
-  color: #fff;
-}
-
-body {
     margin: 0;
-    font-family: sans-serif;
+    font-family: 'FlamaCondensed', 'helvetica neue', 'helvetica', 'arial', 'sans';
+    font-weight: 500;
+    font-size: 200%;
+    color: #222;
     background-color: #222;
     background-image: url('/dev-bg.png');
-}
-
-.center-box {
-    padding: 15px 50px 15px 50px;
-    text-align: center;
-}
-
-.dbl-sided {
-  backface-visibility: visible !important;
-  -webkit-backface-visibility: visible !important;
-}
-
-.full-screen {
-    position: fixed;
-    bottom: 0;
-    top: 0;
-    left: 0;
-    right: 0;
 }
 
 fa-app {
@@ -38,14 +16,29 @@ fa-app {
   left: 0;
 }
 
-.menu {
-  background-color: red;
-}
-
 webview {
  height: 100%;
  width: 100%;
 }
+
+.dbl-sided {
+  backface-visibility: visible !important;
+  -webkit-backface-visibility: visible !important;
+}
+
+.full-screen {
+  position: fixed;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+
+.menu-item {
+  background-color: #fff;
+}
+
 
 button {
   background: transparent;
