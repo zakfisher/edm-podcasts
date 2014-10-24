@@ -51,7 +51,11 @@
 			}
 		],
 		"pathStyles":{
-
+			"pathType":"dots",
+			"spacing":20,
+			"pathWidth":20,
+			"pathColor":"#0f0",
+			"additionalCss":"border:1px solid #000;"
 		},
 		"iconStyles":{
 			"youarehere":{
@@ -67,7 +71,7 @@
 		"labelStyle":{
 			"font-size":"20px",
 			"color":"#333",
-			"maxWidth":"150px"
+			"maxWidth":"125px"
 		}
 	}
 }
