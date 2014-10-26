@@ -51,11 +51,11 @@
 			}
 		],
 		"pathStyles":{
-			"pathType":"dots",
+			"pathType":"line",
 			"spacing":20,
-			"pathWidth":20,
-			"pathColor":"#0f0",
-			"additionalCss":"border:1px solid #000;"
+			"pathWidth":10,
+			"pathColor":"#00f",
+			"additionalCss":"/*border:1px solid #000;*/"
 		},
 		"iconStyles":{
 			"youarehere":{
