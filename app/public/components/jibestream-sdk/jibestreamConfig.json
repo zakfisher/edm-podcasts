@@ -66,6 +66,15 @@
 					"x":"41px",
 					"y":"100px"
 				}
+			},
+			"destination":{
+				"url":"/components/jibestream-sdk/images/pin.png",
+				"width":"100px",
+				"height":"131px",
+				"offset":{
+					"x":"50px",
+					"y":"131px"
+				}
 			}
 		},
 		"labelStyle":{
