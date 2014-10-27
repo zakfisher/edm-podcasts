@@ -1,12 +1,43 @@
+
+
+// Generic + Base Styles
+// ----------------------------------------------------------------------
+
 body {
     margin: 0;
     font-family: 'FlamaCondensed', 'helvetica neue', 'helvetica', 'arial', 'sans';
     font-weight: 500;
-    font-size: 200%;
     color: #222;
     background-color: #222;
     background-image: url('/dev-bg.png');
+    color: #4D4E4C;
 }
+
+
+button {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+  font-size: 100%;
+}
+
+
+// Typography
+// ----------------------------------------------------------------------
+
+h1 {
+  font-size: 77px;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 23px;
+  font-weight: 700;
+}
+
+
+// Famo.us Stuff
+// ----------------------------------------------------------------------
 
 fa-app {
   position: fixed !important;
@@ -35,14 +66,26 @@ webview {
 }
 
 
+// Menu
+// ----------------------------------------------------------------------
+
 .menu-item {
   background-color: #fff;
-}
+  text-align: right;
+  box-sizing: border-box;
+  padding: 1.5rem;
+  border: 1px solid #979797;
 
 
-button {
-  background: transparent;
-  color: #fff;
-  border: 1px solid #fff;
-  font-size: 100%;
+  h1 {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    line-height: 1;
+  }
+
+  h3 {
+    margin: 0;
+    padding: 0;
+  }
 }
+

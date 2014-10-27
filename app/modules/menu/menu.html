@@ -3,11 +3,13 @@
   <button ng-click="menu.toggle()">Menu</button>
 </fa-surface> -->
 <!-- Menu -->
-<fa-modifier fa-size="[300, auto]" fa-translate="[0, 0]">
+<fa-modifier fa-size="[407, auto]" fa-translate="[0, 0]">
   <fa-grid-layout fa-options="menuLayoutOptions" ng-show="menu.active">
       <fa-modifier ng-repeat="item in menuItems">
         <fa-surface fa-touchstart="launch(item)" ng-mousedown="launch(item)" class="menu-item">
-          {{item.title}}
+          <div class="icon"></div>
+          <h1>{{item.title}}</h1>
+          <h3>{{item.subtitle}}</h3>
         </fa-surface>
       </fa-modifier>
     </fa-grid-layout>

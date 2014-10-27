@@ -55,7 +55,22 @@ app.value('config', {
   initialState: 0,
   navigationItems: [
     {
+      title: 'Map',
+      subtitle: '',
+      type: 'map',
+      options: {
+
+      }
+    },
+    {
+      title: 'Search',
+      subtitle: 'Directory',
+      type: 'search',
+      options: {}
+    },
+    {
       title: 'Shopping',
+      subtitle: 'Directory',
       type: 'directory',
       options: {
 
@@ -63,17 +78,20 @@ app.value('config', {
     },
     {
       title: 'Dining',
+      subtitle: 'Directory',
       type: 'directory',
       options: {}
     },
     {
-      title: 'Transit',
-      type: 'transit',
+      title: 'Services',
+      subtitle: 'Directory',
+      type: 'directory',
       options: {}
     },
     {
-      title: 'Dining',
-      type: 'directory',
+      title: 'Events',
+      subtitle: 'Calendar',
+      type: 'calendar',
       options: {}
     },
   ]
