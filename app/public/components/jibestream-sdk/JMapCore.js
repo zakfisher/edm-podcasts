@@ -1230,6 +1230,7 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 
+
 (function (JMap) {
     var Building = (function () {
         /**************************************************************************/
@@ -1249,22 +1250,65 @@ var __extends = this.__extends || function (d, b) {
             this.currentFloor = null;
             if (this.container)this.init();
             this.currentLegendId = null;
+
+            JMap.storage.maps.building = this;
         }
 
 
         Building.prototype.addExtraStyles = function(){
         	var iconStyles = this.styles.mapStyles.iconStyles;
         	var labelStyle = this.styles.mapStyles.labelStyle;
+        	var pathStyle = this.styles.mapStyles.pathStyles;
         	console.log(labelStyle);
-        	var addedStyles = "<style>";
-        	addedStyles += ".point{width:15px;height:15px;position:absolute}#map-mainview{position:absolute;width:100%;height:100%}.map-floor{position:absolute;height:100%;width:100%}.map-floor-base.inactive{pointer-events:none}.map-floor-base{position:absolute;transform-origin:0 0 0;-webit-perspective:1000px;display:block;left:0;top:0}.map-floor-container-base,.map-floor-legendsview-base,.map-floor-legendsview-base img{position:absolute}.map-floor-legendsview-base img.yahPoint{position:absolute;-webkit-transform-origin:50% 0;transform-origin:50% 0}.legendItem{background-size:100%;display:none}.legendItemActive{background:rgba(0,0,0,.2);border:4px solid #fff;border-radius:100px;display:block!important}.bubbleText{text-align:center;position:absolute;color:#fff;font-size:25px;width:250px;height:60px;line-height:30px;display:inline-block;vertical-align:middle}#bubbleLeft>img{pointer-events:none}.pathView{position:absolute;z-index:10;pointer-events:none}.pathView img{position:absolute}.legendLabelItem{position:absolute;font-size:12px;white-space:nowrap}.legendsLabelsView{position:absolute}.map-floor-container-base .landmarks{position:absolute;z-index:10;font-family:Helvetica,Arial,Verdana;font-size:12px;color:#fff;transform-origin:0 0 0}.map-floor-container-base .landmarks .item{position:absolute;text-align:center;display:none;padding:0;margin:0}.map-floor-container-base .landmarks .item.legends img{position:absolute;top:-15px!important;left:-15px!important;width:30px!important;height:30px!important}.map-floor-container-base .landmarks .lable div{position:absolute;font-size:20px;width:auto;text-align:center;background:none!important;color:#ccc}.map-floor-container-base .landmarks .mark .text{background-color:#000}.map-floor-container-base .landmarks .step.item img{top:-7px!important;left:-7px!important}.map-floor-container-base .landmarks #bubbleLeft.item,.map-floor-container-base .landmarks #yah.item,.map-floor-container-base .landmarks .item.mover{z-index:3!important}.map-floor-container-base .landmarks .item.mover img{position:absolute;top:-25px!important;left:-25px!important;padding:2px;border:1px solid #fff;border-radius:12px;background-color:#E32723;width:50px;height:50px}";
-        	if(labelStyle) addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img,.map-floor-container-base .landmarks .item>div{font-size:" + labelStyle.fontSize + ";color:" + labelStyle.color + ";width:" + labelStyle.maxWidth + "}";
-        	else addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img,.map-floor-container-base .landmarks .item>div{font-size:14px;color:#fff;}";
-        	addedStyles += ".map-floor-container-base .landmarks .item.legends{z-index:4!important}";
-        	addedStyles += ".map-floor-container-base .landmarks #yah.item img{top:" + (iconStyles.youarehere?"-" + iconStyles.youarehere.offset.y:"-20px") + "!important;left:" + (iconStyles.youarehere?"-" + iconStyles.youarehere.offset.x:"-20px") + "!important;width:" + (iconStyles.youarehere?iconStyles.youarehere.width:"40px") + ";height:" + (iconStyles.youarehere?iconStyles.youarehere.height:"40px") + "}";
-        	addedStyles += "</style>";
-        	$("body").append(addedStyles);
+
+        	try{
+
+	        	var addedStyles = "<style>";
+	        	addedStyles += ".point{width:15px;height:15px;position:absolute}#map-mainview{position:absolute;width:100%;height:100%}.map-floor{position:absolute;height:100%;width:100%}.map-floor-base.inactive{pointer-events:none}.map-floor-base{position:absolute;transform-origin:0 0 0;-webit-perspective:1000px;display:block;left:0;top:0}.map-floor-container-base,.map-floor-legendsview-base,.map-floor-legendsview-base img{position:absolute}.map-floor-legendsview-base img.yahPoint{position:absolute;-webkit-transform-origin:50% 0;transform-origin:50% 0}.legendItem{background-size:100%;display:none}.legendItemActive{background:rgba(0,0,0,.2);border:4px solid #fff;border-radius:100px;display:block!important}.bubbleText{text-align:center;position:absolute;color:#fff;font-size:25px;width:250px;height:60px;line-height:30px;display:inline-block;vertical-align:middle}#bubbleLeft>img{pointer-events:none}.pathView{position:absolute;z-index:10;pointer-events:none}.pathView img{position:absolute}.legendLabelItem{position:absolute;font-size:12px;white-space:nowrap}.legendsLabelsView{position:absolute}.map-floor-container-base .landmarks{position:absolute;z-index:10;font-family:Helvetica,Arial,Verdana;font-size:12px;color:#fff;transform-origin:0 0 0}.map-floor-container-base .landmarks .item{position:absolute;text-align:center;display:none;padding:0;margin:0}.map-floor-container-base .landmarks .item.legends img{position:absolute;top:-15px!important;left:-15px!important;width:30px!important;height:30px!important}.map-floor-container-base .landmarks .lable div{position:absolute;font-size:20px;width:auto;text-align:center;background:none!important;color:#ccc}.map-floor-container-base .landmarks .mark .text{background-color:#000}.map-floor-container-base .landmarks #bubbleLeft.item,.map-floor-container-base .landmarks #yah.item,.map-floor-container-base .landmarks .item.mover{z-index:3!important}.map-floor-container-base .landmarks .item.mover img{position:absolute;top:-25px!important;left:-25px!important;padding:2px;border:1px solid #fff;border-radius:12px;background-color:#E32723;width:50px;height:50px}";
+	        	if(labelStyle) addedStyles += ".map-floor-container-base .landmarks .item>div{font-size:" + labelStyle.fontSize + ";color:" + labelStyle.color + ";width:" + labelStyle.maxWidth + " }";
+	        	else addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img,.map-floor-container-base .landmarks .item>div{font-size:14px;color:#fff;}";
+	        	// addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img{left:-40px!important}";
+	        	addedStyles += ".map-floor-container-base .landmarks .item.legends{z-index:4!important}";
+
+	            //Map Icons
+	        	addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img{top:" + (iconStyles.destination?"-" + iconStyles.destination.offset.y:"-20px") + "!important;left:" + (iconStyles.destination?"-" + iconStyles.destination.offset.x:"-20px") + "!important;width:" + (iconStyles.destination?iconStyles.destination.width:"40px") + ";height:" + (iconStyles.destination?iconStyles.destination.height:"40px") + "}";
+	        	addedStyles += ".map-floor-container-base .landmarks #yah.item img{top:" + (iconStyles.youarehere?"-" + iconStyles.youarehere.offset.y:"-20px") + "!important;left:" + (iconStyles.youarehere?"-" + iconStyles.youarehere.offset.x:"-20px") + "!important;width:" + (iconStyles.youarehere?iconStyles.youarehere.width:"40px") + ";height:" + (iconStyles.youarehere?iconStyles.youarehere.height:"40px") + "}";
+	        	
+	    		addedStyles += this.generatePathStyle(pathStyle);    	
+
+	        	addedStyles += "</style>";
+	        	$("body").append(addedStyles);
+        	}catch(e){
+        		console.log("There was an Error generating added styles. ", e);
+        	}
         }
+
+
+        Building.prototype.generatePathStyle = function(pathStyle){
+        	var st = "";
+			if(pathStyle){
+				switch(pathStyle.pathType){
+					case "dots":
+        		        st += ".map-floor-container-base .landmarks .step.item img{top:-" + (pathStyle.pathWidth/2).toString() + "px!important;left:-" + (pathStyle.pathWidth/2).toString() + "px!important}.step.item.mark{background:" + pathStyle.pathColor + ";width:" + pathStyle.pathWidth.toString() + "px;height:" + pathStyle.pathWidth.toString() + "px;border-radius:" + pathStyle.pathWidth + "px}";
+						this.stepOffsetValue = pathStyle.spacing;
+						break;
+					case "line":
+        		        st += ".map-floor-container-base .landmarks .step.item img{top:-" + (pathStyle.pathWidth/2).toString() + "px!important;left:-" + (pathStyle.pathWidth/2).toString() + "px!important}.step.item.mark{background:" + pathStyle.pathColor + ";width:" + pathStyle.pathWidth.toString() + "px;height:" + pathStyle.pathWidth.toString() + "px}";
+        		        this.stepOffsetValue = pathStyle.pathWidth;
+						break;
+				}
+        	
+        	
+
+
+
+        		if(pathStyle.additionalCss)st += ".step.item.mark{" + pathStyle.additionalCss + "}";
+        	}else{
+        		st += ".map-floor-container-base .landmarks .step.item img{top:-5px!important;left:-5px!important}.step.item.mark{background:#f00;width:10px;height:10px;border-radius:10px}";
+        		this.stepOffsetValue = 14;
+        	}
+        	return st;
+        };
 
         Building.prototype.init = function () {
             var _this = this;
@@ -1551,7 +1595,7 @@ var __extends = this.__extends || function (d, b) {
         Building.prototype.fromYahToDest = function (useElevator) {
             // this.resetAllMaps();
         
-            this.pathData = this.pathProcessor.compile(JMap.storage.maps.model.findWay(this.destYah, this.targetDestination, useElevator), this.endDestination.name, 14);
+            this.pathData = this.pathProcessor.compile(JMap.storage.maps.model.findWay(this.destYah, this.targetDestination, useElevator), this.endDestination.name, this.stepOffsetValue);
             
             var floorInfo = [];
             for(var i = 0; i < this.pathData.length; i++){
@@ -2319,10 +2363,10 @@ var __extends = this.__extends || function (d, b) {
         		var zl;
         		switch(destinations[i].sponsoredRating){
         			case 0:
-        				zl = "0";
+        				zl = "100";
         				break;
         			case 25:
-        				zl = "60";
+        				zl = "80";
         				break;
         			case 50:
         				zl = "20";
@@ -3002,7 +3046,7 @@ var __extends = this.__extends || function (d, b) {
             }
 
             var bmp = "<div id='point" + i + "' class='item mark step' data-show-at-zoom='0' data-allow-scale='true' data-position='"+  (p.x * this.scaleOffset) + "," + (p.y * this.scaleOffset) + "'>";
-            bmp += "<img src='" + /*JMap.serverUrl +*/ "/cms/trunk/img/step.png' style='transform:rotate(" + rot + "deg);'></div>";// width='100' height='100'
+            bmp += "<img src='" + /*JMap.serverUrl +*/ /*"/cms/trunk/img/step.png"*/ "' style='transform:rotate(" + rot + "deg);'></div>";// width='100' height='100'
 
             return bmp;
         };
@@ -3024,8 +3068,11 @@ var __extends = this.__extends || function (d, b) {
 
 
         Floor.prototype.showBubble = function (bubbleText) {//Shows bubble at the last point of the path
+        	console.log(this.styles);
+        	console.log(this.styles.mapStyles.iconStyles);
+            var bubbleImgUrl = this.styles.mapStyles.iconStyles.destination?this.styles.mapStyles.iconStyles.destination.url:(JMap.getLabelById("searchDestination").filePath);
             var lastP = this.currentPath.points[this.currentPath.points.length - 1];
-            var b = "<div id='bubbleLeft' class='item mark' data-show-at-zoom='0' data-position='" + (lastP.x * this.scaleOffset) + "," + (lastP.y * this.scaleOffset) + "' data-allow-scale='false' data-allow-drag='false'><img src='" + (JMap.getLabelById("searchDestination").filePath) + "' /></div>";
+            var b = "<div id='bubbleLeft' class='item mark destination' data-show-at-zoom='0' data-position='" + (lastP.x * this.scaleOffset) + "," + (lastP.y * this.scaleOffset) + "' data-allow-scale='false' data-allow-drag='false'><img src='" + bubbleImgUrl + "' /></div>";
             this.pathView.push(b);
             $(this.mapView).smoothZoom("addLandmark", [b]);
         };

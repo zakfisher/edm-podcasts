@@ -10,6 +10,11 @@ module.exports = angular.module('wayfindingMap', [])
     results: []
   };
 
+  $scope.destinationClick = function(destinationId){
+    
+    JMap.storage.maps.building.startWayFinding({}, JMap.getDestinationByClientId(destinationId));
+  };
+
   $scope.$watch('search.query', function (a, b) {
     var r;
     if (!a) {
@@ -21,6 +26,7 @@ module.exports = angular.module('wayfindingMap', [])
     $scope.search.results = r;
 
   });
+
 
 
   console.log('JMap', JMap);
