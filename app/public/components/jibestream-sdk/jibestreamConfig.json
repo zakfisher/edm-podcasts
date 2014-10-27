@@ -51,7 +51,11 @@
 			}
 		],
 		"pathStyles":{
-
+			"pathType":"line",
+			"spacing":20,
+			"pathWidth":10,
+			"pathColor":"#00f",
+			"additionalCss":"/*border:1px solid #000;*/"
 		},
 		"iconStyles":{
 			"youarehere":{
@@ -62,12 +66,21 @@
 					"x":"41px",
 					"y":"100px"
 				}
+			},
+			"destination":{
+				"url":"/components/jibestream-sdk/images/pin.png",
+				"width":"100px",
+				"height":"131px",
+				"offset":{
+					"x":"50px",
+					"y":"131px"
+				}
 			}
 		},
 		"labelStyle":{
 			"font-size":"20px",
 			"color":"#333",
-			"maxWidth":"150px"
+			"maxWidth":"125px"
 		}
 	}
 }
