@@ -1,86 +1,86 @@
 {
-	"mapStyles":{
-		"mapLayers":[
-			{
-				"name":"Anchor_x5F_Stores",
-				"class":"st3",
-				"zoomLevel":0,
-				"colorFill":"#b6b28c",
-				"highLightColor":"#fff",
-				"clickable":true
-			},
-			{
-				"name":"Amenities",
-				"class":"Amenities",
-				"zoomLevel":40,
-				"colorFill":"#000",
-				"highLightColor":"",
-				"clickable":false
-			},
-			{
-				"name":"Units_2_",
-				"class":"Units",
-				"zoomLevel":50,
-				"colorFill":"#fff",
-				"strokeColor":"#fff",
-				"strokeWidth":"1px",
-				"clickable":false
-			},
-			{
-				"name":"Blocks",
-				"class":"Blocks",
-				"zoomLevel":0,
-				"colorFill":"#dddabf",
-				"highLightColor":"#fff",
-				"clickable":true
-			},
-			{
-				"name":"Floor",
-				"class":"Floor",
-				"zoomLevel":0,
-				"colorFill":"#2e4956",
-				"clickable":false
-			},
-			{
-				"name":"Parking_x5F_Pavement",
-				"class":"st1",
-				"zoomLevel":0,
-				"colorFill":"#cccccc",
-				"highLightColor":"",
-				"clickable":false
-			}
-		],
-		"pathStyles":{
-			"pathType":"line",
-			"spacing":20,
-			"pathWidth":10,
-			"pathColor":"#00f",
-			"additionalCss":"/*border:1px solid #000;*/"
-		},
-		"iconStyles":{
-			"youarehere":{
-				"url":"/components/jibestream-sdk/images/youarehere.png",
-				"width":"83px",
-				"height":"100px",
-				"offset":{
-					"x":"41px",
-					"y":"100px"
-				}
-			},
-			"destination":{
-				"url":"/components/jibestream-sdk/images/pin.png",
-				"width":"100px",
-				"height":"131px",
-				"offset":{
-					"x":"50px",
-					"y":"131px"
-				}
-			}
-		},
-		"labelStyle":{
-			"font-size":"20px",
-			"color":"#333",
-			"maxWidth":"125px"
-		}
-	}
+  "mapStyles": {
+    "mapLayers": [
+      {
+        "name": "Anchor_x5F_Stores",
+        "class": "st3",
+        "zoomLevel": 0,
+        "colorFill": "#b6b28c",
+        "highLightColor": "#fff",
+        "clickable": true
+    },
+      {
+        "name": "Amenities",
+        "class": "Amenities",
+        "zoomLevel": 40,
+        "colorFill": "#000",
+        "highLightColor": "",
+        "clickable": false
+    },
+      {
+        "name": "Units_2_",
+        "class": "Units",
+        "zoomLevel": 50,
+        "colorFill": "#fff",
+        "strokeColor": "#fff",
+        "strokeWidth": "1px",
+        "clickable": false
+   },
+      {
+        "name": "Blocks",
+        "class": "Blocks",
+        "zoomLevel": 0,
+        "colorFill": "#dddabf",
+        "highLightColor": "#fff",
+        "clickable": true
+   },
+      {
+        "name": "Floor",
+        "class": "Floor",
+        "zoomLevel": 0,
+        "colorFill": "#2e4956",
+        "clickable": false
+   },
+      {
+        "name": "Parking_x5F_Pavement",
+        "class": "st1",
+        "zoomLevel": 0,
+        "colorFill": "#cccccc",
+        "highLightColor": "",
+        "clickable": false
+   }
+  ],
+    "pathStyles": {
+      "pathType": "line",
+      "spacing": 20,
+      "pathWidth": 10,
+      "pathColor": "#00f",
+      "additionalCss": "/*border:1px solid #000;*/"
+    },
+    "iconStyles": {
+      "youarehere": {
+        "url": "/components/jibestream-sdk/images/youarehere.png",
+        "width": "45px",
+        "height": "56px",
+        "offset": {
+          "x": "41px",
+          "y": "100px"
+        }
+      },
+      "destination": {
+        "url": "/components/jibestream-sdk/images/pin.png",
+        "width": "100px",
+        "height": "131px",
+        "offset": {
+          "x": "50px",
+          "y": "131px"
+        }
+      }
+    },
+    "labelStyle": {
+      "font-size": "20px",
+      "color": "#333",
+      "maxWidth": "125px"
+    }
+  }
 }
