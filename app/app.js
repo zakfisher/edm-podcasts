@@ -56,14 +56,14 @@ app.value('config', {
   navigationItems: [
     {
       title: 'Shopping',
-      type: 'directory-view',
+      type: 'directory',
       options: {
 
       }
     },
     {
       title: 'Dining',
-      type: 'directory-view',
+      type: 'directory',
       options: {}
     },
     {
@@ -73,7 +73,7 @@ app.value('config', {
     },
     {
       title: 'Dining',
-      type: 'directory-view',
+      type: 'directory',
       options: {}
     },
   ]
