@@ -36,7 +36,7 @@ h3 {
 }
 
 
-// Famo.us Stuff
+// Famo.us Integration
 // ----------------------------------------------------------------------
 
 fa-app {
@@ -75,11 +75,12 @@ webview {
   box-sizing: border-box;
   padding: 1.5rem;
   border: 1px solid #979797;
+  border-top: none;
 
 
   h1 {
-    margin-bottom: 0;
-    padding-bottom: 0;
+    margin: 0;
+    padding: 0;
     line-height: 1;
   }
 

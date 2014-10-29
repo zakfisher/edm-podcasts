@@ -1,6 +1,16 @@
 var pkg = require('../package.json');
 
+// Debug
+// ----------------------------------------------------------------------
+
+var launchTime = Date();
+console.log('Launched:', launchTime, 'Version: ', pkg.version);
+
+// Angular setup & modules
+// ----------------------------------------------------------------------
+
 var app = angular.module('wfWayfinding', [
+
   // Plugins & Libraries
   'famous.angular',
   'ngAnimate',
@@ -14,37 +24,13 @@ var app = angular.module('wfWayfinding', [
   require('./modules/home').name,
   require('./modules/directory-view').name,
   require('./modules/jibestream-map').name,
+  require('./modules/westfield-icons').name,
   require('./modules/menu').name
 ]);
 
-// Route fallback to home rather than 404'ing
-app.config(function ($urlRouterProvider, $locationProvider) {
-  $locationProvider.html5Mode(true);
-  $urlRouterProvider.otherwise('/');
-});
 
-// Debug
-var launchTime = Date();
-console.log('Launched at', launchTime);
-
-// Chrome app setup
-try {
-  // chrome.app.window.current().fullscreen();
-  chrome.bluetooth.getDevices(function (x) {
-    console.log(x);
-  });
-  chrome.bluetooth.getAdapterState(function (a) {
-    console.log(a);
-  });
-  chrome.system.cpu.getInfo(function (c) {
-    console.log('cpu', c);
-  })
-} catch (e) {
-  console.warn('Chrome command not available', e);
-}
-
-
-//Todo, retrieve config then initialise
+// App Config
+// ----------------------------------------------------------------------
 
 app.value('config', {
   centre: {
@@ -57,6 +43,7 @@ app.value('config', {
     {
       title: 'Map',
       subtitle: '',
+      icon: 'wire-map',
       type: 'map',
       options: {
 
@@ -65,12 +52,14 @@ app.value('config', {
     {
       title: 'Search',
       subtitle: 'Directory',
+      icon: 'wire-search',
       type: 'search',
       options: {}
     },
     {
       title: 'Shopping',
       subtitle: 'Directory',
+      icon: 'wire-shopping',
       type: 'directory',
       options: {
 
@@ -79,23 +68,50 @@ app.value('config', {
     {
       title: 'Dining',
       subtitle: 'Directory',
+      icon: 'wire-dining',
       type: 'directory',
       options: {}
-    },
+  },
     {
       title: 'Services',
       subtitle: 'Directory',
+      icon: 'wire-services',
       type: 'directory',
       options: {}
     },
     {
       title: 'Events',
       subtitle: 'Calendar',
+      icon: 'wire-see',
       type: 'calendar',
       options: {}
     },
   ]
 });
+
+
+
+// Build routes based on config
+// ----------------------------------------------------------------------
+
+app.config(function ($stateProvider) {
+
+  // $stateProvider.state('map', {
+  //   url: '/:section',
+  //   template: require('./home.html'),
+  //   controller: 'KioskHome'
+  // });
+});
+
+// Route fallback to home rather than 404'ing
+app.config(function ($urlRouterProvider, $locationProvider) {
+  $locationProvider.html5Mode(true);
+  $urlRouterProvider.otherwise('/');
+});
+
+
+// Setup & Bootstrap
+// ----------------------------------------------------------------------
 
 $(document.body).on('mousewheel', function (e) {
   e.preventDefault();
@@ -103,3 +119,25 @@ $(document.body).on('mousewheel', function (e) {
 });
 
 angular.bootstrap(document, ['wfWayfinding']);
+
+
+
+
+// Chrome app setup
+// ----------------------------------------------------------------------
+
+try {
+  console.log('go fullscreen');
+  chrome.app.window.current().fullscreen();
+  chrome.bluetooth.getDevices(function (x) {
+    console.log(x);
+  });
+  chrome.bluetooth.getAdapterState(function (a) {
+    console.log(a);
+  });
+  chrome.system.cpu.getInfo(function (c) {
+    console.log('cpu', c);
+  })
+} catch (e) {
+  // console.warn('Chrome command not available', e);
+}

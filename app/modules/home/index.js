@@ -4,14 +4,13 @@ module.exports = angular.module('wayfindingMap', [])
 
 .controller('KioskHome', function ($scope, $famous) {
   $scope.message = "Wayfinding Prototype Home";
-
   $scope.search = {
     query: '',
     results: []
   };
 
-  $scope.destinationClick = function(destinationId){
-    
+  $scope.destinationClick = function (destinationId) {
+
     JMap.storage.maps.building.startWayFinding({}, JMap.getDestinationByClientId(destinationId));
   };
 

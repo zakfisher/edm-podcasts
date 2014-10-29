@@ -48,10 +48,11 @@ webview {
   text-align: right;
   box-sizing: border-box;
   padding: 1.5rem;
-  border: 1px solid #979797; }
+  border: 1px solid #979797;
+  border-top: none; }
   .menu-item h1 {
-    margin-bottom: 0;
-    padding-bottom: 0;
+    margin: 0;
+    padding: 0;
     line-height: 1; }
   .menu-item h3 {
     margin: 0;
