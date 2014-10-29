@@ -51,10 +51,10 @@
 			}
 		],
 		"pathStyles":{
-			"pathType":"line",
-			"spacing":20,
+			"pathType":"dots",
+			"spacing":10,
 			"pathWidth":10,
-			"pathColor":"#00f",
+			"pathColor":"#f00",
 			"additionalCss":"/*border:1px solid #000;*/"
 		},
 		"iconStyles":{
