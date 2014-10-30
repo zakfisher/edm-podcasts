@@ -2355,6 +2355,10 @@ var __extends = this.__extends || function (d, b) {
 					JMap.fire("floorLoaded");
                 
                 });
+				
+				//TODO - get zzom data and update Zoom layers
+				//_this.updateZoomLayers(zoomData);
+
             },50);
         };
 
@@ -2449,30 +2453,7 @@ var __extends = this.__extends || function (d, b) {
                         // //console.log("cannot transition");
                     }
                 },
-                on_ZOOM_PAN_COMPLETE: function(zoomData, zoomComplete){
-
-
-                    //TODO - Zoom Layers
-                    var currentScale = zoomData.ratio *100;
-                    // console.log(zoomData);
-                    for (var i = 0; i < _this.styles.mapStyles.mapLayers.length; i++) {
-                    	
-                    	var zoomAlpha = 1;
-                    	if(_this.styles.mapStyles.mapLayers[i].zoomLevel < currentScale)zoomAlpha = 1;
-                    	else zoomAlpha = 0;
-                		
-                    	console.log(_this.styles.mapStyles.mapLayers[i], zoomAlpha);
-                		var $g = $(_this.styles.mapStyles.mapLayers[i].group.selector);
-                		console.log($g);
-                		console.log($g.length);
-                		// if(!$g)continue;
-                		for(var j = 0; j < $g.length; j++){
-                			console.log($g[j]);
-                			$($g[j]).css("fill-opacity", zoomAlpha);
-                		}
-
-                    }
-                },
+                on_ZOOM_PAN_COMPLETE: $.proxy(this.updateZoomLayers, this),
                 on_IMAGE_LOAD:function(){
                     $(_this.mapView).trigger("updateYah");
                 }
@@ -2486,7 +2467,19 @@ var __extends = this.__extends || function (d, b) {
             $(this.mapView).smoothZoom('Reset');
         }
         
-        
+        Floor.prototype.updateZoomLayers = function(zoomData){
+            //TODO - Zoom Layers
+            var currentScale = zoomData.ratio *100;
+            for (var i = 0; i < _this.styles.mapStyles.mapLayers.length; i++) {
+            	var zoomAlpha = 1;
+            	if(_this.styles.mapStyles.mapLayers[i].zoomLevel < currentScale)zoomAlpha = 1;
+            	else zoomAlpha = 0;
+        		
+            	console.log(_this.styles.mapStyles.mapLayers[i], zoomAlpha);
+            	var $group = $('#svg-' + _this.id ).find("#" + _this.styles.mapStyles.mapLayers[i].name).find("*");
+        		TweenLite.to($group, 0.3, {"fill-opacity":zoomAlpha, "stroke-opacity":zoomAlpha});
+            }
+        };
   
 
         //Check for Zoom level to switch to Google Maps
