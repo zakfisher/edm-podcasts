@@ -9,8 +9,13 @@ module.exports = angular.module('KioskMenu', [])
     menu.active = !menu.active;
   };
 
+  menu.navigateTo = function (item) {
+    console.log('navigate to item', item);
+  };
+
   return menu;
 })
+
 
 .directive('kioskmenu', function () {
   return {

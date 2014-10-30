@@ -1,4 +1,4 @@
-module.exports = angular.module('DirectoryView', [])
+module.exports = angular.module('Directory', [])
 
 .directive('directory', function () {
   return {
@@ -8,4 +8,12 @@ module.exports = angular.module('DirectoryView', [])
       $scope.directoryLayoutOptions = {};
     }
   };
+})
+
+//Routes / States
+.config(function ($stateProvider) {
+  $stateProvider.state('directory', {
+    url: '/directory/:target',
+    template: require('./directory.html')
+  });
 });

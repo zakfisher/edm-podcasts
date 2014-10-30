@@ -1,22 +1,16 @@
-<!-- Menu Toggle Button -->
-<!-- <fa-surface>
-  <button ng-click="menu.toggle()">Menu</button>
-</fa-surface> -->
-<!-- Menu -->
 <fa-modifier fa-size="[407, auto]" fa-translate="[0, 0]">
   <fa-grid-layout fa-options="menuLayoutOptions" ng-show="menu.active">
       <fa-modifier ng-repeat="item in menuItems">
-      <fa-view fa-background-color="red">
+
         <fa-modifier fa-origin="[0, 0.5]">
-          <fa-surface fa-touchstart="launch(item)" ng-mousedown="launch(item)" class="menu-item">
-            <h1>{{item.title}}</h1>
+          <fa-surface ng-click="navigateTo(item)" class="menu-item">
+            <h1 ng-click="menu.navigateTo(item)" >{{item.title}}</h1>
             <h3>{{item.subtitle}}</h3>
           </fa-surface>
         </fa-modifier>
         <fa-modifier fa-translate="[30, 0]" fa-origin="[0, 0.5]">
-          <icon glyph="item.icon" width="80" height="80"></icon>
+          <icon  glyph="item.icon" width="80" height="80"></icon>
         </fa-modifier>
-      </fa-view>
       </fa-modifier>
     </fa-grid-layout>
 </fa-modifier>
