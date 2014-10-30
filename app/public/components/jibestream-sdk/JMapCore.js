@@ -2356,10 +2356,16 @@ var __extends = this.__extends || function (d, b) {
                 
                 });
 				
-				//TODO - get zzom data and update Zoom layers
-				//_this.updateZoomLayers(zoomData);
 
             },50);
+
+			setTimeout(function(){
+				//TODO - get zzom data and update Zoom layers
+				console.log("-------------->>>>>>>>", $(_this.mapView).smoothZoom("getZoomData"));
+				console.log("-------------->>>>>>>>", _this.getZoomData());
+				_this.updateZoomLayers($(_this.mapView).smoothZoom('getZoomData'));
+			}, 200);
+
         };
 
         Floor.prototype.setStoreLabels = function(){
@@ -2453,7 +2459,7 @@ var __extends = this.__extends || function (d, b) {
                         // //console.log("cannot transition");
                     }
                 },
-                on_ZOOM_PAN_COMPLETE: $.proxy(this.updateZoomLayers, this),
+                on_ZOOM_PAN_COMPLETE: $.proxy(_this.updateZoomLayers, _this),
                 on_IMAGE_LOAD:function(){
                     $(_this.mapView).trigger("updateYah");
                 }
@@ -2462,21 +2468,19 @@ var __extends = this.__extends || function (d, b) {
         
 
         Floor.prototype.rebootSmoothZoom = function(){
-
-
             $(this.mapView).smoothZoom('Reset');
         }
         
         Floor.prototype.updateZoomLayers = function(zoomData){
             //TODO - Zoom Layers
             var currentScale = zoomData.ratio *100;
-            for (var i = 0; i < _this.styles.mapStyles.mapLayers.length; i++) {
+            for (var i = 0; i < this.styles.mapStyles.mapLayers.length; i++) {
             	var zoomAlpha = 1;
-            	if(_this.styles.mapStyles.mapLayers[i].zoomLevel < currentScale)zoomAlpha = 1;
+            	if(this.styles.mapStyles.mapLayers[i].zoomLevel < currentScale)zoomAlpha = 1;
             	else zoomAlpha = 0;
         		
-            	console.log(_this.styles.mapStyles.mapLayers[i], zoomAlpha);
-            	var $group = $('#svg-' + _this.id ).find("#" + _this.styles.mapStyles.mapLayers[i].name).find("*");
+            	console.log(this.styles.mapStyles.mapLayers[i], zoomAlpha);
+            	var $group = $('#svg-' + this.id ).find("#" + this.styles.mapStyles.mapLayers[i].name).find("*");
         		TweenLite.to($group, 0.3, {"fill-opacity":zoomAlpha, "stroke-opacity":zoomAlpha});
             }
         };
@@ -2485,10 +2489,8 @@ var __extends = this.__extends || function (d, b) {
         //Check for Zoom level to switch to Google Maps
         Floor.prototype.getZoomData = function(){
             var zoomData = $('.map-floor-base').smoothZoom('getZoomData');
-            var zoomDepth = zoomData.scaledWidth;
-            ////console.log('Checking... ' + zoomDepth);
-            if (zoomDepth == $(window).width()) this.switchToGoogle = true;
-            else this.switchToGoogle = false;
+            this.currentZoomData = zoomData;
+            return zoomData;
         };
 
 
