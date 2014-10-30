@@ -2347,6 +2347,9 @@ var __extends = this.__extends || function (d, b) {
                     		if(currentStyle.strokeColor)$(p).css("stroke", currentStyle.strokeColor);
                     		if(currentStyle.strokeWidth)$(p).css("stroke-width", currentStyle.strokeWidth);
                     	}
+
+                    	_this.styles.mapStyles.mapLayers[i] = currentStyle;
+
                     };
 
 					JMap.fire("floorLoaded");
@@ -2375,7 +2378,7 @@ var __extends = this.__extends || function (d, b) {
         				zl = "0";
         				break;
         			default:
-        				zl = "110";
+        				zl = "140";
         				break;
         		}
 
@@ -2418,7 +2421,7 @@ var __extends = this.__extends || function (d, b) {
                 animation_SPEED_ZOOM: 1,
                 pan_BUTTONS_SHOW: "NO",
                 pan_LIMIT_BOUNDARY: false,
-                zoom_MAX: 100,
+                zoom_MAX: 200, //TODO - Make this configurable
                 zoom_MIN:0,
                 container:"map-floor-container-" + this.id,
                 zoom_BUTTONS_SHOW: false,
@@ -2444,6 +2447,30 @@ var __extends = this.__extends || function (d, b) {
                         // if(_this.ableToSwitch === true)$(_this).trigger("CannotSwitch");
                         _this.ableToSwitch = false;
                         // //console.log("cannot transition");
+                    }
+                },
+                on_ZOOM_PAN_COMPLETE: function(zoomData, zoomComplete){
+
+
+                    //TODO - Zoom Layers
+                    var currentScale = zoomData.ratio *100;
+                    // console.log(zoomData);
+                    for (var i = 0; i < _this.styles.mapStyles.mapLayers.length; i++) {
+                    	
+                    	var zoomAlpha = 1;
+                    	if(_this.styles.mapStyles.mapLayers[i].zoomLevel < currentScale)zoomAlpha = 1;
+                    	else zoomAlpha = 0;
+                		
+                    	console.log(_this.styles.mapStyles.mapLayers[i], zoomAlpha);
+                		var $g = $(_this.styles.mapStyles.mapLayers[i].group.selector);
+                		console.log($g);
+                		console.log($g.length);
+                		// if(!$g)continue;
+                		for(var j = 0; j < $g.length; j++){
+                			console.log($g[j]);
+                			$($g[j]).css("fill-opacity", zoomAlpha);
+                		}
+
                     }
                 },
                 on_IMAGE_LOAD:function(){
@@ -3045,8 +3072,8 @@ var __extends = this.__extends || function (d, b) {
                 rot = Math.atan2(ydiff, xdiff) * 180 / Math.PI;
             }
 
-            var bmp = "<div id='point" + i + "' class='item mark step' data-show-at-zoom='0' data-allow-scale='true' data-position='"+  (p.x * this.scaleOffset) + "," + (p.y * this.scaleOffset) + "'>";
-            bmp += "<img src='" + /*JMap.serverUrl +*/ /*"/cms/trunk/img/step.png"*/ "' style='transform:rotate(" + rot + "deg);'></div>";// width='100' height='100'
+            var bmp = "<div id='point" + i + "' class='item mark step' data-show-at-zoom='0' data-allow-scale='true' data-rotation='" + rot.toString() + "' data-position='"+  (p.x * this.scaleOffset) + "," + (p.y * this.scaleOffset) + "'></div>";
+            // bmp += "<img src='" + /*JMap.serverUrl +*/ /*"/cms/trunk/img/step.png"*/ "' style='transform:rotate(" + rot + "deg);'>";// width='100' height='100'
 
             return bmp;
         };
@@ -5091,6 +5118,7 @@ else
 			w2 = ob.outerWidth() / 2;
 			h2 = ob.outerHeight() / 2;
 			pos = ob.data('position').split(',');	
+			rotation = ob.data('rotation');
 			sc = ob.data('allow-scale');
 			if (sc == undefined) {
 				sc = self.allow_scale;				
@@ -5111,6 +5139,7 @@ else
 					ob: ob,
 					x: parseInt(pos[0]),
 					y: parseInt(pos[1]),
+					rot: rotation,
 					w2: w2,
 					h2: h2,
 					w2pad: w2+(txt[0] ? parseInt(txt.css('padding-left')) : 0),
@@ -5953,6 +5982,7 @@ else
 			}
 								
 			for (var p = 0; p < loc.length; p++) {
+				// console.log("-->", loc[p]);
 				var wScaled,
 					hScaled,
 					lpx = (loc[p].x * _sc) + _x,
@@ -6016,7 +6046,8 @@ else
 				}
 				if (lpx !== loc[p].lpx || lpy !== loc[p].lpy && loc[p].vis) {					
 					if (prop_transform) {
-						loc[p].ob.css(prop_transform, 'translate(' + lpx.toFixed(14) + 'px,' + lpy.toFixed(14) + 'px)' + (loc[p].scale? ' scale(' + this._sc + ')' : ''));						
+						//loc[p].ob.css(prop_transform, 'translate(' + lpx.toFixed(14) + 'px,' + lpy.toFixed(14) + 'px)' + (loc[p].scale? ' scale(' + this._sc + ')':''));
+						loc[p].ob.css(prop_transform, 'translate(' + lpx.toFixed(14) + 'px,' + lpy.toFixed(14) + 'px)' + (loc[p].scale? ' scale(' + this._sc + ')':'')  + (loc[p].rot?' rotate('+loc[p].rot.toString()+ 'deg)':''));
 					} else {						
 						loc[p].ob.css({
 							left: lpx,

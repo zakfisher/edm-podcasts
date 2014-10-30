@@ -12,7 +12,7 @@
 			{
 				"name":"Amenities",
 				"class":"Amenities",
-				"zoomLevel":40,
+				"zoomLevel":100,
 				"colorFill":"#000",
 				"highLightColor":"",
 				"clickable":false
@@ -20,7 +20,7 @@
 			{
 				"name":"Units_2_",
 				"class":"Units",
-				"zoomLevel":50,
+				"zoomLevel":150,
 				"colorFill":"#fff",
 				"strokeColor":"#fff",
 				"strokeWidth":"1px",
@@ -51,9 +51,9 @@
 			}
 		],
 		"pathStyles":{
-			"pathType":"dots",
-			"spacing":10,
-			"pathWidth":10,
+			"pathType":"line",
+			"spacing":5,
+			"pathWidth":5,
 			"pathColor":"#f00",
 			"additionalCss":"/*border:1px solid #000;*/"
 		},
