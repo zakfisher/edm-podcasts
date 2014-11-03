@@ -3,7 +3,7 @@
 		"mapLayers":[
 			{
 				"name":"Anchor_x5F_Stores",
-				"class":"st3",
+				"class":"Anchor_Stores",
 				"zoomLevel":0,
 				"colorFill":"#b6b28c",
 				"highLightColor":"#fff",
@@ -21,18 +21,10 @@
 				"name":"Units_2_",
 				"class":"Units",
 				"zoomLevel":150,
-				"colorFill":"#fff",
-				"strokeColor":"#fff",
-				"strokeWidth":"1px",
-				"clickable":false
-			},
-			{
-				"name":"Blocks",
-				"class":"Blocks",
-				"zoomLevel":0,
 				"colorFill":"#dddabf",
-				"highLightColor":"#fff",
-				"clickable":true
+				"strokeColor":"#fff",
+				"strokeWidth":"2px",
+				"clickable":false
 			},
 			{
 				"name":"Floor",
@@ -43,6 +35,53 @@
 			},
 			{
 				"name":"Parking_x5F_Pavement",
+				"class":"st1",
+				"zoomLevel":0,
+				"colorFill":"#cccccc",
+				"highLightColor":"",
+				"clickable":false
+			},
+			{
+				"name":"Anchor_x5F_Stores_1_",
+				"class":"Anchor_Stores",
+				"zoomLevel":0,
+				"colorFill":"#b6b28c",
+				"highLightColor":"#fff",
+				"clickable":true
+			},
+			{
+				"name":"Amenities_1_",
+				"class":"Amenities",
+				"zoomLevel":100,
+				"colorFill":"#000",
+				"highLightColor":"",
+				"clickable":false
+			},
+			{
+				"name":"Units_1_",
+				"class":"Units",
+				"zoomLevel":0,
+				"colorFill":"#dddabf",
+				"strokeColor":"#fff",
+				"strokeWidth":"2px",
+				"clickable":false
+			},
+			{
+				"name":"Floor_1_",
+				"class":"Floor",
+				"zoomLevel":0,
+				"colorFill":"#2e4956",
+				"clickable":false
+			},
+			{
+				"name":"Holes",
+				"class":"Holes",
+				"zoomLevel":0,
+				"colorFill":"#5789a1",
+				"clickable":false
+			},
+			{
+				"name":"Parking_x5F_Pavement_1_",
 				"class":"st1",
 				"zoomLevel":0,
 				"colorFill":"#cccccc",

@@ -2373,7 +2373,8 @@ var __extends = this.__extends || function (d, b) {
 						//-----------------------
 		                for (var i = 0; i < _this.styles.mapStyles.mapLayers.length; i++) {
 		                	var currentStyle = _this.styles.mapStyles.mapLayers[i];
-		                	var $group = $('#svg-' + _this.id ).find("#" + currentStyle.name).find("*");
+		                	var $group = $('#svg-' + _this.id).find("#" + currentStyle.name).find("*");
+		                	// var $group = $('#svg-' + _this.id ).find("." + currentStyle.class);//.find("*");
 		                	currentStyle.group = $group;
 
 							console.log("Style Elements: ", currentStyle, $group.length);	                	
