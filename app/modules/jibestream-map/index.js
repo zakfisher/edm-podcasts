@@ -14,7 +14,7 @@ module.exports = angular.module('JibestreamMap', [])
   JMap.addListener(JMap.MODULE_READY, onMapCreated);
   // console.log("Second listener------");
   JMap.initMapsStandAlone("http://jibestream2.cloudapp.net:8082", {
-    deviceId: 21744,
+    deviceId: 126092,
     languageCode: "en"
   });
 

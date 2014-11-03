@@ -924,7 +924,7 @@ var JMap = {
     		var wp = JMap.storage.maps.model.getWPByJid(id);
     		// console.log(wp);
     		if(!wp){
-    			console.log("No waypoint assign to this id: " + id);
+    			//console.log("No waypoint assign to this id: " + id);
     			return;
     		}
     		return JMap.storage.maps.model.getFloorById(wp.mapid);
@@ -1079,6 +1079,29 @@ var JMap = {
     	for(var i = 0, len = source.length; i < len; i++){
 	   		if(key === source[i][identifier])return source[i];
 	   	}
+    },
+    getCorsOfUrl:function(urlToEncode, callback){
+    	console.log("Getting CORS for: "+ urlToEncode);
+    	if(urlToEncode.charAt(0) === "/"){
+    		urlToEncode = urlToEncode.substr(1, urlToEncode.length);
+    		console.log("New url ", urlToEncode);
+    	}
+		$.ajax({
+			type: 'GET',
+			// data: JSON.stringify(JMap.storage.device),
+			// headers: {
+	  //           'Accept': 'application/json',
+	  //           'Content-Type': 'application/json'
+	  //       },
+			url: JMap.serverUrl + '/rest/web/cors/get/'  + window.btoa(urlToEncode),
+			// dataType: 'json', contentType: 'application/json'
+		}).done(function(res){
+
+			// console.log("Got CORS ", res);
+			callback(res);
+		});
+
+
     },
     /**
      * Method used to track application life cycles and user interactions. Data is pushed to the Jibestream server.
@@ -1834,6 +1857,7 @@ var __extends = this.__extends || function (d, b) {
             var _this = this;
             this.defaultMap = 1;
             var counter = 0;
+           	// console.log("THIS IS LE DATER!", this.container, this.containerWidth, this.containerHeight, this.styles);
             // console.log('MAPSSS', maps)
             // for (var i = maps.length - 1, n = -1; i > n; i--) {
             JMap.addListener("floorLoaded", function(){
@@ -1855,7 +1879,9 @@ var __extends = this.__extends || function (d, b) {
                 this.view.appendChild(fl.view);
 
                 if(maps[i].svgMap) {
-                    fl.loadSVG(maps[i].svgMap);
+                	// JMap.getCorsOfUrl(maps[i].svgMap, $.proxy(fl.loadSVG, fl));
+                	fl.loadSVG(JMap.serverUrl + '/rest/web/cors/get/'  + window.btoa(maps[i].svgMap));
+                    // fl.loadSVG(maps[i].svgMap);
                 } 
 
                 if(maps[i].defaultMapForDevice === true){
@@ -1883,6 +1909,8 @@ var __extends = this.__extends || function (d, b) {
             JMap.getLabels($.proxy(this.onLabelsLoaded, this));
             this.hideShowLegend('hide');
         };
+
+
 
 
         Building.prototype.setDefaultLocation = function(){
@@ -2188,6 +2216,8 @@ var __extends = this.__extends || function (d, b) {
 
       var Floor = (function () {
         function Floor(id, container, width, height, style) {
+            console.log("FLOOR ---- >",id, container, width, height, style);
+
             that = this;
             this.id = id;
             this.container = container;
@@ -2316,16 +2346,17 @@ var __extends = this.__extends || function (d, b) {
         };
 
 
-        Floor.prototype.loadSVG = function (url) {
+        Floor.prototype.loadSVG = function (svgXml) {
         	// return;
             var _this = this;
-            var compsDir = "/components/jibestream-sdk/";
+            // var compsDir = "/components/jibestream-sdk/";
             var svg = '<div class="item mark svgLayer" id="svg-' + _this.id + '" data-position="0,0" data-show-at-zoom="0" data-allow-drag="false" data-allow-scale="true"></div>';
             var n;
             setTimeout(function(){
                 $(_this.mapView).smoothZoom("addLandmark", [svg]);
                 // $( '#svg-' + _this.id ).load(JMap.serverUrl + url, null, function(resp, status, xhr) {
-                $( '#svg-' + _this.id ).load(compsDir + url.substring(url.lastIndexOf("/"), url.length), null, function(resp, status, xhr) {
+                // $( '#svg-' + _this.id ).html(svgXml, function(resp, status, xhr) {
+                $( '#svg-' + _this.id ).load(svgXml, null, function(resp, status, xhr) {
                     // console.log("LOADED");
                     // var $body = $('#svg-' + _this.id ).find('*');
                     
@@ -2335,36 +2366,37 @@ var __extends = this.__extends || function (d, b) {
                     _this.addDragHandler(_this);
 
                     //parse SVG and apply custom Styling
-                    for (var i = 0; i < _this.styles.mapStyles.mapLayers.length; i++) {
-                    	var currentStyle = _this.styles.mapStyles.mapLayers[i];
-                    	var $group = $('#svg-' + _this.id ).find("#" + currentStyle.name).find("*");
-                    	currentStyle.group = $group;
+					setTimeout(function(){
+						_this.updateZoomLayers($(_this.mapView).smoothZoom('getZoomData'));
+						JMap.fire("floorLoaded");
 
-                    	// console.log("APPLYING STYLE TO ", currentStyle.name, currentStyle);
-                    	for(var j = 0; j < $group.length; j++){
-                    		var p = $group[j];
-                    		if(currentStyle.colorFill)$(p).css("fill", currentStyle.colorFill);
-                    		if(currentStyle.strokeColor)$(p).css("stroke", currentStyle.strokeColor);
-                    		if(currentStyle.strokeWidth)$(p).css("stroke-width", currentStyle.strokeWidth);
-                    	}
+						//-----------------------
+		                for (var i = 0; i < _this.styles.mapStyles.mapLayers.length; i++) {
+		                	var currentStyle = _this.styles.mapStyles.mapLayers[i];
+		                	var $group = $('#svg-' + _this.id ).find("#" + currentStyle.name).find("*");
+		                	currentStyle.group = $group;
 
-                    	_this.styles.mapStyles.mapLayers[i] = currentStyle;
+							console.log("Style Elements: ", currentStyle, $group.length);	                	
 
-                    };
+		                	// console.log("APPLYING STYLE TO ", currentStyle.name, currentStyle);
+		                	for(var j = 0; j < $group.length; j++){
+		                		var p = $group[j];
+		                		if(currentStyle.colorFill)$(p).css("fill", currentStyle.colorFill);
+		                		if(currentStyle.strokeColor)$(p).css("stroke", currentStyle.strokeColor);
+		                		if(currentStyle.strokeWidth)$(p).css("stroke-width", currentStyle.strokeWidth);
+		                	}
 
-					JMap.fire("floorLoaded");
+		                	_this.styles.mapStyles.mapLayers[i] = currentStyle;
+		                };
+						//-----------------------
+
+					}, 250);
                 
                 });
 				
 
-            },50);
+            },100);
 
-			setTimeout(function(){
-				//TODO - get zzom data and update Zoom layers
-				console.log("-------------->>>>>>>>", $(_this.mapView).smoothZoom("getZoomData"));
-				console.log("-------------->>>>>>>>", _this.getZoomData());
-				_this.updateZoomLayers($(_this.mapView).smoothZoom('getZoomData'));
-			}, 200);
 
         };
 
@@ -2374,15 +2406,19 @@ var __extends = this.__extends || function (d, b) {
         	for(var i = 0; i < destinations.length; i++){
         		var wp = JMap.storage.maps.model.getWPByJid(destinations[i].clientId);
         		var zl;
+        		var cl;
         		switch(destinations[i].sponsoredRating){
         			case 0:
         				zl = "100";
+        				cl = "regular-store-label";
         				break;
         			case 25:
         				zl = "80";
+        				cl = "hightraffic-store-label";
         				break;
         			case 50:
         				zl = "20";
+        				cl = "anchor-store-label";
         				break;
         			case 75:
         				zl = "0";
@@ -2398,7 +2434,8 @@ var __extends = this.__extends || function (d, b) {
                 	x:wp.x,
                 	y:wp.y,
                 	label:destinations[i].name,
-                	zl:zl
+                	zl:zl,
+                	iconClassName:cl
                 }));
             }
             $(this.mapView).smoothZoom("addLandmark", this.legendsObj.labelselementsArray);
@@ -2445,18 +2482,13 @@ var __extends = this.__extends || function (d, b) {
                 touch_DRAG:true,
                 mouse_DOUBLE_CLICK: true,
                 on_ZOOM_PAN_UPDATE: function(zoomData, zoomComplete){
-                    // //console.log(zoomData);
                     _this.currentScale = zoomData.ratio;
                     _this.zoomData= zoomData;
                     _this.isAnimating = zoomComplete;
                     if(zoomData.scaledWidth <= w){
                         _this.ableToSwitch = true;
-                        // //console.log("ready to transition");
-                        // $(_this).trigger("ReadyToSwitch");
                     }else{
-                        // if(_this.ableToSwitch === true)$(_this).trigger("CannotSwitch");
                         _this.ableToSwitch = false;
-                        // //console.log("cannot transition");
                     }
                 },
                 on_ZOOM_PAN_COMPLETE: $.proxy(_this.updateZoomLayers, _this),
@@ -2473,6 +2505,7 @@ var __extends = this.__extends || function (d, b) {
         
         Floor.prototype.updateZoomLayers = function(zoomData){
             //TODO - Zoom Layers
+            console.log(zoomData);
             var currentScale = zoomData.ratio *100;
             for (var i = 0; i < this.styles.mapStyles.mapLayers.length; i++) {
             	var zoomAlpha = 1;
@@ -3258,7 +3291,7 @@ var __extends = this.__extends || function (d, b) {
         
         Floor.prototype.createLegendLabel = function(legendItemData){
             // console.log("LEGEND ITEM DATA", legendItemData)
-            var cont = "<div id='" + legendItemData.id.toString() + legendItemData.x.toString() + legendItemData.y.toString() + "' name='" + legendItemData.id.toString() + "' class='item mark legends labelsOn-" + that.id + "' data-show-at-zoom='" + legendItemData.zl + "' data-allow-scale='true' data-position='"+  ((legendItemData.x) * this.scaleOffset) + "," + ((legendItemData.y) * this.scaleOffset) + "'>";
+            var cont = "<div id='" + legendItemData.id.toString() + legendItemData.x.toString() + legendItemData.y.toString() + "' name='" + legendItemData.id.toString() + "' class='item mark legends labelsOn-" + that.id + " "+ legendItemData.iconClassName + "' data-show-at-zoom='" + legendItemData.zl + "' data-allow-scale='true' data-position='"+  ((legendItemData.x) * this.scaleOffset) + "," + ((legendItemData.y) * this.scaleOffset) + "'>";
             cont += "<div>" + legendItemData.label + "</div></div>";// width='100' height='100'
             return cont;
         };
@@ -4089,6 +4122,14 @@ else
 		max_WIDTH: '',								//Maximum allowed width of view area (helpful when 'width' parameter set with % and need limit)
 		max_HEIGHT: ''								//Maximum allowed height of view area (helpful when 'height' parameter set with % and need limit)
 	};
+
+	var props = $.event.props || [];
+    props.push("touches");
+    props.push("scale");
+    props.push("rotation");
+    $.event.props = props;
+
+
 
 	function Zoomer($elem, params) {
 		
@@ -5271,6 +5312,9 @@ else
 		/*Image Events for Dragging and Mouse Wheel
 		***********************************************************************************************************************/
 		mouseDown: function (e) {
+
+			console.log("MouseDown EVENT -- >", e);
+
 			var self = e.data.self,	
 			te = e.originalEvent,
 			touches, fingers, pointerMouse;	

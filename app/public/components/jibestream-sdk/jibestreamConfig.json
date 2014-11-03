@@ -54,7 +54,7 @@
 			"pathType":"line",
 			"spacing":5,
 			"pathWidth":5,
-			"pathColor":"#f00",
+			"pathColor":"#0f0",
 			"additionalCss":"/*border:1px solid #000;*/"
 		},
 		"iconStyles":{
