@@ -11,10 +11,10 @@ module.exports = angular.module('JibestreamMap', [])
 
   JMap.addListener("StandAloneMapsReady", onJmapReady);
   // console.log("Can use jquery");
-  JMap.addListener(JMap.MODULE_READY, onMapCreated);
+  JMap.addListener(JMap.MAPS_LOADED, onMapCreated);
   // console.log("Second listener------");
   JMap.initMapsStandAlone("http://jibestream2.cloudapp.net:8082", {
-    deviceId: 21744,
+    deviceId: 126092,
     languageCode: "en"
   });
 

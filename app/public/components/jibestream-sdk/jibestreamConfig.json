@@ -3,7 +3,7 @@
 		"mapLayers":[
 			{
 				"name":"Anchor_x5F_Stores",
-				"class":"st3",
+				"class":"Anchor_Stores",
 				"zoomLevel":0,
 				"colorFill":"#b6b28c",
 				"highLightColor":"#fff",
@@ -12,7 +12,7 @@
 			{
 				"name":"Amenities",
 				"class":"Amenities",
-				"zoomLevel":40,
+				"zoomLevel":100,
 				"colorFill":"#000",
 				"highLightColor":"",
 				"clickable":false
@@ -20,19 +20,11 @@
 			{
 				"name":"Units_2_",
 				"class":"Units",
-				"zoomLevel":50,
-				"colorFill":"#fff",
-				"strokeColor":"#fff",
-				"strokeWidth":"1px",
-				"clickable":false
-			},
-			{
-				"name":"Blocks",
-				"class":"Blocks",
 				"zoomLevel":0,
 				"colorFill":"#dddabf",
-				"highLightColor":"#fff",
-				"clickable":true
+				"strokeColor":"#fff",
+				"strokeWidth":"2px",
+				"clickable":false
 			},
 			{
 				"name":"Floor",
@@ -48,13 +40,60 @@
 				"colorFill":"#cccccc",
 				"highLightColor":"",
 				"clickable":false
+			},
+			{
+				"name":"Anchor_x5F_Stores_1_",
+				"class":"Anchor_Stores",
+				"zoomLevel":0,
+				"colorFill":"#b6b28c",
+				"highLightColor":"#fff",
+				"clickable":true
+			},
+			{
+				"name":"Amenities_1_",
+				"class":"Amenities",
+				"zoomLevel":100,
+				"colorFill":"#000",
+				"highLightColor":"",
+				"clickable":false
+			},
+			{
+				"name":"Units_1_",
+				"class":"Units",
+				"zoomLevel":0,
+				"colorFill":"#dddabf",
+				"strokeColor":"#fff",
+				"strokeWidth":"2px",
+				"clickable":false
+			},
+			{
+				"name":"Floor_1_",
+				"class":"Floor",
+				"zoomLevel":0,
+				"colorFill":"#2e4956",
+				"clickable":false
+			},
+			{
+				"name":"Holes",
+				"class":"Holes",
+				"zoomLevel":0,
+				"colorFill":"#5789a1",
+				"clickable":false
+			},
+			{
+				"name":"Parking_x5F_Pavement_1_",
+				"class":"st1",
+				"zoomLevel":0,
+				"colorFill":"#cccccc",
+				"highLightColor":"",
+				"clickable":false
 			}
 		],
 		"pathStyles":{
 			"pathType":"line",
-			"spacing":20,
-			"pathWidth":10,
-			"pathColor":"#00f",
+			"spacing":5,
+			"pathWidth":5,
+			"pathColor":"#0f0",
 			"additionalCss":"/*border:1px solid #000;*/"
 		},
 		"iconStyles":{
@@ -78,9 +117,11 @@
 			}
 		},
 		"labelStyle":{
-			"font-size":"20px",
-			"color":"#333",
-			"maxWidth":"125px"
+			"all":{			
+				"font-size":"20px",
+				"color":"#333",
+				"maxWidth":"125px"
+			}
 		}
 	}
 }
