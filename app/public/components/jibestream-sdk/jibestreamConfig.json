@@ -20,7 +20,7 @@
 			{
 				"name":"Units_2_",
 				"class":"Units",
-				"zoomLevel":150,
+				"zoomLevel":0,
 				"colorFill":"#dddabf",
 				"strokeColor":"#fff",
 				"strokeWidth":"2px",
@@ -117,9 +117,11 @@
 			}
 		},
 		"labelStyle":{
-			"font-size":"20px",
-			"color":"#333",
-			"maxWidth":"125px"
+			"all":{			
+				"font-size":"20px",
+				"color":"#333",
+				"maxWidth":"125px"
+			}
 		}
 	}
 }
