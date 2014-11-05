@@ -24,6 +24,16 @@
 				"colorFill":"#dddabf",
 				"strokeColor":"#fff",
 				"strokeWidth":"2px",
+				"clickable":true
+			},
+
+			{
+				"name":"Kiosks",
+				"class":"Kiosks",
+				"zoomLevel":50,
+				"colorFill":"#dddabf",
+				"strokeColor":"#fff",
+				"strokeWidth":"2px",
 				"clickable":false
 			},
 			{
@@ -64,7 +74,7 @@
 				"colorFill":"#dddabf",
 				"strokeColor":"#fff",
 				"strokeWidth":"2px",
-				"clickable":false
+				"clickable":true
 			},
 			{
 				"name":"Floor_1_",
@@ -98,29 +108,40 @@
 		},
 		"iconStyles":{
 			"youarehere":{
-				"url":"/components/jibestream-sdk/images/youarehere.png",
-				"width":"83px",
-				"height":"100px",
+				"url":"/components/jibestream-sdk/images/BlueDot.png",
+				"width":"34px",
+				"height":"34px",
+				"heading":90,
 				"offset":{
-					"x":"41px",
-					"y":"100px"
+					"x":"17px",
+					"y":"17px"
 				}
 			},
 			"destination":{
-				"url":"/components/jibestream-sdk/images/pin.png",
-				"width":"100px",
-				"height":"131px",
+				"url":"/components/jibestream-sdk/images/destination.png",
+				"width":"41px",
+				"height":"50px",
 				"offset":{
-					"x":"50px",
-					"y":"131px"
+					"x":"20px",
+					"y":"50px"
 				}
 			}
 		},
 		"labelStyle":{
-			"all":{			
-				"font-size":"20px",
+			"all":{
+				"font-size":"12px",
 				"color":"#333",
-				"maxWidth":"125px"
+				"max-width":"125px"
+			},
+			"hightraffic-store-label":{
+				"font-size":"25px",
+				"color":"#333",
+				"max-width":"125px"
+			},
+			"anchor-store-label":{
+				"font-size":"27px",
+				"color":"#C62126",
+				"max-width":"125px"
 			}
 		}
 	}
