@@ -1395,8 +1395,8 @@ var __extends = this.__extends || function (d, b) {
             //Use local config
             var iconStyles = this.styles.mapStyles.iconStyles;
             // console.log(iconStyles);
-            if(iconStyles.youarehere)this.yahImage = iconStyles.youarehere.url; 
-            if(iconStyles.destination)this.destinationImage = iconStyles.destination.url; 
+            if(iconStyles.youarehere)this.yahImage = iconStyles.youarehere;
+            if(iconStyles.destination)this.destinationImage = {url:iconStyles.destination.url, heading:0};
 
 
         };
@@ -1410,7 +1410,7 @@ var __extends = this.__extends || function (d, b) {
 			if(!this.destYah || this.yahImage === undefined) return;
             this.yahIsSet = true;
             var fl = this.floors[this.destYah.mapid];
-            fl.putYahByCoor(this.destYah.x, this.destYah.y, this.yahImage);
+            fl.putYahByCoor(this.destYah.x, this.destYah.y, this.yahImage.url, this.yahImage.heading);
         };
 
 
@@ -2497,11 +2497,11 @@ var __extends = this.__extends || function (d, b) {
             var _this = this;
             if(init === true){
                 $(this.mapView).on("updateYah", function(){
-                    if(_this.yahCoord){
-                        _this.yah = "<div id='yah' class='item mark yahpoint' data-show-at-zoom='0' data-position='" + _this.yahCoord.x + "," + _this.yahCoord.y + "' data-allow-drag='true' data-allow-scale='false'><img src='" + (/*JMap.serverUrl +*/ _this.yahCoord.url) + "' /></div>";
-                        //console.log(_this.yah);
-                        $(_this.mapView).smoothZoom("addLandmark", [_this.yah]);
-                    }
+                    // if(_this.yahCoord){
+                    //     _this.yah = "<div id='yah' class='item mark yahpoint' data-show-at-zoom='0' data-position='" + _this.yahCoord.x + "," + _this.yahCoord.y + "' data-allow-drag='true' data-rotate='" + + "' data-allow-scale='false'><img src='" + (/*JMap.serverUrl +*/ _this.yahCoord.url) + "' /></div>";
+                    //     //console.log(_this.yah);
+                    //     $(_this.mapView).smoothZoom("addLandmark", [_this.yah]);
+                    // }
                 });
             }
             var w = $(window).width();
@@ -2541,7 +2541,8 @@ var __extends = this.__extends || function (d, b) {
                 },
                 on_ZOOM_PAN_COMPLETE: $.proxy(_this.updateZoomLayers, _this),
                 on_IMAGE_LOAD:function(){
-                    $(_this.mapView).trigger("updateYah");
+                    //$(_this.mapView).trigger("updateYah");
+                    JMap.storage.maps.building.setNewYah("Defualt");
                 }
             });
         };
@@ -3169,9 +3170,9 @@ var __extends = this.__extends || function (d, b) {
             $(this.mapView).smoothZoom("addLandmark", [b]);
         };
 
-        Floor.prototype.putYahByCoor = function (x, y, url) {
+        Floor.prototype.putYahByCoor = function (x, y, url, heading) {
             this.yahCoord = {x:x*this.scaleOffset, y:y*this.scaleOffset, url:url};
-            this.yah = "<div id='yah' class='item mark yahpoint' data-show-at-zoom='0' data-position='" + this.yahCoord.x + "," + this.yahCoord.y + "' data-allow-drag='true' data-allow-scale='false'><img src='" + (this.yahCoord.url) + "' /></div>";
+            this.yah = "<div id='yah' class='item mark yahpoint' data-show-at-zoom='0' data-position='" + this.yahCoord.x + "," + this.yahCoord.y + "' data-allow-drag='true' data-rotation='" + heading + "' data-allow-scale='false'><img src='" + (this.yahCoord.url) + "' /></div>";
             //console.log(_this.yah);
             $(this.mapView).smoothZoom("addLandmark", [this.yah]);
         };
