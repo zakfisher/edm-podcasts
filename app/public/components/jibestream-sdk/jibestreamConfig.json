@@ -117,10 +117,21 @@
 			}
 		},
 		"labelStyle":{
-			"all":{			
+			"all":{
 				"font-size":"20px",
 				"color":"#333",
-				"maxWidth":"125px"
+				"max-width":"125px"
+			},
+			"hightraffic-store-label":{
+				"font-size":"25px",
+				"color":"#333",
+				"max-width":"125px"
+			},
+			"anchor-store-label":{
+				"font-size":"30px",
+				"color":"#333",
+				"max-width":"125px",
+				"font-weight":"bold"
 			}
 		}
 	}
