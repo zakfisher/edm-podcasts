@@ -943,6 +943,14 @@ var JMap = {
     		if(f)return f;
     	}
     },
+    getFloorDataBySequence:function(seq){//by sequence
+    	if(!JMap.storage.maps || !JMap.storage.maps.model){
+    		console.error("There is not model or building data");
+    	}else{
+    		console.log("Checking Sequence", seq);
+    		return JMap.storage.maps.model.getFloorBySequence(seq);
+    	}
+    },
     /**
      * Retrieves the details specific to the requesting device. This is pulled and stored automatically if using the JMap Modular approach
      *
@@ -1334,11 +1342,6 @@ var __extends = this.__extends || function (d, b) {
         		        this.stepOffsetValue = pathStyle.pathWidth;
 						break;
 				}
-        	
-        	
-
-
-
         		if(pathStyle.additionalCss)st += ".step.item.mark{" + pathStyle.additionalCss + "}";
         	}else{
         		st += ".map-floor-container-base .landmarks .step.item img{top:-5px!important;left:-5px!important}.step.item.mark{background:#f00;width:10px;height:10px;border-radius:10px}";
@@ -1378,10 +1381,6 @@ var __extends = this.__extends || function (d, b) {
 
             this.onBuildingData();
         };
-
-        // Building.prototype.parseStyles = function(){
-        // 	console.log(this.styles);
-        // };
 
         Building.prototype.onLabelsLoaded = function(labels) {
             // console.log("Lables", labels);
@@ -1617,12 +1616,27 @@ var __extends = this.__extends || function (d, b) {
             this.clearYah();
             this.destYah = (typeof start === "string")?JMap.storage.maps.model.getYah():JMap.storage.maps.model.getWPByJid(start.clientId);
             this.setYah();
-            $(this.floors[this.destYah.mapid].mapView).trigger("updateYah");
+            // $(this.floors[this.destYah.mapid].mapView).trigger("updateYah");
 
             //If start is on a seperate floor:
             var wp = JMap.storage.maps.model.getWPByJid(start.clientId);
             if(wp)this.switchFloor(wp.mapid);
 
+        };
+
+
+        Building.prototype.updateCurrentLocation = function(x, y, heading, floorSeq){
+            this.clearYah();
+            //get closest wp to location.
+            var mapId = JMap.getFloorDataBySequence(floorSeq).mapId;
+
+           	var fl = this.floors[mapId];
+
+           	var newPoint = fl.getWayPointNearCoor(x,y,50)[0];
+            this.destYah = newPoint?newPoint:this.destYah;
+            this.setYah();
+
+            if(newPoint)this.switchFloor(mapId);
         };
 
         Building.prototype.setNewEndPoint = function(end){
@@ -1872,7 +1886,15 @@ var __extends = this.__extends || function (d, b) {
             	if(this.mapsData.length >= this.mapsCounter){
             		// JMap.fire(JMap.MODULE_READY);
             		JMap.fire(JMap.MAPS_LOADED);
+            		var _this = this;
+
+            		// var rotation = 0;
+            		// $("#svg-" + this.currentFloor.id).on("click", function(e){
+            		// 	console.log("Clickity click click >>--->", e);
+            		// 	_this.updateCurrentLocation(e.pageX, e.pageY, rotation += 45, _this.currentFloor.sequence);
+            		// });
             	}
+
         };
 
         Building.prototype.onBuildingData = function () {
@@ -2616,6 +2638,25 @@ var __extends = this.__extends || function (d, b) {
 
         Floor.prototype.getDestinationsNearCoor = function(pX, pY, tol) {
             var tolerance = parseInt(tol) || 20;
+            var map = $(this.mapView)
+            var matrix = map.css('-webkit-transform');
+            var mapOffset = map.offset();
+            matrix = matrix.split(',');
+            matrix = matrix[0].split('(');
+            matrix = Number(matrix[1]);
+            //currently the X is working but the Y needs some work
+            pY = pY - mapOffset.top;
+            pX = pX - mapOffset.left;
+            valX = pX / matrix;
+            valY = pY / matrix;
+
+            var nearPoints = this.mapObjData.getPointsInBounds((valX - tolerance), (valY - tolerance), (valX + tolerance), (valY + tolerance), valX, valY);
+            return nearPoints;
+        };
+
+
+        Floor.prototype.getWayPointNearCoor = function(pX, pY, tol) {
+            var tolerance = parseInt(tol) || 50;
             var map = $(this.mapView)
             var matrix = map.css('-webkit-transform');
             var mapOffset = map.offset();
@@ -3706,6 +3747,15 @@ var BuildingModelGrid = (function () {
         BuildingModelGrid.prototype.getFloorById = function (num) {
             for (var i = 0, n = this.arFloors.length; i < n; i++) {
                 if (this.arFloors[i].mapId == num)
+                    return this.arFloors[i];
+            }
+            return null;
+        };
+
+        BuildingModelGrid.prototype.getFloorBySequence = function (seq) {
+            for (var i = 0, n = this.arFloors.length; i < n; i++) {
+            	console.log(this.arFloors[i]);
+                if (this.arFloors[i].floorSequence == seq)
                     return this.arFloors[i];
             }
             return null;
