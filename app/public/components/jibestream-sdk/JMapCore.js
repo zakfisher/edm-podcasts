@@ -943,6 +943,14 @@ var JMap = {
     		if(f)return f;
     	}
     },
+    getFloorDataBySequence:function(seq){//by sequence
+    	if(!JMap.storage.maps || !JMap.storage.maps.model){
+    		console.error("There is not model or building data");
+    	}else{
+    		console.log("Checking Sequence", seq);
+    		return JMap.storage.maps.model.getFloorBySequence(seq);
+    	}
+    },
     /**
      * Retrieves the details specific to the requesting device. This is pulled and stored automatically if using the JMap Modular approach
      *
@@ -1285,7 +1293,7 @@ var __extends = this.__extends || function (d, b) {
 
         Building.prototype.addExtraStyles = function(){
         	var iconStyles = this.styles.mapStyles.iconStyles;
-        	var labelStyle = this.styles.mapStyles.labelStyle;
+        	var labelStyle = this.styles.mapStyles.labelStyle.all;
         	var pathStyle = this.styles.mapStyles.pathStyles;
         	// console.log(labelStyle);
 
@@ -1293,8 +1301,17 @@ var __extends = this.__extends || function (d, b) {
 
 	        	var addedStyles = "<style>";
 	        	addedStyles += ".point{width:15px;height:15px;position:absolute}#map-mainview{position:absolute;width:100%;height:100%}.map-floor{position:absolute;height:100%;width:100%}.map-floor-base.inactive{pointer-events:none}.map-floor-base{position:absolute;transform-origin:0 0 0;-webit-perspective:1000px;display:block;left:0;top:0}.map-floor-container-base,.map-floor-legendsview-base,.map-floor-legendsview-base img{position:absolute}.map-floor-legendsview-base img.yahPoint{position:absolute;-webkit-transform-origin:50% 0;transform-origin:50% 0}.legendItem{background-size:100%;display:none}.legendItemActive{background:rgba(0,0,0,.2);border:4px solid #fff;border-radius:100px;display:block!important}.bubbleText{text-align:center;position:absolute;color:#fff;font-size:25px;width:250px;height:60px;line-height:30px;display:inline-block;vertical-align:middle}#bubbleLeft>img{pointer-events:none}.pathView{position:absolute;z-index:10;pointer-events:none}.pathView img{position:absolute}.legendLabelItem{position:absolute;font-size:12px;white-space:nowrap}.legendsLabelsView{position:absolute}.map-floor-container-base .landmarks{position:absolute;z-index:10;font-family:Helvetica,Arial,Verdana;font-size:12px;color:#fff;transform-origin:0 0 0}.map-floor-container-base .landmarks .item{position:absolute;text-align:center;display:none;padding:0;margin:0}.map-floor-container-base .landmarks .item.legends img{position:absolute;top:-15px!important;left:-15px!important;width:30px!important;height:30px!important}.map-floor-container-base .landmarks .lable div{position:absolute;font-size:20px;width:auto;text-align:center;background:none!important;color:#ccc}.map-floor-container-base .landmarks .mark .text{background-color:#000}.map-floor-container-base .landmarks #bubbleLeft.item,.map-floor-container-base .landmarks #yah.item,.map-floor-container-base .landmarks .item.mover{z-index:3!important}.map-floor-container-base .landmarks .item.mover img{position:absolute;top:-25px!important;left:-25px!important;padding:2px;border:1px solid #fff;border-radius:12px;background-color:#E32723;width:50px;height:50px}";
-	        	if(labelStyle) addedStyles += ".map-floor-container-base .landmarks .item>div{font-size:" + labelStyle.fontSize + ";color:" + labelStyle.color + ";width:" + labelStyle.maxWidth + " }";
-	        	else addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img,.map-floor-container-base .landmarks .item>div{font-size:14px;color:#fff;}";
+	        	
+	        	if(labelStyle){
+	        		addedStyles += ".map-floor-container-base .landmarks .item>div{"
+	        		for(var str in labelStyle){
+	        			console.log("----------------------------");
+	        			console.log(str, labelStyle[str]);
+	            	    addedStyles += str + ":" + labelStyle[str] + ";";
+	            	}
+		        	addedStyles += "}";
+	        	}else addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img,.map-floor-container-base .landmarks .item>div{font-size:14px;color:#fff;}";
+	        	
 	        	// addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img{left:-40px!important}";
 	        	addedStyles += ".map-floor-container-base .landmarks .item.legends{z-index:4!important}";
 
@@ -1325,11 +1342,6 @@ var __extends = this.__extends || function (d, b) {
         		        this.stepOffsetValue = pathStyle.pathWidth;
 						break;
 				}
-        	
-        	
-
-
-
         		if(pathStyle.additionalCss)st += ".step.item.mark{" + pathStyle.additionalCss + "}";
         	}else{
         		st += ".map-floor-container-base .landmarks .step.item img{top:-5px!important;left:-5px!important}.step.item.mark{background:#f00;width:10px;height:10px;border-radius:10px}";
@@ -1370,10 +1382,6 @@ var __extends = this.__extends || function (d, b) {
             this.onBuildingData();
         };
 
-        // Building.prototype.parseStyles = function(){
-        // 	console.log(this.styles);
-        // };
-
         Building.prototype.onLabelsLoaded = function(labels) {
             // console.log("Lables", labels);
             for(var i = 0; i < labels.length; i++) {
@@ -1386,8 +1394,8 @@ var __extends = this.__extends || function (d, b) {
             //Use local config
             var iconStyles = this.styles.mapStyles.iconStyles;
             // console.log(iconStyles);
-            if(iconStyles.youarehere)this.yahImage = iconStyles.youarehere.url; 
-            if(iconStyles.destination)this.destinationImage = iconStyles.destination.url; 
+            if(iconStyles.youarehere)this.yahImage = iconStyles.youarehere;
+            if(iconStyles.destination)this.destinationImage = {url:iconStyles.destination.url, heading:0};
 
 
         };
@@ -1401,7 +1409,7 @@ var __extends = this.__extends || function (d, b) {
 			if(!this.destYah || this.yahImage === undefined) return;
             this.yahIsSet = true;
             var fl = this.floors[this.destYah.mapid];
-            fl.putYahByCoor(this.destYah.x, this.destYah.y, this.yahImage);
+            fl.putYahByCoor(this.destYah.x, this.destYah.y, this.yahImage.url, this.yahImage.heading);
         };
 
 
@@ -1608,12 +1616,27 @@ var __extends = this.__extends || function (d, b) {
             this.clearYah();
             this.destYah = (typeof start === "string")?JMap.storage.maps.model.getYah():JMap.storage.maps.model.getWPByJid(start.clientId);
             this.setYah();
-            $(this.floors[this.destYah.mapid].mapView).trigger("updateYah");
+            // $(this.floors[this.destYah.mapid].mapView).trigger("updateYah");
 
             //If start is on a seperate floor:
             var wp = JMap.storage.maps.model.getWPByJid(start.clientId);
             if(wp)this.switchFloor(wp.mapid);
 
+        };
+
+
+        Building.prototype.updateCurrentLocation = function(x, y, heading, floorSeq){
+            this.clearYah();
+            //get closest wp to location.
+            var mapId = JMap.getFloorDataBySequence(floorSeq).mapId;
+
+           	var fl = this.floors[mapId];
+
+           	var newPoint = fl.getWayPointNearCoor(x,y,50)[0];
+            this.destYah = newPoint?newPoint:this.destYah;
+            this.setYah();
+
+            if(newPoint)this.switchFloor(mapId);
         };
 
         Building.prototype.setNewEndPoint = function(end){
@@ -1863,7 +1886,15 @@ var __extends = this.__extends || function (d, b) {
             	if(this.mapsData.length >= this.mapsCounter){
             		// JMap.fire(JMap.MODULE_READY);
             		JMap.fire(JMap.MAPS_LOADED);
+            		var _this = this;
+
+            		// var rotation = 0;
+            		// $("#svg-" + this.currentFloor.id).on("click", function(e){
+            		// 	console.log("Clickity click click >>--->", e);
+            		// 	_this.updateCurrentLocation(e.pageX, e.pageY, rotation += 45, _this.currentFloor.sequence);
+            		// });
             	}
+
         };
 
         Building.prototype.onBuildingData = function () {
@@ -2377,12 +2408,13 @@ var __extends = this.__extends || function (d, b) {
             }, this), $.proxy(this.setSVG, this), 500);
         };
 
+
+
         Floor.prototype.setSVG = function(){
         	var _this = this;
             var svg = '<div class="item mark svgLayer" id="svg-' + _this.id + '" data-position="0,0" data-show-at-zoom="0" data-allow-drag="false" data-allow-scale="true"></div>';
             $(this.mapView).smoothZoom("addLandmark", [svg]);
             setTimeout(function(){
-            	// console.log("LOAD FUNCTION", $('#svg-' + this.id));
                 $( '#svg-' + _this.id ).html(_this.svgXml);
 				setTimeout(function(){
                     console.log("LOADED");
@@ -2450,6 +2482,8 @@ var __extends = this.__extends || function (d, b) {
         				break;
         		}
 
+        		cl += " store-labels";
+
 	        	this.legendsObj.labelsids.push(destinations[i].id.toString());
                 this.legendsObj.labelselementsArray.push(this.createLegendLabel({
                 	id:destinations[i].id.toString(),
@@ -2461,6 +2495,20 @@ var __extends = this.__extends || function (d, b) {
                 }));
             }
             $(this.mapView).smoothZoom("addLandmark", this.legendsObj.labelselementsArray);
+
+            var labelStyles = this.styles.mapStyles.labelStyle;
+
+            function applyStyleTo(styles, selector){
+            	// setTimeout(function(){
+	            	for(var str in styles){	
+	            	    $(selector).css(str, styles[str]);
+	            	}
+            	// }, 10000);
+            }
+
+           	applyStyleTo(labelStyles["hightraffic-store-label"], ".map-floor-container-base .landmarks .item.hightraffic-store-label.store-labels>div");           	
+           	applyStyleTo(labelStyles["anchor-store-label"], ".map-floor-container-base .landmarks .item.anchor-store-label.store-labels>div");
+
         };
 
 
@@ -2471,11 +2519,11 @@ var __extends = this.__extends || function (d, b) {
             var _this = this;
             if(init === true){
                 $(this.mapView).on("updateYah", function(){
-                    if(_this.yahCoord){
-                        _this.yah = "<div id='yah' class='item mark yahpoint' data-show-at-zoom='0' data-position='" + _this.yahCoord.x + "," + _this.yahCoord.y + "' data-allow-drag='true' data-allow-scale='false'><img src='" + (/*JMap.serverUrl +*/ _this.yahCoord.url) + "' /></div>";
-                        //console.log(_this.yah);
-                        $(_this.mapView).smoothZoom("addLandmark", [_this.yah]);
-                    }
+                    // if(_this.yahCoord){
+                    //     _this.yah = "<div id='yah' class='item mark yahpoint' data-show-at-zoom='0' data-position='" + _this.yahCoord.x + "," + _this.yahCoord.y + "' data-allow-drag='true' data-rotate='" + + "' data-allow-scale='false'><img src='" + (/*JMap.serverUrl +*/ _this.yahCoord.url) + "' /></div>";
+                    //     //console.log(_this.yah);
+                    //     $(_this.mapView).smoothZoom("addLandmark", [_this.yah]);
+                    // }
                 });
             }
             var w = $(window).width();
@@ -2515,7 +2563,8 @@ var __extends = this.__extends || function (d, b) {
                 },
                 on_ZOOM_PAN_COMPLETE: $.proxy(_this.updateZoomLayers, _this),
                 on_IMAGE_LOAD:function(){
-                    $(_this.mapView).trigger("updateYah");
+                    //$(_this.mapView).trigger("updateYah");
+                    JMap.storage.maps.building.setNewYah("Defualt");
                 }
             });
         };
@@ -2570,10 +2619,7 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Floor.prototype.clearPath = function(){
-            //while(this.pathView.childNodes.length > 0)this.pathView.removeChild(this.pathView.childNodes[0]);
             this.pathView.push("bubbleLeft");
-            // this.pathView.push("yah");
-            //console.log("Removing path", this.pathView);
             $(this.mapView).smoothZoom("removeLandmark", this.pathView);
             this.pathView = [];
             while(this.stepTimeouts.length > 0)clearTimeout(this.stepTimeouts.pop());
@@ -2581,12 +2627,9 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Floor.prototype.resetFloor = function(){
-            //console.log("ResetingFloor", this.id);
             $(JMap.storage.thisMap).smoothZoom('Reset');
             this.clearPath();
             this.hasPath = false;
-            // this.rebuildLegend(this.hasPath);
-            // this.rebuildLables(this.hasPath);
         };
 
         /******************************************************************/
@@ -2598,40 +2641,39 @@ var __extends = this.__extends || function (d, b) {
             var map = $(this.mapView)
             var matrix = map.css('-webkit-transform');
             var mapOffset = map.offset();
-            // matrix = matrix.split('(')[0];
-            // matrix = matrix.split(')')[1];
             matrix = matrix.split(',');
             matrix = matrix[0].split('(');
             matrix = Number(matrix[1]);
-            // console.log("Tol", tolerance);
-            // console.log("x", pX);
-            // console.log("y", pY);
-
-            // valX = (map.width() / (map.width() * matrix[1])) * pX;
-            // valY = (map.height() / (map.height() * matrix[1])) * pY;
-
-            // carrefor on GF is 
-            // x:920
-            // y:175
-
             //currently the X is working but the Y needs some work
             pY = pY - mapOffset.top;
             pX = pX - mapOffset.left;
             valX = pX / matrix;
             valY = pY / matrix;
 
+            var nearPoints = this.mapObjData.getPointsInBounds((valX - tolerance), (valY - tolerance), (valX + tolerance), (valY + tolerance), valX, valY);
+            return nearPoints;
+        };
 
-            // console.log('Matrix', valY, valX, 'MAP OFFSET X', mapOffset.left );
 
+        Floor.prototype.getWayPointNearCoor = function(pX, pY, tol) {
+            var tolerance = parseInt(tol) || 50;
+            var map = $(this.mapView)
+            var matrix = map.css('-webkit-transform');
+            var mapOffset = map.offset();
+            matrix = matrix.split(',');
+            matrix = matrix[0].split('(');
+            matrix = Number(matrix[1]);
+            //currently the X is working but the Y needs some work
+            pY = pY - mapOffset.top;
+            pX = pX - mapOffset.left;
+            valX = pX / matrix;
+            valY = pY / matrix;
 
             var nearPoints = this.mapObjData.getPointsInBounds((valX - tolerance), (valY - tolerance), (valX + tolerance), (valY + tolerance), valX, valY);
-
-            // console.log(nearPoints)
             return nearPoints;
         };
 
         Floor.prototype.getDestinationInBox = function(x, y, width, height) {
-            // console.log(x, y, width, height);
             var blur = 10;
             var nearPoints = this.mapObjData.getPointsInBounds((x-blur), (y-blur), (x + width + blur),  (y + height + blur), (x + (width / 2)), (y + (height / 2)));
             return nearPoints;
@@ -3169,9 +3211,9 @@ var __extends = this.__extends || function (d, b) {
             $(this.mapView).smoothZoom("addLandmark", [b]);
         };
 
-        Floor.prototype.putYahByCoor = function (x, y, url) {
+        Floor.prototype.putYahByCoor = function (x, y, url, heading) {
             this.yahCoord = {x:x*this.scaleOffset, y:y*this.scaleOffset, url:url};
-            this.yah = "<div id='yah' class='item mark yahpoint' data-show-at-zoom='0' data-position='" + this.yahCoord.x + "," + this.yahCoord.y + "' data-allow-drag='true' data-allow-scale='false'><img src='" + (this.yahCoord.url) + "' /></div>";
+            this.yah = "<div id='yah' class='item mark yahpoint' data-show-at-zoom='0' data-position='" + this.yahCoord.x + "," + this.yahCoord.y + "' data-allow-drag='true' data-rotation='" + heading + "' data-allow-scale='false'><img src='" + (this.yahCoord.url) + "' /></div>";
             //console.log(_this.yah);
             $(this.mapView).smoothZoom("addLandmark", [this.yah]);
         };
@@ -3705,6 +3747,15 @@ var BuildingModelGrid = (function () {
         BuildingModelGrid.prototype.getFloorById = function (num) {
             for (var i = 0, n = this.arFloors.length; i < n; i++) {
                 if (this.arFloors[i].mapId == num)
+                    return this.arFloors[i];
+            }
+            return null;
+        };
+
+        BuildingModelGrid.prototype.getFloorBySequence = function (seq) {
+            for (var i = 0, n = this.arFloors.length; i < n; i++) {
+            	console.log(this.arFloors[i]);
+                if (this.arFloors[i].floorSequence == seq)
                     return this.arFloors[i];
             }
             return null;
