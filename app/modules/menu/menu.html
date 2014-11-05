@@ -1,16 +1,19 @@
-<fa-modifier fa-size="[407, auto]" fa-translate="[0, 0]">
-  <fa-grid-layout fa-options="menuLayoutOptions" ng-show="menu.active">
-      <fa-modifier ng-repeat="item in menuItems">
-
-        <fa-modifier fa-origin="[0, 0.5]">
-          <fa-surface ng-click="navigateTo(item)" class="menu-item">
-            <h1 ng-click="menu.navigateTo(item)" >{{item.title}}</h1>
-            <h3>{{item.subtitle}}</h3>
-          </fa-surface>
+<fa-view>
+  <fa-modifier fa-size="menu.sizeTransitionable.get()" fa-translate="[0, 0, 0.1]">
+    <fa-grid-layout fa-options="menuLayoutOptions">
+        <fa-modifier ng-repeat="item in menuItems">
+        <fa-view>
+            <fa-surface ng-click="menu.handleTap(item)" class="menu-item">
+              <h1 ng-class="{inactive: !menu.active}" ng-click="menu.handleTap(item)" >
+                {{item.title}}
+              </h1>
+              <h3 ng-click="menu.handleTap(item)" ng-class="{inactive: !menu.active}">{{item.subtitle}}</h3>
+            </fa-surface>
+          <fa-modifier fa-translate="[30, 50]">
+            <icon glyph="item.icon" width="60" height="60" fa-click="menu.handleTap(item)"></icon>
+          </fa-modifier>
+        </fa-view>
         </fa-modifier>
-        <fa-modifier fa-translate="[30, 0]" fa-origin="[0, 0.5]">
-          <icon  glyph="item.icon" width="80" height="80"></icon>
-        </fa-modifier>
-      </fa-modifier>
-    </fa-grid-layout>
-</fa-modifier>
+      </fa-grid-layout>
+  </fa-modifier>
+</fa-view>

@@ -22,7 +22,13 @@ var app = angular.module('wfWayfinding', [
   // Kiosk App Modules
   // '.name' is provided by angular.module, index.js is picked up as the included file
   require('./modules/home').name,
-  require('./modules/directory-view').name,
+  require('./modules/map').name,
+  require('./modules/dining').name,
+  require('./modules/search').name,
+  require('./modules/shopping').name,
+  require('./modules/services').name,
+  require('./modules/events').name,
+  require('./modules/directory').name,
   require('./modules/jibestream-map').name,
   require('./modules/westfield-icons').name,
   require('./modules/menu').name
@@ -39,12 +45,12 @@ app.value('config', {
   },
   kioskID: 2348576,
   initialState: 0,
-  navigationItems: [
+  states: [
     {
       title: 'Map',
       subtitle: '',
-      icon: 'wire-map',
-      type: 'map',
+      icon: 'wire-map-rev',
+      type: 'kioskmap',
       options: {
 
       }
@@ -52,38 +58,38 @@ app.value('config', {
     {
       title: 'Search',
       subtitle: 'Directory',
-      icon: 'wire-search',
+      icon: 'wire-search-rev',
       type: 'search',
       options: {}
     },
     {
       title: 'Shopping',
       subtitle: 'Directory',
-      icon: 'wire-shopping',
-      type: 'directory',
+      icon: 'wire-shopping-rev',
+      type: 'shopping',
       options: {
-
+        show: "things"
       }
     },
     {
       title: 'Dining',
       subtitle: 'Directory',
-      icon: 'wire-dining',
-      type: 'directory',
+      icon: 'wire-dining-rev',
+      type: 'dining',
       options: {}
-  },
+    },
     {
       title: 'Services',
       subtitle: 'Directory',
-      icon: 'wire-services',
-      type: 'directory',
+      icon: 'wire-services-rev',
+      type: 'services',
       options: {}
     },
     {
       title: 'Events',
       subtitle: 'Calendar',
-      icon: 'wire-see',
-      type: 'calendar',
+      icon: 'wire-see-rev',
+      type: 'events',
       options: {}
     },
   ]
@@ -91,22 +97,19 @@ app.value('config', {
 
 
 
-// Build routes based on config
+// Basic routes based on config
 // ----------------------------------------------------------------------
-
-app.config(function ($stateProvider) {
-
-  // $stateProvider.state('map', {
-  //   url: '/:section',
-  //   template: require('./home.html'),
-  //   controller: 'KioskHome'
-  // });
-});
 
 // Route fallback to home rather than 404'ing
 app.config(function ($urlRouterProvider, $locationProvider) {
-  $locationProvider.html5Mode(true);
+  // $locationProvider.html5Mode(true);
   $urlRouterProvider.otherwise('/');
+});
+
+app.run(function ($rootScope) {
+  $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+    console.log('State Change', toState, toParams);
+  });
 });
 
 
@@ -119,7 +122,6 @@ $(document.body).on('mousewheel', function (e) {
 });
 
 angular.bootstrap(document, ['wfWayfinding']);
-
 
 
 

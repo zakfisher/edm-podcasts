@@ -5,7 +5,8 @@ module.exports = angular.module('WestfieldIcons', [])
     restrict: 'E',
     template: require('./icon.html'),
     scope: {
-      glyph: "="
+      glyph: "=",
+      click: "&faClick",
     },
     controller: function ($scope, $element, $attrs) {
       $scope.iconSrc = "/images/westfield-icons/" + $scope.glyph + ".svg";

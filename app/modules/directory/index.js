@@ -8,12 +8,4 @@ module.exports = angular.module('Directory', [])
       $scope.directoryLayoutOptions = {};
     }
   };
-})
-
-//Routes / States
-.config(function ($stateProvider) {
-  $stateProvider.state('directory', {
-    url: '/directory/:target',
-    template: require('./directory.html')
-  });
 });

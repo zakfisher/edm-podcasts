@@ -7,6 +7,9 @@ body {
   background-image: url('/dev-bg.png');
   color: #4D4E4C; }
 
+.section {
+  padding-left: 200px; }
+
 button {
   background: transparent;
   color: #fff;
@@ -14,12 +17,13 @@ button {
   font-size: 100%; }
 
 h1 {
-  font-size: 77px;
+  font-size: 70px;
   font-weight: 600; }
 
 h3 {
-  font-size: 23px;
-  font-weight: 700; }
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase; }
 
 fa-app {
   position: fixed !important;
@@ -44,16 +48,27 @@ webview {
   right: 0; }
 
 .menu-item {
-  background-color: #fff;
+  background-color: #c7242e;
+  color: #fff;
   text-align: right;
   box-sizing: border-box;
-  padding: 1.5rem;
-  border: 1px solid #979797;
-  border-top: none; }
+  padding: 2rem;
+  border: 1px solid #000;
+  cursor: default; }
+  .menu-item * {
+    cursor: default;
+    -webkit-transition: opacity 0.3s; }
+  .menu-item .inactive {
+    opacity: 0; }
   .menu-item h1 {
-    margin: 0;
+    margin: 0 0 10px 0;
     padding: 0;
-    line-height: 1; }
+    line-height: 1;
+    cursor: pointer;
+    opacity: 1;
+    -webkit-transition: opacity 0.3s; }
   .menu-item h3 {
     margin: 0;
-    padding: 0; }
+    padding: 0;
+    opacity: 1;
+    -webkit-transition: opacity 0.3s; }

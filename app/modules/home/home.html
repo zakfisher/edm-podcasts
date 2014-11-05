@@ -1,24 +1,23 @@
-<fa-modifier fa-size="[1000, 1000]" fa-origin="[0.5, 0.5]" fa-rotate-x="bound.tilt">
-  <fa-surface class="map-container">
-    <jmap></jmap>
-  </fa-surface>
-</fa-modifier>
-<fa-modifier fa-size="[100, 100]" fa-origin="[0.9, 0]">
-  <fa-surface>
-    <p>
-      <input type="range" ng-model="bound.tilt" min=0 max=1 step=0.01 value=0>
-    <p>
-    <p>
-      <input type="text" ng-model="search.query">
-    </p>
-    <ul>
-      <li ng-click="destinationClick(result.clientId)" ng-repeat="result in search.results" destinationId="{{result.clientId}}">
-        {{result.name}}
-      </li>
-    </ul>
-  </fa-surface>
-  <fa-modifier fa-size="[100,100]" fa-translate="[0, 500]">
-    <fa-canvas-surface kiosk-gl-view></fa-canvas-surface>
+<fa-view>
+  <fa-modifier>
+    <fa-surface class="map-container">
+      <!-- <jmap></jmap> -->
+    </fa-surface>
   </fa-modifier>
-</fa-modifier>
-<!-- <fa-image-surface fa-image-url="https://westfieldus.box.com/shared/static/zvna30xzd9vmg3nwom1f.png"></fa-image-surface> -->
+  <fa-modifier fa-size="[100, 100]" fa-origin="[0.9, 0]">
+    <fa-surface>
+      <p>
+        <input type="text" ng-model="search.query">
+      </p>
+      <ul>
+        <li ng-click="destinationClick(result.clientId)" ng-repeat="result in search.results" destinationId="{{result.clientId}}">
+          {{result.name}}
+        </li>
+      </ul>
+    </fa-surface>
+    <fa-modifier fa-size="[100,100]" fa-translate="[0, 500]">
+      <fa-canvas-surface kiosk-gl-view></fa-canvas-surface>
+    </fa-modifier>
+  </fa-modifier>
+  <!-- <fa-image-surface fa-image-url="https://westfieldus.box.com/shared/static/zvna30xzd9vmg3nwom1f.png"></fa-image-surface> -->
+</fa-view>
