@@ -4,7 +4,8 @@
   "description": "Westfield Wayfinding Protytype",
   "main": "app/server/index.js",
   "scripts": {
-    "start": "node app/server/index.js"
+    "start": "node app/server/index.js",
+    "postinstall": "node node_modules/.bin/gulp build"
   },
   "dependencies": {
     "express": "~3.4.x",
