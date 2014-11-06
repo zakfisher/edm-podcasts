@@ -80,6 +80,7 @@ webview {
   box-sizing: border-box;
   padding: 2rem;
   border: 1px solid #000;
+  border-top: none;
   // border-top: none;
   cursor: default;
 
@@ -109,3 +110,10 @@ webview {
   }
 }
 
+
+// Map
+// ----------------------------------------------------------------------
+
+.map-container {
+  background-color: #c1cdd3;
+}

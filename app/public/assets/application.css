@@ -54,6 +54,7 @@ webview {
   box-sizing: border-box;
   padding: 2rem;
   border: 1px solid #000;
+  border-top: none;
   cursor: default; }
   .menu-item * {
     cursor: default;
@@ -72,3 +73,6 @@ webview {
     padding: 0;
     opacity: 1;
     -webkit-transition: opacity 0.3s; }
+
+.map-container {
+  background-color: #c1cdd3; }

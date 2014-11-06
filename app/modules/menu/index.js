@@ -41,11 +41,7 @@ module.exports = angular.module('KioskMenu', [])
   };
 
   menu.handleTap = function (item) {
-    if (!menu.active) {
-      menu.expand();
-    } else {
-      menu.navigateTo(item);
-    }
+    menu.navigateTo(item);
   };
 
   return menu;

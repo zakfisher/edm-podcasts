@@ -1,45 +1,43 @@
 // Wayfinding Home View
 
-module.exports = angular.module('wayfindingMap', []);
+module.exports = angular.module('wayfindingMap', [])
 
-// .controller('KioskHome', function ($scope, $famous, KioskMenu) {
-//   KioskMenu.expand();
-//   $scope.message = "Wayfinding Prototype Home";
-//   $scope.search = {
-//     query: '',
-//     results: []
-//   };
+.controller('KioskHome', function ($scope, $famous, KioskMenu) {
+  $scope.message = "Wayfinding Prototype Home";
+  $scope.search = {
+    query: '',
+    results: []
+  };
 
-//   $scope.destinationClick = function (destinationId) {
+  $scope.destinationClick = function (destinationId) {
 
-//     JMap.storage.maps.building.startWayFinding({}, JMap.getDestinationByClientId(destinationId));
-//   };
+    JMap.storage.maps.building.startWayFinding({}, JMap.getDestinationByClientId(destinationId));
+  };
 
-//   $scope.$watch('search.query', function (a, b) {
-//     var r;
-//     if (!a) {
-//       r = [];
-//     } else if (a && a !== b) {
-//       r = JMap.getSearchByQuery(a);
-//       console.log(a, r);
-//     }
-//     $scope.search.results = r;
+  $scope.$watch('search.query', function (a, b) {
+    var r;
+    if (!a) {
+      r = [];
+    } else if (a && a !== b) {
+      r = JMap.getSearchByQuery(a);
+      console.log(a, r);
+    }
+    $scope.search.results = r;
 
-//   });
-
+  });
 
 
-//   console.log('JMap', JMap);
-//   $scope.bound = {
-//     tilt: 0
-//   };
-// })
+  console.log('JMap', JMap);
+  $scope.bound = {
+    tilt: 0
+  };
+})
 
-// //Routes / States
-// .config(function ($stateProvider) {
-//   $stateProvider.state('home', {
-//     url: '/home',
-//     template: require('./home.html'),
-//     controller: 'KioskHome'
-//   });
-// });
+//Routes / States
+.config(function ($stateProvider) {
+  $stateProvider.state('home', {
+    url: '/home',
+    template: require('./home.html'),
+    controller: 'KioskHome'
+  });
+});

@@ -51,46 +51,36 @@ app.value('config', {
       subtitle: '',
       icon: 'wire-map-rev',
       type: 'kioskmap',
-      options: {
-
-      }
     },
     {
       title: 'Search',
       subtitle: 'Directory',
       icon: 'wire-search-rev',
-      type: 'search',
-      options: {}
+      type: 'search'
     },
     {
       title: 'Shopping',
       subtitle: 'Directory',
       icon: 'wire-shopping-rev',
-      type: 'shopping',
-      options: {
-        show: "things"
-      }
+      type: 'shopping'
     },
     {
       title: 'Dining',
       subtitle: 'Directory',
       icon: 'wire-dining-rev',
-      type: 'dining',
-      options: {}
+      type: 'dining'
     },
     {
       title: 'Services',
       subtitle: 'Directory',
       icon: 'wire-services-rev',
       type: 'services',
-      options: {}
     },
     {
       title: 'Events',
       subtitle: 'Calendar',
       icon: 'wire-see-rev',
-      type: 'events',
-      options: {}
+      type: 'home'
     },
   ]
 });
@@ -116,10 +106,10 @@ app.run(function ($rootScope) {
 // Setup & Bootstrap
 // ----------------------------------------------------------------------
 
-$(document.body).on('mousewheel', function (e) {
-  e.preventDefault();
-  e.stopPropagation();
-});
+// $(document.body).on('mousewheel', function (e) {
+//   e.preventDefault();
+//   e.stopPropagation();
+// });
 
 angular.bootstrap(document, ['wfWayfinding']);
 
