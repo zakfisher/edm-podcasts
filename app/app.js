@@ -96,9 +96,10 @@ app.config(function ($urlRouterProvider, $locationProvider) {
   $urlRouterProvider.otherwise('/');
 });
 
-app.run(function ($rootScope) {
+app.run(function ($rootScope, KioskMenu) {
   $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
     console.log('State Change', toState, toParams);
+    KioskMenu.activeMenuItem = toState.name;
   });
 });
 

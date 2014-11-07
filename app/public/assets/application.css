@@ -74,6 +74,8 @@ webview {
     -webkit-transition: opacity 0.3s; }
   .menu-item .inactive {
     opacity: 0; }
+  .menu-item.active {
+    background-color: #160808; }
   .menu-item h1 {
     margin: 0 0 10px 0;
     padding: 0;

@@ -3,7 +3,7 @@
     <fa-grid-layout fa-options="menuLayoutOptions">
         <fa-modifier ng-repeat="item in menuItems">
         <fa-view>
-            <fa-surface class="menu-item" ng-class="{active: (activeMenuItem == item)}">
+            <fa-surface class="menu-item" ng-class="{active: (menu.activeMenuItem == item.type)}">
               <h1 ng-class="{inactive: !menu.active}">{{item.title}}</h1>
               <h3 ng-class="{inactive: !menu.active}">{{item.subtitle}}</h3>
             </fa-surface>
