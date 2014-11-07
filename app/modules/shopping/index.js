@@ -11,9 +11,12 @@ module.exports = angular.module('Shopping', [])
   $scope.myEventHandler2 = new EventHandler();
   $scope.views = [];
   $scope.stores = [];
+  $scope.currentCategoryName = 'All Stores';
+  $scope.headerRotation = Math.PI / 2;
 
   $scope.categoryClickHandler = function (category) {
     $scope.filterCategory = category.code;
+    $scope.currentCategoryName = category.name;
   };
 
   $http({
@@ -23,23 +26,18 @@ module.exports = angular.module('Shopping', [])
     $scope.stores = r;
   });
 
+  //Get All Stores
   $http({
     method: 'GET',
     url: "http://www.westfield.com.au/api/category/master/categories.json?centre_id=valleyfair&country=us&per_page=all"
   }).success(function (r) {
     console.log('categories', r);
     $scope.categories = r;
-
+    $scope.categories.unshift({
+      name: "All Stores",
+      code: null
+    });
   });
-
-  for (var i = 0; i < 1000; i++) {
-    $scope.views.push({
-      color: "#444"
-    });
-    $scope.views.push({
-      color: "#777"
-    });
-  }
 
 
 })

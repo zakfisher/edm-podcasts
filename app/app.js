@@ -106,10 +106,10 @@ app.run(function ($rootScope) {
 // Setup & Bootstrap
 // ----------------------------------------------------------------------
 
-// $(document.body).on('mousewheel', function (e) {
-//   e.preventDefault();
-//   e.stopPropagation();
-// });
+$(document.body).on('mousewheel, contextmenu', function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+});
 
 angular.bootstrap(document, ['wfWayfinding']);
 

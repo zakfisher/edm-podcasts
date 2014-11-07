@@ -7,6 +7,9 @@ body {
   background-image: url('/dev-bg.png');
   color: #4D4E4C; }
 
+* {
+  cursor: default; }
+
 .section {
   padding-left: 200px; }
 
@@ -24,6 +27,16 @@ h3 {
   font-size: 18px;
   font-weight: 700;
   text-transform: uppercase; }
+
+.bigLightText {
+  font-family: 'Flama', 'helvetica neue', 'helvetica', 'arial', 'sans';
+  color: #c7242e;
+  text-transform: uppercase;
+  font-weight: 100;
+  font-size: 600%;
+  line-height: 1.15;
+  margin: 0;
+  padding: 0; }
 
 fa-app {
   position: fixed !important;
@@ -76,3 +89,24 @@ webview {
 
 .map-container {
   background-color: #c1cdd3; }
+
+.directoryCategory {
+  border-right: 25px solid #dfdfde; }
+
+.directoryCategory h3 {
+  font-weight: 200;
+  font-size: 32px;
+  color: #fff;
+  padding-left: 180px;
+  letter-spacing: 4px;
+  white-space: nowrap; }
+
+.directoryCategory.active h3 {
+  font-weight: 700;
+  color: #c7242e !important; }
+
+.directoryListing {
+  opacity: 0.9; }
+
+.txt-center {
+  text-align: center; }

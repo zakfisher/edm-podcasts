@@ -2,20 +2,21 @@
   <fa-image-surface fa-image-url="https://westfieldus.box.com/shared/static/7aw941jotnsgkdi1wj8t.png">
   </fa-surface>
 </fa-view> -->
-<fa-surface fa-background-color="'#eee'"></fa-surface>
+<fa-image-surface fa-background-color="'#222'" fa-image-url="https://westfieldus.box.com/shared/static/m8jnaocf4gmftp5g1l96.jpg"></fa-image-surface>
 <fa-modifier>
-  <fa-header-footer-layout fa-options="{direction: 0, headerSize: 475, footerSize: 75}">
+  <fa-header-footer-layout fa-options="{direction: 0, headerSize: 680, footerSize: 160}">
 
     <!-- Category Filters -->
     <fa-scroll-view fa-pipe-from="myEventHandler">
       <fa-view ng-repeat="category in categories">
-        <fa-modifier fa-size="[undefined, 60]">
+        <fa-modifier fa-size="[undefined, 80]">
           <!-- All events on fa-surfaces (click, mousewheel) are piped to $scope.myEventHandler -->
-           <fa-surface fa-background-color="'#fff'"
+           <fa-surface
                        fa-click="categoryClickHandler(category)"
                        fa-pipe-to="myEventHandler"
-                       style="text-align: right; border-bottom: 1px solid white">
-                       <h3 style="text-align: right; padding-right: 2em;">{{category.name}}</h3>
+                       class="directoryCategory"
+                       ng-class="{'active': (filterCategory == category.code)}">
+              <h3>{{category.name}}</h3>
            </fa-surface>
         </fa-modifier>
       </fa-view>
@@ -23,19 +24,40 @@
 
     <!-- Results -->
     <fa-scroll-view fa-pipe-from="myEventHandler2">
-      <fa-view ng-repeat="store in stores | filter:filterCategory">
-        <fa-modifier fa-size="[undefined, 60]">
-          <!-- All events on fa-surfaces (click, mousewheel) are piped to $scope.myEventHandler -->
-           <fa-surface fa-background-color="'#eee'"
-                       fa-color="'#333'"
-                       fa-pipe-to="myEventHandler2">
-                       <h2 style="padding-left: 2em;">{{store.name}}</h2>
-           </fa-surface>
-        </fa-modifier>
+      <!-- Put stores in a 2 by 1 grid in each listing -->
+      <fa-view ng-repeat="evenStore in stores | filter:filterCategory">
+      <fa-modifier fa-size="[undefined, 200]">
+        <fa-grid-layout fa-options="{dimensions: [2, 1]}">
+           <fa-modifier ng-repeat="store in [stores[$index], stores[$index+1]]"
+                        fa-size="[undefined, 200]">
+              <fa-surface fa-pipe-to="myEventHandler2" fa-background-color="'#fff'" class="txt-center">
+                  <img ng-src="{{store._links.logo.href}}" height="200px"/>
+              </fa-surface>
+           </fa-modifier>
+        </fa-grid-layout>
+      </fa-modifier>
       </fa-view>
     </fa-scroll-view>
 
     <!-- Headings -->
-    <fa-surface fa-background-color="'#888'">Footer</fa-surface>
+    <fa-view>
+      <fa-modifier
+        fa-translate="[10,-160,0]"
+        fa-rotate-z="headerRotation"
+        fa-size="[1200, 200]"
+        >
+        <fa-surface>
+          <h1 class="bigLightText">Shopping</h1>
+        </fa-surface>
+      </fa-modifier>
+      <fa-modifier
+          fa-translate="[0,-40,0]"
+          fa-rotate-z="headerRotation"
+          fa-size="[1200, 40]">
+          <fa-surface fa-background-color="'#dfdfde'" fa-color="'#c7242e'">
+            <h2 style="margin: 0; padding: 0 1em; line-height: 1.6;">{{currentCategoryName}}</h2>
+          </fa-surface>
+      </fa-modifier>
+    </fa-view>
   </fa-header-footer-layout>
 </fa-modifier>
