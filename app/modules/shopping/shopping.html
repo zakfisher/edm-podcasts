@@ -25,15 +25,12 @@
     <!-- Results -->
     <fa-scroll-view fa-pipe-from="myEventHandler2">
       <!-- Put stores in a 2 by 1 grid in each listing -->
-      <fa-view ng-repeat="evenStore in stores | filter:filterCategory">
-      <fa-modifier fa-size="[undefined, 200]">
-        <fa-grid-layout fa-options="{dimensions: [2, 1]}">
-           <fa-modifier ng-repeat="store in [stores[$index], stores[$index+1]]"
-                        fa-size="[undefined, 200]">
-              <fa-surface fa-pipe-to="myEventHandler2" fa-background-color="'#fff'" class="txt-center">
-                  <img ng-src="{{store._links.logo.href}}" height="200px"/>
-              </fa-surface>
-           </fa-modifier>
+      <fa-view ng-repeat="storeGroup in storesList">
+      <fa-modifier fa-size="[undefined, 240]">
+        <fa-grid-layout fa-options="{dimensions:[2,1]}">
+          <fa-surface fa-pipe-to="myEventHandler2" fa-background-color="'#fff'" class="txt-center" ng-repeat="store in storeGroup">
+            <img ng-src="{{store._links.logo.href}}" height="200px"/>
+          </fa-surface>
         </fa-grid-layout>
       </fa-modifier>
       </fa-view>
