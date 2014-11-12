@@ -1,14 +1,19 @@
-<!-- Menu Toggle Button -->
-<fa-surface>
-  <button ng-click="menu.toggle()">Menu</button>
-</fa-surface>
-<!-- Menu -->
-<fa-modifier fa-size="[100, 100]" fa-translate="[0, 40]">
-  <fa-grid-layout fa-options="menuLayoutOptions" ng-show="menu.active">
-      <fa-modifier ng-repeat="item in menuItems" fa-translate="[0, 0, grid.z]" fa-rotate="grid.scale.get()">
-        <fa-surface fa-background-color="grid.bgColor" fa-touchstart="launch(item)" ng-mousedown="launch(item)" class="dbl-sided">
-          {{item.title}}
-        </fa-surface>
-      </fa-modifier>
-    </fa-grid-layout>
-</fa-modifier>
+<fa-view>
+  <fa-modifier fa-size="menu.sizeTransitionable.get()" fa-translate="[0, 0, 0.1]">
+    <fa-grid-layout fa-options="menuLayoutOptions" ng-show="menu.visible">
+        <fa-modifier ng-repeat="item in menuItems">
+        <fa-view>
+            <fa-surface class="menu-item" ng-class="{active: (menu.activeMenuItem == item.type)}">
+              <h1 ng-class="{inactive: !menu.active}">{{item.title}}</h1>
+              <h3 ng-class="{inactive: !menu.active}">{{item.subtitle}}</h3>
+            </fa-surface>
+          <fa-modifier fa-translate="[30, 50]">
+            <icon glyph="item.icon" width="60" height="60"></icon>
+          </fa-modifier>
+          <!-- Click Handler Surface -->
+          <fa-surface fa-click="menu.handleTap(item)"></fa-surface>
+        </fa-view>
+        </fa-modifier>
+      </fa-grid-layout>
+  </fa-modifier>
+</fa-view>

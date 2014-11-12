@@ -1,6 +1,6 @@
 /**
  * famous-angular - Bring structure to your Famo.us apps with the power of AngularJS. Famo.us/Angular integrates seamlessly with existing Angular and Famo.us apps.
- * @version v0.4.0
+ * @version v0.5.0
  * @link https://github.com/Famous/famous-angular
  * @license MPL v2.0
  */
@@ -205,6 +205,7 @@ ngFameApp.provider('$famous', function() {
    * @return {boolean}
    */
     isASurface : function (element) {
+
       return IS_A_SURFACE.test(element[0].tagName);
     },
 
@@ -214,7 +215,15 @@ ngFameApp.provider('$famous', function() {
       @return {boolean}
     */
     isFaElement : function (element) {
-      return IS_FA.test(element[0].tagName);
+      //short-circuit most common case
+      if(IS_FA.test(element[0].tagName)) return true;
+
+      //otherwise loop through attributes
+      var ret = false;
+      angular.forEach(element[0].attributes, function(attr){
+        ret = ret || IS_FA.test(attr);
+      });
+      return ret;
     },
     /**
      * Converts snake_case to camelCase.
@@ -373,13 +382,21 @@ ngFameApp.provider('$famous', function() {
 angular.module('famous.angular')
   .config(['$provide', function($provide) {
     // Hook into the animation system to emit ng-class syncers to surfaces
-    $provide.decorator('$animate', ['$delegate', '$rootScope', '$famous', '$parse',
-                            function($delegate,   $rootScope,   $famous,   $parse) {
+    $provide.decorator('$animate', ['$delegate', '$rootScope', '$famous', '$parse', '$famousDecorator',
+                            function($delegate,   $rootScope,   $famous,   $parse,   $famousDecorator) {
 
       var Timer   = $famous['famous/utilities/Timer'];
 
       var FA_ANIMATION_ACTIVE = '$$faAnimationActive';
 
+
+      //pretty hacky
+      var _lastKnownParent = {};
+      var _getIsolate = function(scope){
+        var isolate = $famous.getIsolate(scope);
+        if(!isolate && scope) {isolate = $famousDecorator.$$getIsolateById(_lastKnownParent[scope.$id]);}
+        return isolate;
+      };
 
       /**
        * Pass through $animate methods that are strictly class based.
@@ -388,7 +405,7 @@ angular.module('famous.angular')
        * considered "enabled" which we do not need.
        */
       var animationHandlers = {
-        enabled: $delegate.enabledß
+        enabled: $delegate.enabled
       };
 
       angular.forEach(['addClass', 'removeClass'], function(classManipulator) {
@@ -408,7 +425,7 @@ angular.module('famous.angular')
           // AND the class is not an empty string, pass through
           // the addClass and removeClass methods to the underlying renderNode.
           if ($famous.util.isASurface(this) && typeof className === 'string' && className.trim() !== '') {
-            $famous.getIsolate(this.scope()).renderNode[classManipulator](className);
+            _getIsolate(this.scope()).renderNode[classManipulator](className);
           }
           return this;
         };
@@ -423,7 +440,7 @@ angular.module('famous.angular')
          
           $delegate[classManipulator](element, className, done);
           if($famous.util.isFaElement(element)){
-            var isolate = $famous.getIsolate(element.scope());
+            var isolate = _getIsolate(element.scope());
             if ($famous.util.isASurface(element)) {
 
               var surface = isolate.renderNode;
@@ -462,7 +479,7 @@ angular.module('famous.angular')
         $delegate.setClass(element, add, remove, done);
 
         if ($famous.util.isASurface(element)) {
-          var surface = $famous.getIsolate(element.scope()).renderNode;
+          var surface = _getIsolate(element.scope()).renderNode;
           angular.forEach(add.split(' '), function(className) {
             surface.addClass(className);
           });
@@ -485,10 +502,20 @@ angular.module('famous.angular')
        * complete and allow Angular to continue manipulating elements and classes.
        */
       angular.forEach(['enter', 'leave', 'move'], function(operation) {
-        animationHandlers[operation] = function(element) {
+        var capitalizedOperation = operation[0].toUpperCase() + operation.slice(1);
+        animationHandlers[operation] = function(element, parent, nonCloneElement) {
           var self = this;
           var selfArgs = arguments;
           var delegateFirst = (operation === 'enter');
+
+
+          var elemScope = element.scope();
+
+          //such hack:  keep a hash of last-known parents so that we can access a scope's parent
+          //            after that scope has been destroyed.  useful for e.g. ui-view and ng-include
+          if(elemScope && elemScope.$parent) {_lastKnownParent[elemScope.$id] = elemScope.$parent.$id;}
+
+          var isolate = _getIsolate(elemScope);
 
           if (delegateFirst === true) {
              $delegate[operation].apply(this, arguments);
@@ -496,7 +523,7 @@ angular.module('famous.angular')
 
            // Detect if an animation is currently running
           if (element.data(FA_ANIMATION_ACTIVE) === true) {
-            $parse(element.attr('fa-animate-halt'))(element.scope());
+            if(isolate && isolate.$$animateHaltHandler) { isolate.$$animateHaltHandler(element.scope()); }
           }
 
           // Indicate an animation is currently running
@@ -504,13 +531,14 @@ angular.module('famous.angular')
 
           var doneCallback = function() {
 
-            var scopeId = element.scope() && element.scope().$id;
+            var scopeId = elemScope && elemScope.$id;
 
             //hide the element on animate.leave
             if(operation === 'leave' && $famous.util.isFaElement(element)){
-              var isolate = $famous.getIsolate(element.scope());
+              var isolate = _getIsolate(elemScope);
               if(isolate && isolate.id) isolate.hide();
-             }
+            }
+
             // Abort if the done callback has already been invoked
             if (element.data(FA_ANIMATION_ACTIVE) === false) {
               return;
@@ -524,16 +552,30 @@ angular.module('famous.angular')
           };
 
           $rootScope.$$postDigest(function() {
-            var animationExpression = element.attr('fa-animate-' + operation);
 
-            // If no animation has been specified, delegate the animation event and return
-            if (animationExpression === undefined) {
+            //if this was an enter event, isolate and scope would not have
+            //existed on the first invocation above
+            var elemScope = element.scope();
+
+            var isolate = _getIsolate(elemScope);
+
+            var animationHandler;
+            //handle $$animateEnterHandler, $$animateLeaveHandler, and $$animateHaltHandler
+
+            if(isolate) { animationHandler = isolate["$$animate" + capitalizedOperation + "Handler"]; }
+
+            // If no animation has been specified [including if this isn't
+            // an fa-element] delegate the animation event and return
+
+            if (animationHandler === undefined) {
               doneCallback();
               return;
             }
 
-            var animationDuration = $parse(animationExpression)(
-              element.scope(),
+            //expects a $parse'd function or a function that
+            //responds to the same API fn(scope, {locals})
+            var animationDuration = animationHandler(
+              elemScope,
               {
                 $done: doneCallback
               }
@@ -602,6 +644,8 @@ angular.module('famous.angular')
       
     };
 
+    var _isolateStore = {};
+
     return {
       //TODO:  patch into _roles and assign the
       // appropriate role to the given scope
@@ -624,8 +668,24 @@ angular.module('famous.angular')
        *
        * @param {String} scope - the scope to ensure that the isolate property
        * exists on
+       * @param {Object} element (optional) - the DOM element associated with the target scope
        */
-      ensureIsolate: function(scope) {
+      ensureIsolate: function(scope, element) {
+
+
+        //handle special-case directives that don't follow a (DOM hierarchy <=> Scope hierarchy) relationship
+        if(element){
+          var SPECIAL_CASE_LIST = ['fa-edge-swapper', 'fa-render-controller', 'fa-deck', 'fa-light-box'];
+          var special = false;
+          angular.forEach(SPECIAL_CASE_LIST, function(specialCase){
+            if(specialCase.toUpperCase() === element[0].tagName) { special = true; return; }
+            if(element[0].attributes[specialCase] !== undefined) { special = true; return; }
+          });
+          if(special){
+            scope = scope.$parent;
+          }
+        }
+
         scope.isolate = scope.isolate || {};
         scope.isolate[scope.$id] = scope.isolate[scope.$id] || {};
 
@@ -638,7 +698,19 @@ angular.module('famous.angular')
         var i = scope.$eval("$index");
         if(i && i !== '$index' && !isolate.index) isolate.index = i;
 
+        _isolateStore[isolate.id] = isolate;
+
         return isolate;
+      },
+
+      //relies on an 'alternate source of truth' vs the static .isolate
+      //member shared by the fa-element child scopes.  Unideal, but should be OK
+      //based on the assumption that a single Angular app will create a unique ID for
+      //every new scope.
+      //surface area for a memory leak (TODO: clean up upon element destruction--BUT, make sure
+      //it doesn't break leave animations on ui-view and ng-include animations, e.g. <ui-view fa-edge-swapper></ui-view>)
+      $$getIsolateById: function(id){
+        return _isolateStore[id];
       },
 
       /**
@@ -690,6 +762,13 @@ angular.module('famous.angular')
       sequenceWith: function(scope, addMethod, removeMethod, updateMethod) {
         scope.$on('registerChild', function(evt, isolate) {
           if (evt.targetScope.$id !== scope.$id) {
+            //add reference to parent isolate
+            var parentIsolate = $famous.getIsolate(scope);
+            isolate.$parent = parentIsolate;
+
+            parentIsolate.$children = parentIsolate.$children || [];
+            parentIsolate.$children.push(isolate);
+
             addMethod(isolate);
             evt.stopPropagation();
 
@@ -849,7 +928,8 @@ angular.module('famous.angular')
     return function(points) {
         //
         // Takes a list of points, with the curve to follow to the next point.
-        // Any curve value on the last point is ignored.
+        // Any curve value on the last point is ignored. If no curve function is
+        // provided, a linear (identity) function is used.
         //
         //  e.g., [[0, 100, Easings.inOutQuad], [1, 500]]
         //
@@ -868,13 +948,15 @@ angular.module('famous.angular')
         //         \ last x,         otherwise
         //
 
+        var linear = function(x) { return x; };
+
         return function(x) {
           if (x < points[0][0]) {
             return points[0][1];
           }
           for (var i = 0; i < points.length - 1; i++) {
             if (points[i][0] <= x && x < points[i+1][0]) {
-              var f = scale(points[i][2],
+              var f = scale(points[i][2] || linear,
                             points[i][0],
                             points[i+1][0],
                             points[i][1],
@@ -890,6 +972,151 @@ angular.module('famous.angular')
 
   });
 
+
+/**
+ * @ngdoc directive
+ * @name faAnimateEnter
+ * @module famous.angular
+ * @restrict EA
+ * @description Attaches the passed function/expression to Angular ngAnimate "enter" events on the given element.
+ * Useful when you want to manage animations in Famo.us that are tied into Angular's data-driven events, e.g. on directives like ng-repeat, ui-view, and ng-if.
+ * 
+ * @usage
+ * ```html
+ * <fa-view ng-repeat="view in views" fa-animate-enter="myAnimationFunction($done)">
+ * </fa-view>
+ * ```
+ */
+
+angular.module('famous.angular')
+  .directive('faAnimateEnter', ["$parse", "$famousDecorator", function ($parse, $famousDecorator) {
+    return {
+      restrict: 'A',
+      scope: false,
+      priority: 16,
+      compile: function () {
+        return {
+          post: function (scope, element, attrs) {
+            var isolate = $famousDecorator.ensureIsolate(scope);
+            isolate.$$animateEnterHandler = $parse(attrs.faAnimateEnter);
+
+            attrs.$observe('faAnimateEnter', function () {
+              isolate.$$animateEnterHandler = $parse(attrs.faAnimateEnter);
+            });
+          }
+        };
+      }
+    };
+  }]);
+
+/**
+ * @ngdoc directive
+ * @name faAnimateHalt
+ * @module famous.angular
+ * @restrict EA
+ * @description Will execute the passed function/expression when an ngAnimate event on the given element is halted before finishing.
+ * Useful when you want to manage clean-up (e.g. Transitionable `.halt()`ing).
+ * 
+ * @usage
+ * ```html
+ * <fa-view ng-repeat="view in views" fa-animate-halt="cleanupFunction()">
+ * </fa-view>
+ * ```
+ */
+
+
+angular.module('famous.angular')
+  .directive('faAnimateHalt', ["$parse", "$famousDecorator", function ($parse, $famousDecorator) {
+    return {
+      restrict: 'A',
+      scope: false,
+      priority: 16,
+      compile: function () {
+        return {
+          post: function (scope, element, attrs) {
+            var isolate = $famousDecorator.ensureIsolate(scope);
+            isolate.$$animateHaltHandler = $parse(attrs.faAnimateHalt);
+
+            attrs.$observe('faAnimateHalt', function () {
+              isolate.$$animateHaltHandler = $parse(attrs.faAnimateHalt);
+            });
+          }
+        };
+      }
+    };
+  }]);
+
+/**
+ * @ngdoc directive
+ * @name faAnimateLeave
+ * @module famous.angular
+ * @restrict EA
+ * @description Attaches the passed function/expression to Angular ngAnimate "leave" events on the given element.
+ * Useful when you want to manage animations in Famo.us that are tied into Angular's data-driven events, e.g. on directives like ng-repeat, ui-view, and ng-if.
+ * 
+ * @usage
+ * ```html
+ * <fa-view ng-repeat="view in views" fa-animate-leave="myAnimationFunction($done)">
+ * </fa-view>
+ * ```
+ */
+
+angular.module('famous.angular')
+  .directive('faAnimateLeave', ["$parse", "$famousDecorator", function ($parse, $famousDecorator) {
+    return {
+      restrict: 'A',
+      scope: false,
+      priority: 16,
+      compile: function () {
+        return {
+          post: function (scope, element, attrs) {
+            var isolate = $famousDecorator.ensureIsolate(scope);
+            isolate.$$animateLeaveHandler = $parse(attrs.faAnimateLeave);
+
+            attrs.$observe('faAnimateLeave', function () {
+              isolate.$$animateLeaveHandler = $parse(attrs.faAnimateLeave);
+            });
+          }
+        };
+      }
+    };
+  }]);
+
+/**
+ * @ngdoc directive
+ * @name faAnimateMove
+ * @module famous.angular
+ * @restrict EA
+ * @description Attaches the passed function/expression to Angular ngAnimate "move" events on the given element.
+ * Useful when you want to manage animations in Famo.us that are tied into Angular's data-driven events, e.g. on directives like ng-repeat, ui-view, and ng-if.
+ * 
+ * @usage
+ * ```html
+ * <fa-view ng-repeat="view in views" fa-animate-move="myAnimationFunction($done)">
+ * </fa-view>
+ * ```
+ */
+
+angular.module('famous.angular')
+  .directive('faAnimateMove', ["$parse", "$famousDecorator", function ($parse, $famousDecorator) {
+    return {
+      restrict: 'A',
+      scope: false,
+      priority: 16,
+      compile: function () {
+        return {
+          post: function (scope, element, attrs) {
+            var isolate = $famousDecorator.ensureIsolate(scope);
+            isolate.$$animateMoveHandler = $parse(attrs.faAnimateMove);
+
+            attrs.$observe('faAnimateMove', function () {
+              isolate.$$animateMoveHandler = $parse(attrs.faAnimateMove);
+            });
+          }
+        };
+      }
+    };
+  }]);
 /**
  * @ngdoc directive
  * @name faAnimation
@@ -1937,6 +2164,93 @@ angular.module('famous.angular')
 
 /**
  * @ngdoc directive
+ * @name faEdgeSwapper
+ * @module famous.angular
+ * @restrict EA
+ * @description
+ * This directive is used to hook a Famo.us EdgeSwapper into AngularJS ngAnimate events.  For example, you can apply an fa-edge-swapper directive
+ * to a `<ui-view>` or an `<ng-include>` in order to quickly and easily add EdgeSwapper transitions to template changes in those directives.
+ * Supports the `fa-options` directive for setting options.  Does NOT support sitting on the same element as another fa- element
+ *
+ * @usage
+ * ```html
+ * <ui-view fa-edge-swapper></ui-view>
+ * <ng-include src='getSrc()' fa-edge-swapper></ng-include>
+ * ```
+ */
+
+
+
+//TODO:  TEST
+
+angular.module('famous.angular')
+  .directive('faEdgeSwapper', ["$famous", "$famousDecorator", function ($famous, $famousDecorator) {
+    return {
+      scope: true,
+      restrict: 'A',
+      priority: 512, //higher than ui-view and ng-include, because if it's lower it will
+                     //get recompiled every time those templates change
+
+      compile: function(tElement, tAttrs, transclude){
+        var EdgeSwapper = $famous['famous/views/EdgeSwapper'];
+        return {
+          pre: function(scope, element, attrs){
+            var isolate = $famousDecorator.ensureIsolate(scope);
+
+            //'register' for the next child to be picked up by the animateEnterHandler
+            var _nextChild;
+
+            //add animateEnter handler for new content
+            isolate.$$animateEnterHandler = function(scope, locals){
+
+              isolate.renderNode.show(_nextChild, function(){
+                if(isolate.$$leaveDoneCallback){
+                  isolate.$$leaveDoneCallback();
+                }
+                locals.$done();
+              });
+            };
+
+            isolate.$$animateLeaveHandler = function(scope, locals){
+              //just drops the $done callback into a spot where the
+              //enter handler can access it.
+
+              //relies on the assumption that this assignment will
+              //always occur before the next enter handler's animation
+              //is complete
+
+              //maybe good enough
+              isolate.$$leaveDoneCallback = locals.$done;
+            };
+
+            var initialOptions = scope.$eval(attrs.faOptions);
+            isolate.renderNode = new EdgeSwapper(initialOptions);
+
+            $famousDecorator.addRole('renderable',isolate);
+
+            isolate.show();
+            
+            $famousDecorator.sequenceWith(
+              scope,
+              function(data) {
+                //child received
+                _nextChild = data.renderGate;
+              }
+              //don't need to handle child removal?
+            );
+
+          },
+          post: function(scope, element, attrs){
+            var isolate = $famousDecorator.ensureIsolate(scope);
+            $famousDecorator.registerChild(scope, element, isolate);
+          }
+        };
+      }
+    };
+  }]);
+
+/**
+ * @ngdoc directive
  * @name faFlexibleLayout
  * @module famous.angular
  * @restrict E
@@ -2756,7 +3070,7 @@ angular.module('famous.angular')
       compile: function () {
         return {
           post: function (scope, element, attrs) {
-            var isolate = $famousDecorator.ensureIsolate(scope);
+            var isolate = $famousDecorator.ensureIsolate(scope, element);
             isolate.index = scope.$eval(attrs.faIndex);
 
             scope.$watch(function () {
@@ -2777,13 +3091,13 @@ angular.module('famous.angular')
  * @module famous.angular
  * @restrict A
  * @requires famous.angular
- * 
+ *
  * @description
  * This is a wrapped for the default ngClick which allows you to specify custom behavior when an fa-surface is clicked.
- * the wrapper is also designed to be be used on touchscreen devices. It matches all the features supported by ngClick, 
- * including ngTouch module for all types of fa-surface. 
- * 
- * If ngTouch is requried to add touch click capabilites in non F/A elements. Add ngTouch dependence before adding famous.angular otherwise 
+ * the wrapper is also designed to be be used on touchscreen devices. It matches all the features supported by ngClick,
+ * including ngTouch module for all types of fa-surface.
+ *
+ * If ngTouch is requried to add touch click capabilites in non F/A elements. Add ngTouch dependence before adding famous.angular otherwise
  * this functionality will be lost.
  *
  * @usage
@@ -2820,22 +3134,22 @@ angular.module('famous.angular')
         $scope.myClickHandler = function($event) {
           console.log($event);
           $scope.clicked++;
-        }; 
+        };
     }]);
   </file>
  </example>
  * ### ng-click on an fa-surface
  * `ng-click` can be used on an `fa-surface`.  Internally, a Famous Surface has a `.on()` method that binds a callback function to an event type handled by that Surface.
- *  The function expression bound to `ng-click` is bound to that `fa-surface`'s click eventHandler, and when the `fa-surface` is clicked, the function expression will be called. 
+ *  The function expression bound to `ng-click` is bound to that `fa-surface`'s click eventHandler, and when the `fa-surface` is clicked, the function expression will be called.
 **/
 angular.module('famous.angular')
 .config(['$provide', function  ($provide) {
-  
+
   $provide.decorator('ngClickDirective', ['$delegate', '$famousDecorator', '$parse', '$rootElement', '$famous', '$timeout', function ($delegate, $famousDecorator, $parse, $rootElement, $famous, $timeout) {
     var directive = $delegate[0];
 
     var compile = directive.compile;
-    
+
     var TAP_DURATION = 750; // Shorter than 750ms is a tap, longer is a taphold or drag.
     var MOVE_TOLERANCE = 12; // 12px seems to work in most mobile browsers.
     var PREVENT_DURATION = 2500; // 2.5 seconds maximum from preventGhostClick call to click
@@ -2876,7 +3190,7 @@ angular.module('famous.angular')
       var touches = event.touches && event.touches.length ? event.touches : [event];
       var x = touches[0].clientX;
       var y = touches[0].clientY;
-     
+
 
       // Look for an allowable region containing this click.
       // If we find one, that means it was created by touchstart and not removed by
@@ -2945,7 +3259,7 @@ angular.module('famous.angular')
 
               function resetState() {
                 tapping = false;
-                
+
                 // TODO: renderNode.
 
                 renderNode.removeClass(ACTIVE_CLASS_NAME);
@@ -2991,7 +3305,7 @@ angular.module('famous.angular')
                   // Call preventGhostClick so the clickbuster will catch the corresponding click.
                   preventGhostClick(x, y);
 
-                  if (!angular.isDefined(attr.disabled) || attr.disabled === false) {
+                  if (!angular.isDefined(attr.disabled) || attr.disabled === 'false') {
                     renderNode.emit('click', [event]);
                   }
                 }
@@ -3020,7 +3334,7 @@ angular.module('famous.angular')
         return compile(element, attrs, transclude);
       }
     };
-    return $delegate; 
+    return $delegate;
   }]);
 
 
@@ -3029,7 +3343,7 @@ angular.module('famous.angular')
   'dblclick mousedown mouseup mouseover mouseout mousemove mouseenter mouseleave keydown keyup keypress submit focus blur copy cut paste'.split(' '),
   function(name) {
     var directiveName = window.$famousUtil.directiveNormalize('ng-' + name) ;
-    
+
     $provide.decorator(directiveName+'Directive', ['$delegate', '$famousDecorator', '$parse', '$famous', function ($delegate, $famousDecorator, $parse, $famous) {
         var directive = $delegate[0];
 
@@ -3461,7 +3775,7 @@ angular.module('famous.angular')
  * ```
  * @example
    <example>
-    
+
    </example>
  */
 
@@ -3485,7 +3799,7 @@ angular.module('famous.angular')
  * ```
  * @example
    <example>
-    
+
    </example>
  */
 
@@ -4194,7 +4508,7 @@ angular.module('famous.angular')
             compile: function () {
                 return {
                     post: function (scope, element, attrs) {
-                        var isolate = $famousDecorator.ensureIsolate(scope);
+                        var isolate = $famousDecorator.ensureIsolate(scope, element);
                         scope.$watch(function () {
                             return scope.$eval(attrs.faOptions);
                         }, function () {
@@ -4414,114 +4728,118 @@ angular.module('famous.angular')
  *  
  *
  * The directional pad has a list of input checkboxes created by an ng-repeated list from `$scope.inputList`.
- * If a checkbox is checked, it calls `checkBoxChange()`, passing the letter (such as `'A'`) and and the model (such as `'checkBox.A'`) of the respective checkbox.
- * If the checkbox is checked, the model (`checkBox.A`) is assigned the value of "true", and if it is unchecked, it is asigned the value of "false".
+ * If a checkbox is checked, it calls `checkBoxChange()`, passing the index of the object within the ng-repeat, the letter (such as `'A'`), and the model (such as `'checkBox.A'`) of the respective checkbox.
+ * If the checkbox is checked, the model (`checkBox.A`) is assigned the value of "true", and if it is unchecked, it is assigned the value of "false".
  * 
  * In the controller, `$scope.checkBoxChange()` changes the value of the pipe of the respective Scroll View (A, B, or C) that corresponds to the checkBox.
  * If the checkbox is checked, it assigns the respective Scroll View (A, B, or C) to pipe from `$scope.mainPipe`, and if unchecked, it will continue to pipe from `$scope.emptyPipe`.
  * In short, the checkboxes act as switches to change piping events.
  *
- <example module="faPipeExampleApp">
-  <file name="index.html">
-  <fa-app ng-controller="PipeCtrl">
-      <!-- directional pad view -->
-      <fa-view>
-        <!-- scroll view used as a directional pad input, receives events from mainPipe-->
-        <fa-scroll-view fa-pipe-from="mainPipe">
-          <fa-modifier fa-translate="[0, 0, 15]" fa-size="[320, 50]">
-            <fa-view>
-              <fa-modifier>
-                <!-- mousewheel events will be piped to mainPipe -->
-                <fa-surface fa-background-color="'orange'" fa-pipe-to="mainPipe">
-                  <div>Directional pad</div>
-                    <span ng-repeat="input in inputList">
-                      <label>{{input.letter}}</label>
-                      <!-- checkboxes -->
-                      <input type="checkbox"
-                             ng-model="input.model" 
-                             name="scrollPipeTo" 
-                             ng-change="checkBoxChange(input.letter, input.model)"
-                             ng-true-value="true"
-                             ng-false-value="false">
-                    </span>
-                </fa-surface>
-              </fa-modifier>
-            </fa-view>
-          </fa-modifier>
-        </fa-scroll-view>
-      </fa-view>
-      
-      <!-- view with 3 Scroll Views -->
-      <fa-view>
-        <!-- ng-repeat creating 3 different scroll Views -->
-        <fa-modifier ng-repeat="view in scrollViews"
-                     fa-translate="[100 * $index, 50, 0]">
-          <fa-view>
-            <!-- each Scroll View conditionally receives events from mainPipe or emptyPipe, default is emptyPipe -->
-            <fa-scroll-view fa-pipe-from="view.pipe" fa-options="options.scrollViewTwo">
-              <fa-view ng-repeat="items in list">
-                <fa-modifier fa-size="[100, 100]">
-                    <fa-surface fa-background-color="view.bgColor">
-                      Index: {{$index}}
-                    </fa-surface>
-                  </fa-modifier>
-              </fa-view>
-             </fa-scroll-view>   
-          </fa-view>
-        </fa-modifier>
-      </fa-view>
-    </fa-app>
-  </file>
-  <file name="script.js">
-  angular.module('faPipeExampleApp', ['famous.angular'])
-      .controller('PipeCtrl', ['$scope', '$famous', function($scope, $famous) {
+<example module="faPipeExampleApp">
+ <file name="index.html">
+ <fa-app ng-controller="PipeCtrl">
+     <!-- directional pad view -->
+     <fa-view>
+       <!-- scroll view used as a directional pad input, receives events from mainPipe-->
+       <fa-scroll-view fa-pipe-from="mainPipe">
+         <fa-modifier fa-translate="[0, 0, 15]" fa-size="[300, 50]">
+           <fa-view>
+             <fa-modifier>
+               <!-- mousewheel events will be piped to mainPipe -->
+               <fa-surface fa-background-color="'orange'" fa-pipe-to="mainPipe">
+                 <div>Directional pad</div>
+                   <span ng-repeat="input in inputList">
+                     <label>{{input.letter}}</label>
+                     <!-- checkboxes -->
+                     <input type="checkbox"
+                            ng-model="input.model" 
+                            name="scrollPipeTo" 
+                            ng-change="checkBoxChange($index, input.letter, input.model)"
+                            ng-true-value="true"
+                            ng-false-value="false">
+                   </span>
+               </fa-surface>
+             </fa-modifier>
+           </fa-view>
+         </fa-modifier>
+       </fa-scroll-view>
+     </fa-view>
+     
+     <!-- view with 3 Scroll Views -->
+     <fa-view>
+       <!-- ng-repeat creating 3 different scroll Views -->
+       <fa-modifier ng-repeat="view in scrollViews"
+                    fa-translate="[100 * $index, 50, 0]">
+         <fa-view>
+           <!-- each Scroll View conditionally receives events from mainPipe or emptyPipe, default is emptyPipe -->
+           <fa-scroll-view fa-pipe-from="view.pipe" fa-options="options.scrollViewTwo">
+             <fa-view ng-repeat="items in list">
+               <fa-modifier fa-size="[100, 100]">
+                   <fa-surface fa-background-color="view.bgColor">
+                     Index: {{$index}}
+                   </fa-surface>
+                 </fa-modifier>
+             </fa-view>
+            </fa-scroll-view>   
+         </fa-view>
+       </fa-modifier>
+     </fa-view>
+   </fa-app>
+ </file>
+ <file name="script.js">
+ angular.module('faPipeExampleApp', ['famous.angular'])
+     .controller('PipeCtrl', ['$scope', '$famous', function($scope, $famous) {
 
-        // Event Handlers
-        var EventHandler = $famous['famous/core/EventHandler'];
-        $scope.mainPipe = new EventHandler();
-        $scope.emptyPipe = new EventHandler();
-        
-        // items in ng-repeated list in each of the 3 Scroll Views
-        $scope.list = [];
-        for (var i = 0; i < 10; i++) {
-          $scope.list.push({});
-        };
-        
-        // 3 inputs in the directional pad corresponding to the 3 scroll views
-        $scope.inputList = [{model: "checkBox.A", letter: "A"},{model: "checkBox.B", letter: "B"}, {model: "checkBox.C", letter: "C"}];
-        
-        // 3 scrollviews
-        $scope.scrollViews = [{pipe: "pipes.A", bgColor: "blue"}, {pipe: "pipes.B", bgColor: "red"}, {pipe: "pipes.C", bgColor: "green"}];
-        
-        // pipes that each of the 3 scroll views is binded to through fa-pipe-from
-        $scope.pipes = {
-          A: $scope.emptyPipe,
-          B: $scope.emptyPipe,
-          C: $scope.emptyPipe
-        };
-        
-        // function that is called whenever a checkbox is checked/unchecked that assigns the fa-pipe-from
-        $scope.checkBoxChange = function(model, value) {
-          if (value !== "false") {
-            $scope.pipes[model] = $scope.mainPipe;
-          } else {
-            $scope.pipes[model] = $scope.emptyPipe;
-          };
-        };
-    }]);
-  </file>
-  <file name="style.css">
-  fa-app {
-      position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-    }
-  </file>
- </example>
- *
- */
+       // Event Handlers
+       var EventHandler = $famous['famous/core/EventHandler'];
+       
+       $scope.mainPipe = new EventHandler();
+       $scope.emptyPipe = new EventHandler();
+       
+       // items in ng-repeated list in each of the 3 Scroll Views
+       $scope.list = [];
+       for (var i = 0; i < 10; i++) {
+         $scope.list.push({});
+       };
+       
+       // 3 inputs in the directional pad corresponding to the 3 scroll views
+       $scope.inputList = [{model: "checkBox.A", letter: "A"},{model: "checkBox.B", letter: "B"}, {model: "checkBox.C", letter: "C"}];
+       
+       // pipes that each of the 3 scroll views is binded to through fa-pipe-from
+       $scope.pipes = {
+         A: $scope.emptyPipe,
+         B: $scope.emptyPipe,
+         C: $scope.emptyPipe
+       };
+
+       // 3 scrollviews
+       $scope.scrollViews = [{pipe: $scope.pipes.A, bgColor: "blue"}, {pipe: $scope.pipes.B, bgColor: "red"}, {pipe: $scope.pipes.C, bgColor: "green"}];
+       
+       // function that is called whenever a checkbox is checked/unchecked that assigns the fa-pipe-from
+       $scope.checkBoxChange = function(index, model, value) {
+         if (value == 'true') {
+           console.log($scope.pipes[model], + " is now pointing to mainPipe");
+           $scope.scrollViews[index].pipe = $scope.mainPipe;
+         
+         } else {
+           console.log($scope.pipes[model] + " is now pointing to emptyPipe");
+           $scope.scrollViews[index].pipe = $scope.emptyPipe;
+         }
+       };
+   }]);
+ </file>
+ <file name="style.css">
+ fa-app {
+     position: fixed;
+     top: 0;
+     right: 0;
+     bottom: 0;
+     left: 0;
+   }
+ </file>
+</example>
+*
+*/
 
 angular.module('famous.angular')
   .directive('faPipeFrom', ['$famous', '$famousDecorator', '$famousPipe', function ($famous, $famousDecorator, $famousPipe) {
@@ -4604,23 +4922,46 @@ angular.module('famous.angular')
  * In the example below, events from the `fa-surface` are piped to `myEventHandler`, a source event handler, via `fa-pipe-to`. `Fa-scroll-view` receives events from `myEventHandler`, its target event handler, via `fa-pipe-from`. 
  * `myEventHandler` refers to an instantiated Famous EventHandler declared on the scope.  Using pipes allows events to propagate between `fa-surface`s and the `fa-scroll-view`.
  *
- * ```html
- * <!-- fa-scroll-view receives all events from $scope.myEventHandler, and decides how to handle them -->
- * <fa-scroll-view fa-pipe-from="myEventHandler">
- *     <fa-view ng-repeat="view in views">
- *       <fa-modifier fa-size="[320, 320]">
- *       <!-- All events on fa-surfaces (click, mousewheel) are piped to $scope.myEventHandler -->
- *          <fa-surface fa-background-color="'blue'"
- *                       fa-pipe-to="myEventHandler">
- *          </fa-surface>
- *         </fa-modifier>
- *     </fa-view>
- * </fa-scroll-view>
- * ```
- * ```javascript
- * var EventHandler = $famous['famous/core/EventHandler'];
- * $scope.myEventHandler = new EventHandler();
- * ```
+ *
+ <example module="faPipeExampleApp">
+  <file name="index.html">
+  <fa-app ng-controller="PipeCtrl">
+      <!-- fa-scroll-view receives all events from $scope.myEventHandler, and decides how to handle them -->
+      <fa-scroll-view fa-pipe-from="myEventHandler">
+          <fa-view ng-repeat="view in views">
+            <fa-modifier fa-size="[undefined, 160]">
+            <!-- All events on fa-surfaces (click, mousewheel) are piped to $scope.myEventHandler -->
+               <fa-surface fa-background-color="view.color"
+                            fa-pipe-to="myEventHandler">
+               </fa-surface>
+              </fa-modifier>
+          </fa-view>
+      </fa-scroll-view>
+    </fa-app>
+
+    <script>
+      angular.module('faPipeExampleApp', ['famous.angular'])
+          .controller('PipeCtrl', ['$scope', '$famous', function($scope, $famous) {
+            
+            var EventHandler = $famous['famous/core/EventHandler'];
+
+            $scope.views = [{color: 'red'}, {color: 'blue'}, {color: 'green'}, {color: 'yellow'}, {color: 'orange'}];
+
+            $scope.myEventHandler = new EventHandler();
+
+        }]);
+    </script>
+  </file>
+  <file name="style.css">
+  fa-app {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+  </file>
+ </example>
  *
  * ##Event Handlers on the Controller
  * 
@@ -4667,7 +5008,64 @@ angular.module('famous.angular')
  *   $scope.redTrans.set([0, 200, 0], {duration: 2000, curve: 'easeInOut'})
  * });
  * ```
- * 
+ *
+ <example module="faPipeExampleApp">
+  <file name="index.html">
+  <fa-app ng-controller="PipeCtrl">
+      <fa-view>
+        <fa-modifier fa-size="[100, 100]">
+            <fa-surface class="blue-surface" fa-background-color="'blue'" fa-click="surfaceClick()">Click me!</fa-surface>
+          </fa-modifier>
+      </fa-view>
+      <fa-view fa-pipe-from="eventHandlerB">
+        <fa-modifier fa-size="[100, 100]" fa-translate="redTrans.get()">
+            <fa-surface fa-background-color="'red'"></fa-surface>
+        </fa-modifier>
+      </fa-view>
+    </fa-app>
+
+    <script>
+      angular.module('faPipeExampleApp', ['famous.angular'])
+          .controller('PipeCtrl', ['$scope', '$famous', function($scope, $famous) {
+            
+            var EventHandler = $famous['famous/core/EventHandler'];
+            $scope.eventHandlerA = new EventHandler();
+            $scope.eventHandlerB = new EventHandler();
+            $scope.eventHandlerA.pipe($scope.eventHandlerB); 
+            // all events received by eventHandlerA wil be piped to eventHandlerB
+            
+            var Transitionable = $famous['famous/transitions/Transitionable'];
+            $scope.redTrans = new Transitionable([0, 100, 0]);
+            
+            // eventHandlerA emits 'myEvent' on click
+            $scope.surfaceClick = function() {
+              $scope.eventHandlerA.emit('myEvent');
+            };
+            
+            // eventHandlerA pipes all events it receives to eventHandlerB
+            // This is an event handler defined on eventHandlerB for handling 'myEvent'
+            $scope.eventHandlerB.on('myEvent', function() {
+              $scope.redTrans.set([0, 200, 0], {duration: 2000, curve: 'easeInOut'})
+            });
+
+        }]);
+    </script>
+  </file>
+  <file name="style.css">
+  fa-app {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+    .blue-surface {
+      cursor: pointer;
+      color: #fff;
+    }
+  </file>
+ </example> 
+ *
  * ##Switching Pipes
  * 
  * Another feature of `fa-pipe-to` and `fa-pipe-from` is the ability to switch pipes.
@@ -4689,98 +5087,120 @@ angular.module('famous.angular')
  * 
  * In the second view containing 3 Scroll Views, each Scroll View pipes from `emptyPipe` by default, another instantiated EventHandler that has no events piped to it.  
  *  
- * ```html
- * <!-- directional pad view -->
- * <fa-view>
- *   <!-- scroll view used as a directional pad input, receives events from mainPipe-->
- *   <fa-scroll-view fa-pipe-from="mainPipe">
- *     <fa-modifier fa-translate="[0, 0, 15]" fa-size="[320, 50]">
- *       <fa-view>
- *         <fa-modifier>
- *           <!-- mousewheel events will be piped to mainPipe -->
- *           <fa-surface fa-background-color="'orange'" fa-pipe-to="mainPipe">
- *             <div>Directional pad</div>
- *               <span ng-repeat="input in inputList">
- *                 <label>{{input.letter}}</label>
- *                 <!-- checkboxes -->
- *                 <input type="checkbox"
- *                        ng-model="input.model" 
- *                        name="scrollPipeTo" 
- *                        ng-change="checkBoxChange(input.letter, input.model)"
- *                        ng-true-value="true"
- *                        ng-false-value="false">
- *               </span>
- *           </fa-surface>
- *         </fa-modifier>
- *       </fa-view>
- *     </fa-modifier>
- *   </fa-scroll-view>
- * </fa-view>
- * 
- * <!-- view with 3 Scroll Views -->
- * <fa-view>
- *   <!-- ng-repeat creating 3 different scroll Views -->
- *   <fa-modifier ng-repeat="view in scrollViews"
- *                fa-translate="[100 * $index, 50, 0]">
- *     <fa-view>
- *       <!-- each Scroll View conditionally receives events from mainPipe or emptyPipe, default is emptyPipe -->
- *       <fa-scroll-view fa-pipe-from="{{view.pipe}}" fa-options="options.scrollViewTwo">
- *         <fa-view ng-repeat="items in list">
- *           <fa-modifier fa-size="[100, 100]">
- *               <fa-surface fa-background-color="view.bgColor">
- *                 Index: {{$index}}
- *               </fa-surface>
- *             </fa-modifier>
- *         </fa-view>
- *        </fa-scroll-view>   
- *     </fa-view>
- *   </fa-modifier>
- * </fa-view>
- * ```
  *
  * The directional pad has a list of input checkboxes created by an ng-repeated list from `$scope.inputList`.
- * If a checkbox is checked, it calls `checkBoxChange()`, passing the letter (such as `'A'`) and and the model (such as `'checkBox.A'`) of the respective checkbox.
- * If the checkbox is checked, the model (`checkBox.A`) is assigned the value of "true", and if it is unchecked, it is asigned the value of "false".
+ * If a checkbox is checked, it calls `checkBoxChange()`, passing the index of the object within the ng-repeat, the letter (such as `'A'`), and the model (such as `'checkBox.A'`) of the respective checkbox.
+ * If the checkbox is checked, the model (`checkBox.A`) is assigned the value of "true", and if it is unchecked, it is assigned the value of "false".
  * 
  * In the controller, `$scope.checkBoxChange()` changes the value of the pipe of the respective Scroll View (A, B, or C) that corresponds to the checkBox.
  * If the checkbox is checked, it assigns the respective Scroll View (A, B, or C) to pipe from `$scope.mainPipe`, and if unchecked, it will continue to pipe from `$scope.emptyPipe`.
  * In short, the checkboxes act as switches to change piping events.
  *
- * ```javascript
- * // Event Handlers
- * var EventHandler = $famous['famous/core/EventHandler'];
- * $scope.mainPipe = new EventHandler();
- * $scope.emptyPipe = new EventHandler();
- * 
- * // items in ng-repeated list in each of the 3 Scroll Views
- * $scope.list = [];
- * for (var i = 0; i < 10; i++) {
- *   $scope.list.push({});
- * };
- * 
- * // 3 inputs in the directional pad corresponding to the 3 scroll views
- * $scope.inputList = [{model: "checkBox.A", letter: "A"},{model: "checkBox.B", letter: "B"}, {model: "checkBox.C", letter: "C"}];
- * 
- * // 3 scrollviews
- * $scope.scrollViews = [{pipe: "pipes.A", bgColor: "blue"}, {pipe: "pipes.B", bgColor: "red"}, {pipe: "pipes.C", bgColor: "green"}];
- * 
- * // pipes that each of the 3 scroll views is binded to through fa-pipe-from
- * $scope.pipes = {
- *   A: $scope.emptyPipe,
- *   B: $scope.emptyPipe,
- *   C: $scope.emptyPipe
- * };
- * 
- * // function that is called whenever a checkbox is checked/unchecked that assigns the fa-pipe-from
- * $scope.checkBoxChange = function(model, value) {
- *   if (value !== "false") {
- *     $scope.pipes[model] = $scope.mainPipe;
- *   } else {
- *     $scope.pipes[model] = $scope.emptyPipe;
- *   };
- * };
- * ```
- */
+<example module="faPipeExampleApp">
+ <file name="index.html">
+ <fa-app ng-controller="PipeCtrl">
+     <!-- directional pad view -->
+     <fa-view>
+       <!-- scroll view used as a directional pad input, receives events from mainPipe-->
+       <fa-scroll-view fa-pipe-from="mainPipe">
+         <fa-modifier fa-translate="[0, 0, 15]" fa-size="[300, 50]">
+           <fa-view>
+             <fa-modifier>
+               <!-- mousewheel events will be piped to mainPipe -->
+               <fa-surface fa-background-color="'orange'" fa-pipe-to="mainPipe">
+                 <div>Directional pad</div>
+                   <span ng-repeat="input in inputList">
+                     <label>{{input.letter}}</label>
+                     <!-- checkboxes -->
+                     <input type="checkbox"
+                            ng-model="input.model" 
+                            name="scrollPipeTo" 
+                            ng-change="checkBoxChange($index, input.letter, input.model)"
+                            ng-true-value="true"
+                            ng-false-value="false">
+                   </span>
+               </fa-surface>
+             </fa-modifier>
+           </fa-view>
+         </fa-modifier>
+       </fa-scroll-view>
+     </fa-view>
+     
+     <!-- view with 3 Scroll Views -->
+     <fa-view>
+       <!-- ng-repeat creating 3 different scroll Views -->
+       <fa-modifier ng-repeat="view in scrollViews"
+                    fa-translate="[100 * $index, 50, 0]">
+         <fa-view>
+           <!-- each Scroll View conditionally receives events from mainPipe or emptyPipe, default is emptyPipe -->
+           <fa-scroll-view fa-pipe-from="view.pipe" fa-options="options.scrollViewTwo">
+             <fa-view ng-repeat="items in list">
+               <fa-modifier fa-size="[100, 100]">
+                   <fa-surface fa-background-color="view.bgColor">
+                     Index: {{$index}}
+                   </fa-surface>
+                 </fa-modifier>
+             </fa-view>
+            </fa-scroll-view>   
+         </fa-view>
+       </fa-modifier>
+     </fa-view>
+   </fa-app>
+ </file>
+ <file name="script.js">
+ angular.module('faPipeExampleApp', ['famous.angular'])
+     .controller('PipeCtrl', ['$scope', '$famous', function($scope, $famous) {
+
+       // Event Handlers
+       var EventHandler = $famous['famous/core/EventHandler'];
+       
+       $scope.mainPipe = new EventHandler();
+       $scope.emptyPipe = new EventHandler();
+       
+       // items in ng-repeated list in each of the 3 Scroll Views
+       $scope.list = [];
+       for (var i = 0; i < 10; i++) {
+         $scope.list.push({});
+       };
+       
+       // 3 inputs in the directional pad corresponding to the 3 scroll views
+       $scope.inputList = [{model: "checkBox.A", letter: "A"},{model: "checkBox.B", letter: "B"}, {model: "checkBox.C", letter: "C"}];
+       
+       // pipes that each of the 3 scroll views is binded to through fa-pipe-from
+       $scope.pipes = {
+         A: $scope.emptyPipe,
+         B: $scope.emptyPipe,
+         C: $scope.emptyPipe
+       };
+
+       // 3 scrollviews
+       $scope.scrollViews = [{pipe: $scope.pipes.A, bgColor: "blue"}, {pipe: $scope.pipes.B, bgColor: "red"}, {pipe: $scope.pipes.C, bgColor: "green"}];
+       
+       // function that is called whenever a checkbox is checked/unchecked that assigns the fa-pipe-from
+       $scope.checkBoxChange = function(index, model, value) {
+         if (value == 'true') {
+           console.log($scope.pipes[model], + " is now pointing to mainPipe");
+           $scope.scrollViews[index].pipe = $scope.mainPipe;
+         
+         } else {
+           console.log($scope.pipes[model] + " is now pointing to emptyPipe");
+           $scope.scrollViews[index].pipe = $scope.emptyPipe;
+         }
+       };
+   }]);
+ </file>
+ <file name="style.css">
+ fa-app {
+     position: fixed;
+     top: 0;
+     right: 0;
+     bottom: 0;
+     left: 0;
+   }
+ </file>
+</example>
+*
+*/
 
 angular.module('famous.angular')
   .directive('faPipeTo', ['$famous', '$famousDecorator', '$famousPipe', function ($famous, $famousDecorator, $famousPipe) {

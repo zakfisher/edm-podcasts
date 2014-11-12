@@ -1,0 +1,260 @@
+/* Flama THIN */
+
+@font-face {
+  font-family: 'Flama';
+  src: url('Flama-Thin.eot');
+  src: url('Flama-Thin.eot?iefix') format('eot'),
+       url('Flama-Thin.woff') format('woff'),
+       url('Flama-Thin.svg') format('svg');
+  font-weight: 100;
+  font-style: normal;
+}
+
+
+/* Flama Thin Italic */
+
+@font-face {
+  font-family: 'Flama';
+  src: url('Flama-ThinItalic.eot');
+  src: url('Flama-ThinItalic.eot?iefix') format('eot'),
+       url('Flama-ThinItalic.woff') format('woff'),
+       url('Flama-ThinItalic.svg') format('svg');
+  font-weight: 100;
+  font-style: italic;
+}
+
+
+/* Flama Ultralight */
+
+@font-face {
+  font-family: 'Flama';
+  src: url('Flama-Ultralight.eot');
+  src: url('Flama-Ultralight.eot?iefix') format('eot'),
+       url('Flama-Ultralight.woff') format('woff'),
+       url('Flama-Ultralight.svg') format('svg');
+  font-weight: 200;
+  font-style: normal;
+}
+
+
+/* Flama Ultralight Italic */
+
+@font-face {
+  font-family: 'Flama';
+  src: url('Flama-UltralightItalic.eot');
+  src: url('Flama-UltralightItalic.eot?iefix') format('eot'),
+       url('Flama-UltralightItalic.woff') format('woff'),
+       url('Flama-UltralightItalic.svg') format('svg');
+  font-weight: 200;
+  font-style: italic;
+}
+
+
+/* Flama Light */
+
+@font-face {
+  font-family: 'Flama';
+  src: url('Flama-Light.eot');
+  src: url('Flama-Light.eot?iefix') format('eot'),
+       url('Flama-Light.woff') format('woff'),
+       url('Flama-Light.svg') format('svg');
+  font-weight: 300;
+  font-style: normal;
+}
+
+
+/* Flama Light Italic */
+
+@font-face {
+  font-family: 'Flama';
+  src: url('Flama-LightItalic.eot');
+  src: url('Flama-LightItalic.eot?iefix') format('eot'),
+       url('Flama-LightItalic.woff') format('woff'),
+       url('Flama-LightItalic.svg') format('svg');
+  font-weight: 300;
+  font-style: italic;
+}
+
+
+/* Flama Book - Body copy etc*/
+
+@font-face {
+  font-family: 'Flama';
+  src: url('Flama-Book.eot');
+  src: url('Flama-Book.eot?iefix') format('eot'),
+       url('Flama-Book.woff') format('woff'),
+       url('Flama-Book.svg') format('svg');
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+/* Flama Book Italic*/
+
+@font-face {
+  font-family: 'Flama';
+  src: url('Flama-BookItalic.eot');
+  src: url('Flama-BookItalic.eot?iefix') format('eot'),
+       url('Flama-BookItalic.woff') format('woff'),
+       url('Flama-BookItalic.svg') format('svg');
+  font-weight: 400;
+  font-style: italic;
+}
+
+
+/* Flama Basic */
+
+@font-face {
+  font-family: 'Flama';
+  src: url('Flama-Basic.eot');
+  src: url('Flama-Basic.eot?iefix') format('eot'),
+       url('Flama-Basic.woff') format('woff'),
+       url('Flama-Basic.svg') format('svg');
+  font-weight: 500;
+  font-style: normal;
+}
+
+
+/* Flama Basic Italic*/
+
+@font-face {
+  font-family: 'Flama';
+  src: url('Flama-BasicItalic.eot');
+  src: url('Flama-BasicItalic.eot?iefix') format('eot'),
+       url('Flama-BasicItalic.woff') format('woff'),
+       url('Flama-BasicItalic.svg') format('svg');
+  font-weight: 500;
+  font-style: italic;
+}
+
+
+/* Flama Medium */
+
+@font-face {
+  font-family: 'Flama';
+  src: url('Flama-Medium.eot');
+  src: url('Flama-Medium.eot?iefix') format('eot'),
+       url('Flama-Medium.woff') format('woff'),
+       url('Flama-Medium.svg') format('svg');
+  font-weight: 600;
+  font-style: normal;
+}
+
+
+/* Flama Medium Italic */
+
+@font-face {
+  font-family: 'Flama';
+  src: url('Flama-MediumItalic.eot');
+  src: url('Flama-MediumItalic.eot?iefix') format('eot'),
+       url('Flama-MediumItalic.woff') format('woff'),
+       url('Flama-MediumItalic.svg') format('svg');
+  font-weight: 600;
+  font-style: italic;
+}
+
+
+
+/* Flama Semibold */
+
+/*@font-face {
+  font-family: 'Flama';
+  src: url('Flama-Semibold.eot');
+  src: url('Flama-Semibold.eot?iefix') format('eot'),
+       url('Flama-Semibold.woff') format('woff'),
+       url('Flama-Semibold.svg') format('svg');
+  font-weight: 600;
+  font-style: normal;
+}*/
+
+
+/* Flama Semibold Italic */
+
+/*@font-face {
+  font-family: 'Flama';
+  src: url('Flama-SemiboldItalic.eot');
+  src: url('Flama-SemiboldItalic.eot?iefix') format('eot'),
+       url('Flama-SemiboldItalic.woff') format('woff'),
+       url('Flama-SemiboldItalic.svg') format('svg');
+  font-weight: 600;
+  font-style: italic;
+}*/
+
+
+/* Flama Bold */
+
+@font-face {
+  font-family: 'Flama';
+  src: url('Flama-Bold.eot');
+  src: url('Flama-Bold.eot?iefix') format('eot'),
+       url('Flama-Bold.woff') format('woff'),
+       url('Flama-Bold.svg') format('svg');
+  font-weight: 700;
+  font-style: normal;
+}
+
+
+/* Flama Bold Italic */
+
+@font-face {
+  font-family: 'Flama';
+  src: url('Flama-BoldItalic.eot');
+  src: url('Flama-BoldItalic.eot?iefix') format('eot'),
+       url('Flama-BoldItalic.woff') format('woff'),
+       url('Flama-BoldItalic.svg') format('svg');
+  font-weight: 700;
+  font-style: italic;
+}
+
+
+/* Flama Extrabold */
+
+@font-face {
+  font-family: 'Flama';
+  src: url('Flama-Extrabold.eot');
+  src: url('Flama-Extrabold.eot?iefix') format('eot'),
+       url('Flama-Extrabold.woff') format('woff'),
+       url('Flama-Extrabold.svg') format('svg');
+  font-weight: 800;
+  font-style: normal;
+}
+
+
+ /*FLAMA Extrabold Italic */
+
+@font-face {
+  font-family: 'Flama';
+  src: url('Flama-ExtraboldItalic.eot');
+  src: url('Flama-ExtraboldItalic.eot?iefix') format('eot'),
+       url('Flama-ExtraboldItalic.woff') format('woff'),
+       url('Flama-ExtraboldItalic.svg') format('svg');
+  font-weight: 800;
+  font-style: italic;
+}
+
+
+/* Flama Black */
+
+@font-face {
+  font-family: 'Flama';
+  src: url('Flama-Black.eot');
+  src: url('Flama-Black.eot?iefix') format('eot'),
+       url('Flama-Black.woff') format('woff'),
+       url('Flama-Black.svg') format('svg');
+  font-weight: 900;
+  font-style: normal;
+}
+
+
+/* Flama Black Italic */
+
+@font-face {
+  font-family: 'Flama';
+  src: url('Flama-BlackItalic.eot');
+  src: url('Flama-BlackItalic.eot?iefix') format('eot'),
+       url('Flama-BlackItalic.woff') format('woff'),
+       url('Flama-BlackItalic.svg') format('svg');
+  font-weight: 900;
+  font-style: italic;
+}
+

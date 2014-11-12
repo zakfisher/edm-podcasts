@@ -1,0 +1,33 @@
+<fa-modifier>
+  <fa-header-footer-layout fa-options="{direction: 1, headerSize: 150, footerSize: 370}">
+    <!-- Input -->
+    <fa-view>
+      <fa-surface fa-background-color="'black'"></fa-surface>
+      <fa-modifier fa-size="[undefined, 100]">
+      <fa-surface>
+      <h1 class="txt-center" ng-bind="string + '|'" style="color: #fff">
+      </h1>
+      </fa-surface>
+      </fa-modifier>
+    </fa-view>
+
+    <!-- Results -->
+    <fa-view>
+      <fa-surface fa-background-color="'black'">
+        <h2 ng-show="results.length > 0">Stores</h2>
+        <h2 ng-repeat="result in results" class="txt-center" style="color: #fff" ng-bind-html="result.name"></h2>
+      </fa-surface>
+    </fa-view>
+
+    <!-- Keyboard -->
+    <fa-view>
+      <fa-surface fa-background-color="'black'"></fa-surface>
+      <fa-modifier fa-size="[1055, 370]" fa-origin="[.5,0]" fa-align="[.5, 0]">
+        <fa-surface>
+          <keyboard model="string"></keyboard>
+        </fa-surface>
+      </fa-modifier>
+    </fa-view>
+
+  </fa-header-footer-layout>
+</fa-modifier>

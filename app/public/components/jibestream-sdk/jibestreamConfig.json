@@ -1,148 +1,148 @@
 {
-	"mapStyles":{
-		"mapLayers":[
-			{
-				"name":"Anchor_x5F_Stores",
-				"class":"Anchor_Stores",
-				"zoomLevel":0,
-				"colorFill":"#b6b28c",
-				"highLightColor":"#fff",
-				"clickable":true
-			},
-			{
-				"name":"Amenities",
-				"class":"Amenities",
-				"zoomLevel":100,
-				"colorFill":"#000",
-				"highLightColor":"",
-				"clickable":false
-			},
-			{
-				"name":"Units_2_",
-				"class":"Units",
-				"zoomLevel":0,
-				"colorFill":"#dddabf",
-				"strokeColor":"#fff",
-				"strokeWidth":"2px",
-				"clickable":true
-			},
+  "mapStyles": {
+    "mapLayers": [
+      {
+        "name": "Anchor_x5F_Stores",
+        "class": "Anchor_Stores",
+        "zoomLevel": 0,
+        "colorFill": "#b6b28c",
+        "highLightColor": "#fff",
+        "clickable": true
+   },
+      {
+        "name": "Amenities",
+        "class": "Amenities",
+        "zoomLevel": 100,
+        "colorFill": "#000",
+        "highLightColor": "",
+        "clickable": false
+   },
+      {
+        "name": "Units_2_",
+        "class": "Units",
+        "zoomLevel": 0,
+        "colorFill": "#dddabf",
+        "strokeColor": "#fff",
+        "strokeWidth": "2px",
+        "clickable": true
+   },
 
-			{
-				"name":"Kiosks",
-				"class":"Kiosks",
-				"zoomLevel":50,
-				"colorFill":"#dddabf",
-				"strokeColor":"#fff",
-				"strokeWidth":"2px",
-				"clickable":false
-			},
-			{
-				"name":"Floor",
-				"class":"Floor",
-				"zoomLevel":0,
-				"colorFill":"#2e4956",
-				"clickable":false
-			},
-			{
-				"name":"Parking_x5F_Pavement",
-				"class":"st1",
-				"zoomLevel":0,
-				"colorFill":"#cccccc",
-				"highLightColor":"",
-				"clickable":false
-			},
-			{
-				"name":"Anchor_x5F_Stores_1_",
-				"class":"Anchor_Stores",
-				"zoomLevel":0,
-				"colorFill":"#b6b28c",
-				"highLightColor":"#fff",
-				"clickable":true
-			},
-			{
-				"name":"Amenities_1_",
-				"class":"Amenities",
-				"zoomLevel":100,
-				"colorFill":"#000",
-				"highLightColor":"",
-				"clickable":false
-			},
-			{
-				"name":"Units_1_",
-				"class":"Units",
-				"zoomLevel":0,
-				"colorFill":"#dddabf",
-				"strokeColor":"#fff",
-				"strokeWidth":"2px",
-				"clickable":true
-			},
-			{
-				"name":"Floor_1_",
-				"class":"Floor",
-				"zoomLevel":0,
-				"colorFill":"#2e4956",
-				"clickable":false
-			},
-			{
-				"name":"Holes",
-				"class":"Holes",
-				"zoomLevel":0,
-				"colorFill":"#5789a1",
-				"clickable":false
-			},
-			{
-				"name":"Parking_x5F_Pavement_1_",
-				"class":"st1",
-				"zoomLevel":0,
-				"colorFill":"#cccccc",
-				"highLightColor":"",
-				"clickable":false
-			}
-		],
-		"pathStyles":{
-			"pathType":"line",
-			"spacing":5,
-			"pathWidth":5,
-			"pathColor":"#0f0",
-			"additionalCss":"/*border:1px solid #000;*/"
-		},
-		"iconStyles":{
-			"youarehere":{
-				"url":"/components/jibestream-sdk/images/BlueDot.png",
-				"width":"34px",
-				"height":"34px",
-				"heading":90,
-				"offset":{
-					"x":"17px",
-					"y":"17px"
-				}
-			},
-			"destination":{
-				"url":"/components/jibestream-sdk/images/destination.png",
-				"width":"41px",
-				"height":"50px",
-				"offset":{
-					"x":"20px",
-					"y":"50px"
-				}
-			}
-		},
-		"labelStyle":{
-			"all":{
-				"font-size":"12px",
-				"color":"#333",
-				"max-width":"125px"
-			},
-			"hightraffic-store-label":{
-				"font-size":"25px",
-				"color":"#333",
-				"max-width":"125px"
-			},
-			"anchor-store-label":{
-				"font-size":"27px",
-				"color":"#C62126",
-				"max-width":"125px"
-			}
-		}
-	}
+      {
+        "name": "Kiosks",
+        "class": "Kiosks",
+        "zoomLevel": 50,
+        "colorFill": "#dddabf",
+        "strokeColor": "#fff",
+        "strokeWidth": "2px",
+        "clickable": false
+   },
+      {
+        "name": "Floor",
+        "class": "Floor",
+        "zoomLevel": 0,
+        "colorFill": "#2e4956",
+        "clickable": false
+   },
+      {
+        "name": "Parking_x5F_Pavement",
+        "class": "st1",
+        "zoomLevel": 0,
+        "colorFill": "#cccccc",
+        "highLightColor": "",
+        "clickable": false
+   },
+      {
+        "name": "Anchor_x5F_Stores_1_",
+        "class": "Anchor_Stores",
+        "zoomLevel": 0,
+        "colorFill": "#b6b28c",
+        "highLightColor": "#fff",
+        "clickable": true
+   },
+      {
+        "name": "Amenities_1_",
+        "class": "Amenities",
+        "zoomLevel": 100,
+        "colorFill": "#000",
+        "highLightColor": "",
+        "clickable": false
+   },
+      {
+        "name": "Units_1_",
+        "class": "Units",
+        "zoomLevel": 0,
+        "colorFill": "#dddabf",
+        "strokeColor": "#fff",
+        "strokeWidth": "2px",
+        "clickable": true
+   },
+      {
+        "name": "Floor_1_",
+        "class": "Floor",
+        "zoomLevel": 0,
+        "colorFill": "#2e4956",
+        "clickable": false
+   },
+      {
+        "name": "Holes",
+        "class": "Holes",
+        "zoomLevel": 0,
+        "colorFill": "#5789a1",
+        "clickable": false
+   },
+      {
+        "name": "Parking_x5F_Pavement_1_",
+        "class": "st1",
+        "zoomLevel": 0,
+        "colorFill": "#cccccc",
+        "highLightColor": "",
+        "clickable": false
+   }
+  ],
+    "pathStyles": {
+      "pathType": "line",
+      "spacing": 5,
+      "pathWidth": 5,
+      "pathColor": "#0f0",
+      "additionalCss": "/*border:1px solid #000;*/"
+    },
+    "iconStyles": {
+      "youarehere": {
+        "url": "/components/jibestream-sdk/images/BlueDot.png",
+        "width": "34px",
+        "height": "34px",
+        "heading": 90,
+        "offset": {
+          "x": "17px",
+          "y": "17px"
+        }
+      },
+      "destination": {
+        "url": "/components/jibestream-sdk/images/destination.png",
+        "width": "41px",
+        "height": "50px",
+        "offset": {
+          "x": "20px",
+          "y": "50px"
+        }
+      }
+    },
+    "labelStyle": {
+      "all": {
+        "font-size": "12px",
+        "color": "#333",
+        "max-width": "125px"
+      },
+      "hightraffic-store-label": {
+        "font-size": "25px",
+        "color": "#333",
+        "max-width": "125px"
+      },
+      "anchor-store-label": {
+        "font-size": "27px",
+        "color": "#C62126",
+        "max-width": "125px"
+      }
+    }
+  }
 }
