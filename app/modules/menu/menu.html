@@ -1,6 +1,6 @@
 <fa-view>
   <fa-modifier fa-size="menu.sizeTransitionable.get()" fa-translate="[0, 0, 0.1]">
-    <fa-grid-layout fa-options="menuLayoutOptions">
+    <fa-grid-layout fa-options="menuLayoutOptions" ng-show="menu.visible">
         <fa-modifier ng-repeat="item in menuItems">
         <fa-view>
             <fa-surface class="menu-item" ng-class="{active: (menu.activeMenuItem == item.type)}">

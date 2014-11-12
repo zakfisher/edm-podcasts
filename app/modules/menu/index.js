@@ -1,6 +1,6 @@
 module.exports = angular.module('KioskMenu', [])
 
-.service('KioskMenu', function ($famous, $state, $stateParams) {
+.service('KioskMenu', function ($famous, $state, $stateParams, $rootScope) {
   var menu = {},
     Transitionable = $famous['famous/transitions/Transitionable'],
     Easing = $famous['famous/transitions/Easing'];
@@ -9,6 +9,10 @@ module.exports = angular.module('KioskMenu', [])
   menu.compactWidth = 120;
   menu.expandedWidth = 430;
   menu.sizeTransitionable = new Transitionable([menu.compactWidth, undefined]);
+
+  menu.show = function () {
+    menu.visible = true;
+  };
 
   menu.toggle = function () {
     console.log('toggle menu');
@@ -44,6 +48,11 @@ module.exports = angular.module('KioskMenu', [])
     menu.activeMenuItem = item.type;
     menu.navigateTo(item);
   };
+
+  //Keep menu highlighting accurate with state
+  $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+    menu.activeMenuItem = toState.name;
+  });
 
   return menu;
 })

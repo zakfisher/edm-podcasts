@@ -40,10 +40,11 @@ module.exports = angular.module('keyboard', [])
     restrict: 'A',
     controller: function ($element, $attrs, $scope) {
       $element.on('click', function () {
-        $scope.keyFire($attrs.keyboardkey);
+        // $scope.keyFire($attrs.keyboardkey);
         $scope.$apply();
       });
-      $element[0].addEventListener('touchstart', function () {
+      $element[0].addEventListener('touchstart', function (e) {
+
         $scope.keyFire($attrs.keyboardkey);
         $element.attr('class', 'active');
         $scope.$apply();

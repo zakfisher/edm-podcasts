@@ -2,6 +2,27 @@
 
 module.exports = angular.module('Shopping', [])
 
+.run(function ($http, Preloader) {
+
+  var storesTask = Preloader.createTask('Get Stores');
+  var categoriesTask = Preloader.createTask('Get Categories');
+
+  $http({
+    method: 'GET',
+    cache: true,
+    url: "http://www.westfield.com.au/api/store/master/stores.json?centre_id=valleyfair&country=us&per_page=all"
+  }).success(storesTask.resolve);
+
+  $http({
+    method: 'GET',
+    cache: true,
+    url: "http://www.westfield.com.au/api/category/master/categories.json?centre_id=valleyfair&country=us&per_page=all"
+  }).success(categoriesTask.resolve);
+
+
+})
+
+
 .controller('Shopping', function ($scope, $famous, $http, filterFilter, $filter) {
   console.log("Shopping Module");
 
@@ -28,7 +49,7 @@ module.exports = angular.module('Shopping', [])
     $scope.setStoresList(r);
   });
 
-  //Get All Stores
+  //Get All Categories
   $http({
     method: 'GET',
     url: "http://www.westfield.com.au/api/category/master/categories.json?centre_id=valleyfair&country=us&per_page=all"

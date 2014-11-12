@@ -13,7 +13,7 @@ var app = angular.module('wfWayfinding', [
 
   // Plugins & Libraries
   'famous.angular',
-  'ngAnimate',
+  // 'ngAnimate',
   'ui.router',
   'ngResource',
   'ngSanitize',
@@ -21,7 +21,6 @@ var app = angular.module('wfWayfinding', [
 
   // Kiosk App Modules
   // '.name' is provided by angular.module, index.js is picked up as the included file
-  require('./modules/home').name,
   require('./modules/map').name,
   require('./modules/dining').name,
   require('./modules/search').name,
@@ -31,6 +30,8 @@ var app = angular.module('wfWayfinding', [
   require('./modules/directory').name,
   require('./modules/jibestream-map').name,
   require('./modules/westfield-icons').name,
+  require('./modules/category-service').name,
+  require('./modules/preloader').name,
   require('./modules/svg-keyboard').name,
   require('./modules/menu').name
 ]);
@@ -81,7 +82,7 @@ app.value('config', {
       title: 'Events',
       subtitle: 'Calendar',
       icon: 'wire-see-rev',
-      type: 'home'
+      type: 'events'
     },
   ]
 });
@@ -97,27 +98,27 @@ app.config(function ($urlRouterProvider, $locationProvider) {
   $urlRouterProvider.otherwise('/');
 });
 
-app.run(function ($rootScope, KioskMenu) {
-  $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-    console.log('State Change', toState, toParams);
-    KioskMenu.activeMenuItem = toState.name;
-  });
+app.run(function ($state, Preloader, $q) {
+  $state.go('preloader');
 });
 
 
 // Setup & Bootstrap
 // ----------------------------------------------------------------------
 
-// $(document.body).on('mousewheel, contextmenu', function (e) {
-//   e.preventDefault();
-//   e.stopPropagation();
+$(document.body).on('mousewheel, contextmenu', function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+});
+
+
+// JMap.initMapsStandAlone("http://jibestream2.cloudapp.net:8082", {
+//   deviceId: 126092,
+//   languageCode: "en"
 // });
 
-
-JMap.initMapsStandAlone("http://jibestream2.cloudapp.net:8082", {
-  deviceId: 126092,
-  languageCode: "en"
-});
+// JMap.addListener("StandAloneMapsReady", function () {
+// });
 
 angular.bootstrap(document, ['wfWayfinding']);
 
