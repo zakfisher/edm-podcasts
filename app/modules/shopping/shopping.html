@@ -25,7 +25,7 @@
         <fa-view ng-repeat="storeGroup in storesList">
         <fa-modifier fa-size="[undefined, 240]">
           <fa-grid-layout fa-options="{dimensions:[2,1]}">
-            <fa-surface fa-pipe-to="myEventHandler2" fa-background-color="'#fff'" class="txt-center" ng-repeat="store in storeGroup">
+            <fa-surface fa-pipe-to="myEventHandler2" fa-background-color="'#fff'" class="txt-center" ng-repeat="store in storeGroup" fa-click="handleStoreClick(store)">
               <img ng-src="{{store._links.logo.href}}" height="200px"/>
             </fa-surface>
           </fa-grid-layout>

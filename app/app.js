@@ -31,6 +31,7 @@ var app = angular.module('wfWayfinding', [
   require('./modules/jibestream-map').name,
   require('./modules/westfield-icons').name,
   require('./modules/category-service').name,
+  require('./modules/kiosk-service').name,
   require('./modules/preloader').name,
   require('./modules/svg-keyboard').name,
   require('./modules/menu').name
@@ -98,8 +99,9 @@ app.config(function ($urlRouterProvider, $locationProvider) {
   $urlRouterProvider.otherwise('/');
 });
 
-app.run(function ($state, Preloader, $q) {
+app.run(function ($state, Preloader, $q, KioskService) {
   $state.go('preloader');
+  KioskService.saveState(false);
 });
 
 
@@ -110,15 +112,6 @@ $(document.body).on('mousewheel, contextmenu', function (e) {
   e.preventDefault();
   e.stopPropagation();
 });
-
-
-// JMap.initMapsStandAlone("http://jibestream2.cloudapp.net:8082", {
-//   deviceId: 126092,
-//   languageCode: "en"
-// });
-
-// JMap.addListener("StandAloneMapsReady", function () {
-// });
 
 angular.bootstrap(document, ['wfWayfinding']);
 
