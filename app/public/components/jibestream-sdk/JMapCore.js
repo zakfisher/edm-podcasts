@@ -1634,6 +1634,7 @@ var __extends = this.__extends || function (d, b) {
 
            	var newPoint = fl.getWayPointNearCoor(x,y,50)[0];
             this.destYah = newPoint?newPoint:this.destYah;
+            this.yahImage.heading = heading;
             this.setYah();
 
             if(newPoint)this.switchFloor(mapId);
@@ -1646,6 +1647,9 @@ var __extends = this.__extends || function (d, b) {
         Building.prototype.fromYahToDest = function (useElevator) {
             // this.resetAllMaps();
         
+
+            var speed = this.styles.mapStyles.pathStyles.duration * 1000;
+
             this.pathData = this.pathProcessor.compile(JMap.storage.maps.model.findWay(this.destYah, this.targetDestination, useElevator), this.endDestination.name, this.stepOffsetValue);
             
             var floorInfo = [];
@@ -1672,29 +1676,54 @@ var __extends = this.__extends || function (d, b) {
 
             var transitionWait = this.multifloorWaitTime;
 
+            // switch(floorsInvolved.length){
+            //     case 1:
+            //         this.showDestinationByFloor(this.pathData[0].mapid, (t*0.8)*1000);
+            //         this.timeouts.push(setTimeout(function(){JMap.fire("pathAnimationComplete");}, (t*0.8)*1000));
+            //         break;
+            //     default:
+            //         this.showMoverByFloor(this.pathData[0].mapid, this.pathData[0].mover.imagePath, this.pathData[0].points[this.pathData[0].points.length-1],(t*0.8)*1000);
+            //         this.showMoverByFloor(this.pathData[1].mapid, this.pathData[0].mover.imagePath, this.pathData[1].points[0], (t*1000) + transitionWait + 1000);//timeout plus floor transition time
+
+            //         this.timeouts.push(setTimeout(function(){
+            //             _this.switchFloor(_this.pathData[1].mapid, true);
+            //         }, t*1000 + transitionWait));
+
+            //         this.timeouts.push(setTimeout(function(){
+            //             var t2 = _this.displayPathOnFloor(_this.pathData[1], _this.floors[_this.pathData[1].mapid]);
+            //             _this.showDestinationByFloor(_this.pathData[1].mapid, (t2*0.8)*1000);
+            //             _this.timeouts.push(setTimeout(function(){
+            //                 _this.clearAllTimeouts();
+            //                 JMap.fire("pathAnimationComplete");
+            //                 _this.switchFloor(_this.pathData[0].mapid, true);
+
+            //             }, (t2*1000) + (t*1000 + transitionWait)));
+            //         }, 2000));
+            //         break;
+            // }
             switch(floorsInvolved.length){
                 case 1:
-                    this.showDestinationByFloor(this.pathData[0].mapid, (t*0.8)*1000);
-                    this.timeouts.push(setTimeout(function(){JMap.fire("pathAnimationComplete");}, (t*0.8)*1000));
+                    this.showDestinationByFloor(this.pathData[0].mapid, speed * 0.8);
+                    this.timeouts.push(setTimeout(function(){JMap.fire("pathAnimationComplete");}, speed));
                     break;
                 default:
-                    this.showMoverByFloor(this.pathData[0].mapid, this.pathData[0].mover.imagePath, this.pathData[0].points[this.pathData[0].points.length-1],(t*0.8)*1000);
-                    this.showMoverByFloor(this.pathData[1].mapid, this.pathData[0].mover.imagePath, this.pathData[1].points[0], (t*1000) + transitionWait + 1000);//timeout plus floor transition time
+                    this.showMoverByFloor(this.pathData[0].mapid, this.pathData[0].mover.imagePath, this.pathData[0].points[this.pathData[0].points.length-1],speed*0.7);
 
                     this.timeouts.push(setTimeout(function(){
                         _this.switchFloor(_this.pathData[1].mapid, true);
-                    }, t*1000 + transitionWait));
+                    }, 3000 + transitionWait));
 
                     this.timeouts.push(setTimeout(function(){
                         var t2 = _this.displayPathOnFloor(_this.pathData[1], _this.floors[_this.pathData[1].mapid]);
-                        _this.showDestinationByFloor(_this.pathData[1].mapid, (t2*0.8)*1000);
+                        _this.showDestinationByFloor(_this.pathData[1].mapid, speed * 0.7);
+                    	_this.showMoverByFloor(_this.pathData[1].mapid, _this.pathData[0].mover.imagePath, _this.pathData[1].points[0], 100);//timeout plus floor transition time
                         _this.timeouts.push(setTimeout(function(){
                             _this.clearAllTimeouts();
                             JMap.fire("pathAnimationComplete");
                             _this.switchFloor(_this.pathData[0].mapid, true);
 
-                        }, (t2*1000) + (t*1000 + transitionWait)));
-                    }, 2000));
+                        },  speed +  transitionWait));
+                    }, speed + 850 + transitionWait));
                     break;
             }
         };
@@ -1923,7 +1952,9 @@ var __extends = this.__extends || function (d, b) {
                 	JMap.getCorsOfUrl(this.mapsData[i].svgMap, $.proxy(fl.loadSVG, fl));
                 	// fl.loadSVG(JMap.serverUrl + '/rest/web/cors/get/'  + window.btoa(this.mapsData[i].svgMap));
                     // fl.loadSVG(this.mapsData[i].svgMap);
-                } 
+                }else{
+                	// fl.loadSVG("");
+                }
 
                 if(this.mapsData[i].defaultMapForDevice === true){
                     this.defaultMap = this.mapsData[i].mapId;
@@ -2042,6 +2073,8 @@ var __extends = this.__extends || function (d, b) {
 
             for(var i = 0, len = p_data.length; i < len; i++){
                 p_data[i].steps = this.breakToSteps(p_data[i].points, steps?steps:20);
+                p_data[i].svgPath = this.convertSVG(p_data[i].points);
+
             }
             JMap.fire("onTextDirections", [dt.textArrayData, dest]);
             return p_data;
@@ -2072,6 +2105,18 @@ var __extends = this.__extends || function (d, b) {
                 ar = ar.concat(this.lineInterpolate(pt1, pt2, newstep));
             }
             return ar;
+        };
+
+        PathProcessor.prototype.convertSVG = function (points) {
+            var str = "";
+            var n = points.length;
+
+            if (n < 2) {return null;}
+            str += "M " + points[0].x + " " + points[0].y;
+            for(var i = 1; i < n; i ++){
+                str += " L " + points[i].x + " " + points[i].y;
+            }
+            return str;
         };
 
         PathProcessor.prototype.lineInterpolate = function (point1, point2, distance) {
@@ -2413,13 +2458,19 @@ var __extends = this.__extends || function (d, b) {
         Floor.prototype.setSVG = function(){
         	var _this = this;
             var svg = '<div class="item mark svgLayer" id="svg-' + _this.id + '" data-position="0,0" data-show-at-zoom="0" data-allow-drag="false" data-allow-scale="true"></div>';
-            $(this.mapView).smoothZoom("addLandmark", [svg]);
+            var pathSVG = '<div class="item mark svgLayer" id="graphicCont-' + _this.id + '" data-position="0,0" data-show-at-zoom="0" data-allow-drag="false" data-allow-scale="true"></div>';
+            // var pathGraphicContainer = "<svg id='graphic-" + _this.id + "'></svg>";
+            $(this.mapView).smoothZoom("addLandmark", [svg, pathSVG]);
+            // $(this.mapView).smoothZoom("addLandmark", [pathGraphicContainer]);
             setTimeout(function(){
                 $( '#svg-' + _this.id ).html(_this.svgXml);
+                $("#graphicCont-" + _this.id).html("<svg id='graphic-" + _this.id + "'></svg>");
 				setTimeout(function(){
                     console.log("LOADED");
                     $('#svg-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
                     $( '#svg-' + _this.id ).show().css('opacity',1);
+                    $( '#graphicCont-' + _this.id ).show().css('opacity',1);
+                    $('#graphicCont-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
                     _this.addDragHandler(_this);
 					setTimeout($.proxy(_this.styleSVG, _this), 5000);
 				}, 5000);
@@ -2619,8 +2670,13 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Floor.prototype.clearPath = function(){
+
             this.pathView.push("bubbleLeft");
             $(this.mapView).smoothZoom("removeLandmark", this.pathView);
+
+            var svg = document.getElementById('graphic-' + this.id); //Get svg element
+            $(svg).html("");
+
             this.pathView = [];
             while(this.stepTimeouts.length > 0)clearTimeout(this.stepTimeouts.pop());
 
@@ -2709,7 +2765,7 @@ var __extends = this.__extends || function (d, b) {
 
         Floor.prototype.addDragHandler = function(fl) {
 
-            $('#svg-' + fl.id).on("touchstart",$.proxy(this.startDrag, this));
+            $('#svg-' + fl.id).on("click",$.proxy(this.startDrag, this));
 
 
             var _this = this;
@@ -2751,7 +2807,7 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Floor.prototype.startDrag = function(evt) {
-            if(evt.originalEvent.touches.length > 1) return;
+            if(evt.originalEvent.touches && evt.originalEvent.touches.length > 1) return;
             var _this = this;
             // console.log(_this)
             this.isZooming = false;
@@ -2762,10 +2818,12 @@ var __extends = this.__extends || function (d, b) {
 
             this.useSVGHitzones = 1;
 
+            this.dragMove(evt);
 
 
             // console.log("EVENT", evt.originalEvent.touches.length)
-
+            return;
+            
             if(this.useSVGHitzones == 1) {
                 $('#svg-' + _this.id).on("touchstart", $.proxy(this.dragMove, this));
                 this.dragMove(evt);
@@ -2791,6 +2849,7 @@ var __extends = this.__extends || function (d, b) {
             var clickY = evt.pageY;
             var list, $list, offset, range;
             var $body = $('#svg-' + this.id).find('*');
+            console.log(evt.originalEvent);
             var oEvtTouch = evt.originalEvent.changedTouches[0];
             var eleTag = document.elementFromPoint(oEvtTouch.clientX, oEvtTouch.clientY);
 
@@ -3120,37 +3179,70 @@ var __extends = this.__extends || function (d, b) {
         Floor.prototype.showPath = function (floorPath) {
             this.clearPath();
 
-            this.currentPath = floorPath;
-            var _this = this;
-            // var delayTime = this.speed;//waiting for device specific params
-            var delayTime = 0.05;
+             var _this = this,
+            	delayTime = 0.05,
+            	pStyle = this.styles.mapStyles.pathStyles;
 
+            this.currentPath = floorPath;
             this.hasPath = true;
             
             //Reset Map View
-            $(JMap.storage.thisMap).smoothZoom('Reset');
+            // $(JMap.storage.thisMap).smoothZoom('Reset');
+            switch(pStyle.pathType){
+            	case "line":
+	            	var svg = document.getElementById('graphic-' + this.id);
+		            console.log(svg);
+		            console.log(floorPath);
+					var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+					newElement.setAttribute("d",floorPath.svgPath);
+					newElement.style.stroke = pStyle.pathColor?pStyle.pathColor:"#000";
+					newElement.style.strokeWidth = pStyle.pathWidth?pStyle.pathWidth:"5px";
+					newElement.style["stroke-linejoin"] = "round";
+					newElement.style["stroke-linecap"] = "round";
+					var lt = newElement.getTotalLength();
+					newElement.style["stroke-dasharray"] = lt;
+					newElement.style["stroke-dashoffset"] = lt;
 
-            var arToShow = [];
-            function fFinal(){
-                //console.log("pathCompelte");
-                if(JMap.storage.maps.building.pathComplete !== undefined)JMap.storage.maps.building.pathComplete();
+					newElement.style.fill = "none";
+					svg.appendChild(newElement);
+		    		
+
+
+
+		    		TweenLite.to(newElement.style, pStyle.duration, {strokeDashoffset:0 , ease: Circ.easeOut, onComplete:function(){
+		    			console.log("ANIMATE!");
+		                if(JMap.storage.maps.building.pathComplete !== undefined)JMap.storage.maps.building.pathComplete();
+		    		}});
+
+		            break;
+            	case "dots":
+            		var arToShow = [];
+		            function fFinal(){
+		                if(JMap.storage.maps.building.pathComplete !== undefined)JMap.storage.maps.building.pathComplete();
+		            }
+
+		            function stepAnimate(stepObj, i){
+		                $(_this.mapView).smoothZoom("addLandmark", [stepObj]);
+		                _this.pathView.push("point" + i);
+		                // //console.log("Adding step ", i);
+
+		                if(i === floorPath.steps.length - 2)fFinal();
+		            }
+
+		            for(var i = 3, len = floorPath.steps.length - 2; i < len; i++){
+		            // for(var i = 0, len = floorPath.steps.length; i < len; i++){
+		                var p = floorPath.steps[i];
+		                var s = this.getGraphicStep(p, i === 0? undefined: floorPath.steps[i-1], i);
+		                this.stepTimeouts.push(setTimeout(stepAnimate, (delayTime * i) * 1000, s, i));
+		            }
+	            	break;
             }
 
-            function stepAnimate(stepObj, i){
-                $(_this.mapView).smoothZoom("addLandmark", [stepObj]);
-                _this.pathView.push("point" + i);
-                // //console.log("Adding step ", i);
+			
 
-                if(i === floorPath.steps.length - 2)fFinal();
-            }
+            
 
-            for(var i = 3, len = floorPath.steps.length - 2; i < len; i++){
-            // for(var i = 0, len = floorPath.steps.length; i < len; i++){
-                var p = floorPath.steps[i];
-                var s = this.getGraphicStep(p, i === 0? undefined: floorPath.steps[i-1], i);
-                this.stepTimeouts.push(setTimeout(stepAnimate, (delayTime * i) * 1000, s, i));
 
-            }
             // $(this.mapView).smoothZoom("addLandmark", arToShow);
             return floorPath.steps.length * delayTime;
         };
@@ -3667,30 +3759,71 @@ var BuildingModelGrid = (function () {
             return fl.grid.getPathLength(fromid, toid);
         };
 
-        BuildingModelGrid.prototype.getMoverClosest = function (wpfrom, wpto, elevator) {
-            var map1 = wpfrom.mapid;
-            var map2 = wpto.mapid;
-            var mover;
-            var length = 1000000;
-            for (var i = 0, n = this.movers.length; i < n; i++) {
-                var mov = this.movers[i];
-				// console.log('Looking for mover ------------------------------------------------------------->',mov);
-				if(elevator && mov.type !== 1)continue;
-
-                var con1 = this.isConnected(wpfrom.mapid, mov.connections);
-                var con2 = this.isConnected(wpto.mapid, mov.connections);
-                // console.log(con1, con2);
-
-                if (con1 && con2 && con1.wp) {
-                    var dist = this.getPathLength(wpfrom.id, con1.wpid, wpfrom.mapid);
-                    if (length > dist) {
-                        length = dist;
-                        mov.conn1 = con1;
-                        mov.conn2 = con2;
-                        mover = mov;
+        BuildingModelGrid.prototype.getFloorPreferenceMultiplier = function(mapid) {
+            var currentMultiplier = 1;
+            if(this.mapData) {
+                var currentPref = 0;
+                for(var i = 0; i < this.mapData.length; i++) {
+                    if(this.mapData[i].mapId == mapid) {
+                        if(this.mapData[i].preference == undefined) break;
+                        if(this.mapData[i].preference == 0) {
+                            currentMultiplier = 1;
+                        } else if (this.mapData[i].preference > 0) {
+                            currentMultiplier = currentMultiplier / (this.mapData[i].preference + 1);
+                        } else if (this.mapData[i].preference < 0) {
+                            currentMultiplier = currentMultiplier * (Math.abs(this.mapData[i].preference) + 1);
+                        }
+                        break;
                     }
                 }
             }
+
+            return currentMultiplier;         
+        } 
+
+        BuildingModelGrid.prototype.getMoverClosest = function (wpFrom, wpTo, elevator) {
+        	var map1 = wpFrom.mapid;
+            var map2 = wpTo.mapid;
+            var mover;
+            var length = -1;
+
+            for(var i = 0; i < this.movers.length; i++) {
+                var currentMov = this.movers[i];
+                if(elevator && currentMov.type !== 1) continue;
+
+                var con1 = this.isConnected(wpFrom.mapid, currentMov.connections);
+                var con2 = this.isConnected(wpTo.mapid, currentMov.connections);
+
+                console.log("Checking some Movers. Nothing to see Here");
+                console.log("First Connection", con1);
+                console.log("Second Connection", con2);
+
+                if(con1 && con2) {
+                    var floorPrefMultiplierFrom = this.getFloorPreferenceMultiplier(wpFrom.mapid);
+                    var floorPrefMultiplierTo = this.getFloorPreferenceMultiplier(wpTo.mapid);
+
+                    console.log("Got Multiplier", floorPrefMultiplierFrom);
+                    console.log("Got Multiplier", floorPrefMultiplierTo);
+
+                    var dist1 = floorPrefMultiplierFrom * (this.getPathLength(wpFrom.id, con1.wpid, wpFrom.mapid));
+                    var dist2 = floorPrefMultiplierTo * (this.getPathLength(wpTo.id, con2.wpid, wpTo.mapid));
+
+                    var distTotal = dist1 + dist2;
+
+                    if(length == -1) {
+                        length = distTotal;
+                        currentMov.conn1 = con1;
+                        currentMov.conn2 = con2;
+                        mover = currentMov;
+                    } else if (length > distTotal) {
+                        length = distTotal;
+                        currentMov.conn1 = con1;
+                        currentMov.conn2 = con2;
+                        mover = currentMov;
+                    }
+                }
+            }
+
             return mover;
         };
 
@@ -3736,6 +3869,10 @@ var BuildingModelGrid = (function () {
             JMap.getPeopleMovers(function(res){
                 return _this.onMoverData(res);
             });
+
+            JMap.getMaps(function(res) {
+                return _this.onMaps(res);
+            });
         };
 
         /**
@@ -3751,6 +3888,11 @@ var BuildingModelGrid = (function () {
             }
             return null;
         };
+
+        BuildingModelGrid.prototype.onMaps = function(res) {
+            this.mapData = res;
+        };
+
 
         BuildingModelGrid.prototype.getFloorBySequence = function (seq) {
             for (var i = 0, n = this.arFloors.length; i < n; i++) {
@@ -5208,7 +5350,7 @@ else
 		setLocation: function (lc){
 			var self = this,
 				ob = lc,
-				w2, h2, pos, sc;
+				w2, h2, pos, sc, rotation;
 			
 			if (prop_origin) {
 				ob.css(prop_origin, '0 0');
@@ -6379,6 +6521,8 @@ else
 		},				
 
 		getZoomData: function (params) {
+			if(this._x === undefined)return;
+
 			return {
 				//x offset (without scale ratio multiplied)
 				normX: (-this._x / this.rA).toFixed(14),				

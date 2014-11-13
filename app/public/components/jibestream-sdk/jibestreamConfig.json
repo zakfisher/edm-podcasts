@@ -103,8 +103,9 @@
 			"pathType":"line",
 			"spacing":5,
 			"pathWidth":5,
-			"pathColor":"#0f0",
-			"additionalCss":"/*border:1px solid #000;*/"
+			"pathColor":"#f00",
+			"additionalCss":"/*border:1px solid #000;*/",
+			"duration":3
 		},
 		"iconStyles":{
 			"youarehere":{
@@ -125,6 +126,22 @@
 					"x":"20px",
 					"y":"50px"
 				}
+			},
+			"movers":{
+				"width":"40px",
+				"height":"40px",
+				"offset":{
+					"x":"20px",
+					"y":"20px"
+				}	
+			},
+			"legends":{
+				"width":"40px",
+				"height":"40px",
+				"offset":{
+					"x":"20px",
+					"y":"20px"
+				}	
 			}
 		},
 		"labelStyle":{
