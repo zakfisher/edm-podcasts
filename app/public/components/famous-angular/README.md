@@ -1,4 +1,4 @@
-# Famo.us/Angular
+# Famo.us/Angular [![Build Status](https://travis-ci.org/Famous/famous-angular.svg?branch=master)](https://travis-ci.org/Famous/famous-angular)
 
 Famo.us/Angular is an AngularJS-driven framework for building Famo.us apps.
 
@@ -65,7 +65,9 @@ To get started even faster, try the [famous-angular-starter](https://github.com/
 
 
 ####Thereafter:
-Install the frontend dependencies inside of your example folder.
+Clone the submodules and install the frontend dependencies inside of your example folder.
+
+`git submodule update --init --recursive`
 
 `cd famous-angular-examples`
 

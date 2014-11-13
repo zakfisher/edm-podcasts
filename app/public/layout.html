@@ -1,27 +1,28 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <title>Wayfinding Prototype</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <link rel="stylesheet" href="/assets/application.css?v=1">
-  <link rel="stylesheet" href="/components/famous-angular/dist/famous-angular.css">
-  <script src="/components/jquery/dist/jquery.min.js"></script>
-  <script src="/components/angular/angular.js"></script>
-  <script src="/components/angular-animate/angular-animate.js"></script>
-  <script src="/components/angular-touch/angular-touch.js"></script>
-  <script src="/components/angular-sanitize/angular-sanitize.js"></script>
-  <script src="/components/angular-resource/angular-resource.js"></script>
-  <script src="/components/angular-ui-router/release/angular-ui-router.js"></script>
-  <script src="/components/angular-route/angular-route.js"></script>
-  <script src="/components/famous/famous-global.js"></script>
-  <script src="/components/famous-angular/dist/famous-angular.js"></script>
-  <script src="/components/jibestream-sdk/JMapCore.js"></script>
-</head>
+  <head>
+    <title>Wayfinding Prototype</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="/components/flama-webfont/flama.css?v=1">
+    <link rel="stylesheet" href="/components/flama-condensed-webfont/flama-condensed.css?v=1">
+    <link rel="stylesheet" href="/assets/application.css?v=1">
+    <link rel="stylesheet" href="/components/famous-angular/dist/famous-angular.css">
+    <script src="/components/jquery/dist/jquery.min.js"></script>
+    <script src="/components/angular/angular.js"></script>
+    <script src="/components/angular-touch/angular-touch.js"></script>
+    <script src="/components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="/components/angular-resource/angular-resource.js"></script>
+    <script src="/components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="/components/angular-route/angular-route.js"></script>
+    <script src="/components/famous/dist/famous-global.js"></script>
+    <script src="/components/famous-angular/dist/famous-angular.js"></script>
+    <script src="/components/jibestream-sdk/JMapCore.js"></script>
+  </head>
   <body>
-    <fa-app fa-perspective="800" fa-perspective-origin="[0.5,0.5]">
-      <kioskmenu></kioskmenu>
+    <fa-app fa-perspective="250">
       <div ui-view></div>
+      <kioskmenu></kioskmenu>
     </fa-app>
   </body>
   <script src="/assets/app.js"></script>

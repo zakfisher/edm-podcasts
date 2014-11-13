@@ -1,0 +1,102 @@
+/* Flama Condensed Light */
+
+@font-face {
+  font-family: 'FlamaCondensed';
+  src: url('FlamaCondensed-Light.eot');
+  src: url('FlamaCondensed-Light.eot?iefix') format('eot'),
+       url('FlamaCondensed-Light.woff') format('woff'),
+       url('FlamaCondensed-Light.svg') format('svg');
+  font-weight: 300;
+  font-style: normal;
+}
+
+
+/* Flama Condensed Book */
+
+@font-face {
+  font-family: 'FlamaCondensed';
+  src: url('FlamaCondensed-Book.eot');
+  src: url('FlamaCondensed-Book.eot?iefix') format('eot'),
+       url('FlamaCondensed-Book.woff') format('woff'),
+       url('FlamaCondensed-Book.svg') format('svg');
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+/* Flama Condensed Basic */
+
+@font-face {
+  font-family: 'FlamaCondensed';
+  src: url('FlamaCondensed-Basic.eot');
+  src: url('FlamaCondensed-Basic.eot?iefix') format('eot'),
+       url('FlamaCondensed-Basic.woff') format('woff'),
+       url('FlamaCondensed-Basic.svg') format('svg');
+  font-weight: 500;
+  font-style: normal;
+}
+
+
+/* Flama Condensed Medium */
+
+@font-face {
+  font-family: 'FlamaCondensed';
+  src: url('FlamaCondensed-Medium.eot');
+  src: url('FlamaCondensed-Medium.eot?iefix') format('eot'),
+       url('FlamaCondensed-Medium.woff') format('woff'),
+       url('FlamaCondensed-Medium.svg') format('svg');
+  font-weight: 600;
+  font-style: normal;
+}
+
+
+/* Flama Condensed Semibold */
+
+/*@font-face {
+  font-family: 'FlamaCondensed';
+  src: url('FlamaCondensed-Semibold.eot');
+  src: url('FlamaCondensed-Semibold.eot?iefix') format('eot'),
+       url('FlamaCondensed-Semibold.woff') format('woff'),
+       url('FlamaCondensed-Semibold.svg') format('svg');
+  font-weight: 600;
+  font-style: normal;
+}*/
+
+
+/* Flama Condensed Bold */
+
+@font-face {
+  font-family: 'FlamaCondensed';
+  src: url('FlamaCondensed-Bold.eot');
+  src: url('FlamaCondensed-Bold.eot?iefix') format('eot'),
+       url('FlamaCondensed-Bold.woff') format('woff'),
+       url('FlamaCondensed-Bold.svg') format('svg');
+  font-weight: 700;
+  font-style: normal;
+}
+
+
+/* Flama Condensed Extrabold */
+
+@font-face {
+  font-family: 'FlamaCondensed';
+  src: url('FlamaCondensed-Extrabold.eot');
+  src: url('FlamaCondensed-Extrabold.eot?iefix') format('eot'),
+       url('FlamaCondensed-Extrabold.woff') format('woff'),
+       url('FlamaCondensed-Extrabold.svg') format('svg');
+  font-weight: 800;
+  font-style: normal;
+}
+
+
+/* Flama Condensed Black */
+
+@font-face {
+  font-family: 'FlamaCondensed';
+  src: url('FlamaCondensed-Black.eot');
+  src: url('FlamaCondensed-Black.eot?iefix') format('eot'),
+       url('FlamaCondensed-Black.woff') format('woff'),
+       url('FlamaCondensed-Black.svg') format('svg');
+  font-weight: 900;
+  font-style: normal;
+}
