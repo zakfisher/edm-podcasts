@@ -1300,13 +1300,32 @@ var __extends = this.__extends || function (d, b) {
         	try{
 
 	        	var addedStyles = "<style>";
-	        	addedStyles += ".point{width:15px;height:15px;position:absolute}#map-mainview{position:absolute;width:100%;height:100%}.map-floor{position:absolute;height:100%;width:100%}.map-floor-base.inactive{pointer-events:none}.map-floor-base{position:absolute;transform-origin:0 0 0;-webit-perspective:1000px;display:block;left:0;top:0}.map-floor-container-base,.map-floor-legendsview-base,.map-floor-legendsview-base img{position:absolute}.map-floor-legendsview-base img.yahPoint{position:absolute;-webkit-transform-origin:50% 0;transform-origin:50% 0}.legendItem{background-size:100%;display:none}.legendItemActive{background:rgba(0,0,0,.2);border:4px solid #fff;border-radius:100px;display:block!important}.bubbleText{text-align:center;position:absolute;color:#fff;font-size:25px;width:250px;height:60px;line-height:30px;display:inline-block;vertical-align:middle}#bubbleLeft>img{pointer-events:none}.pathView{position:absolute;z-index:10;pointer-events:none}.pathView img{position:absolute}.legendLabelItem{position:absolute;font-size:12px;white-space:nowrap}.legendsLabelsView{position:absolute}.map-floor-container-base .landmarks{position:absolute;z-index:10;font-family:Helvetica,Arial,Verdana;font-size:12px;color:#fff;transform-origin:0 0 0}.map-floor-container-base .landmarks .item{position:absolute;text-align:center;display:none;padding:0;margin:0}.map-floor-container-base .landmarks .item.legends img{position:absolute;top:-15px!important;left:-15px!important;width:30px!important;height:30px!important}.map-floor-container-base .landmarks .lable div{position:absolute;font-size:20px;width:auto;text-align:center;background:none!important;color:#ccc}.map-floor-container-base .landmarks .mark .text{background-color:#000}.map-floor-container-base .landmarks #bubbleLeft.item,.map-floor-container-base .landmarks #yah.item,.map-floor-container-base .landmarks .item.mover{z-index:3!important}.map-floor-container-base .landmarks .item.mover img{position:absolute;top:-25px!important;left:-25px!important;padding:2px;border:1px solid #fff;border-radius:12px;background-color:#E32723;width:50px;height:50px}";
+	        	addedStyles += ".point{width:15px;height:15px;position:absolute}"+
+	        	"#map-mainview{position:absolute;width:100%;height:100%}"+
+	        	".map-floor{position:absolute;height:100%;width:100%}"+
+	        	".map-floor-base.inactive{pointer-events:none}"+
+	        	".map-floor-base{position:absolute;transform-origin:0 0 0;-webit-perspective:1000px;display:block;left:0;top:0}"+
+	        	".map-floor-container-base,.map-floor-legendsview-base,.map-floor-legendsview-base img{position:absolute}"+
+	        	".map-floor-legendsview-base img.yahPoint{position:absolute;-webkit-transform-origin:50% 0;transform-origin:50% 0}"+
+	        	".legendItem{background-size:100%;display:none}"+
+	        	".legendItemActive{background:rgba(0,0,0,.2);border:4px solid #fff;border-radius:100px;display:block!important}"+
+	        	".bubbleText{text-align:center;position:absolute;color:#fff;font-size:25px;width:250px;height:60px;line-height:30px;display:inline-block;vertical-align:middle}"+
+	        	"#bubbleLeft>img{pointer-events:none}.pathView{position:absolute;z-index:10;pointer-events:none}"+
+	        	".pathView img{position:absolute}.legendLabelItem{position:absolute;font-size:12px;white-space:nowrap}"+
+	        	".legendsLabelsView{position:absolute}"+
+	        	".map-floor-container-base .landmarks{position:absolute;z-index:10;font-family:Helvetica,Arial,Verdana;font-size:12px;color:#fff;transform-origin:0 0 0}"+
+	        	".map-floor-container-base .landmarks .item{position:absolute;text-align:center;display:none;padding:0;margin:0}"+
+	        	".map-floor-container-base .landmarks .lable div{position:absolute;font-size:20px;width:auto;text-align:center;background:none!important;color:#ccc}"+
+	        	".map-floor-container-base .landmarks .mark .text{background-color:#000}"+
+	        	".map-floor-container-base .landmarks #bubbleLeft.item,.map-floor-container-base .landmarks #yah.item,.map-floor-container-base .landmarks .item.mover{z-index:3!important}";
+	        	
+	        	addedStyles += ".map-floor-container-base .landmarks .item.legends img{position:absolute;top:-" + (iconStyles.mover?iconStyles.legends.offset.y + "px":"15px") + "px!important;left:-" + (iconStyles.mover?iconStyles.legends.offset.x + "px":"15px") + "px!important;width:" + (iconStyles.mover?iconStyles.legends.width + "px":"15px") + "px!important;height:" + (iconStyles.mover?iconStyles.legends.height + "px":"30px") + "px!important}";
+
+	        	addedStyles += ".map-floor-container-base .landmarks .item.mover img{position:absolute;top:-" + (iconStyles.mover?iconStyles.mover.offset.y + "px":"25px") + "!important;left:-" + (iconStyles.mover?iconStyles.mover.offset.x + "px":"25px") + "px!important;width:" + (iconStyles.mover?iconStyles.mover.width + "px":"50px") + "px;height:" + (iconStyles.mover?iconStyles.mover.offset.y + "px":"50px") + "px}";
 	        	
 	        	if(labelStyle){
 	        		addedStyles += ".map-floor-container-base .landmarks .item>div{"
 	        		for(var str in labelStyle){
-	        			console.log("----------------------------");
-	        			console.log(str, labelStyle[str]);
 	            	    addedStyles += str + ":" + labelStyle[str] + ";";
 	            	}
 		        	addedStyles += "}";
@@ -2435,7 +2454,7 @@ var __extends = this.__extends || function (d, b) {
         	interval = interval || 250;
         	var intervalReference = setInterval(function(){
         		var conditionReponse = condition();
-        		console.log("checking - > ", conditionReponse);
+        		// console.log("checking - > ", conditionReponse);
         		if(condition() !== false){
         			response();
         			clearInterval(intervalReference);
@@ -2466,7 +2485,7 @@ var __extends = this.__extends || function (d, b) {
                 $( '#svg-' + _this.id ).html(_this.svgXml);
                 $("#graphicCont-" + _this.id).html("<svg id='graphic-" + _this.id + "'></svg>");
 				setTimeout(function(){
-                    console.log("LOADED");
+                    // console.log("LOADED");
                     $('#svg-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
                     $( '#svg-' + _this.id ).show().css('opacity',1);
                     $( '#graphicCont-' + _this.id ).show().css('opacity',1);
@@ -2478,7 +2497,7 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Floor.prototype.styleSVG = function(){
-			console.log("FIRING FLOOR READY", this);
+			// console.log("FIRING FLOOR READY", this);
 			this.updateZoomLayers($(this.mapView).smoothZoom('getZoomData'));
 			JMap.fire("floorLoaded");
 
@@ -2627,7 +2646,7 @@ var __extends = this.__extends || function (d, b) {
         
         Floor.prototype.updateZoomLayers = function(zoomData){
             //TODO - Zoom Layers
-            console.log(zoomData);
+            // console.log(zoomData);
             if(!zoomData)return;
             var currentScale = zoomData.ratio *100;
             for (var i = 0; i < this.styles.mapStyles.mapLayers.length; i++) {
@@ -3296,9 +3315,7 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Floor.prototype.showMoverByWP = function (url, wp) {
-            // console.log("URL");
-            // console.log(url);
-            var b = "<div id='mover" + this.id + "' class='item mark mover' data-show-at-zoom='0' data-position='" + (wp.x * this.scaleOffset) + "," + (wp.y * this.scaleOffset) + "' data-allow-scale='true' data-allow-drag='false'><img src='" +  url + "' width='100' height='100' /></div>";
+            var b = "<div id='mover" + this.id + "' class='item mark mover' data-show-at-zoom='0' data-position='" + (wp.x * this.scaleOffset) + "," + (wp.y * this.scaleOffset) + "' data-allow-scale='true' data-allow-drag='false'><img src='" + JMap.serverUrl + url + "' width='100' height='100' /></div>";
             this.pathView.push("mover" + this.id);
             $(this.mapView).smoothZoom("addLandmark", [b]);
         };
