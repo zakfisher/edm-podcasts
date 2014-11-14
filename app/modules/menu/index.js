@@ -45,8 +45,10 @@ module.exports = angular.module('KioskMenu', [])
   };
 
   menu.handleTap = function (item) {
-    menu.activeMenuItem = item.type;
-    menu.navigateTo(item);
+    if (!item.disabled) {
+      menu.activeMenuItem = item.type;
+      menu.navigateTo(item);
+    }
   };
 
   //Keep menu highlighting accurate with state

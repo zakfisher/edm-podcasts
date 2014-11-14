@@ -1,5 +1,7 @@
 <fa-view>
-  <!-- <fa-image-surface fa-background-color="'#222'" style="background-image: url('https://westfieldus.box.com/shared/static/m8jnaocf4gmftp5g1l96.jpg');"></fa-image-surface> -->
+    <fa-modifier fa-translate="[0,0,-2]">
+      <fa-image-surface fa-background-color="'#222'" fa-image-url="directoryBG.jpg"></fa-image-surface>
+    </fa-modifier>
   <fa-modifier>
     <fa-header-footer-layout fa-options="{direction: 0, headerSize: 680, footerSize: 160}">
 
@@ -25,7 +27,7 @@
         <fa-view ng-repeat="storeGroup in storesList">
         <fa-modifier fa-size="[undefined, 240]">
           <fa-grid-layout fa-options="{dimensions:[2,1]}">
-            <fa-surface fa-pipe-to="myEventHandler2" fa-background-color="'#fff'" class="txt-center" ng-repeat="store in storeGroup" fa-click="handleStoreClick(store)">
+            <fa-surface fa-pipe-to="myEventHandler2" fa-background-color="'#fff'" class="txt-center directoryStoreSurface" ng-repeat="store in storeGroup" fa-click="handleStoreClick(store)">
               <img ng-src="{{store._links.logo.href}}" height="200px"/>
             </fa-surface>
           </fa-grid-layout>

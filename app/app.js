@@ -34,6 +34,7 @@ var app = angular.module('wfWayfinding', [
   require('./modules/kiosk-service').name,
   require('./modules/preloader').name,
   require('./modules/svg-keyboard').name,
+  require('./modules/card-stream').name,
   require('./modules/menu').name
 ]);
 
@@ -71,19 +72,22 @@ app.value('config', {
       title: 'Dining',
       subtitle: 'Directory',
       icon: 'wire-dining-rev',
-      type: 'dining'
+      type: 'dining',
+      disabled: true
     },
     {
       title: 'Services',
       subtitle: 'Directory',
       icon: 'wire-services-rev',
       type: 'services',
+      disabled: true
     },
     {
       title: 'Events',
       subtitle: 'Calendar',
       icon: 'wire-see-rev',
-      type: 'events'
+      type: 'events',
+      disabled: true
     },
   ]
 });

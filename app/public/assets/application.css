@@ -82,6 +82,8 @@ webview {
     opacity: 0; }
   .menu-item.active {
     background-color: #160808; }
+  .menu-item.disabled {
+    background-color: #666; }
   .menu-item h1 {
     margin: 0 0 10px 0;
     padding: 0;
@@ -113,11 +115,11 @@ webview {
   font-weight: 700;
   color: #c7242e !important; }
 
-.directoryListing {
-  opacity: 0.9; }
-
 .txt-center {
   text-align: center; }
+
+.directoryStoreSurface {
+  opacity: 0.9 !important; }
 
 svg * {
   pointer-events: all; }
