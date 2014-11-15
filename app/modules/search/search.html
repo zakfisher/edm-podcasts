@@ -1,11 +1,13 @@
 <fa-modifier>
   <fa-header-footer-layout fa-options="{direction: 1, headerSize: 150, footerSize: 370}">
-    <!-- Input -->
+
     <fa-view>
-      <fa-surface fa-background-color="'black'"></fa-surface>
+      <fa-modifier fa-translate="[0,0,-1]">
+        <fa-surface fa-background-color="'black'"></fa-surface>
+      </fa-modifier>
       <fa-modifier fa-size="[undefined, 100]">
       <fa-surface>
-      <h1 class="txt-center" ng-bind="string + '|'" style="color: #fff">
+        <h1 class="txt-center searchBox" ng-bind="string + '|'" style="color: #fff">
       </h1>
       </fa-surface>
       </fa-modifier>
@@ -22,7 +24,7 @@
     <!-- Keyboard -->
     <fa-view>
       <fa-surface fa-background-color="'black'"></fa-surface>
-      <fa-modifier fa-size="[1055, 370]" fa-origin="[.5,0]" fa-align="[.5, 0]">
+      <fa-modifier fa-size="[1055, 370]" fa-origin="[.5,0]" fa-align="[.5, 0]" fa-translate="[0,0,1]">
         <fa-surface>
           <keyboard model="string"></keyboard>
         </fa-surface>

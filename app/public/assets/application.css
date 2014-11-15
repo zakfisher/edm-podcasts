@@ -126,3 +126,10 @@ svg * {
 
 g.active .key-background {
   fill: #c7242e; }
+
+.searchBox {
+  border-bottom: 2px solid #c7242e;
+  width: 60%;
+  margin: 30px auto;
+  padding: 20px 1em;
+  line-height: 1; }
