@@ -7,7 +7,8 @@
 				"zoomLevel":0,
 				"colorFill":"#b6b28c",
 				"highLightColor":"#fff",
-				"clickable":true
+				"clickable":true,
+				"addLabel":true
 			},
 			{
 				"name":"Amenities",
@@ -24,7 +25,8 @@
 				"colorFill":"#dddabf",
 				"strokeColor":"#fff",
 				"strokeWidth":"2px",
-				"clickable":true
+				"clickable":true,
+				"addLabel":true
 			},
 
 			{
@@ -57,7 +59,8 @@
 				"zoomLevel":0,
 				"colorFill":"#b6b28c",
 				"highLightColor":"#fff",
-				"clickable":true
+				"clickable":true,
+				"addLabel":true
 			},
 			{
 				"name":"Amenities_1_",
@@ -74,7 +77,8 @@
 				"colorFill":"#dddabf",
 				"strokeColor":"#fff",
 				"strokeWidth":"2px",
-				"clickable":true
+				"clickable":true,
+				"addLabel":true
 			},
 			{
 				"name":"Floor_1_",

@@ -21,6 +21,17 @@
 .st3:hover{
 	fill: #fff;
 }
+
+
+
+/**** Pop Up ****/
+#popup-render-container{
+	display:none;
+}
+
+
+
+
 </style>
 
 <div id="loading-container">
@@ -31,3 +42,18 @@
 
 
 <div id="map-container"></div>
+
+
+<div id="popup-render-container">
+	<div class="popup-container">
+		<div class="popup-image">
+			<img src="{{imgurl}}" />
+		</div>
+		
+		<div class="popup-text">{{description}}</div>
+
+		<div click="" class="popup-button">
+			Click here for directions
+		</div>
+	</div>
+</div>
