@@ -2509,7 +2509,7 @@ var __extends = this.__extends || function (d, b) {
 
 				// console.log("Style Elements: ", currentStyle, $group.length);	                	
 
-				console.log("APPLYING STYLE TO ", currentStyle.name, currentStyle);
+				// console.log("APPLYING STYLE TO ", currentStyle.name, currentStyle);
 
 
 				var ar = [];
@@ -2552,7 +2552,7 @@ var __extends = this.__extends || function (d, b) {
 	            }
 
 
-	            if(currentStyle.addLabel)console.log(ar);
+	           // if(currentStyle.addLabel)console.log(ar);
 	            // $(this.mapView).smoothZoom("addLandmark", this.legendsObj.labelselementsArray);
 
 				this.styles.mapStyles.mapLayers[i] = currentStyle;
@@ -2893,7 +2893,7 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Floor.prototype.startDrag = function(evt) {
-        	console.log("click", evt);
+        	// console.log("click", evt);
 
             if(evt.originalEvent.touches && evt.originalEvent.touches.length > 1) return;
             var _this = this;
@@ -2937,7 +2937,7 @@ var __extends = this.__extends || function (d, b) {
             var clickY = evt.pageY;
             var list, $list, offset, range;
             var $body = $('#svg-' + this.id).find('*');
-            console.log(evt.originalEvent);
+            // console.log(evt.originalEvent);
             var oEvtTouch = evt.originalEvent.changedTouches[0];
             var eleTag = document.elementFromPoint(oEvtTouch.clientX, oEvtTouch.clientY);
 
@@ -3279,8 +3279,8 @@ var __extends = this.__extends || function (d, b) {
             switch(pStyle.pathType){
             	case "line":
 	            	var svg = document.getElementById('graphic-' + this.id);
-		            console.log(svg);
-		            console.log(floorPath);
+		            // console.log(svg);
+		            // console.log(floorPath);
 					var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
 					newElement.setAttribute("d",floorPath.svgPath);
 					newElement.style.stroke = pStyle.pathColor?pStyle.pathColor:"#000";
@@ -3298,7 +3298,7 @@ var __extends = this.__extends || function (d, b) {
 
 
 		    		TweenLite.to(newElement.style, pStyle.duration, {strokeDashoffset:0 , ease: Circ.easeOut, onComplete:function(){
-		    			console.log("ANIMATE!");
+		    			// console.log("ANIMATE!");
 		                if(JMap.storage.maps.building.pathComplete !== undefined)JMap.storage.maps.building.pathComplete();
 		    		}});
 
@@ -3903,16 +3903,16 @@ var BuildingModelGrid = (function () {
                 var con1 = this.isConnected(wpFrom.mapid, currentMov.connections);
                 var con2 = this.isConnected(wpTo.mapid, currentMov.connections);
 
-                console.log("Checking some Movers. Nothing to see Here");
-                console.log("First Connection", con1);
-                console.log("Second Connection", con2);
+                // console.log("Checking some Movers. Nothing to see Here");
+                // console.log("First Connection", con1);
+                // console.log("Second Connection", con2);
 
                 if(con1 && con2) {
                     var floorPrefMultiplierFrom = this.getFloorPreferenceMultiplier(wpFrom.mapid);
                     var floorPrefMultiplierTo = this.getFloorPreferenceMultiplier(wpTo.mapid);
 
-                    console.log("Got Multiplier", floorPrefMultiplierFrom);
-                    console.log("Got Multiplier", floorPrefMultiplierTo);
+                    // console.log("Got Multiplier", floorPrefMultiplierFrom);
+                    // console.log("Got Multiplier", floorPrefMultiplierTo);
 
                     var dist1 = floorPrefMultiplierFrom * (this.getPathLength(wpFrom.id, con1.wpid, wpFrom.mapid));
                     var dist2 = floorPrefMultiplierTo * (this.getPathLength(wpTo.id, con2.wpid, wpTo.mapid));
@@ -4005,7 +4005,7 @@ var BuildingModelGrid = (function () {
 
         BuildingModelGrid.prototype.getFloorBySequence = function (seq) {
             for (var i = 0, n = this.arFloors.length; i < n; i++) {
-            	console.log(this.arFloors[i]);
+            	// console.log(this.arFloors[i]);
                 if (this.arFloors[i].floorSequence == seq)
                     return this.arFloors[i];
             }
