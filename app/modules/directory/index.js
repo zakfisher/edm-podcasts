@@ -54,6 +54,7 @@ module.exports = angular.module('Directory', [])
 
       $http({
         method: 'GET',
+        cache: true,
         url: $scope.storesUrl
       }).success(function (r) {
         $scope.stores = r;

@@ -16,14 +16,14 @@ module.exports = angular.module('Shopping', [])
   $http({
     method: 'GET',
     cache: true,
-    url: "http://www.westfield.com.au/api/category/master/categories.json?centre_id=valleyfair&country=us&per_page=all"
+    url: "http://www.westfield.com.au/api/category/master/store-categories/valleyfair.json"
   }).success(categoriesTask.resolve);
 
 })
 
 .controller('Shopping', function ($scope, $famous, $http, filterFilter, $filter, KioskService, CardStream) {
   $scope.storesUrl = "http://www.westfield.com.au/api/store/master/stores.json?centre_id=valleyfair&country=us&per_page=all";
-  $scope.categoriesUrl = "http://www.westfield.com.au/api/category/master/categories.json?centre_id=valleyfair&country=us&per_page=all";
+  $scope.categoriesUrl = "http://www.westfield.com.au/api/category/master/store-categories/valleyfair.json";
 
   //Get All Categories
   $http({
