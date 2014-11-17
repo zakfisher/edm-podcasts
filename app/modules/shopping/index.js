@@ -23,7 +23,7 @@ module.exports = angular.module('Shopping', [])
 })
 
 
-.controller('Shopping', function ($scope, $famous, $http, filterFilter, $filter) {
+.controller('Shopping', function ($scope, $famous, $http, filterFilter, $filter, KioskService, CardStream) {
   console.log("Shopping Module");
 
   var EventHandler = $famous['famous/core/EventHandler'];
@@ -39,6 +39,12 @@ module.exports = angular.module('Shopping', [])
     $scope.filterCategory = category.code;
     $scope.currentCategoryName = category.name;
     $scope.setStoresList($scope.stores);
+  };
+
+  $scope.handleStoreClick = function (store) {
+    KioskService.saveState(store);
+    CardStream.setStore(store);
+    CardStream.show();
   };
 
   $http({

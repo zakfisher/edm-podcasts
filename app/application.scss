@@ -118,6 +118,11 @@ webview {
     background-color: #160808;
   }
 
+  &.disabled {
+    background-color: #666;
+
+  }
+
   h1 {
     margin: 0 0 10px 0;
     padding: 0;
@@ -167,12 +172,13 @@ webview {
   color: #c7242e !important;
 }
 
-.directoryListing {
-  opacity: 0.9;
-}
 
 .txt-center {
   text-align: center;
+}
+
+.directoryStoreSurface {
+  opacity: 0.9 !important;
 }
 
 
@@ -185,4 +191,12 @@ g.active {
   .key-background {
     fill: #c7242e;
   }
+}
+
+.searchBox {
+  border-bottom: 2px solid #c7242e;
+  width: 60%;
+  margin: 30px auto;
+  padding: 20px 1em;
+  line-height: 1;
 }
