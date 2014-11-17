@@ -29,13 +29,13 @@ var app = angular.module('wfWayfinding', [
   require('./modules/events').name,
   require('./modules/directory').name,
   require('./modules/jibestream-map').name,
-  require('./modules/westfield-icons').name,
   require('./modules/category-service').name,
   require('./modules/kiosk-service').name,
   require('./modules/preloader').name,
   require('./modules/svg-keyboard').name,
   require('./modules/card-stream').name,
-  require('./modules/menu').name
+  require('./modules/menu').name,
+  require('./public/components/westfield-icons').name
 ]);
 
 
