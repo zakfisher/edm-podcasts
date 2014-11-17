@@ -72,8 +72,7 @@ app.value('config', {
       title: 'Dining',
       subtitle: 'Directory',
       icon: 'wire-dining-rev',
-      type: 'dining',
-      disabled: true
+      type: 'dining'
     },
     {
       title: 'Services',

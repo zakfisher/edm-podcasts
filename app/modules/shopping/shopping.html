@@ -3,58 +3,6 @@
       <fa-image-surface fa-background-color="'#222'" fa-image-url="directoryBG.jpg"></fa-image-surface>
     </fa-modifier>
   <fa-modifier>
-    <fa-header-footer-layout fa-options="{direction: 0, headerSize: 680, footerSize: 160}">
-
-      <!-- Category Filters -->
-      <fa-scroll-view fa-pipe-from="myEventHandler">
-        <fa-view ng-repeat="category in categories">
-          <fa-modifier fa-size="[undefined, 80]">
-            <!-- All events on fa-surfaces (click, mousewheel) are piped to $scope.myEventHandler -->
-             <fa-surface
-                         fa-click="categoryClickHandler(category)"
-                         fa-pipe-to="myEventHandler"
-                         class="directoryCategory"
-                         ng-class="{'active': (filterCategory == category.code)}">
-                <h3>{{category.name}}</h3>
-             </fa-surface>
-          </fa-modifier>
-        </fa-view>
-      </fa-scroll-view>
-
-      <!-- Results -->
-      <fa-scroll-view fa-pipe-from="myEventHandler2">
-        <!-- Put stores in a 2 by 1 grid in each listing -->
-        <fa-view ng-repeat="storeGroup in storesList">
-        <fa-modifier fa-size="[undefined, 240]">
-          <fa-grid-layout fa-options="{dimensions:[2,1]}">
-            <fa-surface fa-pipe-to="myEventHandler2" fa-background-color="'#fff'" class="txt-center directoryStoreSurface" ng-repeat="store in storeGroup" fa-click="handleStoreClick(store)">
-              <img ng-src="{{store._links.logo.href}}" height="200px"/>
-            </fa-surface>
-          </fa-grid-layout>
-        </fa-modifier>
-        </fa-view>
-      </fa-scroll-view>
-
-      <!-- Headings -->
-      <fa-view>
-        <fa-modifier
-          fa-translate="[10,-160,0]"
-          fa-rotate-z="headerRotation"
-          fa-size="[1200, 200]"
-          >
-          <fa-surface>
-            <h1 class="bigLightText">Shopping</h1>
-          </fa-surface>
-        </fa-modifier>
-        <fa-modifier
-            fa-translate="[0,-40,0]"
-            fa-rotate-z="headerRotation"
-            fa-size="[1200, 40]">
-            <fa-surface fa-background-color="'#dfdfde'" fa-color="'#c7242e'">
-              <h2 style="margin: 0; padding: 0 1em; line-height: 1.6;">{{currentCategoryName}}</h2>
-            </fa-surface>
-        </fa-modifier>
-      </fa-view>
-    </fa-header-footer-layout>
+   <directory></directory>
   </fa-modifier>
 </fa-view>
