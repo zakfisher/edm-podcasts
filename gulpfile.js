@@ -40,7 +40,9 @@ gulp.task('clean', function () {
 gulp.task('sass', function () {
   return gulp.src(['./app/application.scss'])
     .pipe(plumber())
-    .pipe(sass())
+    .pipe(sass({
+      loadPath: ['./app/modules/**']
+    }))
     .pipe(gulp.dest('./app/public/assets'));
 });
 
