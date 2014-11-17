@@ -28,6 +28,7 @@ module.exports = angular.module('JibestreamMap', [])
 .controller('JibestreamMapController', function ($scope, $element) {
   var mapObject = new JMap.Building($element.find("#map-container"), $element.offsetWidth, $element.offsetHeight, JMap._stylingData);
   mapObject.setDefaultLocation();
+  mapObject.setDefaultPopUpRender($("#popup-render-container").html());
   $("#loading-container").remove();
   TweenLite.set($("#map-container"), {
     alpha: 1
@@ -36,6 +37,10 @@ module.exports = angular.module('JibestreamMap', [])
   function resetMap() {
     mapObject.resetAllMaps();
   }
+
+
+  // mapObject.showCustomPopupDestination(JMap.getDestinationByClientId("7700"), $("#popup-render-container").html());
+
 })
 
 .directive('jmap', function () {
