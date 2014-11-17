@@ -112,7 +112,7 @@ app.run(function ($state, Preloader, $q, KioskService) {
 // Setup & Bootstrap
 // ----------------------------------------------------------------------
 
-$(document.body).on('mousewheel, contextmenu', function (e) {
+$(document.body).on('mousewheel', function (e) {
   e.preventDefault();
   e.stopPropagation();
 });
