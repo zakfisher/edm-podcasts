@@ -5,7 +5,7 @@
     "Content-Type": "application/x-tar"
   },
   "main": "index.md",
-  "_source": "https://code.famo.us/famous-angular/bower/famous-angular-bower.tar.gz",
+  "_source": "https://code.famo.us/famous-angular/bower/famous-angular-bower.tar.gz?version=0.5.0",
   "_target": "*",
-  "_originalSource": "https://code.famo.us/famous-angular/bower/famous-angular-bower.tar.gz"
+  "_originalSource": "https://code.famo.us/famous-angular/bower/famous-angular-bower.tar.gz?version=0.5.0"
 }
