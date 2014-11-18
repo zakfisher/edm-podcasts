@@ -17,7 +17,7 @@
     <fa-view>
       <fa-surface fa-background-color="'black'">
         <h2 ng-show="results.length > 0">Stores</h2>
-        <h2 ng-repeat="result in results" class="txt-center" style="color: #fff" ng-bind-html="result.name"></h2>
+        <h2 ng-repeat="result in results" class="txt-center" style="color: #fff" ng-bind-html="result.name" ng-click="handleResultClick(result)"></h2>
       </fa-surface>
     </fa-view>
 

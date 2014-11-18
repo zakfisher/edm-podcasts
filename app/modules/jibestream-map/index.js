@@ -2,9 +2,7 @@
 module.exports = angular.module('JibestreamMap', [])
 
 .run(function (Preloader) {
-
-  // Add Jibestream Map resources to kiosk preloader
-
+  // Preload maps api data
   var JMapInitTask = Preloader.createTask("Jibestream Bootstrap");
   JMap.initMapsStandAlone("http://jibestream2.cloudapp.net:8082", {
     deviceId: 126092,
@@ -29,23 +27,24 @@ module.exports = angular.module('JibestreamMap', [])
       JMapConfigTask.resolve();
     }
   });
-
 })
 
-.controller('JibestreamMapController', function ($scope, $element) {
-  $scope.isLoading = true;
-  var mapObject = new JMap.Building($element.find("#map-container"), $element.offsetWidth, $element.offsetHeight, JMap._stylingData);
+.controller('JibestreamMapController', function ($scope, $element, CardStream) {
+  var mapObject = new JMap.Building($element.find(".map-container"), $element.offsetWidth, $element.offsetHeight, JMap._stylingData);
   mapObject.setDefaultLocation();
-  $scope.isLoading = false;
-  // // mapObject.setDefaultPopUpRender($("#popup-render-container").html());
-  // $("#loading-container").remove();
-  TweenLite.set($("#map-container"), {
-    alpha: 1
-  });
+  window.mo = mapObject;
   /*Exposed Calls*/
   function resetMap() {
     mapObject.resetAllMaps();
   }
+
+  $scope.handleStoreClick = function () {
+    CardStream.setStore({
+      name: "My Store",
+      description: "My Store Description"
+    });
+    CardStream.show();
+  };
 
   // mapObject.showCustomPopupDestination(JMap.getDestinationByClientId("7700"), $("#popup-render-container").html());
 
