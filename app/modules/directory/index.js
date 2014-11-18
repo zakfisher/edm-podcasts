@@ -4,7 +4,7 @@ module.exports = angular.module('Directory', [])
   return {
     restrict: 'E',
     template: require('./directory.html'),
-    controller: function ($scope, $famous, $http, filterFilter, $filter, KioskService, CardStream) {
+    controller: function ($scope, $famous, $http, filterFilter, $filter, KioskService, StoreService, CardStream) {
 
       $scope.directoryLayoutOptions = {};
 
@@ -52,14 +52,16 @@ module.exports = angular.module('Directory', [])
 
       // Init
 
-      $http({
-        method: 'GET',
-        cache: true,
-        url: $scope.storesUrl
-      }).success(function (r) {
-        $scope.stores = r;
-        $scope.setStoresList(r);
-      });
+      // $http({
+      //   method: 'GET',
+      //   cache: true,
+      //   url: $scope.storesUrl
+      // }).success(function (r) {
+      //   $scope.stores = r;
+      //   $scope.setStoresList(r);
+      // });
+
+      $scope.setStoresList(StoreService.getStores());
 
     }
   };
