@@ -74,21 +74,21 @@ app.value('config', {
       subtitle: 'Directory',
       icon: 'wire-dining-rev',
       type: 'dining'
-    },
-    {
-      title: 'Services',
-      subtitle: 'Directory',
-      icon: 'wire-services-rev',
-      type: 'services',
-      disabled: true
-    },
-    {
-      title: 'Events',
-      subtitle: 'Calendar',
-      icon: 'wire-see-rev',
-      type: 'events',
-      disabled: true
-    },
+    } //,
+    // {
+    //   title: 'Services',
+    //   subtitle: 'Directory',
+    //   icon: 'wire-services-rev',
+    //   type: 'services',
+    //   disabled: true
+    // },
+    // {
+    //   title: 'Events',
+    //   subtitle: 'Calendar',
+    //   icon: 'wire-see-rev',
+    //   type: 'events',
+    //   disabled: true
+    // },
   ]
 });
 
