@@ -31,6 +31,7 @@ var app = angular.module('wfWayfinding', [
   require('./modules/jibestream-map').name,
   require('./modules/category-service').name,
   require('./modules/kiosk-service').name,
+  require('./modules/store-service').name,
   require('./modules/preloader').name,
   require('./modules/svg-keyboard').name,
   require('./modules/card-stream').name,

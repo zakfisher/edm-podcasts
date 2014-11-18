@@ -2,26 +2,33 @@
 
 module.exports = angular.module('Search', [])
 
-.controller('Search', function ($scope, $famous) {
+.controller('Search', function ($scope, $famous, StoreService, CardStream) {
   console.log("Search Module");
   var EventHandler = $famous['famous/core/EventHandler'];
-
   $scope.myEventHandler = new EventHandler();
 
   $scope.string = "";
+  //onKeyboard change provided by svg keyboard directive in search.html
   $scope.onKeyboardChange = function (a) {
     $scope.string = a;
   };
 
-  $scope.$watch('string', function (a, b) {
-    var r;
-    if (!a) {
-      r = [];
-    } else if (a && a !== b) {
-      r = JMap.getSearchByQuery(a);
-      console.log(a, r);
+  $scope.handleResultClick = function (result) {
+    var store;
+    console.log(result);
+    store = StoreService.getStoreById(result.clientId);
+    CardStream.setStore(store);
+    CardStream.show();
+  };
+
+  $scope.$watch('string', function (newValue, oldValue) {
+    var results;
+    if (!newValue) {
+      results = [];
+    } else if (newValue !== oldValue) {
+      results = JMap.getSearchByQuery(newValue);
     }
-    $scope.results = r;
+    $scope.results = results;
   });
 
 })
