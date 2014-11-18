@@ -1,5 +1,26 @@
 {
 	"mapStyles":{
+		"mapConfig":{
+			"startState":{
+				"x":1900,
+				"y":2390,
+				"zoom":150
+			},
+			"container":{
+				"width":1920,
+				"height":1080,
+				"zoomMax":400,
+				"zoomMin":100
+			},
+			"mapSize":{
+				"width":3999,
+				"height":4365
+			},
+			"positionOffset":{
+				"x":1486,
+				"y":1194
+			}
+		},
 		"mapLayers":[
 			{
 				"name":"Anchor_x5F_Stores",

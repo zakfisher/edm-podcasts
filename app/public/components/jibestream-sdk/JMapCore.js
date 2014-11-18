@@ -1278,6 +1278,11 @@ var __extends = this.__extends || function (d, b) {
 
         function Building(container, width, height, styles) {
             this.styles = styles;
+
+            // if(styles.mapStyles.mapConfig.positionOffset){
+            // 	JMap.storage.maps.model.setOffset(styles.mapStyles.mapConfig.positionOffset);
+            // }
+
         	this.addExtraStyles();
 
             this.container = container;
@@ -1291,6 +1296,8 @@ var __extends = this.__extends || function (d, b) {
             this.currentLegendId = null;
 
             JMap.storage.maps.building = this;
+
+
         }
 
 
@@ -1384,7 +1391,7 @@ var __extends = this.__extends || function (d, b) {
 
             this.container.append(this.view);
 
-            this.pathProcessor = new JMap.PathProcessor();
+            this.pathProcessor = new JMap.PathProcessor(this.styles.mapStyles.mapConfig.positionOffset);
 
             this.timeouts = [];
 
@@ -2081,7 +2088,11 @@ var __extends = this.__extends || function (d, b) {
      */
 
     var PathProcessor = (function () {
-        function PathProcessor() {}
+        function PathProcessor(offset) {
+        	if(offset)this.offset = offset;
+        	else this.offset = {x:0, y:0};
+
+        }
 
         PathProcessor.prototype.compile = function(data, dest, steps){
             var dt = this.processDirections(data);
@@ -2129,9 +2140,9 @@ var __extends = this.__extends || function (d, b) {
             var n = points.length;
 
             if (n < 2) {return null;}
-            str += "M " + points[0].x + " " + points[0].y;
+            str += "M " + (points[0].x + this.offset.x) + " " + (points[0].y + this.offset.y);
             for(var i = 1; i < n; i ++){
-                str += " L " + points[i].x + " " + points[i].y;
+                str += " L " + (points[i].x + this.offset.x) + " " + (points[i].y + this.offset.y);
             }
             return str;
         };
@@ -2422,7 +2433,8 @@ var __extends = this.__extends || function (d, b) {
             var as = JMap.getDeviceParamByKey("animationSpeed");
             // var sl = JMap.getDeviceParamByKey("specialLegend");
             // this.stepOffset = so?JSON.parse(so):{x:7,y:7};
-            this.scaleOffset = 1;//JMap.storage.deviceType === "mobile"?(ms?ms:1):1;
+            this.scaleOffset = this.styles.mapStyles.mapConfig.scaleOffset?this.styles.mapStyles.mapConfig.scaleOffset:1;//JMap.storage.deviceType === "mobile"?(ms?ms:1):1;
+            this.positionOffset = this.styles.mapStyles.mapConfig.positionOffset?this.styles.mapStyles.mapConfig.positionOffset:{x:0, y:0};//JMap.storage.deviceType === "mobile"?(ms?ms:1):1;
             this.speed = as?as:1;
         };
 
@@ -2489,9 +2501,9 @@ var __extends = this.__extends || function (d, b) {
                     $( '#graphicCont-' + _this.id ).show().css('opacity',1);
                     $('#graphicCont-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
                     _this.addDragHandler(_this);
-					setTimeout($.proxy(_this.styleSVG, _this), 5000);
-				}, 5000);
-			}, 100);
+					setTimeout($.proxy(_this.styleSVG, _this), 10);
+				}, 10);
+			}, 10);
         };
 
 
@@ -2664,19 +2676,22 @@ var __extends = this.__extends || function (d, b) {
             var w = $(window).width();
             var h = $(window).height();
 
+            var config = this.styles.mapStyles.mapConfig;
+            console.log(config);
+
+            $(this.mapView).width(config.mapSize.width);
+            $(this.mapView).height(config.mapSize.height);
+
             $(this.mapView).smoothZoom({
-                // width: this.containerWidth,
-                // height: this.containerHeight,
-                width:1920,
-                height:1080,
-                // width: '100%',
-                // height: '100%',
+                width:config?config.container.width:"100%",
+                height:config?config.container.height:"100%",
                 animation_SMOOTHNESS: 8,
                 animation_SPEED_ZOOM: 1,
                 pan_BUTTONS_SHOW: "NO",
                 pan_LIMIT_BOUNDARY: false,
-                zoom_MAX: 200, //TODO - Make this configurable
-                zoom_MIN:0,
+                initial_ZOOM:config?config.startState.zoom:0,
+                zoom_MAX: config?config.container.zoomMax:100, //TODO - Make this configurable
+                zoom_MIN:config?config.container.zoomMin:0,
                 container:"map-floor-container-" + this.id,
                 zoom_BUTTONS_SHOW: false,
                 background_COLOR: 'transparent',
@@ -2713,7 +2728,7 @@ var __extends = this.__extends || function (d, b) {
         
         Floor.prototype.updateZoomLayers = function(zoomData){
             //TODO - Zoom Layers
-            // console.log(zoomData);
+            console.log(zoomData);
             if(!zoomData)return;
             var currentScale = zoomData.ratio *100;
             for (var i = 0; i < this.styles.mapStyles.mapLayers.length; i++) {
@@ -2769,7 +2784,11 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Floor.prototype.resetFloor = function(){
-            $(JMap.storage.thisMap).smoothZoom('Reset');
+        	if(this.yah){
+            	$(this.mapView).smoothZoom('focusTo', this.styles.mapStyles.mapConfig.startState);
+        	}else{
+            	$(this.mapView).smoothZoom('Reset');
+        	}
             this.clearPath();
             this.hasPath = false;
         };
@@ -3345,7 +3364,7 @@ var __extends = this.__extends || function (d, b) {
                 rot = Math.atan2(ydiff, xdiff) * 180 / Math.PI;
             }
 
-            var bmp = "<div id='point" + i + "' class='item mark step' data-show-at-zoom='0' data-allow-scale='true' data-rotation='" + rot.toString() + "' data-position='"+  (p.x * this.scaleOffset) + "," + (p.y * this.scaleOffset) + "'></div>";
+            var bmp = "<div id='point" + i + "' class='item mark step' data-show-at-zoom='0' data-allow-scale='true' data-rotation='" + rot.toString() + "' data-position='"+  ((p.x + this.positionOffset.x) * this.scaleOffset) + "," + (p.y + this.positionOffset.y * this.scaleOffset) + "'></div>";
             // bmp += "<img src='" + /*JMap.serverUrl +*/ /*"/cms/trunk/img/step.png"*/ "' style='transform:rotate(" + rot + "deg);'>";// width='100' height='100'
 
             return bmp;
@@ -3383,25 +3402,25 @@ var __extends = this.__extends || function (d, b) {
         	// console.log(this.styles.mapStyles.iconStyles);
             var bubbleImgUrl = this.styles.mapStyles.iconStyles.destination?this.styles.mapStyles.iconStyles.destination.url:(JMap.getLabelById("searchDestination").filePath);
             var lastP = this.currentPath.points[this.currentPath.points.length - 1];
-            var b = "<div id='bubbleLeft' class='item mark destination' data-show-at-zoom='0' data-position='" + (lastP.x * this.scaleOffset) + "," + (lastP.y * this.scaleOffset) + "' data-allow-scale='false' data-allow-drag='false'><img src='" + bubbleImgUrl + "' /></div>";
+            var b = "<div id='bubbleLeft' class='item mark destination' data-show-at-zoom='0' data-position='" + ((lastP.x + this.positionOffset.x) * this.scaleOffset) + "," + ((lastP.y + this.positionOffset.y) * this.scaleOffset) + "' data-allow-scale='false' data-allow-drag='false'><img src='" + bubbleImgUrl + "' /></div>";
             this.pathView.push(b);
             $(this.mapView).smoothZoom("addLandmark", [b]);
         };
 
         Floor.prototype.showBubbleByWP = function (bubble, wp) {
-            var b = "<div id='bubbleLeft' class='item mark' data-show-at-zoom='0' data-position='" + (wp.x * this.scaleOffset) + "," + (wp.y * this.scaleOffset) + "' data-allow-scale='false' data-allow-drag='false'><img src='" + (JMap.getLabelById((icon?icon:"yah")).filePath) + "' /></div>";
+            var b = "<div id='bubbleLeft' class='item mark' data-show-at-zoom='0' data-position='" + ((wp.x  + this.positionOffset.x)* this.scaleOffset) + "," + ((wp.y  + this.positionOffset.y)* this.scaleOffset) + "' data-allow-scale='false' data-allow-drag='false'><img src='" + (JMap.getLabelById((icon?icon:"yah")).filePath) + "' /></div>";
             this.pathView.push("bubbleLeft");
             $(this.mapView).smoothZoom("addLandmark", [b]);
         };
 
         Floor.prototype.showMoverByWP = function (url, wp) {
-            var b = "<div id='mover" + this.id + "' class='item mark mover' data-show-at-zoom='0' data-position='" + (wp.x * this.scaleOffset) + "," + (wp.y * this.scaleOffset) + "' data-allow-scale='true' data-allow-drag='false'><img src='" + JMap.serverUrl + url + "' width='100' height='100' /></div>";
+            var b = "<div id='mover" + this.id + "' class='item mark mover' data-show-at-zoom='0' data-position='" + ((wp.x  + this.positionOffset.x)* this.scaleOffset) + "," + ((wp.y  + this.positionOffset.y)* this.scaleOffset) + "' data-allow-scale='true' data-allow-drag='false'><img src='" + JMap.serverUrl + url + "' width='100' height='100' /></div>";
             this.pathView.push("mover" + this.id);
             $(this.mapView).smoothZoom("addLandmark", [b]);
         };
 
         Floor.prototype.putYahByCoor = function (x, y, url, heading) {
-            this.yahCoord = {x:x*this.scaleOffset, y:y*this.scaleOffset, url:url};
+            this.yahCoord = {x:(x + this.positionOffset.x)*this.scaleOffset, y:(y+ this.positionOffset.y)*this.scaleOffset, url:url};
             this.yah = "<div id='yah' class='item mark yahpoint' data-show-at-zoom='0' data-position='" + this.yahCoord.x + "," + this.yahCoord.y + "' data-allow-drag='true' data-rotation='" + heading + "' data-allow-scale='false'><img src='" + (this.yahCoord.url) + "' /></div>";
             //console.log(_this.yah);
             $(this.mapView).smoothZoom("addLandmark", [this.yah]);
@@ -3714,7 +3733,8 @@ var BuildingModelGrid = (function () {
          * @class BuildingModelGrid
          * @constructor 
          */
-        function BuildingModelGrid() {
+        function BuildingModelGrid(options) {
+        	this.options = options;
             this.WPS = {};
         }
         
@@ -4012,6 +4032,22 @@ var BuildingModelGrid = (function () {
             return null;
         };
 
+        BuildingModelGrid.prototype.setOffset = function(posOffset){
+        	for (var i = 0; i < this.waypoints.length; i++) {
+        		var wp = this.waypoints[i];
+        		wp.x = wp.x + posOffset.x;
+        		wp.y = wp.y + posOffset.y;
+        		this.waypoints[i] = wp;
+        	}
+
+        	// for (var i = 0; i < this.waypoints.length; i++) {
+        	// 	var wp = this.waypoints[i];
+        	// 	wp.x = wp.x + posOffset.x;
+        	// 	wp.y = wp.y + posOffset.y;
+        	// 	this.waypoints[i] = wp;
+        	// }
+        };
+
         BuildingModelGrid.prototype.onData = function (res) {
             this.access_level = res.access_level;
             this.blocked = res.blocked;
@@ -4021,7 +4057,14 @@ var BuildingModelGrid = (function () {
             this.paths = res.paths;
             this.waypoints = res.waypoints;
 
-            // console.log(res);
+
+         //    for (var i = 0; i < this.waypoints.length; i++) {
+        	// 	var wp = this.waypoints[i];
+        	// 	wp.x = wp.x + 1486;
+        	// 	wp.y = wp.y + 1194;
+        	// 	this.waypoints[i] = wp;
+        	// }
+
             this.parseData();
             this.parseGrid();
 
