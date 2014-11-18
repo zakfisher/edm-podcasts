@@ -2,32 +2,8 @@
 
 module.exports = angular.module('Shopping', [])
 
-.run(function ($http, Preloader) {
-  var categoriesTask = Preloader.createTask('Get Categories');
-  $http({
-    method: 'GET',
-    cache: true,
-    url: "http://www.westfield.com.au/api/category/master/store-categories/valleyfair.json"
-  }).success(categoriesTask.resolve);
-})
-
-.controller('Shopping', function ($scope, $famous, $http, filterFilter, $filter, KioskService, CardStream) {
-  $scope.storesUrl = "http://www.westfield.com.au/api/store/master/stores.json?centre_id=valleyfair&country=us&per_page=all";
-  $scope.categoriesUrl = "http://www.westfield.com.au/api/category/master/store-categories/valleyfair.json";
-
-  //Get All Categories
-  $http({
-    method: 'GET',
-    url: $scope.categoriesUrl
-  }).success(function (r) {
-    console.log('categories', r);
-    $scope.categories = r;
-    $scope.categories.unshift({
-      name: "All Stores",
-      code: null
-    });
-  });
-
+.controller('Shopping', function ($scope, $famous, $http, filterFilter, $filter, KioskService, CardStream, CategoryService) {
+  $scope.categories = CategoryService.getCategories();
 })
 
 //Routes / States

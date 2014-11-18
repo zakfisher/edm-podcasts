@@ -4,7 +4,7 @@ module.exports = angular.module('Directory', [])
   return {
     restrict: 'E',
     template: require('./directory.html'),
-    controller: function ($scope, $famous, $http, filterFilter, $filter, KioskService, StoreService, CardStream) {
+    controller: function ($scope, $famous, filterFilter, $filter, KioskService, StoreService, CardStream) {
 
       $scope.directoryLayoutOptions = {};
 
@@ -19,7 +19,7 @@ module.exports = angular.module('Directory', [])
       $scope.categoryClickHandler = function (category) {
         $scope.filterCategory = category.code;
         $scope.currentCategoryName = category.name;
-        $scope.setStoresList($scope.stores);
+        $scope.setStoresList();
       };
 
       $scope.handleStoreClick = function (store) {
@@ -28,38 +28,25 @@ module.exports = angular.module('Directory', [])
         CardStream.show();
       };
 
-      $scope.setStoresList = function (stores) {
+      $scope.setStoresList = function () {
         var groupedList = [];
-        var filteredStores;
+        var stores;
         if ($scope.filterCategory) {
-          filteredStores = filterFilter(stores, {
-            'category_codes': $scope.filterCategory
-          });
+          console.log('getting stores by filter category', $scope.filterCategory);
+          stores = StoreService.getStoresByCategory($scope.filterCategory);
         } else {
-          filteredStores = stores;
+          stores = StoreService.getStores();
         }
-        filteredStores.forEach(function (store, i) {
+        stores.forEach(function (store, i) {
           if (i % 2) {
             var group = [];
-            group.push(filteredStores[i]);
-            group.push(filteredStores[i - 1]);
+            group.push(stores[i]);
+            group.push(stores[i - 1]);
             groupedList.push(group);
           }
         });
         $scope.storesList = groupedList;
-        console.log($scope.storesList);
       };
-
-      // Init
-
-      // $http({
-      //   method: 'GET',
-      //   cache: true,
-      //   url: $scope.storesUrl
-      // }).success(function (r) {
-      //   $scope.stores = r;
-      //   $scope.setStoresList(r);
-      // });
 
       $scope.setStoresList(StoreService.getStores());
 

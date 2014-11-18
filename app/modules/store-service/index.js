@@ -2,7 +2,7 @@ module.exports = angular.module('StoreService', [])
 
 .run(function (StoreService, Preloader, $http) {
 
-  //Preload Stores
+  //Preload Stores on boot
   var storesTask = Preloader.createTask('Get Stores');
   $http({
     method: 'GET',
@@ -19,7 +19,6 @@ module.exports = angular.module('StoreService', [])
   var self = {};
 
   self.setStores = function (stores) {
-    console.log('set stores!', stores);
     self.stores = stores;
   };
 
@@ -35,6 +34,15 @@ module.exports = angular.module('StoreService', [])
     if (results.length === 1) {
       return results[0];
     }
+  };
+
+  self.getStoresByCategory = function (category) {
+    var stores;
+    stores = filterFilter(self.stores, {
+      'category_codes': category
+    });
+    console.log('\n\nstores by category', category, self.stores, stores);
+    return stores;
   };
 
   return self;
