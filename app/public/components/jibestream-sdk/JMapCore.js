@@ -1305,6 +1305,8 @@ var __extends = this.__extends || function (d, b) {
         	var iconStyles = this.styles.mapStyles.iconStyles;
         	var labelStyle = this.styles.mapStyles.labelStyle.all;
         	var pathStyle = this.styles.mapStyles.pathStyles;
+        	var popUpStyle = this.styles.mapStyles.popupCard;
+
         	// console.log(labelStyle);
 
         	try{
@@ -1347,6 +1349,25 @@ var __extends = this.__extends || function (d, b) {
 	            //Map Icons
 	        	addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img{top:" + (iconStyles.destination?"-" + iconStyles.destination.offset.y:"-20px") + "!important;left:" + (iconStyles.destination?"-" + iconStyles.destination.offset.x:"-20px") + "!important;width:" + (iconStyles.destination?iconStyles.destination.width:"40px") + ";height:" + (iconStyles.destination?iconStyles.destination.height:"40px") + "}";
 	        	addedStyles += ".map-floor-container-base .landmarks #yah.item img{top:" + (iconStyles.youarehere?"-" + iconStyles.youarehere.offset.y:"-20px") + "!important;left:" + (iconStyles.youarehere?"-" + iconStyles.youarehere.offset.x:"-20px") + "!important;width:" + (iconStyles.youarehere?iconStyles.youarehere.width:"40px") + ";height:" + (iconStyles.youarehere?iconStyles.youarehere.height:"40px") + "}";
+
+	        	if(popUpStyle){
+
+	        		var moarStyle = ".map-floor-container-base .landmarks .item.card{z-index:3!important}";
+	        		// console.log(popUpStyle);
+	        		for(var str in popUpStyle.css){
+
+	        			moarStyle += ".map-floor-container-base .landmarks .item.card div." + str + "{";
+	        			var cls = popUpStyle.css[str];
+	        			for(var stl in cls){
+	        				// console.log(stl, cls[stl]);
+	        				moarStyle += stl + ":" + cls[stl] + ";"
+	        			}
+	        			moarStyle += "} "
+	        		}
+	        		// console.log();
+	        		// debugger;
+	        	}
+	        	addedStyles += moarStyle;
 	        	
 	    		addedStyles += this.generatePathStyle(pathStyle);    	
 
@@ -2516,6 +2537,7 @@ var __extends = this.__extends || function (d, b) {
 			this.updateZoomLayers($(this.mapView).smoothZoom('getZoomData'));
 			JMap.fire("floorLoaded");
 			this.styleRef = {};
+			this.polyRef = {};
 			var _this = this;
 
 			//-----------------------
@@ -2560,22 +2582,29 @@ var __extends = this.__extends || function (d, b) {
 
 						});
 
+						// var $p = $(p);
+
+						
+						// if (d)ar.push(d);
+						// else continue;
+						// console.log(p);
+						// console.log(d);
+						// this.polyRef[] = d;
+
+
 						$(p).on("click", function(){
-							// console.log();
+							if(this.tagName == "g")return;
+							var pd = d3.select(this);
+							var bb = pd.node().getBBox();
+							var d = _this.getDestinationWithinBounds(bb);
+							JMap.fire("SHOW_DESTINATION", [d]);
+							_this.showCard(d);
 						});
 
 
 					}
 
 					// if(!currentStyle.addLabel)continue;
-					// var $p = $(p);
-
-					// var pd = d3.select(p);
-					// var bb = pd.node().getBBox();
-
-					// var d = this.getDestinationWithinBounds(bb);
-					// if (d)ar.push(d);
-					// else continue;
 
 
 					//TODO TRY FIT JS
@@ -2597,12 +2626,12 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Floor.prototype.getDestinationWithinBounds = function(bounds){
-        	var scOffSet = 860/1920;
+        	var scOffSet = this.scaleOffset;
         	bounds = {x:bounds.x*scOffSet,y:bounds.y*scOffSet,width:bounds.width*scOffSet,height:bounds.height*scOffSet};
         	for (var i = 0; i < this.destinations.length; i++) {
         		var wp = JMap.storage.maps.model.getWPByJid(this.destinations[i].clientId);
         		if(!wp)continue;
-        		if(wp.x > bounds.x && wp.x < (bounds.x + bounds.width) && wp.y > bounds.y && wp.y < (bounds.y + bounds.height))return this.destinations[i];
+        		if((wp.x + this.positionOffset.x) > bounds.x && (wp.x + this.positionOffset.x) < (bounds.x + bounds.width) && (wp.y + this.positionOffset.y) > bounds.y && (wp.y + this.positionOffset.y) < (bounds.y + bounds.height))return this.destinations[i];
         	};
         };
 
@@ -2817,6 +2846,7 @@ var __extends = this.__extends || function (d, b) {
         	// }else{
             	$(this.mapView).smoothZoom('Reset');
         	// }
+        	this.removeCard();
             this.clearPath();
             this.hasPath = false;
         };
@@ -3449,6 +3479,53 @@ var __extends = this.__extends || function (d, b) {
             var b = "<div id='mover" + this.id + "' class='item mark mover' data-show-at-zoom='0' data-position='" + ((wp.x  + this.positionOffset.x)* this.scaleOffset) + "," + ((wp.y  + this.positionOffset.y)* this.scaleOffset) + "' data-allow-scale='true' data-allow-drag='false'><img src='" + JMap.serverUrl + url + "' width='100' height='100' /></div>";
             this.pathView.push("mover" + this.id);
             $(this.mapView).smoothZoom("addLandmark", [b]);
+        };
+
+        Floor.prototype.removeCard = function (_destination) {
+        	$("#card").off("click");
+        	$("#card").off("touchstart");
+        	$("#card").off("touchend");
+        	$(this.mapView).smoothZoom("removeLandmark", ["card"]);
+        };
+
+        Floor.prototype.showCard = function (_destination) {
+        	this.removeCard();
+        	if(!_destination){
+        		console.log("NO DESTINATION WAS FOUND HERE");
+        		return;
+        	}
+        	var wp = _destination.wp;
+            var b = "<div id='card' class='item mark card' jibe-data='" + _destination.clientId+ "' data-show-at-zoom='0' data-position='" + ((wp.x  + this.positionOffset.x)* this.scaleOffset) + "," + ((wp.y  + this.positionOffset.y)* this.scaleOffset) + "' data-allow-scale='false' data-allow-drag='false'>";
+            var card = this.styles.mapStyles.popupCard;
+            if(card){
+            	var str = card.html;
+            	b += str.split("{{imgurl}}").join("").split("{{name}}").join(_destination.name).split("{{description}}").join(_destination.description);
+            }else{
+        		b += "<div>" + _destination.name + "</div>";
+        		// b += "<img src='" + JMap.serverUrl + url + "' width='100' height='100' />";
+            }
+        	b+= "</div>";
+
+            $(this.mapView).smoothZoom("addLandmark", [b]);
+
+            
+            var _this = this;
+
+
+			$("#card").on("touchstart", function(){
+				$(this).find(".popup-container").css("background", "#ccc");
+            });
+
+
+			$("#card").on("touchend", function(){
+				$(this).find(".popup-container").css("background", "");
+            });
+
+            $("#card").on("click", function(){
+            	console.log($(this).attr("jibe-data"));
+            	JMap.fire("StoreCardClick", [JMap.getDestinationByClientId($(this).attr("jibe-data"))]);
+            	_this.removeCard();
+            });
         };
 
         Floor.prototype.putYahByCoor = function (x, y, url, heading) {

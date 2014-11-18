@@ -149,7 +149,7 @@
 				"strokeColor":"#fff",
 				"strokeWidth":"2px",
 				"highLightColor":"#fff",
-				
+
 				"clickable":true,
 				"addLabel":true
 			},
@@ -280,6 +280,50 @@
 				"font-size":"27px",
 				"color":"#C62126",
 				"max-width":"125px"
+			}
+		},
+		"popupCard":{
+			"html":"<div class='popup-container'><div class='popup-image'><img src='{{imgurl}}' /></div><div class='popup-name'>{{name}}</div><div class='popup-text'>{{description}}</div><div class='popup-button'>Click here for directions</div></div>",
+			"css":{
+				"popup-container":{
+					"width":"700px",
+					"height":"200px;",
+					"left":"-350px!important",
+					"bottom":"5px!important",
+					"background":"#fff",
+					"color":"#000",
+					"border":"1px solid black",
+					"max-width":"700px",
+					"box-shadow":"5px 5px 20px rgba(0,0,0,0.5)"
+				},
+				"popup-image":{
+					"width":"180px",
+					"height":"180px",
+					"float":"left",
+					"margin":"10px"
+				},
+				"popup-name":{
+					"text-align":"left",
+					"font-size":"40px",
+					"margin":"10px"
+				},
+				"popup-text":{
+					"text-overflow":"ellipsis",
+					"overflow":"hidden",
+					"margin-bottom":"25px",
+					"text-align":"left",
+					"width":"490px",
+					"white-space":"nowrap",
+					"font-size":"30px",
+					"margin-top":"18px"
+				},
+				"popup-button":{
+					"width":"280px",
+					"float":"left",
+					"border":"1px solid #aaa",
+					"padding":"5px 10px",
+					"font-size":"25px"
+				}
 			}
 		}
 	}

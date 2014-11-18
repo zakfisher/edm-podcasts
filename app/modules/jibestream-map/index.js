@@ -9,7 +9,14 @@ module.exports = angular.module('JibestreamMap', [])
     languageCode: "en"
   });
   JMap.addListener("StandAloneMapsReady", JMapInitTask.resolve);
-  // Preload maps json config
+
+  /*STORE CARD CLICK*/
+  JMap.addListener("StoreCardClick", function(e, destination){
+    console.log("Get more details for " + destination.name);
+  });
+
+
+
   var JMapConfigTask = Preloader.createTask("Load Jibestream Config");
   $.ajax({
     url: "/components/jibestream-sdk/jibestreamConfig.json",
