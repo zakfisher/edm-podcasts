@@ -106,6 +106,14 @@ app.config(function ($urlRouterProvider, $locationProvider) {
 app.run(function ($state, Preloader, $q, KioskService) {
   $state.go('preloader');
   KioskService.saveState(false);
+
+  // Backdoor to switch to largescreen view
+  $(window).on('keydown', function (e) {
+    if (e.keyCode === 76) {
+      $state.go('largescreenhome');
+    }
+  });
+
 });
 
 
