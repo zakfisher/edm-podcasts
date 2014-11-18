@@ -19,11 +19,11 @@ module.exports = angular.module('StoreService', [])
   var self = {};
 
   self.setStores = function (stores) {
-    self.stores = stores;
+    self.stores = stores.slice(0);
   };
 
   self.getStores = function () {
-    return self.stores;
+    return self.stores.slice(0);
   };
 
   self.getStoreById = function (_id) {
@@ -41,7 +41,6 @@ module.exports = angular.module('StoreService', [])
     stores = filterFilter(self.stores, {
       'category_codes': category
     });
-    console.log('\n\nstores by category', category, self.stores, stores);
     return stores;
   };
 
