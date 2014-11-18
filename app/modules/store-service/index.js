@@ -7,7 +7,7 @@ module.exports = angular.module('StoreService', [])
   $http({
     method: 'GET',
     cache: true,
-    url: "http://www.westfield.com.au/api/store/master/stores.json?centre_id=valleyfair&country=us&per_page=all"
+    url: "http://api.westfield.io/api/store/master/stores.json?centre_id=valleyfair&country=us&per_page=all"
   }).success(function (r) {
     StoreService.setStores(r);
     storesTask.resolve();

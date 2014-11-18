@@ -1,3 +1,3 @@
 exports.index = function (req, res) {
-  res.sendfile(__dirname + '/public/layout.html');
+  res.sendfile(__dirname + '/public/index.html');
 };

@@ -6,7 +6,7 @@ module.exports = angular.module('CategoryService', [])
   $http({
     method: 'GET',
     cache: true,
-    url: "http://www.westfield.com.au/api/category/master/store-categories/valleyfair.json"
+    url: "http://api.westfield.io/api/category/master/store-categories/valleyfair.json"
   }).success(function (r) {
     CategoryService.setCategories(r);
     categoriesTask.resolve();
