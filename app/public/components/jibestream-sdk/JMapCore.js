@@ -2515,6 +2515,8 @@ var __extends = this.__extends || function (d, b) {
 			// console.log("FIRING FLOOR READY", this);
 			this.updateZoomLayers($(this.mapView).smoothZoom('getZoomData'));
 			JMap.fire("floorLoaded");
+			this.styleRef = {};
+			var _this = this;
 
 			//-----------------------
 			for (var i = 0; i < this.styles.mapStyles.mapLayers.length; i++) {
@@ -2523,46 +2525,61 @@ var __extends = this.__extends || function (d, b) {
 				// var $group = $('#svg-' + this.id ).find("." + currentStyle.class);//.find("*");
 				currentStyle.group = $group;
 
-				// console.log("Style Elements: ", currentStyle, $group.length);	                	
-
-				// console.log("APPLYING STYLE TO ", currentStyle.name, currentStyle);
-
-
-				var ar = [];
-
 				for(var j = 0; j < $group.length; j++){
 					var p = $group[j];
 					if(currentStyle.colorFill)$(p).css("fill", currentStyle.colorFill);
 					if(currentStyle.strokeColor)$(p).css("stroke", currentStyle.strokeColor);
 					if(currentStyle.strokeWidth)$(p).css("stroke-width", currentStyle.strokeWidth);
-
-					if(!currentStyle.addLabel)continue;
-
-					var $p = $(p);
-
-					var pd = d3.select(p);
-					var bb = pd.node().getBBox();
+					if(!currentStyle.clickable)$(p).css("pointer-events", "none");
+					$(p).addClass(currentStyle.name);
 
 
-					var d = this.getDestinationWithinBounds(bb);
-					if (d)ar.push(d);
-					else continue;
 
-
-					//TODO TRY FIT JS
 					if(currentStyle.clickable == true){
 						$(p).on("touchstart", function(){
-							var _d = d;
-							console.log(_d);
-							$(this).css("fill", "#000");
+							var lbl = undefined;
+							var prnt = $(this);
+							while(lbl == undefined) {
+								prnt = prnt.parent();
+								lbl = prnt.attr("id");
+								if(prnt.prop("tagName") == "DIV") break;
+							}
+							$(this).css("fill", _this.styleRef[lbl].highLightColor);
 						});
 
 
 						$(p).on("touchend", function(){
-							$(this).css("fill", currentStyle.colorFill);
+							lbl = undefined;
+							var prnt = $(this);
+							while(lbl == undefined) {
+								prnt = prnt.parent();
+								lbl = prnt.attr("id");
+								if(prnt.prop("tagName") == "DIV") break;
+							}
+							$(this).css("fill", _this.styleRef[lbl].colorFill);
+
 						});
+
+						$(p).on("click", function(){
+							// console.log();
+						});
+
+
 					}
 
+					// if(!currentStyle.addLabel)continue;
+					// var $p = $(p);
+
+					// var pd = d3.select(p);
+					// var bb = pd.node().getBBox();
+
+					// var d = this.getDestinationWithinBounds(bb);
+					// if (d)ar.push(d);
+					// else continue;
+
+
+					//TODO TRY FIT JS
+					
 
 
 	            }
@@ -2572,8 +2589,10 @@ var __extends = this.__extends || function (d, b) {
 	            // $(this.mapView).smoothZoom("addLandmark", this.legendsObj.labelselementsArray);
 
 				this.styles.mapStyles.mapLayers[i] = currentStyle;
+				this.styleRef[currentStyle.name] = currentStyle;
 			};
 			//-----------------------
+			console.log(this.styleRef);
 
         };
 
@@ -2596,13 +2615,13 @@ var __extends = this.__extends || function (d, b) {
         Floor.prototype.setStoreLabels = function(){
         	this.destinations = JMap.getDestinationsByFloorId(this.id);
 
-			return;
+			// return;
 
         	this.destinationsByWPID = {};
 
         	var destLabels = [];
-        	for(var i = 0; i < destinations.length; i++){
-        		var dtn = destinations[i];
+        	for(var i = 0; i < this.destinations.length; i++){
+        		var dtn = this.destinations[i];
         		var wp = JMap.storage.maps.model.getWPByJid(dtn.clientId);
         		dtn.wp = wp;
 
@@ -2879,7 +2898,9 @@ var __extends = this.__extends || function (d, b) {
 
         Floor.prototype.addDragHandler = function(fl) {
 
-            $('#svg-' + fl.id).on("click",$.proxy(this.startDrag, this));
+        	return;
+
+            // $('#svg-' + fl.id).on("click",$.proxy(this.startDrag, this));
             $('#svg-' + fl.id).on("touchstart",$.proxy(this.startDrag, this));
 
 
@@ -2944,8 +2965,8 @@ var __extends = this.__extends || function (d, b) {
                 $('#svg-' + _this.id).on("touchstart", $.proxy(this.dragMove, this));
                 this.dragMove(evt);
             } else{
-                $('#svg-' + _this.id).on("touchstart", $.proxy(this.radiusDrag, this));
-                this.radiusDrag(evt);
+                // $('#svg-' + _this.id).on("touchstart", $.proxy(this.radiusDrag, this));
+                // this.radiusDrag(evt);
             }
 
         };
@@ -2965,7 +2986,8 @@ var __extends = this.__extends || function (d, b) {
             var clickY = evt.pageY;
             var list, $list, offset, range;
             var $body = $('#svg-' + this.id).find('*');
-            // console.log(evt.originalEvent);
+            // console.log(evt);
+            if(!evt.originalEvent)return;
             var oEvtTouch = evt.originalEvent.changedTouches[0];
             var eleTag = document.elementFromPoint(oEvtTouch.clientX, oEvtTouch.clientY);
 
@@ -2973,31 +2995,31 @@ var __extends = this.__extends || function (d, b) {
 
             
             if(eleTag.tagName != "polygon" && eleTag.tagName != "rect" && eleTag.tagName != "path") {
-
                 if(this.useRadiusCombo > 0) {
                     
                     if(eleTag.tagName == "svg") {
                         this.isZooming =  false;
-                        this.radiusDrag(evt, true);
+                        // this.radiusDrag(evt, true);
                     }
                 }
                 return;
             }
+            // console.log("SVG ITEM");
 
             
-            for(var i = 0; i < $body.length; i++) {
-                if(eleTag != $body[i]) {
-                    $body[i].style.fillOpacity = 0;
-                } else {
-                    $body[i].style.fillOpacity = 0.7;
-                    $body[i].style.fill = this.svgFill;
-                }
-            }
+            // for(var i = 0; i < $body.length; i++) {
+                // if(eleTag != $body[i]) {
+                //     $body[i].style.fillOpacity = 0;
+                // } else {
+                //     // $body[i].style.fillOpacity = 0.7;
+                //     $body[i].style.fill = this.svgFill;
+                // }
+            // }
 
             // if(evt.currentTarget != this.svgContainer)return;
 
-            var flagOffsetX = 0;
-            var flagOffsetY = 0;
+            // var flagOffsetX = 0;
+            // var flagOffsetY = 0;
 
 
             
@@ -3005,124 +3027,125 @@ var __extends = this.__extends || function (d, b) {
             polygonBounds = this.convertBoundingRect(polygonBounds);
             // console.log('POLYGON', polygonBounds);
             
-            var testZone = document.createElement("DIV");
-            testZone.style.position = "absolute";
-            testZone.style.top = polygonBounds.top;
-            testZone.style.left = polygonBounds.left;
-            testZone.style.width = polygonBounds.width;
-            testZone.style.height = polygonBounds.height;
-            testZone.style.backgroundColor = "rgba(0,0,255, 0.2)";
-            //this.svgContainer.appendChild(testZone);
+            // var testZone = document.createElement("DIV");
+            // testZone.style.position = "absolute";
+            // testZone.style.top = polygonBounds.top;
+            // testZone.style.left = polygonBounds.left;
+            // testZone.style.width = polygonBounds.width;
+            // testZone.style.height = polygonBounds.height;
+            // testZone.style.backgroundColor = "rgba(0,0,255, 0.2)";
+            // //this.svgContainer.appendChild(testZone);
             
 
-            var nearPoints = this.getDestinationInBox(polygonBounds.left,polygonBounds.top,polygonBounds.width,polygonBounds.height);
+            // var nearPoints = this.getDestinationInBox(polygonBounds.left,polygonBounds.top,polygonBounds.width,polygonBounds.height);
 
-            // console.log("NEARPOINTS",nearPoints);
+            // // console.log("NEARPOINTS",nearPoints);
             
-            //var nearPoints = this.getDestinationsNearCoor(evtX, evtY, 50);
+            // //var nearPoints = this.getDestinationsNearCoor(evtX, evtY, 50);
             
 
-            var allNearLocations = [];
-            // console.log("floor dest",this.floorDestinations);
-            for(i = 0; i < nearPoints.length; i++) {
-                for(var j = 0; j < this.floorDestinations.length; j++) {
+            // var allNearLocations = [];
+            // // console.log("floor dest",this.floorDestinations);
+            // for(i = 0; i < nearPoints.length; i++) {
+            //     for(var j = 0; j < this.floorDestinations.length; j++) {
                     
 
                     
-                    if(nearPoints[i].id == this.floorDestinations[j].wp.id) {
+            //         if(nearPoints[i].id == this.floorDestinations[j].wp.id) {
                         
 
-                        if(this.floorDestinations[j].clickRadius > 0) {
-                            // console.log(this.floorDestinations[j].name, nearPoints[i].distance);
-                            if(this.floorDestinations[j].clickRadius > nearPoints[i].distance) {
+            //             if(this.floorDestinations[j].clickRadius > 0) {
+            //                 // console.log(this.floorDestinations[j].name, nearPoints[i].distance);
+            //                 if(this.floorDestinations[j].clickRadius > nearPoints[i].distance) {
                                 
-                                allNearLocations.push(this.floorDestinations[j]);
-                            } else {
-                                // console.log(this.floorDestinations[j].name, nearPoints[i].distance);
-                            }
+            //                     allNearLocations.push(this.floorDestinations[j]);
+            //                 } else {
+            //                     // console.log(this.floorDestinations[j].name, nearPoints[i].distance);
+            //                 }
                             
-                        } else {
-                            allNearLocations.push(this.floorDestinations[j]);
-                        }
-                        //
-                    }
+            //             } else {
+            //                 allNearLocations.push(this.floorDestinations[j]);
+            //             }
+            //             //
+            //         }
 
-                }
-            }
-            // console.log("All Near", allNearLocations);
+            //     }
+            // }
+            // // console.log("All Near", allNearLocations);
 
-            //console.log(nearLocations);
-            //Test if near point is under poly
-            var nearLocations = [];
-            var intersect = null;
-            var convertedPoint = null;
+            // //console.log(nearLocations);
+            // //Test if near point is under poly
+            // var nearLocations = [];
+            // var intersect = null;
+            // var convertedPoint = null;
 
-            // console.log('DIRTY',allNearLocations);
+            // // console.log('DIRTY',allNearLocations);
 
-            for(i = 0; i < allNearLocations.length; i++) {
+            // for(i = 0; i < allNearLocations.length; i++) {
                 
-                // console.log('GLOBALPOINT', allNearLocations[i].wp.x, allNearLocations[i].wp.y);
-                var globalPoint = this.mapToGlobal(allNearLocations[i].wp.x, allNearLocations[i].wp.y);
-                var intersect = document.elementFromPoint(globalPoint.x, globalPoint.y);
+            //     // console.log('GLOBALPOINT', allNearLocations[i].wp.x, allNearLocations[i].wp.y);
+            //     var globalPoint = this.mapToGlobal(allNearLocations[i].wp.x, allNearLocations[i].wp.y);
+            //     var intersect = document.elementFromPoint(globalPoint.x, globalPoint.y);
 
-                if(intersect == eleTag) {
-                    nearLocations.push(allNearLocations[i]);
-                }
-            }
+            //     if(intersect == eleTag) {
+            //         nearLocations.push(allNearLocations[i]);
+            //     }
+            // }
 
             // console.log("Clean", nearLocations);
             JMap.fire('SHOW_DESTINATION', nearLocations);
 
-            if(nearLocations.length > 1) {
-                // alert(nearLocations[0]["name"]);
-                $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
-                this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
-                this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
-                this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
-                flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
+            // if(nearLocations.length > 1) {
+            //     // alert(nearLocations[0]["name"]);
+            //     $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
+            //     this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
+            //     this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
+            //     this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
+            //     flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
 
-                this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
-                this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
-                this.nameToolTip.setAttribute("data-scale", 1);
-                this.nameToolTip.setAttribute("data-opacity", 1);
-                this.nameToolTip.setAttribute("data-sizeoffset", true);
-                this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
-                this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
-                this.localToMap(this.nameToolTip);
-                TweenLite.to($(this.nameToolTip), 0, {alpha:1});
-                $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
-                this.showWaypointSVG( nearLocations[0].wp.x,  nearLocations[0].wp.y );
-            } else if (nearLocations.length > 0) {
-                $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
-                this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
-                this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
-                this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
-                flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
+            //     this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
+            //     this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
+            //     this.nameToolTip.setAttribute("data-scale", 1);
+            //     this.nameToolTip.setAttribute("data-opacity", 1);
+            //     this.nameToolTip.setAttribute("data-sizeoffset", true);
+            //     this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
+            //     this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
+            //     this.localToMap(this.nameToolTip);
+            //     TweenLite.to($(this.nameToolTip), 0, {alpha:1});
+            //     $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
+            //     this.showWaypointSVG( nearLocations[0].wp.x,  nearLocations[0].wp.y );
+            // } else if (nearLocations.length > 0) {
+            //     $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
+            //     this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
+            //     this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
+            //     this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
+            //     flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
 
-                this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
-                this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
-                this.nameToolTip.setAttribute("data-scale", 1);
-                this.nameToolTip.setAttribute("data-opacity", 1);
-                this.nameToolTip.setAttribute("data-sizeoffset", true);
-                this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
-                this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
-                this.localToMap(this.nameToolTip);
-                TweenLite.to($(this.nameToolTip), 0, {alpha:1});
-                $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
-            } else {
-                clearTimeout(this.dragLabelTimer);
-                var _this = this;
-                this.dragLabelTimer = setTimeout(function() {
-                    _this.hideTooltip();
-                    _this = null;
-                }, 2000);
-            }
+            //     this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
+            //     this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
+            //     this.nameToolTip.setAttribute("data-scale", 1);
+            //     this.nameToolTip.setAttribute("data-opacity", 1);
+            //     this.nameToolTip.setAttribute("data-sizeoffset", true);
+            //     this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
+            //     this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
+            //     this.localToMap(this.nameToolTip);
+            //     TweenLite.to($(this.nameToolTip), 0, {alpha:1});
+            //     $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
+            // } else {
+            //     clearTimeout(this.dragLabelTimer);
+            //     var _this = this;
+            //     this.dragLabelTimer = setTimeout(function() {
+            //         _this.hideTooltip();
+            //         _this = null;
+            //     }, 2000);
+            // }
 
             // this.legendsView.style.pointerEvents = "auto";
             this.isZooming =  false;
         };
 
         Floor.prototype.showWaypointSVG = function(x,y) {
+        	console.log("Show wp svg");
             var globalPoint = this.mapToGlobal(x, y);
             var eleTag = document.elementFromPoint(globalPoint.x, globalPoint.y);
             if(eleTag.tagName != "polygon" && eleTag.tagName != "rect" && eleTag.tagName != "path") {
@@ -3142,117 +3165,117 @@ var __extends = this.__extends || function (d, b) {
             }
         };
 
-        Floor.prototype.radiusDrag = function(evt, omitSVG) {
-            if(this.isZooming === true)return;
+        // Floor.prototype.radiusDrag = function(evt, omitSVG) {
+        //     if(this.isZooming === true)return;
 
-            this.isZooming =  true;
+        //     this.isZooming =  true;
             
-            // this.legendsView.style.pointerEvents = "none";
-            var evtX = evt.offsetX;
-            var evtY = evt.offsetY;
-            // var touch = evt.touches[0];
-            var svgContainer = 'svg-' + this.id;
-            if(evt.currentTarget.id != svgContainer)return;
+        //     // this.legendsView.style.pointerEvents = "none";
+        //     var evtX = evt.offsetX;
+        //     var evtY = evt.offsetY;
+        //     // var touch = evt.touches[0];
+        //     var svgContainer = 'svg-' + this.id;
+        //     if(evt.currentTarget.id != svgContainer)return;
 
-            var flagOffsetX = 0;
-            var flagOffsetY = 0;
-            var oEvtTouch = evt.originalEvent.changedTouches[0];
+        //     var flagOffsetX = 0;
+        //     var flagOffsetY = 0;
+        //     var oEvtTouch = evt.originalEvent.changedTouches[0];
 
-            // console.log(oEvtTouch.clientX, oEvtTouch.clientY, this.clickTolerance);
+        //     // console.log(oEvtTouch.clientX, oEvtTouch.clientY, this.clickTolerance);
 
 
             
         
 
-            //var nearPoints = this.getDestinationInBox(polygonBounds.left,polygonBounds.top,polygonBounds.width,polygonBounds.height);
+        //     //var nearPoints = this.getDestinationInBox(polygonBounds.left,polygonBounds.top,polygonBounds.width,polygonBounds.height);
 
-            var nearPoints = this.getDestinationsNearCoor(oEvtTouch.clientX, oEvtTouch.clientY, this.clickTolerance);
+        //     var nearPoints = this.getDestinationsNearCoor(oEvtTouch.clientX, oEvtTouch.clientY, this.clickTolerance);
 
-            // console.log(nearPoints);
+        //     // console.log(nearPoints);
 
 
-            var allNearLocations = [];
-            for(i = 0; i < nearPoints.length; i++) {
+        //     var allNearLocations = [];
+        //     for(i = 0; i < nearPoints.length; i++) {
 
-                for(var j = 0; j < this.floorDestinations.length; j++) {
+        //         for(var j = 0; j < this.floorDestinations.length; j++) {
 
-                    if(nearPoints[i].id == this.floorDestinations[j].wp.id) {
+        //             if(nearPoints[i].id == this.floorDestinations[j].wp.id) {
                         
-                        if(omitSVG) {
+        //                 if(omitSVG) {
 
-                            var globalPoint = this.mapToGlobal(this.floorDestinations[j].wp.x, this.floorDestinations[j].wp.y);
-                            var intersect = document.elementFromPoint(globalPoint.x, globalPoint.y);
-                            if(intersect.tagName != "polygon" && intersect.tagName != "rect" && intersect.tagName != "path") {
-                                allNearLocations.push(this.floorDestinations[j]);
-                            }
+        //                     var globalPoint = this.mapToGlobal(this.floorDestinations[j].wp.x, this.floorDestinations[j].wp.y);
+        //                     var intersect = document.elementFromPoint(globalPoint.x, globalPoint.y);
+        //                     if(intersect.tagName != "polygon" && intersect.tagName != "rect" && intersect.tagName != "path") {
+        //                         allNearLocations.push(this.floorDestinations[j]);
+        //                     }
 
-                        } else {
-                            allNearLocations.push(this.floorDestinations[j]);
-                        }
+        //                 } else {
+        //                     allNearLocations.push(this.floorDestinations[j]);
+        //                 }
                         
-                    }
-                }
-            }
+        //             }
+        //         }
+        //     }
 
 
 
-            var nearLocations = allNearLocations;
-            var intersect = null;
-            var convertedPoint = null;
+        //     var nearLocations = allNearLocations;
+        //     var intersect = null;
+        //     var convertedPoint = null;
 
-            // console.log("Clean", nearLocations);
+        //     // console.log("Clean", nearLocations);
 
-            if(nearLocations.length > 1) {
-                // alert(nearLocations[0]["name"]);
-                JMap.fire('SHOW_DESTINATION', [nearLocations[0]]);
-                $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
-                this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
-                this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
-                this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
-                flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
+        //     if(nearLocations.length > 1) {
+        //         // alert(nearLocations[0]["name"]);
+        //         JMap.fire('SHOW_DESTINATION', [nearLocations[0]]);
+        //         $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
+        //         this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
+        //         this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
+        //         this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
+        //         flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
 
-                this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
-                this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
-                this.nameToolTip.setAttribute("data-scale", 1);
-                this.nameToolTip.setAttribute("data-opacity", 1);
-                this.nameToolTip.setAttribute("data-sizeoffset", true);
-                this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
-                this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
-                this.localToMap(this.nameToolTip);
-                TweenLite.to($(this.nameToolTip), 0, {alpha:1});
-                $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
-                this.showWaypointSVG( nearLocations[0].wp.x,  nearLocations[0].wp.y );
+        //         this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
+        //         this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
+        //         this.nameToolTip.setAttribute("data-scale", 1);
+        //         this.nameToolTip.setAttribute("data-opacity", 1);
+        //         this.nameToolTip.setAttribute("data-sizeoffset", true);
+        //         this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
+        //         this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
+        //         this.localToMap(this.nameToolTip);
+        //         TweenLite.to($(this.nameToolTip), 0, {alpha:1});
+        //         $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
+        //         this.showWaypointSVG( nearLocations[0].wp.x,  nearLocations[0].wp.y );
 
-            } else if (nearLocations.length > 0) {
-                $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
-                this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
-                this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
-                this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
-                flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
+        //     } else if (nearLocations.length > 0) {
+        //         $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
+        //         this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
+        //         this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
+        //         this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
+        //         flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
 
-                this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
-                this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
-                this.nameToolTip.setAttribute("data-scale", 1);
-                this.nameToolTip.setAttribute("data-opacity", 1);
-                this.nameToolTip.setAttribute("data-sizeoffset", true);
-                this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
-                this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
-                this.localToMap(this.nameToolTip);
-                TweenLite.to($(this.nameToolTip), 0, {alpha:1});
-                $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
-            } else {
-                clearTimeout(this.dragLabelTimer);
-                var _this = this;
-                this.dragLabelTimer = setTimeout(function() {
-                    _this.hideTooltip();
-                    _this = null;
-                }, 2000);
-            }
+        //         this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
+        //         this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
+        //         this.nameToolTip.setAttribute("data-scale", 1);
+        //         this.nameToolTip.setAttribute("data-opacity", 1);
+        //         this.nameToolTip.setAttribute("data-sizeoffset", true);
+        //         this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
+        //         this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
+        //         this.localToMap(this.nameToolTip);
+        //         TweenLite.to($(this.nameToolTip), 0, {alpha:1});
+        //         $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
+        //     } else {
+        //         clearTimeout(this.dragLabelTimer);
+        //         var _this = this;
+        //         this.dragLabelTimer = setTimeout(function() {
+        //             _this.hideTooltip();
+        //             _this = null;
+        //         }, 2000);
+        //     }
 
-            this.removeDragHandler
-            // this.legendsView.style.pointerEvents = "auto";
-            this.isZooming =  false;
-        };
+        //     this.removeDragHandler
+        //     // this.legendsView.style.pointerEvents = "auto";
+        //     this.isZooming =  false;
+        // };
 
         Floor.prototype.removeDragHandler = function() {
             $('#svg-' + this.id).off("touchstart");

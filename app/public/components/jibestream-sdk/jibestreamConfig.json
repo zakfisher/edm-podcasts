@@ -2,9 +2,9 @@
 	"mapStyles":{
 		"mapConfig":{
 			"startState":{
-				"x":1900,
-				"y":2390,
-				"zoom":150
+				"x":1760,
+				"y":2391,
+				"zoom":175
 			},
 			"container":{
 				"width":1920,
@@ -48,6 +48,7 @@
 				"strokeColor":"#fff",
 				"strokeWidth":"2px",
 				"clickable":true,
+				"highLightColor":"#fff",
 				"addLabel":true
 			},
 
@@ -147,6 +148,8 @@
 				"colorFill":"#dddabf",
 				"strokeColor":"#fff",
 				"strokeWidth":"2px",
+				"highLightColor":"#fff",
+				
 				"clickable":true,
 				"addLabel":true
 			},
