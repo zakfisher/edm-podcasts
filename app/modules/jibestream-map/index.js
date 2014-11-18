@@ -11,7 +11,7 @@ module.exports = angular.module('JibestreamMap', [])
   JMap.addListener("StandAloneMapsReady", JMapInitTask.resolve);
 
   /*STORE CARD CLICK*/
-  JMap.addListener("StoreCardClick", function(e, destination){
+  JMap.addListener("StoreCardClick", function (e, destination) {
     console.log("Get more details for " + destination.name);
   });
 

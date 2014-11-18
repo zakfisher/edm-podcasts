@@ -4,7 +4,13 @@ module.exports = angular.module('Shopping', [])
 
 .controller('Shopping', function ($scope, $famous, $http, filterFilter, $filter, KioskService, CardStream, CategoryService) {
   $scope.categories = CategoryService.getCategories();
+  $scope.categories.unshift({
+    name: "All Stores",
+    code: null
+  });
+  $scope.directoryTitle = "Shopping";
 })
+
 
 //Routes / States
 .config(function ($stateProvider) {

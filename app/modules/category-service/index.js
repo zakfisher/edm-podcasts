@@ -8,25 +8,33 @@ module.exports = angular.module('CategoryService', [])
     cache: true,
     url: "http://www.westfield.com.au/api/category/master/store-categories/valleyfair.json"
   }).success(function (r) {
-    r.unshift({
-      name: "All Stores",
-      code: null
-    });
     CategoryService.setCategories(r);
     categoriesTask.resolve();
   });
 })
 
-.service('CategoryService', function () {
+.service('CategoryService', function (filterFilter) {
   var self = {};
   self.categories = [];
 
   self.setCategories = function (categories) {
-    self.categories = categories;
+    self.categories = categories.slice(0);
   };
 
   self.getCategories = function () {
-    return self.categories;
+    return self.categories.slice(0);
+  };
+
+  self.getChildCategoriesOf = function (parentCode) {
+    var childCategories,
+      filteredCategories,
+      parentCategory;
+    filteredCategories = filterFilter(self.categories, {
+      'code': parentCode
+    });
+    if (filteredCategories.length === 1) {
+      return filteredCategories[0].children.slice(0);
+    }
   };
 
   return self;
