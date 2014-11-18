@@ -1278,6 +1278,11 @@ var __extends = this.__extends || function (d, b) {
 
         function Building(container, width, height, styles) {
             this.styles = styles;
+
+            // if(styles.mapStyles.mapConfig.positionOffset){
+            // 	JMap.storage.maps.model.setOffset(styles.mapStyles.mapConfig.positionOffset);
+            // }
+
         	this.addExtraStyles();
 
             this.container = container;
@@ -1291,6 +1296,8 @@ var __extends = this.__extends || function (d, b) {
             this.currentLegendId = null;
 
             JMap.storage.maps.building = this;
+
+
         }
 
 
@@ -1384,7 +1391,7 @@ var __extends = this.__extends || function (d, b) {
 
             this.container.append(this.view);
 
-            this.pathProcessor = new JMap.PathProcessor();
+            this.pathProcessor = new JMap.PathProcessor(this.styles.mapStyles.mapConfig.positionOffset);
 
             this.timeouts = [];
 
@@ -2081,7 +2088,11 @@ var __extends = this.__extends || function (d, b) {
      */
 
     var PathProcessor = (function () {
-        function PathProcessor() {}
+        function PathProcessor(offset) {
+        	if(offset)this.offset = offset;
+        	else this.offset = {x:0, y:0};
+
+        }
 
         PathProcessor.prototype.compile = function(data, dest, steps){
             var dt = this.processDirections(data);
@@ -2129,9 +2140,9 @@ var __extends = this.__extends || function (d, b) {
             var n = points.length;
 
             if (n < 2) {return null;}
-            str += "M " + points[0].x + " " + points[0].y;
+            str += "M " + (points[0].x + this.offset.x) + " " + (points[0].y + this.offset.y);
             for(var i = 1; i < n; i ++){
-                str += " L " + points[i].x + " " + points[i].y;
+                str += " L " + (points[i].x + this.offset.x) + " " + (points[i].y + this.offset.y);
             }
             return str;
         };
@@ -2422,7 +2433,8 @@ var __extends = this.__extends || function (d, b) {
             var as = JMap.getDeviceParamByKey("animationSpeed");
             // var sl = JMap.getDeviceParamByKey("specialLegend");
             // this.stepOffset = so?JSON.parse(so):{x:7,y:7};
-            this.scaleOffset = 1;//JMap.storage.deviceType === "mobile"?(ms?ms:1):1;
+            this.scaleOffset = this.styles.mapStyles.mapConfig.scaleOffset?this.styles.mapStyles.mapConfig.scaleOffset:1;//JMap.storage.deviceType === "mobile"?(ms?ms:1):1;
+            this.positionOffset = this.styles.mapStyles.mapConfig.positionOffset?this.styles.mapStyles.mapConfig.positionOffset:{x:0, y:0};//JMap.storage.deviceType === "mobile"?(ms?ms:1):1;
             this.speed = as?as:1;
         };
 
@@ -2482,16 +2494,20 @@ var __extends = this.__extends || function (d, b) {
             setTimeout(function(){
                 $( '#svg-' + _this.id ).html(_this.svgXml);
                 $("#graphicCont-" + _this.id).html("<svg id='graphic-" + _this.id + "'></svg>");
+                $("#graphicCont-" + _this.id).css("pointer-events", "none");
 				setTimeout(function(){
                     // console.log("LOADED");
                     $('#svg-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
                     $( '#svg-' + _this.id ).show().css('opacity',1);
+		            $('#svg-' + _this.id).css("background", _this.styles.mapStyles.mapConfig.container.background);
+
+
                     $( '#graphicCont-' + _this.id ).show().css('opacity',1);
                     $('#graphicCont-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
                     _this.addDragHandler(_this);
-					setTimeout($.proxy(_this.styleSVG, _this), 5000);
-				}, 5000);
-			}, 100);
+					setTimeout($.proxy(_this.styleSVG, _this), 10);
+				}, 10);
+			}, 10);
         };
 
 
@@ -2499,6 +2515,8 @@ var __extends = this.__extends || function (d, b) {
 			// console.log("FIRING FLOOR READY", this);
 			this.updateZoomLayers($(this.mapView).smoothZoom('getZoomData'));
 			JMap.fire("floorLoaded");
+			this.styleRef = {};
+			var _this = this;
 
 			//-----------------------
 			for (var i = 0; i < this.styles.mapStyles.mapLayers.length; i++) {
@@ -2507,57 +2525,74 @@ var __extends = this.__extends || function (d, b) {
 				// var $group = $('#svg-' + this.id ).find("." + currentStyle.class);//.find("*");
 				currentStyle.group = $group;
 
-				// console.log("Style Elements: ", currentStyle, $group.length);	                	
-
-				console.log("APPLYING STYLE TO ", currentStyle.name, currentStyle);
-
-
-				var ar = [];
-
 				for(var j = 0; j < $group.length; j++){
 					var p = $group[j];
 					if(currentStyle.colorFill)$(p).css("fill", currentStyle.colorFill);
 					if(currentStyle.strokeColor)$(p).css("stroke", currentStyle.strokeColor);
 					if(currentStyle.strokeWidth)$(p).css("stroke-width", currentStyle.strokeWidth);
-
-					if(!currentStyle.addLabel)continue;
-
-					var $p = $(p);
-
-					var pd = d3.select(p);
-					var bb = pd.node().getBBox();
+					if(!currentStyle.clickable)$(p).css("pointer-events", "none");
+					$(p).addClass(currentStyle.name);
 
 
-					var d = this.getDestinationWithinBounds(bb);
-					if (d)ar.push(d);
-					else continue;
 
-
-					//TODO TRY FIT JS
 					if(currentStyle.clickable == true){
 						$(p).on("touchstart", function(){
-							var _d = d;
-							console.log(_d);
-							$(this).css("fill", "#000");
+							var lbl = undefined;
+							var prnt = $(this);
+							while(lbl == undefined) {
+								prnt = prnt.parent();
+								lbl = prnt.attr("id");
+								if(prnt.prop("tagName") == "DIV") break;
+							}
+							$(this).css("fill", _this.styleRef[lbl].highLightColor);
 						});
 
 
 						$(p).on("touchend", function(){
-							$(this).css("fill", currentStyle.colorFill);
+							lbl = undefined;
+							var prnt = $(this);
+							while(lbl == undefined) {
+								prnt = prnt.parent();
+								lbl = prnt.attr("id");
+								if(prnt.prop("tagName") == "DIV") break;
+							}
+							$(this).css("fill", _this.styleRef[lbl].colorFill);
+
 						});
+
+						$(p).on("click", function(){
+							// console.log();
+						});
+
+
 					}
 
+					// if(!currentStyle.addLabel)continue;
+					// var $p = $(p);
+
+					// var pd = d3.select(p);
+					// var bb = pd.node().getBBox();
+
+					// var d = this.getDestinationWithinBounds(bb);
+					// if (d)ar.push(d);
+					// else continue;
+
+
+					//TODO TRY FIT JS
+					
 
 
 	            }
 
 
-	            if(currentStyle.addLabel)console.log(ar);
+	           // if(currentStyle.addLabel)console.log(ar);
 	            // $(this.mapView).smoothZoom("addLandmark", this.legendsObj.labelselementsArray);
 
 				this.styles.mapStyles.mapLayers[i] = currentStyle;
+				this.styleRef[currentStyle.name] = currentStyle;
 			};
 			//-----------------------
+			console.log(this.styleRef);
 
         };
 
@@ -2580,13 +2615,13 @@ var __extends = this.__extends || function (d, b) {
         Floor.prototype.setStoreLabels = function(){
         	this.destinations = JMap.getDestinationsByFloorId(this.id);
 
-			return;
+			// return;
 
         	this.destinationsByWPID = {};
 
         	var destLabels = [];
-        	for(var i = 0; i < destinations.length; i++){
-        		var dtn = destinations[i];
+        	for(var i = 0; i < this.destinations.length; i++){
+        		var dtn = this.destinations[i];
         		var wp = JMap.storage.maps.model.getWPByJid(dtn.clientId);
         		dtn.wp = wp;
 
@@ -2664,19 +2699,27 @@ var __extends = this.__extends || function (d, b) {
             var w = $(window).width();
             var h = $(window).height();
 
+            var config = this.styles.mapStyles.mapConfig;
+            // console.log(config);
+
+            if(config){
+	            $(this.mapView).width(config.mapSize.width);
+	            $(this.mapView).height(config.mapSize.height);
+            }
+
+
             $(this.mapView).smoothZoom({
-                // width: this.containerWidth,
-                // height: this.containerHeight,
-                width:1920,
-                height:1080,
-                // width: '100%',
-                // height: '100%',
+                width:config?config.container.width:"100%",
+                height:config?config.container.height:"100%",
                 animation_SMOOTHNESS: 8,
                 animation_SPEED_ZOOM: 1,
                 pan_BUTTONS_SHOW: "NO",
                 pan_LIMIT_BOUNDARY: false,
-                zoom_MAX: 200, //TODO - Make this configurable
-                zoom_MIN:0,
+                initial_ZOOM:config?config.startState.zoom:0,
+                initial_POSITION:config?config.startState.x + " " + config.startState.y:0,
+
+                zoom_MAX: config?config.container.zoomMax:100, //TODO - Make this configurable
+                zoom_MIN:config?config.container.zoomMin:0,
                 container:"map-floor-container-" + this.id,
                 zoom_BUTTONS_SHOW: false,
                 background_COLOR: 'transparent',
@@ -2769,7 +2812,11 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Floor.prototype.resetFloor = function(){
-            $(JMap.storage.thisMap).smoothZoom('Reset');
+        	// if(this.yah){
+         //    	$(this.mapView).smoothZoom('focusTo', this.styles.mapStyles.mapConfig.startState);
+        	// }else{
+            	$(this.mapView).smoothZoom('Reset');
+        	// }
             this.clearPath();
             this.hasPath = false;
         };
@@ -2851,7 +2898,9 @@ var __extends = this.__extends || function (d, b) {
 
         Floor.prototype.addDragHandler = function(fl) {
 
-            $('#svg-' + fl.id).on("click",$.proxy(this.startDrag, this));
+        	return;
+
+            // $('#svg-' + fl.id).on("click",$.proxy(this.startDrag, this));
             $('#svg-' + fl.id).on("touchstart",$.proxy(this.startDrag, this));
 
 
@@ -2893,7 +2942,7 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Floor.prototype.startDrag = function(evt) {
-        	console.log("click", evt);
+        	// console.log("click", evt);
 
             if(evt.originalEvent.touches && evt.originalEvent.touches.length > 1) return;
             var _this = this;
@@ -2916,8 +2965,8 @@ var __extends = this.__extends || function (d, b) {
                 $('#svg-' + _this.id).on("touchstart", $.proxy(this.dragMove, this));
                 this.dragMove(evt);
             } else{
-                $('#svg-' + _this.id).on("touchstart", $.proxy(this.radiusDrag, this));
-                this.radiusDrag(evt);
+                // $('#svg-' + _this.id).on("touchstart", $.proxy(this.radiusDrag, this));
+                // this.radiusDrag(evt);
             }
 
         };
@@ -2937,7 +2986,8 @@ var __extends = this.__extends || function (d, b) {
             var clickY = evt.pageY;
             var list, $list, offset, range;
             var $body = $('#svg-' + this.id).find('*');
-            console.log(evt.originalEvent);
+            // console.log(evt);
+            if(!evt.originalEvent)return;
             var oEvtTouch = evt.originalEvent.changedTouches[0];
             var eleTag = document.elementFromPoint(oEvtTouch.clientX, oEvtTouch.clientY);
 
@@ -2945,31 +2995,31 @@ var __extends = this.__extends || function (d, b) {
 
             
             if(eleTag.tagName != "polygon" && eleTag.tagName != "rect" && eleTag.tagName != "path") {
-
                 if(this.useRadiusCombo > 0) {
                     
                     if(eleTag.tagName == "svg") {
                         this.isZooming =  false;
-                        this.radiusDrag(evt, true);
+                        // this.radiusDrag(evt, true);
                     }
                 }
                 return;
             }
+            // console.log("SVG ITEM");
 
             
-            for(var i = 0; i < $body.length; i++) {
-                if(eleTag != $body[i]) {
-                    $body[i].style.fillOpacity = 0;
-                } else {
-                    $body[i].style.fillOpacity = 0.7;
-                    $body[i].style.fill = this.svgFill;
-                }
-            }
+            // for(var i = 0; i < $body.length; i++) {
+                // if(eleTag != $body[i]) {
+                //     $body[i].style.fillOpacity = 0;
+                // } else {
+                //     // $body[i].style.fillOpacity = 0.7;
+                //     $body[i].style.fill = this.svgFill;
+                // }
+            // }
 
             // if(evt.currentTarget != this.svgContainer)return;
 
-            var flagOffsetX = 0;
-            var flagOffsetY = 0;
+            // var flagOffsetX = 0;
+            // var flagOffsetY = 0;
 
 
             
@@ -2977,124 +3027,125 @@ var __extends = this.__extends || function (d, b) {
             polygonBounds = this.convertBoundingRect(polygonBounds);
             // console.log('POLYGON', polygonBounds);
             
-            var testZone = document.createElement("DIV");
-            testZone.style.position = "absolute";
-            testZone.style.top = polygonBounds.top;
-            testZone.style.left = polygonBounds.left;
-            testZone.style.width = polygonBounds.width;
-            testZone.style.height = polygonBounds.height;
-            testZone.style.backgroundColor = "rgba(0,0,255, 0.2)";
-            //this.svgContainer.appendChild(testZone);
+            // var testZone = document.createElement("DIV");
+            // testZone.style.position = "absolute";
+            // testZone.style.top = polygonBounds.top;
+            // testZone.style.left = polygonBounds.left;
+            // testZone.style.width = polygonBounds.width;
+            // testZone.style.height = polygonBounds.height;
+            // testZone.style.backgroundColor = "rgba(0,0,255, 0.2)";
+            // //this.svgContainer.appendChild(testZone);
             
 
-            var nearPoints = this.getDestinationInBox(polygonBounds.left,polygonBounds.top,polygonBounds.width,polygonBounds.height);
+            // var nearPoints = this.getDestinationInBox(polygonBounds.left,polygonBounds.top,polygonBounds.width,polygonBounds.height);
 
-            // console.log("NEARPOINTS",nearPoints);
+            // // console.log("NEARPOINTS",nearPoints);
             
-            //var nearPoints = this.getDestinationsNearCoor(evtX, evtY, 50);
+            // //var nearPoints = this.getDestinationsNearCoor(evtX, evtY, 50);
             
 
-            var allNearLocations = [];
-            // console.log("floor dest",this.floorDestinations);
-            for(i = 0; i < nearPoints.length; i++) {
-                for(var j = 0; j < this.floorDestinations.length; j++) {
+            // var allNearLocations = [];
+            // // console.log("floor dest",this.floorDestinations);
+            // for(i = 0; i < nearPoints.length; i++) {
+            //     for(var j = 0; j < this.floorDestinations.length; j++) {
                     
 
                     
-                    if(nearPoints[i].id == this.floorDestinations[j].wp.id) {
+            //         if(nearPoints[i].id == this.floorDestinations[j].wp.id) {
                         
 
-                        if(this.floorDestinations[j].clickRadius > 0) {
-                            // console.log(this.floorDestinations[j].name, nearPoints[i].distance);
-                            if(this.floorDestinations[j].clickRadius > nearPoints[i].distance) {
+            //             if(this.floorDestinations[j].clickRadius > 0) {
+            //                 // console.log(this.floorDestinations[j].name, nearPoints[i].distance);
+            //                 if(this.floorDestinations[j].clickRadius > nearPoints[i].distance) {
                                 
-                                allNearLocations.push(this.floorDestinations[j]);
-                            } else {
-                                // console.log(this.floorDestinations[j].name, nearPoints[i].distance);
-                            }
+            //                     allNearLocations.push(this.floorDestinations[j]);
+            //                 } else {
+            //                     // console.log(this.floorDestinations[j].name, nearPoints[i].distance);
+            //                 }
                             
-                        } else {
-                            allNearLocations.push(this.floorDestinations[j]);
-                        }
-                        //
-                    }
+            //             } else {
+            //                 allNearLocations.push(this.floorDestinations[j]);
+            //             }
+            //             //
+            //         }
 
-                }
-            }
-            // console.log("All Near", allNearLocations);
+            //     }
+            // }
+            // // console.log("All Near", allNearLocations);
 
-            //console.log(nearLocations);
-            //Test if near point is under poly
-            var nearLocations = [];
-            var intersect = null;
-            var convertedPoint = null;
+            // //console.log(nearLocations);
+            // //Test if near point is under poly
+            // var nearLocations = [];
+            // var intersect = null;
+            // var convertedPoint = null;
 
-            // console.log('DIRTY',allNearLocations);
+            // // console.log('DIRTY',allNearLocations);
 
-            for(i = 0; i < allNearLocations.length; i++) {
+            // for(i = 0; i < allNearLocations.length; i++) {
                 
-                // console.log('GLOBALPOINT', allNearLocations[i].wp.x, allNearLocations[i].wp.y);
-                var globalPoint = this.mapToGlobal(allNearLocations[i].wp.x, allNearLocations[i].wp.y);
-                var intersect = document.elementFromPoint(globalPoint.x, globalPoint.y);
+            //     // console.log('GLOBALPOINT', allNearLocations[i].wp.x, allNearLocations[i].wp.y);
+            //     var globalPoint = this.mapToGlobal(allNearLocations[i].wp.x, allNearLocations[i].wp.y);
+            //     var intersect = document.elementFromPoint(globalPoint.x, globalPoint.y);
 
-                if(intersect == eleTag) {
-                    nearLocations.push(allNearLocations[i]);
-                }
-            }
+            //     if(intersect == eleTag) {
+            //         nearLocations.push(allNearLocations[i]);
+            //     }
+            // }
 
             // console.log("Clean", nearLocations);
             JMap.fire('SHOW_DESTINATION', nearLocations);
 
-            if(nearLocations.length > 1) {
-                // alert(nearLocations[0]["name"]);
-                $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
-                this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
-                this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
-                this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
-                flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
+            // if(nearLocations.length > 1) {
+            //     // alert(nearLocations[0]["name"]);
+            //     $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
+            //     this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
+            //     this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
+            //     this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
+            //     flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
 
-                this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
-                this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
-                this.nameToolTip.setAttribute("data-scale", 1);
-                this.nameToolTip.setAttribute("data-opacity", 1);
-                this.nameToolTip.setAttribute("data-sizeoffset", true);
-                this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
-                this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
-                this.localToMap(this.nameToolTip);
-                TweenLite.to($(this.nameToolTip), 0, {alpha:1});
-                $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
-                this.showWaypointSVG( nearLocations[0].wp.x,  nearLocations[0].wp.y );
-            } else if (nearLocations.length > 0) {
-                $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
-                this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
-                this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
-                this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
-                flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
+            //     this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
+            //     this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
+            //     this.nameToolTip.setAttribute("data-scale", 1);
+            //     this.nameToolTip.setAttribute("data-opacity", 1);
+            //     this.nameToolTip.setAttribute("data-sizeoffset", true);
+            //     this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
+            //     this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
+            //     this.localToMap(this.nameToolTip);
+            //     TweenLite.to($(this.nameToolTip), 0, {alpha:1});
+            //     $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
+            //     this.showWaypointSVG( nearLocations[0].wp.x,  nearLocations[0].wp.y );
+            // } else if (nearLocations.length > 0) {
+            //     $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
+            //     this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
+            //     this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
+            //     this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
+            //     flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
 
-                this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
-                this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
-                this.nameToolTip.setAttribute("data-scale", 1);
-                this.nameToolTip.setAttribute("data-opacity", 1);
-                this.nameToolTip.setAttribute("data-sizeoffset", true);
-                this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
-                this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
-                this.localToMap(this.nameToolTip);
-                TweenLite.to($(this.nameToolTip), 0, {alpha:1});
-                $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
-            } else {
-                clearTimeout(this.dragLabelTimer);
-                var _this = this;
-                this.dragLabelTimer = setTimeout(function() {
-                    _this.hideTooltip();
-                    _this = null;
-                }, 2000);
-            }
+            //     this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
+            //     this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
+            //     this.nameToolTip.setAttribute("data-scale", 1);
+            //     this.nameToolTip.setAttribute("data-opacity", 1);
+            //     this.nameToolTip.setAttribute("data-sizeoffset", true);
+            //     this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
+            //     this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
+            //     this.localToMap(this.nameToolTip);
+            //     TweenLite.to($(this.nameToolTip), 0, {alpha:1});
+            //     $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
+            // } else {
+            //     clearTimeout(this.dragLabelTimer);
+            //     var _this = this;
+            //     this.dragLabelTimer = setTimeout(function() {
+            //         _this.hideTooltip();
+            //         _this = null;
+            //     }, 2000);
+            // }
 
             // this.legendsView.style.pointerEvents = "auto";
             this.isZooming =  false;
         };
 
         Floor.prototype.showWaypointSVG = function(x,y) {
+        	console.log("Show wp svg");
             var globalPoint = this.mapToGlobal(x, y);
             var eleTag = document.elementFromPoint(globalPoint.x, globalPoint.y);
             if(eleTag.tagName != "polygon" && eleTag.tagName != "rect" && eleTag.tagName != "path") {
@@ -3114,117 +3165,117 @@ var __extends = this.__extends || function (d, b) {
             }
         };
 
-        Floor.prototype.radiusDrag = function(evt, omitSVG) {
-            if(this.isZooming === true)return;
+        // Floor.prototype.radiusDrag = function(evt, omitSVG) {
+        //     if(this.isZooming === true)return;
 
-            this.isZooming =  true;
+        //     this.isZooming =  true;
             
-            // this.legendsView.style.pointerEvents = "none";
-            var evtX = evt.offsetX;
-            var evtY = evt.offsetY;
-            // var touch = evt.touches[0];
-            var svgContainer = 'svg-' + this.id;
-            if(evt.currentTarget.id != svgContainer)return;
+        //     // this.legendsView.style.pointerEvents = "none";
+        //     var evtX = evt.offsetX;
+        //     var evtY = evt.offsetY;
+        //     // var touch = evt.touches[0];
+        //     var svgContainer = 'svg-' + this.id;
+        //     if(evt.currentTarget.id != svgContainer)return;
 
-            var flagOffsetX = 0;
-            var flagOffsetY = 0;
-            var oEvtTouch = evt.originalEvent.changedTouches[0];
+        //     var flagOffsetX = 0;
+        //     var flagOffsetY = 0;
+        //     var oEvtTouch = evt.originalEvent.changedTouches[0];
 
-            // console.log(oEvtTouch.clientX, oEvtTouch.clientY, this.clickTolerance);
+        //     // console.log(oEvtTouch.clientX, oEvtTouch.clientY, this.clickTolerance);
 
 
             
         
 
-            //var nearPoints = this.getDestinationInBox(polygonBounds.left,polygonBounds.top,polygonBounds.width,polygonBounds.height);
+        //     //var nearPoints = this.getDestinationInBox(polygonBounds.left,polygonBounds.top,polygonBounds.width,polygonBounds.height);
 
-            var nearPoints = this.getDestinationsNearCoor(oEvtTouch.clientX, oEvtTouch.clientY, this.clickTolerance);
+        //     var nearPoints = this.getDestinationsNearCoor(oEvtTouch.clientX, oEvtTouch.clientY, this.clickTolerance);
 
-            // console.log(nearPoints);
+        //     // console.log(nearPoints);
 
 
-            var allNearLocations = [];
-            for(i = 0; i < nearPoints.length; i++) {
+        //     var allNearLocations = [];
+        //     for(i = 0; i < nearPoints.length; i++) {
 
-                for(var j = 0; j < this.floorDestinations.length; j++) {
+        //         for(var j = 0; j < this.floorDestinations.length; j++) {
 
-                    if(nearPoints[i].id == this.floorDestinations[j].wp.id) {
+        //             if(nearPoints[i].id == this.floorDestinations[j].wp.id) {
                         
-                        if(omitSVG) {
+        //                 if(omitSVG) {
 
-                            var globalPoint = this.mapToGlobal(this.floorDestinations[j].wp.x, this.floorDestinations[j].wp.y);
-                            var intersect = document.elementFromPoint(globalPoint.x, globalPoint.y);
-                            if(intersect.tagName != "polygon" && intersect.tagName != "rect" && intersect.tagName != "path") {
-                                allNearLocations.push(this.floorDestinations[j]);
-                            }
+        //                     var globalPoint = this.mapToGlobal(this.floorDestinations[j].wp.x, this.floorDestinations[j].wp.y);
+        //                     var intersect = document.elementFromPoint(globalPoint.x, globalPoint.y);
+        //                     if(intersect.tagName != "polygon" && intersect.tagName != "rect" && intersect.tagName != "path") {
+        //                         allNearLocations.push(this.floorDestinations[j]);
+        //                     }
 
-                        } else {
-                            allNearLocations.push(this.floorDestinations[j]);
-                        }
+        //                 } else {
+        //                     allNearLocations.push(this.floorDestinations[j]);
+        //                 }
                         
-                    }
-                }
-            }
+        //             }
+        //         }
+        //     }
 
 
 
-            var nearLocations = allNearLocations;
-            var intersect = null;
-            var convertedPoint = null;
+        //     var nearLocations = allNearLocations;
+        //     var intersect = null;
+        //     var convertedPoint = null;
 
-            // console.log("Clean", nearLocations);
+        //     // console.log("Clean", nearLocations);
 
-            if(nearLocations.length > 1) {
-                // alert(nearLocations[0]["name"]);
-                JMap.fire('SHOW_DESTINATION', [nearLocations[0]]);
-                $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
-                this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
-                this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
-                this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
-                flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
+        //     if(nearLocations.length > 1) {
+        //         // alert(nearLocations[0]["name"]);
+        //         JMap.fire('SHOW_DESTINATION', [nearLocations[0]]);
+        //         $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
+        //         this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
+        //         this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
+        //         this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
+        //         flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
 
-                this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
-                this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
-                this.nameToolTip.setAttribute("data-scale", 1);
-                this.nameToolTip.setAttribute("data-opacity", 1);
-                this.nameToolTip.setAttribute("data-sizeoffset", true);
-                this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
-                this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
-                this.localToMap(this.nameToolTip);
-                TweenLite.to($(this.nameToolTip), 0, {alpha:1});
-                $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
-                this.showWaypointSVG( nearLocations[0].wp.x,  nearLocations[0].wp.y );
+        //         this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
+        //         this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
+        //         this.nameToolTip.setAttribute("data-scale", 1);
+        //         this.nameToolTip.setAttribute("data-opacity", 1);
+        //         this.nameToolTip.setAttribute("data-sizeoffset", true);
+        //         this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
+        //         this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
+        //         this.localToMap(this.nameToolTip);
+        //         TweenLite.to($(this.nameToolTip), 0, {alpha:1});
+        //         $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
+        //         this.showWaypointSVG( nearLocations[0].wp.x,  nearLocations[0].wp.y );
 
-            } else if (nearLocations.length > 0) {
-                $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
-                this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
-                this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
-                this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
-                flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
+        //     } else if (nearLocations.length > 0) {
+        //         $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
+        //         this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
+        //         this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
+        //         this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
+        //         flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
 
-                this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
-                this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
-                this.nameToolTip.setAttribute("data-scale", 1);
-                this.nameToolTip.setAttribute("data-opacity", 1);
-                this.nameToolTip.setAttribute("data-sizeoffset", true);
-                this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
-                this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
-                this.localToMap(this.nameToolTip);
-                TweenLite.to($(this.nameToolTip), 0, {alpha:1});
-                $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
-            } else {
-                clearTimeout(this.dragLabelTimer);
-                var _this = this;
-                this.dragLabelTimer = setTimeout(function() {
-                    _this.hideTooltip();
-                    _this = null;
-                }, 2000);
-            }
+        //         this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
+        //         this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
+        //         this.nameToolTip.setAttribute("data-scale", 1);
+        //         this.nameToolTip.setAttribute("data-opacity", 1);
+        //         this.nameToolTip.setAttribute("data-sizeoffset", true);
+        //         this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
+        //         this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
+        //         this.localToMap(this.nameToolTip);
+        //         TweenLite.to($(this.nameToolTip), 0, {alpha:1});
+        //         $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
+        //     } else {
+        //         clearTimeout(this.dragLabelTimer);
+        //         var _this = this;
+        //         this.dragLabelTimer = setTimeout(function() {
+        //             _this.hideTooltip();
+        //             _this = null;
+        //         }, 2000);
+        //     }
 
-            this.removeDragHandler
-            // this.legendsView.style.pointerEvents = "auto";
-            this.isZooming =  false;
-        };
+        //     this.removeDragHandler
+        //     // this.legendsView.style.pointerEvents = "auto";
+        //     this.isZooming =  false;
+        // };
 
         Floor.prototype.removeDragHandler = function() {
             $('#svg-' + this.id).off("touchstart");
@@ -3279,8 +3330,8 @@ var __extends = this.__extends || function (d, b) {
             switch(pStyle.pathType){
             	case "line":
 	            	var svg = document.getElementById('graphic-' + this.id);
-		            console.log(svg);
-		            console.log(floorPath);
+		            // console.log(svg);
+		            // console.log(floorPath);
 					var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
 					newElement.setAttribute("d",floorPath.svgPath);
 					newElement.style.stroke = pStyle.pathColor?pStyle.pathColor:"#000";
@@ -3298,7 +3349,7 @@ var __extends = this.__extends || function (d, b) {
 
 
 		    		TweenLite.to(newElement.style, pStyle.duration, {strokeDashoffset:0 , ease: Circ.easeOut, onComplete:function(){
-		    			console.log("ANIMATE!");
+		    			// console.log("ANIMATE!");
 		                if(JMap.storage.maps.building.pathComplete !== undefined)JMap.storage.maps.building.pathComplete();
 		    		}});
 
@@ -3345,7 +3396,7 @@ var __extends = this.__extends || function (d, b) {
                 rot = Math.atan2(ydiff, xdiff) * 180 / Math.PI;
             }
 
-            var bmp = "<div id='point" + i + "' class='item mark step' data-show-at-zoom='0' data-allow-scale='true' data-rotation='" + rot.toString() + "' data-position='"+  (p.x * this.scaleOffset) + "," + (p.y * this.scaleOffset) + "'></div>";
+            var bmp = "<div id='point" + i + "' class='item mark step' data-show-at-zoom='0' data-allow-scale='true' data-rotation='" + rot.toString() + "' data-position='"+  ((p.x + this.positionOffset.x) * this.scaleOffset) + "," + (p.y + this.positionOffset.y * this.scaleOffset) + "'></div>";
             // bmp += "<img src='" + /*JMap.serverUrl +*/ /*"/cms/trunk/img/step.png"*/ "' style='transform:rotate(" + rot + "deg);'>";// width='100' height='100'
 
             return bmp;
@@ -3383,25 +3434,25 @@ var __extends = this.__extends || function (d, b) {
         	// console.log(this.styles.mapStyles.iconStyles);
             var bubbleImgUrl = this.styles.mapStyles.iconStyles.destination?this.styles.mapStyles.iconStyles.destination.url:(JMap.getLabelById("searchDestination").filePath);
             var lastP = this.currentPath.points[this.currentPath.points.length - 1];
-            var b = "<div id='bubbleLeft' class='item mark destination' data-show-at-zoom='0' data-position='" + (lastP.x * this.scaleOffset) + "," + (lastP.y * this.scaleOffset) + "' data-allow-scale='false' data-allow-drag='false'><img src='" + bubbleImgUrl + "' /></div>";
+            var b = "<div id='bubbleLeft' class='item mark destination' data-show-at-zoom='0' data-position='" + ((lastP.x + this.positionOffset.x) * this.scaleOffset) + "," + ((lastP.y + this.positionOffset.y) * this.scaleOffset) + "' data-allow-scale='false' data-allow-drag='false'><img src='" + bubbleImgUrl + "' /></div>";
             this.pathView.push(b);
             $(this.mapView).smoothZoom("addLandmark", [b]);
         };
 
         Floor.prototype.showBubbleByWP = function (bubble, wp) {
-            var b = "<div id='bubbleLeft' class='item mark' data-show-at-zoom='0' data-position='" + (wp.x * this.scaleOffset) + "," + (wp.y * this.scaleOffset) + "' data-allow-scale='false' data-allow-drag='false'><img src='" + (JMap.getLabelById((icon?icon:"yah")).filePath) + "' /></div>";
+            var b = "<div id='bubbleLeft' class='item mark' data-show-at-zoom='0' data-position='" + ((wp.x  + this.positionOffset.x)* this.scaleOffset) + "," + ((wp.y  + this.positionOffset.y)* this.scaleOffset) + "' data-allow-scale='false' data-allow-drag='false'><img src='" + (JMap.getLabelById((icon?icon:"yah")).filePath) + "' /></div>";
             this.pathView.push("bubbleLeft");
             $(this.mapView).smoothZoom("addLandmark", [b]);
         };
 
         Floor.prototype.showMoverByWP = function (url, wp) {
-            var b = "<div id='mover" + this.id + "' class='item mark mover' data-show-at-zoom='0' data-position='" + (wp.x * this.scaleOffset) + "," + (wp.y * this.scaleOffset) + "' data-allow-scale='true' data-allow-drag='false'><img src='" + JMap.serverUrl + url + "' width='100' height='100' /></div>";
+            var b = "<div id='mover" + this.id + "' class='item mark mover' data-show-at-zoom='0' data-position='" + ((wp.x  + this.positionOffset.x)* this.scaleOffset) + "," + ((wp.y  + this.positionOffset.y)* this.scaleOffset) + "' data-allow-scale='true' data-allow-drag='false'><img src='" + JMap.serverUrl + url + "' width='100' height='100' /></div>";
             this.pathView.push("mover" + this.id);
             $(this.mapView).smoothZoom("addLandmark", [b]);
         };
 
         Floor.prototype.putYahByCoor = function (x, y, url, heading) {
-            this.yahCoord = {x:x*this.scaleOffset, y:y*this.scaleOffset, url:url};
+            this.yahCoord = {x:(x + this.positionOffset.x)*this.scaleOffset, y:(y+ this.positionOffset.y)*this.scaleOffset, url:url};
             this.yah = "<div id='yah' class='item mark yahpoint' data-show-at-zoom='0' data-position='" + this.yahCoord.x + "," + this.yahCoord.y + "' data-allow-drag='true' data-rotation='" + heading + "' data-allow-scale='false'><img src='" + (this.yahCoord.url) + "' /></div>";
             //console.log(_this.yah);
             $(this.mapView).smoothZoom("addLandmark", [this.yah]);
@@ -3714,7 +3765,8 @@ var BuildingModelGrid = (function () {
          * @class BuildingModelGrid
          * @constructor 
          */
-        function BuildingModelGrid() {
+        function BuildingModelGrid(options) {
+        	this.options = options;
             this.WPS = {};
         }
         
@@ -3903,16 +3955,16 @@ var BuildingModelGrid = (function () {
                 var con1 = this.isConnected(wpFrom.mapid, currentMov.connections);
                 var con2 = this.isConnected(wpTo.mapid, currentMov.connections);
 
-                console.log("Checking some Movers. Nothing to see Here");
-                console.log("First Connection", con1);
-                console.log("Second Connection", con2);
+                // console.log("Checking some Movers. Nothing to see Here");
+                // console.log("First Connection", con1);
+                // console.log("Second Connection", con2);
 
                 if(con1 && con2) {
                     var floorPrefMultiplierFrom = this.getFloorPreferenceMultiplier(wpFrom.mapid);
                     var floorPrefMultiplierTo = this.getFloorPreferenceMultiplier(wpTo.mapid);
 
-                    console.log("Got Multiplier", floorPrefMultiplierFrom);
-                    console.log("Got Multiplier", floorPrefMultiplierTo);
+                    // console.log("Got Multiplier", floorPrefMultiplierFrom);
+                    // console.log("Got Multiplier", floorPrefMultiplierTo);
 
                     var dist1 = floorPrefMultiplierFrom * (this.getPathLength(wpFrom.id, con1.wpid, wpFrom.mapid));
                     var dist2 = floorPrefMultiplierTo * (this.getPathLength(wpTo.id, con2.wpid, wpTo.mapid));
@@ -4005,11 +4057,27 @@ var BuildingModelGrid = (function () {
 
         BuildingModelGrid.prototype.getFloorBySequence = function (seq) {
             for (var i = 0, n = this.arFloors.length; i < n; i++) {
-            	console.log(this.arFloors[i]);
+            	// console.log(this.arFloors[i]);
                 if (this.arFloors[i].floorSequence == seq)
                     return this.arFloors[i];
             }
             return null;
+        };
+
+        BuildingModelGrid.prototype.setOffset = function(posOffset){
+        	for (var i = 0; i < this.waypoints.length; i++) {
+        		var wp = this.waypoints[i];
+        		wp.x = wp.x + posOffset.x;
+        		wp.y = wp.y + posOffset.y;
+        		this.waypoints[i] = wp;
+        	}
+
+        	// for (var i = 0; i < this.waypoints.length; i++) {
+        	// 	var wp = this.waypoints[i];
+        	// 	wp.x = wp.x + posOffset.x;
+        	// 	wp.y = wp.y + posOffset.y;
+        	// 	this.waypoints[i] = wp;
+        	// }
         };
 
         BuildingModelGrid.prototype.onData = function (res) {
@@ -4021,7 +4089,14 @@ var BuildingModelGrid = (function () {
             this.paths = res.paths;
             this.waypoints = res.waypoints;
 
-            // console.log(res);
+
+         //    for (var i = 0; i < this.waypoints.length; i++) {
+        	// 	var wp = this.waypoints[i];
+        	// 	wp.x = wp.x + 1486;
+        	// 	wp.y = wp.y + 1194;
+        	// 	this.waypoints[i] = wp;
+        	// }
+
             this.parseData();
             this.parseGrid();
 
