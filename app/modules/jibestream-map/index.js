@@ -1,7 +1,7 @@
 // Jibestream Integration
 module.exports = angular.module('JibestreamMap', [])
 
-.run(function (Preloader) {
+.run(function (Preloader, StoreService, CardStream, $rootScope) {
   // Preload maps api data
   var JMapInitTask = Preloader.createTask("Jibestream Bootstrap");
   JMap.initMapsStandAlone("http://jibestream2.cloudapp.net:8082", {
@@ -9,13 +9,6 @@ module.exports = angular.module('JibestreamMap', [])
     languageCode: "en"
   });
   JMap.addListener("StandAloneMapsReady", JMapInitTask.resolve);
-
-  /*STORE CARD CLICK*/
-  JMap.addListener("StoreCardClick", function (e, destination) {
-    console.log("Get more details for " + destination.name);
-  });
-
-
 
   var JMapConfigTask = Preloader.createTask("Load Jibestream Config");
   $.ajax({
@@ -27,9 +20,25 @@ module.exports = angular.module('JibestreamMap', [])
       JMapConfigTask.resolve();
     }
   });
+
+  var showStoreCardFromDestination = function (e, destination) {
+    var store = StoreService.getStoreById(destination.clientId);
+    if (store) {
+      console.log('STORE', store);
+      CardStream.setStore(store);
+      CardStream.show();
+      $rootScope.$apply();
+    } else {
+      console.warn('Could not find store from destination:', destination);
+    }
+  };
+
+  // @todo change this to the event when clicking on the map
+  JMap.addListener("StoreCardClick", showStoreCardFromDestination);
+
 })
 
-.controller('JibestreamMapController', function ($scope, $element, CardStream) {
+.controller('JibestreamMapController', function ($scope, $element, CardStream, StoreService) {
   var mapObject = new JMap.Building($element.find(".map-container"), $element.offsetWidth, $element.offsetHeight, JMap._stylingData);
   mapObject.setDefaultLocation();
   window.mo = mapObject;
@@ -37,14 +46,6 @@ module.exports = angular.module('JibestreamMap', [])
   function resetMap() {
     mapObject.resetAllMaps();
   }
-
-  $scope.handleStoreClick = function () {
-    CardStream.setStore({
-      name: "My Store",
-      description: "My Store Description"
-    });
-    CardStream.show();
-  };
 
   // mapObject.showCustomPopupDestination(JMap.getDestinationByClientId("7700"), $("#popup-render-container").html());
 
