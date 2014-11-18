@@ -34,7 +34,7 @@ module.exports = angular.module('JibestreamMap', [])
   };
 
   // @todo change this to the event when clicking on the map
-  JMap.addListener("StoreCardClick", showStoreCardFromDestination);
+  JMap.addListener("SHOW_DESTINATION", showStoreCardFromDestination);
 
 })
 
