@@ -10,15 +10,16 @@
 				"width":1920,
 				"height":1080,
 				"zoomMax":400,
-				"zoomMin":100
+				"zoomMin":50,
+				"background":"#c1cdd3"
 			},
 			"mapSize":{
 				"width":3999,
 				"height":4365
 			},
 			"positionOffset":{
-				"x":1486,
-				"y":1194
+				"x":1480,
+				"y":1198
 			}
 		},
 		"mapLayers":[
@@ -70,10 +71,58 @@
 				"name":"Parking_x5F_Pavement",
 				"class":"st1",
 				"zoomLevel":0,
-				"colorFill":"#cccccc",
+				"colorFill":"#DDDABF",
 				"highLightColor":"",
 				"clickable":false
 			},
+			{
+				"name":"MainStreets",
+				"class":"",
+				"zoomLevel":0,
+				"colorFill":"#ffffff",
+				"strokeColor":"#ffffff",
+				"clickable":false
+			},
+			{
+				"name":"Streets",
+				"class":"",
+				"zoomLevel":0,
+				"strokeColor":"#DFEBEF",
+				"highLightColor":"",
+				"clickable":false
+			},
+			{
+				"name":"Ramps",
+				"class":"",
+				"zoomLevel":0,
+				"strokeColor":"#8CA5AF",
+				"clickable":false
+			},
+			{
+				"name":"Highways",
+				"class":"",
+				"zoomLevel":0,
+				"strokeColor":"#8CA5AF",
+				"clickable":false
+			},
+			{
+				"name":"Hallways",
+				"class":"",
+				"zoomLevel":900,
+				"strokeColor":"#8CA5AF",
+				"clickable":false
+			},
+			{
+				"name":"Entrances",
+				"class":"",
+				"zoomLevel":150,
+				"colorFill":"#ffffff",
+				"clickable":false
+			},
+
+
+
+
 			{
 				"name":"Anchor_x5F_Stores_1_",
 				"class":"Anchor_Stores",
@@ -119,8 +168,52 @@
 				"name":"Parking_x5F_Pavement_1_",
 				"class":"st1",
 				"zoomLevel":0,
-				"colorFill":"#cccccc",
+				"colorFill":"#DDDABF",
 				"highLightColor":"",
+				"clickable":false
+			},
+			{
+				"name":"MainStreets_1_",
+				"class":"",
+				"zoomLevel":0,
+				"colorFill":"#ffffff",
+				"strokeColor":"#ffffff",
+				"clickable":false
+			},
+			{
+				"name":"Streets_1_",
+				"class":"",
+				"zoomLevel":0,
+				"strokeColor":"#DFEBEF",
+				"highLightColor":"",
+				"clickable":false
+			},
+			{
+				"name":"Ramps_1_",
+				"class":"",
+				"zoomLevel":0,
+				"strokeColor":"#8CA5AF",
+				"clickable":false
+			},
+			{
+				"name":"Highways_1_",
+				"class":"",
+				"zoomLevel":0,
+				"strokeColor":"#8CA5AF",
+				"clickable":false
+			},
+			{
+				"name":"Hallways_1_",
+				"class":"",
+				"zoomLevel":900,
+				"strokeColor":"#8CA5AF",
+				"clickable":false
+			},
+			{
+				"name":"Entrances_1_",
+				"class":"",
+				"zoomLevel":150,
+				"colorFill":"#ffffff",
 				"clickable":false
 			}
 		],

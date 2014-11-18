@@ -2494,10 +2494,14 @@ var __extends = this.__extends || function (d, b) {
             setTimeout(function(){
                 $( '#svg-' + _this.id ).html(_this.svgXml);
                 $("#graphicCont-" + _this.id).html("<svg id='graphic-" + _this.id + "'></svg>");
+                $("#graphicCont-" + _this.id).css("pointer-events", "none");
 				setTimeout(function(){
                     // console.log("LOADED");
                     $('#svg-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
                     $( '#svg-' + _this.id ).show().css('opacity',1);
+		            $('#svg-' + _this.id).css("background", _this.styles.mapStyles.mapConfig.container.background);
+
+
                     $( '#graphicCont-' + _this.id ).show().css('opacity',1);
                     $('#graphicCont-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
                     _this.addDragHandler(_this);
@@ -2677,10 +2681,13 @@ var __extends = this.__extends || function (d, b) {
             var h = $(window).height();
 
             var config = this.styles.mapStyles.mapConfig;
-            console.log(config);
+            // console.log(config);
 
-            $(this.mapView).width(config.mapSize.width);
-            $(this.mapView).height(config.mapSize.height);
+            if(config){
+	            $(this.mapView).width(config.mapSize.width);
+	            $(this.mapView).height(config.mapSize.height);
+            }
+
 
             $(this.mapView).smoothZoom({
                 width:config?config.container.width:"100%",
@@ -2690,6 +2697,8 @@ var __extends = this.__extends || function (d, b) {
                 pan_BUTTONS_SHOW: "NO",
                 pan_LIMIT_BOUNDARY: false,
                 initial_ZOOM:config?config.startState.zoom:0,
+                initial_POSITION:config?config.startState.x + " " + config.startState.y:0,
+
                 zoom_MAX: config?config.container.zoomMax:100, //TODO - Make this configurable
                 zoom_MIN:config?config.container.zoomMin:0,
                 container:"map-floor-container-" + this.id,
@@ -2728,7 +2737,7 @@ var __extends = this.__extends || function (d, b) {
         
         Floor.prototype.updateZoomLayers = function(zoomData){
             //TODO - Zoom Layers
-            console.log(zoomData);
+            // console.log(zoomData);
             if(!zoomData)return;
             var currentScale = zoomData.ratio *100;
             for (var i = 0; i < this.styles.mapStyles.mapLayers.length; i++) {
@@ -2784,11 +2793,11 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Floor.prototype.resetFloor = function(){
-        	if(this.yah){
-            	$(this.mapView).smoothZoom('focusTo', this.styles.mapStyles.mapConfig.startState);
-        	}else{
+        	// if(this.yah){
+         //    	$(this.mapView).smoothZoom('focusTo', this.styles.mapStyles.mapConfig.startState);
+        	// }else{
             	$(this.mapView).smoothZoom('Reset');
-        	}
+        	// }
             this.clearPath();
             this.hasPath = false;
         };
