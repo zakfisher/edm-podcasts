@@ -4,19 +4,43 @@ module.exports = angular.module('Largescreen', [])
   KioskMenu.hide();
   var EventHandler = $famous['famous/core/EventHandler'];
   $scope.myEventHandler = new EventHandler();
-  $scope.pages = [{
-    content: "Scroll",
-    color: "rgba(255,255,255,0.2)"
-  }, {
-    content: "horizontally",
-    color: "rgba(255,255,255,0.4)"
-  }, {
-    content: "yay!",
-    color: "rgba(255,255,255,0.2)"
-  }, {
-    content: "woo!",
-    color: "rgba(255,255,255,0.4)"
-  }];
+
+  var page = {
+    gridOptions: {
+      dimensions: [30, 2]
+    },
+    items: [
+      {
+        'text': 'grid item'
+      },
+      {
+        'text': 'grid item'
+      },
+      {
+        'text': 'grid item'
+      },
+      {
+        'text': 'grid item'
+      },
+      {
+        'text': 'grid item'
+      },
+      {
+        'text': 'grid item'
+      },
+      {
+        'text': 'grid item'
+      },
+      {
+        'text': 'grid item'
+      },
+      {
+        'text': 'grid item'
+      }
+    ]
+  }
+
+  $scope.pages = [page, page, page];
 
   $scope.options = {
     myScrollView: {

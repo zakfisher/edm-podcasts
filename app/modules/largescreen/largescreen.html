@@ -9,10 +9,13 @@
     <fa-scroll-view fa-pipe-from="myEventHandler" fa-options="options.myScrollView">
       <fa-view ng-repeat="view in pages">
         <fa-modifier fa-size="[1000, undefined]">
-           <fa-surface fa-background-color="view.color" fa-pipe-to="myEventHandler">
-              {{view.content}}
-           </fa-surface>
-           <!-- <fa-grid-view></fa-grid-view> -->
+           <fa-grid-view fa-options="page.gridOptions">
+             <fa-modifier ng-repeat="item in page.items" fa-size="[undefined, 60]">
+               <fa-surface fa-background-color="'yellow'">
+                  {{item.text}}
+               </fa-surface>
+             </fa-modifier>
+           </fa-grid-view>
           </fa-modifier>
       </fa-view>
     </fa-scroll-view>
