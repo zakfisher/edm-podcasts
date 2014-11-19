@@ -280,7 +280,42 @@
         "font-size": "27px",
         "color": "#C62126",
         "max-width": "125px"
+      },
+      "highway": {
+        "font-size": "50px",
+        "color": "#ccc"
+      },
+      "major-street": {
+        "font-size": "40px",
+        "color": "#000"
       }
-    }
+    },
+
+    "mapLabels":[
+    	{
+    		"text":"Street",
+    		"x":100,
+    		"y":100,
+    		"rotation":90,
+    		"class":"highway"
+    	},
+    	{
+    		"text":"Street 2",
+    		"x":1000,
+    		"y":1000,
+    		"rotation":90,
+    		"class":"major-street",
+    		"mapSequence":"0"
+    	},
+    	{
+    		"text":"Street",
+    		"x":500,
+    		"y":500,
+    		"rotation":180,
+    		"class":"major-street",
+    		"mapSequence":"0"
+    	}
+    ]
+
   }
 }

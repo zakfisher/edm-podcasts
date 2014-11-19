@@ -2527,6 +2527,7 @@ var __extends = this.__extends || function (d, b) {
                     $('#graphicCont-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
                     _this.addDragHandler(_this);
 					setTimeout($.proxy(_this.styleSVG, _this), 10);
+					setTimeout($.proxy(_this.assignMapLabels, _this), 20);
 				}, 10);
 			}, 10);
         };
@@ -2582,16 +2583,6 @@ var __extends = this.__extends || function (d, b) {
 
 						});
 
-						// var $p = $(p);
-
-						
-						// if (d)ar.push(d);
-						// else continue;
-						// console.log(p);
-						// console.log(d);
-						// this.polyRef[] = d;
-
-
 						p.addEventListener("touchend", function(evt){
 						// $(p).on("click", function(evt){
 							if(this.tagName == "g")return;
@@ -2604,31 +2595,14 @@ var __extends = this.__extends || function (d, b) {
 
 
 					}
-
-					// if(!currentStyle.addLabel)continue;
-
-
-					//TODO TRY FIT JS
-					
-
-
 	            }
-
-
-	           // if(currentStyle.addLabel)console.log(ar);
-	            // $(this.mapView).smoothZoom("addLandmark", this.legendsObj.labelselementsArray);
-
 				this.styles.mapStyles.mapLayers[i] = currentStyle;
 				this.styleRef[currentStyle.name] = currentStyle;
 			};
-			//-----------------------
-			console.log(this.styleRef);
-
         };
 
         Floor.prototype.getDestinationWithinBounds = function(poly, evt){
         	var scOffSet = this.scaleOffset;
-        	// bounds = {x:bounds.x*scOffSet,y:bounds.y*scOffSet,width:bounds.width*scOffSet,height:bounds.height*scOffSet};
         	for (var i = 0; i < this.destinations.length; i++) {
         		var wp = JMap.storage.maps.model.getWPByJid(this.destinations[i].clientId);
         		if(!wp)continue;
@@ -2640,42 +2614,27 @@ var __extends = this.__extends || function (d, b) {
         		};
         		if(cwp.x < 0 || cwp.y < 0)continue;
 
-        		// var cwp = {x:zd.scaledX + (wp.x), y:zd.scaledY + (wp.y)};
         		var cpoly = document.elementFromPoint(cwp.x, cwp.y);
-        		// console.log(cpoly);
-        		// console.log(poly == cpoly);
-        		// console.log("----------------------------");
         		var pd = d3.select(poly);
 				var bounds = pd.node().getBBox();
-
-        		// switch(poly.tagName){
-        		// 	case "polygon":
-
-        				if(poly === cpoly)return this.destinations[i];
-
-
-        				// var points = $(poly).attr("points").split(" ");
-        				// for(var j = 0; j < points.length; j++){
-        				// 	var currPoint = points[j].split(",");
-
-        				// }
-       //  				break;
-       //  			case "rect":
-		     //    		if((wp.x + this.positionOffset.x) > bounds.x && (wp.x + this.positionOffset.x) < (bounds.x + bounds.width) && (wp.y + this.positionOffset.y) > bounds.y && (wp.y + this.positionOffset.y) < (bounds.y + bounds.height)){
-			    //     		if(evt){
-			    //     			var poly = document.elementFromPoint(evt.changedTouches[0].pageX, evt.changedTouches[0].pageY);
-			    //     			if(poly.tagName == "DIV")return;
-			    //     			var cBounds = d3.select(poly).node().getBBox();
-			    //     			if(cBounds.x != bounds.x || cBounds.y != bounds.y || cBounds.width != bounds.width || cBounds.height != bounds.height)continue;
-
-							// }
-		     //    			return this.destinations[i];
-		     //    		}
-
-	      //   			break;
-       //  		}
+        		if(poly === cpoly)return this.destinations[i];
         	}
         };
+
+
+
+        Floor.prototype.assignMapLabels = function(){
+        	var labels = this.styles.mapStyles.mapLabels;
+			console.log(labels);
+			for (var i = 0; i < labels.length; i++) {
+				if(labels[i].mapSequence && labels[i].mapSequence != this.sequence)continue;
+				console.log(labels[i], "add label to me");
+			};
+        };
+
+
+
+
 
         Floor.prototype.getCenterOfBounds = function(bounds){
         	var scOffSet = 860/1920;
@@ -2845,7 +2804,7 @@ var __extends = this.__extends || function (d, b) {
 
         //Check for Zoom level to switch to Google Maps
         Floor.prototype.getZoomData = function(){
-            var zoomData = $('.map-floor-base').smoothZoom('getZoomData');
+            var zoomData = $(this.mapView).smoothZoom('getZoomData');
             this.currentZoomData = zoomData;
             return zoomData;
         };
