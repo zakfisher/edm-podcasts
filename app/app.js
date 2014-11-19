@@ -113,7 +113,7 @@ app.run(function ($state, Preloader, $q, KioskService) {
   // Backdoor to switch to largescreen view
   $(window).on('keydown', function (e) {
     if (e.keyCode === 76) {
-      $state.go('largescreen');
+      $state.go('kioskmap');
     }
   });
 
