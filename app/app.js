@@ -22,6 +22,7 @@ var app = angular.module('wfWayfinding', [
   // Kiosk App Modules
   // '.name' is provided by angular.module, index.js is picked up as the included file
   require('./modules/map').name,
+  require('./modules/largescreen').name,
   require('./modules/dining').name,
   require('./modules/search').name,
   require('./modules/shopping').name,
@@ -110,7 +111,7 @@ app.run(function ($state, Preloader, $q, KioskService) {
   // Backdoor to switch to largescreen view
   $(window).on('keydown', function (e) {
     if (e.keyCode === 76) {
-      $state.go('largescreenhome');
+      $state.go('largescreen');
     }
   });
 
