@@ -14,6 +14,10 @@ module.exports = angular.module('KioskMenu', [])
     menu.visible = true;
   };
 
+  menu.hide = function () {
+    menu.visible = false;
+  };
+
   menu.toggle = function () {
     console.log('toggle menu');
     menu.active = !menu.active;

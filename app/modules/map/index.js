@@ -4,6 +4,7 @@ module.exports = angular.module('Map', [])
 
 .controller('Map', function ($scope, $famous, KioskMenu) {
   KioskMenu.expand();
+  KioskMenu.show();
 })
 
 //Routes / States
