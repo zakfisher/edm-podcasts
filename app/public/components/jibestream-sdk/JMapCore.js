@@ -2642,9 +2642,9 @@ var __extends = this.__extends || function (d, b) {
 
         		// var cwp = {x:zd.scaledX + (wp.x), y:zd.scaledY + (wp.y)};
         		var cpoly = document.elementFromPoint(cwp.x, cwp.y);
-        		// console.log(cpoly);
+        		console.log(cpoly);
         		// console.log(poly == cpoly);
-        		// console.log("----------------------------");
+        		console.log("----------------------------");
         		var pd = d3.select(poly);
 				var bounds = pd.node().getBBox();
 
@@ -2845,7 +2845,7 @@ var __extends = this.__extends || function (d, b) {
 
         //Check for Zoom level to switch to Google Maps
         Floor.prototype.getZoomData = function(){
-            var zoomData = $('.map-floor-base').smoothZoom('getZoomData');
+            var zoomData = $(this.mapView).smoothZoom('getZoomData');
             this.currentZoomData = zoomData;
             return zoomData;
         };
