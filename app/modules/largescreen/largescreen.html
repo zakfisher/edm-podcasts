@@ -1,5 +1,26 @@
 <fa-view>
-  <fa-surface fa-background-color="'red'"></fa-surface>
+  <fa-image-surface fa-image-url="bigBG.jpg"></fa-image-surface>
   <largescreen-directory></largescreen-directory>
+  <fa-header-footer-layout fa-options="{direction: 1, headerSize: 250, footerSize: 175}">
+    <fa-view>
+      <fa-surface fa-background-color="'rgba(0,0,0,0.1)'"></fa-surface>
+    </fa-view>
+
+    <fa-scroll-view fa-pipe-from="myEventHandler" fa-options="options.myScrollView">
+      <fa-view ng-repeat="view in pages">
+        <fa-modifier fa-size="[1000, undefined]">
+           <fa-surface fa-background-color="view.color" fa-pipe-to="myEventHandler">
+              {{view.content}}
+           </fa-surface>
+           <!-- <fa-grid-view></fa-grid-view> -->
+          </fa-modifier>
+      </fa-view>
+    </fa-scroll-view>
+
+
+    <fa-view>
+      <fa-surface fa-background-color="'rgba(0,0,0,0.2)'"></fa-surface>
+    </fa-view>
+  </fa-header-footer-layout>
   <largescreen-sidebar></largescreen-sidebar>
 </fa-view>

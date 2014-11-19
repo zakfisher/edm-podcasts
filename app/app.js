@@ -44,6 +44,8 @@ var app = angular.module('wfWayfinding', [
 // App Config
 // ----------------------------------------------------------------------
 
+//@todo get info   //127.0.0.1/id.html
+
 app.value('config', {
   centre: {
     title: 'World Trade Centre',
