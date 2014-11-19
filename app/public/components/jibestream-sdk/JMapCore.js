@@ -2592,11 +2592,12 @@ var __extends = this.__extends || function (d, b) {
 						// this.polyRef[] = d;
 
 
-						$(p).on("click", function(){
+						p.addEventListener("touchend", function(evt){
+						// $(p).on("click", function(evt){
 							if(this.tagName == "g")return;
-							var pd = d3.select(this);
-							var bb = pd.node().getBBox();
-							var d = _this.getDestinationWithinBounds(bb);
+							var d = _this.getDestinationWithinBounds(this, evt);
+							// console.log("fixed");
+							if(!d)return;
 							JMap.fire("SHOW_DESTINATION", [d]);
 							_this.showCard(d);
 						});
@@ -2625,14 +2626,55 @@ var __extends = this.__extends || function (d, b) {
 
         };
 
-        Floor.prototype.getDestinationWithinBounds = function(bounds){
+        Floor.prototype.getDestinationWithinBounds = function(poly, evt){
         	var scOffSet = this.scaleOffset;
-        	bounds = {x:bounds.x*scOffSet,y:bounds.y*scOffSet,width:bounds.width*scOffSet,height:bounds.height*scOffSet};
+        	// bounds = {x:bounds.x*scOffSet,y:bounds.y*scOffSet,width:bounds.width*scOffSet,height:bounds.height*scOffSet};
         	for (var i = 0; i < this.destinations.length; i++) {
         		var wp = JMap.storage.maps.model.getWPByJid(this.destinations[i].clientId);
         		if(!wp)continue;
-        		if((wp.x + this.positionOffset.x) > bounds.x && (wp.x + this.positionOffset.x) < (bounds.x + bounds.width) && (wp.y + this.positionOffset.y) > bounds.y && (wp.y + this.positionOffset.y) < (bounds.y + bounds.height))return this.destinations[i];
-        	};
+
+        		var zd = this.getZoomData();
+        		var cwp = {
+        			x:(zd.ratio * ((wp.x + this.positionOffset.x) - Number(zd.normX))), 
+        			y:(zd.ratio * ((wp.y + this.positionOffset.y) - Number(zd.normY)))
+        		};
+        		if(cwp.x < 0 || cwp.y < 0)continue;
+
+        		// var cwp = {x:zd.scaledX + (wp.x), y:zd.scaledY + (wp.y)};
+        		var cpoly = document.elementFromPoint(cwp.x, cwp.y);
+        		// console.log(cpoly);
+        		// console.log(poly == cpoly);
+        		// console.log("----------------------------");
+        		var pd = d3.select(poly);
+				var bounds = pd.node().getBBox();
+
+        		// switch(poly.tagName){
+        		// 	case "polygon":
+
+        				if(poly === cpoly)return this.destinations[i];
+
+
+        				// var points = $(poly).attr("points").split(" ");
+        				// for(var j = 0; j < points.length; j++){
+        				// 	var currPoint = points[j].split(",");
+
+        				// }
+       //  				break;
+       //  			case "rect":
+		     //    		if((wp.x + this.positionOffset.x) > bounds.x && (wp.x + this.positionOffset.x) < (bounds.x + bounds.width) && (wp.y + this.positionOffset.y) > bounds.y && (wp.y + this.positionOffset.y) < (bounds.y + bounds.height)){
+			    //     		if(evt){
+			    //     			var poly = document.elementFromPoint(evt.changedTouches[0].pageX, evt.changedTouches[0].pageY);
+			    //     			if(poly.tagName == "DIV")return;
+			    //     			var cBounds = d3.select(poly).node().getBBox();
+			    //     			if(cBounds.x != bounds.x || cBounds.y != bounds.y || cBounds.width != bounds.width || cBounds.height != bounds.height)continue;
+
+							// }
+		     //    			return this.destinations[i];
+		     //    		}
+
+	      //   			break;
+       //  		}
+        	}
         };
 
         Floor.prototype.getCenterOfBounds = function(bounds){
@@ -2786,6 +2828,7 @@ var __extends = this.__extends || function (d, b) {
         Floor.prototype.updateZoomLayers = function(zoomData){
             //TODO - Zoom Layers
             // console.log(zoomData);
+            // this.zoomData = zoomData;
             if(!zoomData)return;
             var currentScale = zoomData.ratio *100;
             for (var i = 0; i < this.styles.mapStyles.mapLayers.length; i++) {
@@ -3501,6 +3544,7 @@ var __extends = this.__extends || function (d, b) {
             	var str = card.html;
             	b += str.split("{{imgurl}}").join("").split("{{name}}").join(_destination.name).split("{{description}}").join(_destination.description);
             }else{
+            	return;
         		b += "<div>" + _destination.name + "</div>";
         		// b += "<img src='" + JMap.serverUrl + url + "' width='100' height='100' />";
             }
