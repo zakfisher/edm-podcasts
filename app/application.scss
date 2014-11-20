@@ -226,13 +226,34 @@ g.active {
 // ----------------------------------------------------------------------
 
 .large-directory-card {
--webkit-border-bottom-right-radius: 20px;
--webkit-border-bottom-left-radius: 20px;
--moz-border-radius-bottomright: 20px;
--moz-border-radius-bottomleft: 20px;
-border-bottom-right-radius: 20px;
-border-bottom-left-radius: 20px;
+  -webkit-border-bottom-right-radius: 15px;
+  -webkit-border-bottom-left-radius: 15px;
+  -moz-border-radius-bottomright: 15px;
+  -moz-border-radius-bottomleft: 15px;
+  border-bottom-right-radius: 15px;
+  border-bottom-left-radius: 15px;
 }
+
+.large-directory-card-main {
+  padding: 40px 40px;
+}
+
+.large-directory-column {
+  width: 33.3%;
+  margin: 0;
+  padding: 0;
+  float: left;
+  list-style-type: none;
+
+  li {
+    list-style-type: none;
+  }
+
+  p {
+    font-family: 'Flama', 'helvetica neue', 'helvetica', 'arial', 'sans';
+  }
+}
+
 
 
 // Large Screen Sidebar

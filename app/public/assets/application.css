@@ -146,6 +146,7 @@ g.active .key-background {
   display: none; }
 
 .large-directory-card {
+<<<<<<< HEAD
   -webkit-border-bottom-right-radius: 20px;
   -webkit-border-bottom-left-radius: 20px;
   -moz-border-radius-bottomright: 20px;
@@ -156,3 +157,25 @@ g.active .key-background {
 .sidebar-menu {
   background: blue; }
 
+=======
+  -webkit-border-bottom-right-radius: 15px;
+  -webkit-border-bottom-left-radius: 15px;
+  -moz-border-radius-bottomright: 15px;
+  -moz-border-radius-bottomleft: 15px;
+  border-bottom-right-radius: 15px;
+  border-bottom-left-radius: 15px; }
+
+.large-directory-card-main {
+  padding: 40px 40px; }
+
+.large-directory-column {
+  width: 33.3%;
+  margin: 0;
+  padding: 0;
+  float: left;
+  list-style-type: none; }
+  .large-directory-column li {
+    list-style-type: none; }
+  .large-directory-column p {
+    font-family: 'Flama', 'helvetica neue', 'helvetica', 'arial', 'sans'; }
+>>>>>>> ae905c9450cc734b8f9cb761f828610b46b82f35
