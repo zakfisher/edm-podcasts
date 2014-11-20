@@ -2144,7 +2144,7 @@ var __extends = this.__extends || function (d, b) {
 			var bounds = d3.select(newElement).node().getBBox();
 			var bounds2 = this.getBoundsOfPath(pathData[i].originalPoints);
 
-			newSVG.setAttribute("viewbox", (bounds2.x + 75) + " " + (bounds2.y + 75)+ " " + bounds2.width + " " + bounds2.height);
+			newSVG.setAttribute("viewbox", (bounds2.x - 75) + " " + (bounds2.y - 75)+ " " + bounds2.width + " " + bounds2.height);
 
 			var wGh = bounds2.width > bounds2.height?bounds2.width:bounds2.height;
 
