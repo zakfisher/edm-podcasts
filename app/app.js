@@ -1,5 +1,5 @@
 var pkg = require('../package.json');
-window.initialView = 'largescreen';
+window.initialView = 'kioskmap';
 
 // Debug
 // ----------------------------------------------------------------------
