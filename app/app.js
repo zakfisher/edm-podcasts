@@ -1,4 +1,5 @@
 var pkg = require('../package.json');
+window.initialView = 'largescreen';
 
 // Debug
 // ----------------------------------------------------------------------
@@ -113,7 +114,7 @@ app.run(function ($state, Preloader, $q, KioskService) {
   // Backdoor to switch to largescreen view
   $(window).on('keydown', function (e) {
     if (e.keyCode === 76) {
-      $state.go('kioskmap');
+      $state.go('largescreen');
     }
   });
 
