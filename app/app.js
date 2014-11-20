@@ -44,6 +44,8 @@ var app = angular.module('wfWayfinding', [
 // App Config
 // ----------------------------------------------------------------------
 
+//@todo get info   //127.0.0.1/id.html
+
 app.value('config', {
   centre: {
     title: 'World Trade Centre',
@@ -111,7 +113,7 @@ app.run(function ($state, Preloader, $q, KioskService) {
   // Backdoor to switch to largescreen view
   $(window).on('keydown', function (e) {
     if (e.keyCode === 76) {
-      $state.go('largescreen');
+      $state.go('kioskmap');
     }
   });
 

@@ -1,5 +1,40 @@
 <fa-view>
-  <fa-surface fa-background-color="'red'"></fa-surface>
+  <fa-image-surface fa-image-url="bigBG.jpg"></fa-image-surface>
   <largescreen-directory></largescreen-directory>
+
+  <fa-header-footer-layout fa-options="{direction: 1, headerSize: 250, footerSize: 175}">
+
+    <fa-view></fa-view>
+
+    <fa-view>
+      <fa-modifier fa-translate="[30,0,0]">
+      <fa-scroll-view fa-pipe-from="myEventHandler" fa-options="options.myScrollView">
+        <fa-modifier fa-size="[1000, undefined]" ng-repeat="page in pages">
+          <fa-modifier fa-size="[950, undefined]">
+            <fa-surface fa-background-color="'rgba(255,255,255,0.7)'" fa-pipe-to="myEventHandler" class="large-directory-card"></fa-surface>
+            <fa-view>
+              <fa-modifier fa-size="[undefined, page.gridHeight]" fa-translate="[30,20,0.01]">
+                <fa-grid-layout fa-options="page.gridOptions">
+                  <fa-modifier ng-repeat="item in page.items track by $index">
+                    <fa-surface fa-pipe-to="myEventHandler" fa-click="handleItemClick(item)" fa-size="[undefined, gridItemHeight]">
+                      <h2 ng-if="item.category">{{item.name}}</h2>
+                      <p ng-if="!item.category">{{item.name}}</p>
+                    </fa-surface>
+                  </fa-modifier>
+                </fa-grid-layout>
+              </fa-modifier>
+            </fa-view>
+          </fa-modifier>
+        </fa-modifier>
+      </fa-scroll-view>
+    </fa-modifier>
+
+    </fa-view>
+
+    <fa-view></fa-view>
+
+  </fa-header-footer-layout>
+
+
   <largescreen-sidebar></largescreen-sidebar>
 </fa-view>

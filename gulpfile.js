@@ -166,6 +166,7 @@ gulp.task('watch', function () {
     gulp.start('images');
   });
   watch(['app/app.js', 'app/modules/**/*.js', 'app/modules/**/*.html'], function () {
+    console.log('do the js');
     gulp.start(['lint', 'app-js', 'background-js']);
   });
   watch('app/public/**', function () {

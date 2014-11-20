@@ -14,7 +14,8 @@ module.exports = angular.module('StoreService', [])
       StoreService.setStores(r);
       storesTask.resolve();
     }).error(function () {
-      getStores();
+      // getStores();
+      console.warn('could not get stores!');
     });
   };
 
