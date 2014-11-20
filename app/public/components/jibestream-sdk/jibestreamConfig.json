@@ -315,7 +315,20 @@
     		"class":"major-street",
     		"mapSequence":"0"
     	}
-    ]
+    ],
+
+    "storeCard":{
+    	"excludeLayers":[
+    		"Ramps_1_",
+    		"Ramps",
+    		"Highways",
+    		"Highways_1_",
+    		"Streets",
+    		"Streets_1_",
+    		"MainStreets",
+    		"MainStreets_1_"
+    	]
+    }
 
   }
 }

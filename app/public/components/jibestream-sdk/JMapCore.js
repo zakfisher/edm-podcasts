@@ -1331,9 +1331,9 @@ var __extends = this.__extends || function (d, b) {
 	        	".map-floor-container-base .landmarks .mark .text{background-color:#000}"+
 	        	".map-floor-container-base .landmarks #bubbleLeft.item,.map-floor-container-base .landmarks #yah.item,.map-floor-container-base .landmarks .item.mover{z-index:3!important}";
 	        	
-	        	addedStyles += ".map-floor-container-base .landmarks .item.legends img{position:absolute;top:-" + (iconStyles.mover?iconStyles.legends.offset.y + "px":"15px") + "px!important;left:-" + (iconStyles.mover?iconStyles.legends.offset.x + "px":"15px") + "px!important;width:" + (iconStyles.mover?iconStyles.legends.width + "px":"15px") + "px!important;height:" + (iconStyles.mover?iconStyles.legends.height + "px":"30px") + "px!important}";
+	        	addedStyles += ".map-floor-container-base .landmarks .item.legends img{position:absolute;top:-" + (iconStyles.mover?iconStyles.legends.offset.y :"15") + "px!important;left:-" + (iconStyles.mover?iconStyles.legends.offset.x:"15") + "px!important;width:" + (iconStyles.mover?iconStyles.legends.width:"15") + "px!important;height:" + (iconStyles.mover?iconStyles.legends.height + "px":"30") + "px!important}";
 
-	        	addedStyles += ".map-floor-container-base .landmarks .item.mover img{position:absolute;top:-" + (iconStyles.mover?iconStyles.mover.offset.y + "px":"25px") + "!important;left:-" + (iconStyles.mover?iconStyles.mover.offset.x + "px":"25px") + "px!important;width:" + (iconStyles.mover?iconStyles.mover.width + "px":"50px") + "px;height:" + (iconStyles.mover?iconStyles.mover.offset.y + "px":"50px") + "px}";
+	        	addedStyles += ".map-floor-container-base .landmarks .item.mover img{position:absolute;top:-" + (iconStyles.mover?iconStyles.mover.offset.y :"25") + "px!important;left:-" + (iconStyles.mover?iconStyles.mover.offset.x:"25") + "px!important;width:" + (iconStyles.mover?iconStyles.mover.width :"50") + "px;height:" + (iconStyles.mover?iconStyles.mover.offset.y :"50") + "px}";
 	        	
 	        	if(labelStyle){
 	        		addedStyles += ".map-floor-container-base .landmarks .item>div{"
@@ -2090,6 +2090,169 @@ var __extends = this.__extends || function (d, b) {
             switchFloor(newYah.mapid);
         };
 
+
+
+	/********************************************************/
+    /*********************** SVG MAPS ***********************/
+    /********************************************************/
+
+    Building.prototype.getMapsWithDirections = function(destinationId){
+
+    	var destination = JMap.getDestinationByClientId(destinationId);
+    	var returnValue = [];
+    	if(!destination){
+    		console.log("NO MATCHING DESTINATION TO THE ID: " + destinationId);
+    		return returnValue;;
+    	}
+
+    	var pStyle = this.styles.mapStyles.pathStyles;
+    	var pathData = this.pathProcessor.compile(JMap.storage.maps.model.findWay(this.destYah, JMap.storage.maps.model.getWPByJid(destinationId)), destination.name);
+
+    	for(var i =0; i < pathData.length; i++){
+    		var dataObj = {};
+
+
+    		var currFloor = this.floors[pathData[i].mapid];
+    		var $svgOrig = $("#svg-" + currFloor.id).find("svg");
+    		var svgHtml = $svgOrig.html();
+
+			var newSVG = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
+			newSVG.innerHTML = svgHtml;
+			newSVG.setAttribute("version" , "1.1");
+			newSVG.setAttribute("x" , "0");
+			newSVG.setAttribute("y" , "0");
+
+			var newGroup = document.createElementNS("http://www.w3.org/2000/svg", 'g');
+			newGroup.id = "pathLayer-" + currFloor.id;
+
+			var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+			newElement.setAttribute("d",pathData[i].svgPath);
+			newElement.style.stroke = pStyle.pathColor?pStyle.pathColor:"#000";
+			newElement.style.strokeWidth = pStyle.pathWidth?pStyle.pathWidth:"5px";
+			newElement.style["stroke-linejoin"] = "round";
+			newElement.style["stroke-linecap"] = "round";
+			var lt = newElement.getTotalLength();
+			newElement.style["stroke-dasharray"] = lt;
+			newElement.style["stroke-dashoffset"] = lt;
+
+			newElement.style.fill = "none";
+
+			newGroup.appendChild(newElement);
+
+    		newSVG.appendChild(newGroup);
+
+			var bounds = d3.select(newElement).node().getBBox();
+			var bounds2 = this.getBoundsOfPath(pathData[i].originalPoints);
+
+			newSVG.setAttribute("viewbox", (bounds2.x - 75) + " " + (bounds2.y - 75)+ " " + bounds2.width + " " + bounds2.height);
+
+			var wGh = bounds2.width > bounds2.height?bounds2.width:bounds2.height;
+
+			// newSVG.setAttribute("width", bounds2.width);
+			// newSVG.setAttribute("height" , bounds2.height);
+
+			newSVG.setAttribute("width", wGh + 150);
+			newSVG.setAttribute("height" , wGh + 150);
+
+
+
+			var iconStyles = this.styles.mapStyles.iconStyles;
+
+			var startImg = document.createElementNS("http://www.w3.org/2000/svg", 'image');
+			startImg.setAttribute("width", iconStyles.youarehere.width);
+			startImg.setAttribute("height", iconStyles.youarehere.height);
+			var endImg = document.createElementNS("http://www.w3.org/2000/svg", 'image');
+			endImg.setAttribute("width", iconStyles.destination.width);
+			endImg.setAttribute("height", iconStyles.destination.height);
+			var startpoint = pathData[i].points[0];
+			var endpoint = pathData[i].points[pathData[i].points.length - 1];
+
+			var positionOffset = this.styles.mapStyles.mapConfig.positionOffset;
+
+		
+
+			if(pathData.length > 1){
+				
+				switch(i){
+					case 0:
+
+						startImg.setAttribute("xlink:href", iconStyles.youarehere.url);
+						startImg.setAttribute("x", startpoint.x + positionOffset.x - parseInt(iconStyles.youarehere.offset.x.substr(0, iconStyles.youarehere.offset.x.length - 2)));
+						startImg.setAttribute("y", startpoint.y + positionOffset.y - parseInt(iconStyles.youarehere.offset.y.substr(0, iconStyles.youarehere.offset.y.length - 2)));
+
+						//mover
+						endImg.setAttribute("xlink:href", pathData[0].imagePath);
+						endImg.setAttribute("x", endpoint.x + positionOffset.x - parseInt(iconStyles.movers.offset.x.substr(0, iconStyles.movers.offset.x.length - 2)));
+						endImg.setAttribute("y", endpoint.y + positionOffset.y - parseInt(iconStyles.movers.offset.y.substr(0, iconStyles.movers.offset.y.length - 2)));
+
+						break;
+					case 1:
+						
+						
+
+						//mover
+						startImg.setAttribute("xlink:href", pathData[0].imagePath);
+						startImg.setAttribute("x", startpoint.x + positionOffset.x - parseInt(iconStyles.movers.offset.x.substr(0, iconStyles.movers.offset.x.length - 2)));
+						startImg.setAttribute("y", startpoint.y + positionOffset.y - parseInt(iconStyles.movers.offset.y.substr(0, iconStyles.movers.offset.y.length - 2)));
+
+						endImg.setAttribute("xlink:href", iconStyles.destination.url);
+						endImg.setAttribute("x", endpoint.x + positionOffset.x - parseInt(iconStyles.youarehere.offset.x.substr(0, iconStyles.youarehere.offset.x.length - 2)));
+						endImg.setAttribute("y", endpoint.y + positionOffset.y - parseInt(iconStyles.youarehere.offset.y.substr(0, iconStyles.youarehere.offset.y.length - 2)));
+						break;
+				}
+
+			}else{
+				
+
+				startImg.setAttribute("xlink:href", iconStyles.youarehere.url);
+				startImg.setAttribute("x", startpoint.x + positionOffset.x - parseInt(iconStyles.youarehere.offset.x.substr(0, iconStyles.youarehere.offset.x.length - 2)));
+				startImg.setAttribute("y", startpoint.y + positionOffset.y - parseInt(iconStyles.youarehere.offset.y.substr(0, iconStyles.youarehere.offset.y.length - 2)));
+				
+				endImg.setAttribute("xlink:href", iconStyles.destination.url);
+				endImg.setAttribute("x", endpoint.x + positionOffset.x - parseInt(iconStyles.youarehere.offset.x.substr(0, iconStyles.youarehere.offset.x.length - 2)));
+				endImg.setAttribute("y", endpoint.y + positionOffset.y - parseInt(iconStyles.youarehere.offset.y.substr(0, iconStyles.youarehere.offset.y.length - 2)));
+
+
+				// newSVG.appendChild(startImg);
+				// newSVG.appendChild(endImg);
+
+			}
+			newSVG.appendChild(startImg);
+			newSVG.appendChild(endImg);
+
+			returnValue.push({svg:newSVG});
+
+    		// debugger;
+
+    	}
+
+
+
+    	return returnValue;
+
+
+    };
+
+
+	Building.prototype.getBoundsOfPath = function(points){
+		var positionOffset = this.styles.mapStyles.mapConfig.positionOffset;
+
+		var w = 0;
+		var h = 0;
+		var x = points[0].x;
+		var y = points[0].y;
+		for (var i = 0; i < points.length; i++) {
+			if(points[i].x > w)w=points[i].x;
+			if(points[i].y > h)h=points[i].y;
+			if(points[i].x < x)x=points[i].x;
+			if(points[i].y < y)y=points[i].y;
+		};
+		return {x:x+ positionOffset.x, y:y + positionOffset.y, width:w-x, height:h-y};
+	};
+
+
+
+
         return Building;
     })();
     JMap.Building = Building;
@@ -2521,6 +2684,7 @@ var __extends = this.__extends || function (d, b) {
                     $('#svg-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
                     $( '#svg-' + _this.id ).show().css('opacity',1);
 		            $('#svg-' + _this.id).css("background", _this.styles.mapStyles.mapConfig.container.background);
+		            $(_this.view).css("background", _this.styles.mapStyles.mapConfig.container.background);
 
 
                     $( '#graphicCont-' + _this.id ).show().css('opacity',1);
@@ -2625,11 +2789,13 @@ var __extends = this.__extends || function (d, b) {
 
         Floor.prototype.assignMapLabels = function(){
         	var labels = this.styles.mapStyles.mapLabels;
-			console.log(labels);
+			// console.log(labels);
+			var sl = [];
 			for (var i = 0; i < labels.length; i++) {
 				if(labels[i].mapSequence && labels[i].mapSequence != this.sequence)continue;
-				console.log(labels[i], "add label to me");
+				sl.push(this.createMapLabel(labels[i]));
 			};
+			$(this.mapView).smoothZoom("addLandmark", sl);
         };
 
 
@@ -3478,7 +3644,7 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Floor.prototype.showMoverByWP = function (url, wp) {
-            var b = "<div id='mover" + this.id + "' class='item mark mover' data-show-at-zoom='0' data-position='" + ((wp.x  + this.positionOffset.x)* this.scaleOffset) + "," + ((wp.y  + this.positionOffset.y)* this.scaleOffset) + "' data-allow-scale='true' data-allow-drag='false'><img src='" + JMap.serverUrl + url + "' width='100' height='100' /></div>";
+            var b = "<div id='mover" + this.id + "' class='item mark mover' data-show-at-zoom='0' data-position='" + ((wp.x  + this.positionOffset.x)* this.scaleOffset) + "," + ((wp.y  + this.positionOffset.y)* this.scaleOffset) + "' data-allow-scale='false' data-allow-drag='false'><img src='" + JMap.serverUrl + url + "' width='100' height='100' /></div>";
             this.pathView.push("mover" + this.id);
             $(this.mapView).smoothZoom("addLandmark", [b]);
         };
@@ -3690,6 +3856,13 @@ var __extends = this.__extends || function (d, b) {
             
             var cont = "<div id='" + legendItemData.id.toString() + legendItemData.wp.x.toString() + legendItemData.wp.y.toString() + "' name='" + legendItemData.id.toString() + "' class='item mark legends labelsOn-" + that.id + " "+ legendItemData.iconClassName + "' data-show-at-zoom='" + legendItemData.zl + "' data-allow-scale='true' data-position='"+  ((legendItemData.wp.x) * this.scaleOffset) + "," + ((legendItemData.wp.y) * this.scaleOffset) + "'>";
             cont += "<div>" + legendItemData.label + "</div></div>";// width='100' height='100'
+            return cont;
+        };
+
+          Floor.prototype.createMapLabel = function(mapLabelData){
+            // console.log("LEGEND ITEM DATA", mapLabelData)
+            var cont = "<div id='" + mapLabelData.text.split(" ").join("") + mapLabelData.x.toString() + mapLabelData.y.toString() + "' name='" + mapLabelData.text + "' class='item mark legends labelsOn-" + this.id + " "+ mapLabelData["class"] + "' data-show-at-zoom='0' data-rotation='" + mapLabelData.rotation + "' data-allow-scale='true' data-position='"+  ((mapLabelData.x) * this.scaleOffset) + "," + ((mapLabelData.y) * this.scaleOffset) + "'>";
+            cont += "<div>" + mapLabelData.text + "</div></div>";// width='100' height='100'
             return cont;
         };
 
