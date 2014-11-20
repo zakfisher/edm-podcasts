@@ -152,3 +152,7 @@ g.active .key-background {
   -moz-border-radius-bottomleft: 20px;
   border-bottom-right-radius: 20px;
   border-bottom-left-radius: 20px; }
+
+.sidebar-menu {
+  background: blue; }
+
