@@ -2222,7 +2222,7 @@ var __extends = this.__extends || function (d, b) {
 
 			returnValue.push({svg:newSVG});
 
-    		debugger;
+    		// debugger;
 
     	}
 
