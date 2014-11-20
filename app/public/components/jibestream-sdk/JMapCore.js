@@ -1303,7 +1303,7 @@ var __extends = this.__extends || function (d, b) {
 
         Building.prototype.addExtraStyles = function(){
         	var iconStyles = this.styles.mapStyles.iconStyles;
-        	var labelStyle = this.styles.mapStyles.labelStyle.all;
+        	var labelStyle = this.styles.mapStyles.labelStyle;
         	var pathStyle = this.styles.mapStyles.pathStyles;
         	var popUpStyle = this.styles.mapStyles.popupCard;
 
@@ -1336,11 +1336,14 @@ var __extends = this.__extends || function (d, b) {
 	        	addedStyles += ".map-floor-container-base .landmarks .item.mover img{position:absolute;top:-" + (iconStyles.mover?iconStyles.mover.offset.y :"25") + "px!important;left:-" + (iconStyles.mover?iconStyles.mover.offset.x:"25") + "px!important;width:" + (iconStyles.mover?iconStyles.mover.width :"50") + "px;height:" + (iconStyles.mover?iconStyles.mover.offset.y :"50") + "px}";
 	        	
 	        	if(labelStyle){
-	        		addedStyles += ".map-floor-container-base .landmarks .item>div{"
 	        		for(var str in labelStyle){
-	            	    addedStyles += str + ":" + labelStyle[str] + ";";
+		        		addedStyles += ".map-floor-container-base .landmarks .item" + (str == "all"?"":"." + str) + " >div{"
+		        		var ls = labelStyle[str];
+		            	for(var k in  ls){
+		            	    addedStyles += k + ":" + ls[k] + ";";
+		            	}
+			        	addedStyles += "}";
 	            	}
-		        	addedStyles += "}";
 	        	}else addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img,.map-floor-container-base .landmarks .item>div{font-size:14px;color:#fff;}";
 	        	
 	        	// addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img{left:-40px!important}";
@@ -3840,7 +3843,7 @@ var __extends = this.__extends || function (d, b) {
 
         Floor.prototype.createLegend = function(legendItemData){
             // var cont = "<div name='" + legendItemData.id.toString() + "' class='item mark' data-show-at-zoom='0' data-position='" + Math.round(100*Math.random()).toString() + "," + Math.round(100*Math.random()).toString() + "'>";
-            var cont = "<div id='" + legendItemData.id.toString() + legendItemData.x.toString() + legendItemData.y.toString() + "' name='" + legendItemData.id.toString() + "' class='item mark legends' data-show-at-zoom='0' data-allow-scale='false' data-position='"+  ((legendItemData.x + 25) * this.scaleOffset) + "," + ((legendItemData.y + 25) * this.scaleOffset) + "'>";
+            var cont = "<div id='" + legendItemData.id.toString() + legendItemData.x.toString() + legendItemData.y.toString() + "' name='" + legendItemData.id.toString() + "' class='item mark legends' data-show-at-zoom='0' data-allow-scale='false' data-position='"+  ((legendItemData.x + this.positionOffset.x) * this.scaleOffset) + "," + ((legendItemData.y + this.positionOffset.y) * this.scaleOffset) + "'>";
             cont += "<img src='" + /*JMap.serverUrl +*/ legendItemData.url + "' width='50' height='50'></div>";// width='100' height='100'
             return cont;
         };
@@ -3861,7 +3864,7 @@ var __extends = this.__extends || function (d, b) {
 
           Floor.prototype.createMapLabel = function(mapLabelData){
             // console.log("LEGEND ITEM DATA", mapLabelData)
-            var cont = "<div id='" + mapLabelData.text.split(" ").join("") + mapLabelData.x.toString() + mapLabelData.y.toString() + "' name='" + mapLabelData.text + "' class='item mark legends labelsOn-" + this.id + " "+ mapLabelData["class"] + "' data-show-at-zoom='0' data-rotation='" + mapLabelData.rotation + "' data-allow-scale='true' data-position='"+  ((mapLabelData.x) * this.scaleOffset) + "," + ((mapLabelData.y) * this.scaleOffset) + "'>";
+            var cont = "<div id='" + mapLabelData.text.split(" ").join("") + mapLabelData.x.toString() + mapLabelData.y.toString() + "' name='" + mapLabelData.text + "' class='item mark legends labelsOn-" + this.id + " "+ mapLabelData["class"] + "' data-show-at-zoom='0' data-rotation='" + mapLabelData.rotation + "' data-allow-scale='true' data-position='"+  ((mapLabelData.x) * this.scaleOffset) + "," + ((mapLabelData.y ) * this.scaleOffset) + "'>";
             cont += "<div>" + mapLabelData.text + "</div></div>";// width='100' height='100'
             return cont;
         };
