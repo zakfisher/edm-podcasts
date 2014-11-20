@@ -222,4 +222,14 @@ g.active {
 
 
 
+// Large Screen
+// ----------------------------------------------------------------------
 
+.large-directory-card {
+-webkit-border-bottom-right-radius: 20px;
+-webkit-border-bottom-left-radius: 20px;
+-moz-border-radius-bottomright: 20px;
+-moz-border-radius-bottomleft: 20px;
+border-bottom-right-radius: 20px;
+border-bottom-left-radius: 20px;
+}

@@ -16,8 +16,5 @@
   ],
   "dependencies": {
     "famous-angular": "latest"
-  },
-  "resolutions": {
-    "angular": "1.2.25"
   }
 }

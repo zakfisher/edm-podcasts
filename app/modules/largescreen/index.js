@@ -10,9 +10,6 @@ module.exports = angular.module('Largescreen', [])
   $scope.itemsPerPage = 100;
   $scope.allStores = [];
 
-  $scope.pageSize = [1000, 1200];
-
-
   var categories = CategoryService.getCategories();
   categories.forEach(function (category) {
     $scope.allStores.push({
@@ -23,8 +20,6 @@ module.exports = angular.module('Largescreen', [])
       $scope.allStores.push(store);
     });
   });
-
-
 
   $scope.options = {
     myScrollView: {
