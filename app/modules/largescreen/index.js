@@ -7,7 +7,10 @@ module.exports = angular.module('Largescreen', [])
 
   $scope.gridItemHeight = 40;
   $scope.columnCount = 3;
-  $scope.itemsPerPage = 100;
+  $scope.itemsPerPage = 93;
+  $scope.pageWidth = 850;
+  $scope.pageGutter = 50;
+  $scope.pageInset = 150;
   $scope.allStores = [];
 
   var categories = CategoryService.getCategories();
@@ -39,16 +42,37 @@ module.exports = angular.module('Largescreen', [])
   var groups = [];
   var group = [];
   var count = 0;
+
+  // Split items into pages
+  // @todo: make this less heinous.
   $scope.allStores.forEach(function (store, i) {
     group.push(store);
     count++;
     if (count === $scope.itemsPerPage || i === $scope.allStores.length - 1) {
       var items = group.slice(0);
+
+      // Split page items into columns
+      var itemsPerColumn = Math.ceil($scope.itemsPerPage / 3);
+      var columnItemsCount = 0;
+      var columns = [];
+      var column = [];
+
+      items.forEach(function (item, i) {
+        column.push(item);
+        columnItemsCount++;
+        if (columnItemsCount === itemsPerColumn || i === items.length - 1) {
+          columns.push(column.slice(0));
+          column = [];
+          columnItemsCount = 0;
+        }
+      });
       groups.push({
         items: items,
+        columns: columns,
         gridHeight: $scope.getGridHeight(items),
         gridOptions: {
-          dimensions: [$scope.columnCount, Math.ceil(items.length / $scope.columnCount)]
+          dimensions: [$scope.columnCount, Math.ceil(items.length / $scope.columnCount)],
+          direction: 0
         }
       });
       group = [];

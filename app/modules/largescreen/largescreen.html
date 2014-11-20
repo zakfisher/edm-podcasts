@@ -2,17 +2,28 @@
   <fa-image-surface fa-image-url="bigBG.jpg"></fa-image-surface>
   <largescreen-directory></largescreen-directory>
 
-  <fa-header-footer-layout fa-options="{direction: 1, headerSize: 250, footerSize: 175}">
+  <fa-header-footer-layout fa-options="{direction: 1, headerSize: 270, footerSize: 155}">
 
     <fa-view></fa-view>
 
     <fa-view>
-      <fa-modifier fa-translate="[30,0,0]">
+      <fa-modifier fa-translate="[pageInset,0,0]">
       <fa-scroll-view fa-pipe-from="myEventHandler" fa-options="options.myScrollView">
-        <fa-modifier fa-size="[1000, undefined]" ng-repeat="page in pages">
-          <fa-modifier fa-size="[950, undefined]">
+        <fa-modifier fa-size="[pageWidth, undefined]" ng-repeat="page in pages">
+          <fa-modifier fa-size="[(pageWidth - pageGutter), undefined]">
             <fa-view>
-              <fa-surface fa-background-color="'rgba(255,255,255,0.7)'" fa-pipe-to="myEventHandler" class="large-directory-card"></fa-surface>
+              <fa-surface fa-background-color="'rgba(255,255,255,0.7)'" fa-pipe-to="myEventHandler" class="large-directory-card">
+              <img src="/cardHeader.png" width="100%" />
+                <div class="large-directory-card-main">
+                  <ul class="large-directory-column" ng-repeat="column in page.columns track by $index">
+                    <li ng-repeat="item in column track by $index">
+                      <h2 ng-if="item.category">{{item.name}}</h2>
+                      <p ng-if="!item.category" ng-click="handleItemClick(item)">{{item.name}}</p>
+                    </li>
+                  </ul>
+                </div>
+              </fa-surface>
+              <!-- Alternate fa-grid based layout
               <fa-modifier fa-size="[undefined, page.gridHeight]" fa-translate="[30,20,0.01]">
                 <fa-grid-layout fa-options="page.gridOptions">
                   <fa-modifier ng-repeat="item in page.items track by $index">
@@ -23,6 +34,7 @@
                   </fa-modifier>
                 </fa-grid-layout>
               </fa-modifier>
+              -->
             </fa-view>
           </fa-modifier>
         </fa-modifier>

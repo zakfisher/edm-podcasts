@@ -167,7 +167,8 @@ gulp.task('watch', function () {
   });
   watch(['app/app.js', 'app/modules/**/*.js', 'app/modules/**/*.html'], function () {
     console.log('do the js');
-    gulp.start(['lint', 'app-js', 'background-js']);
+    gulp.start('build');
+    // gulp.start(['lint', 'app-js', 'background-js']);
   });
   watch('app/public/**', function () {
     livereload.changed();
