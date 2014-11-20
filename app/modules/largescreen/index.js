@@ -7,10 +7,11 @@ module.exports = angular.module('Largescreen', [])
 
   $scope.gridItemHeight = 40;
   $scope.columnCount = 3;
-  $scope.itemsPerPage = 93;
+  $scope.itemsPerPage = 85;
   $scope.pageWidth = 850;
   $scope.pageGutter = 50;
   $scope.pageInset = 150;
+  $scope.scrollViewSize = [window.innerWidth - $scope.pageInset, undefined];
   $scope.allStores = [];
 
   var categories = CategoryService.getCategories();
@@ -27,7 +28,8 @@ module.exports = angular.module('Largescreen', [])
   $scope.options = {
     myScrollView: {
       paginated: true,
-      speedLimit: 10,
+      speedLimit: 100,
+      drag: 0,
       margin: 50,
       direction: 0,
     }
