@@ -268,8 +268,7 @@
     "labelStyle": {
       "all": {
         "font-size": "12px",
-        "color": "#333",
-        "max-width": "125px"
+        "color": "#333"
       },
       "hightraffic-store-label": {
         "font-size": "25px",
@@ -283,37 +282,45 @@
       },
       "highway": {
         "font-size": "50px",
-        "color": "#ccc"
+        "color": "#fff",
+        "white-space":"nowrap",
+        "font-weight":"bolder"
       },
       "major-street": {
         "font-size": "40px",
-        "color": "#000"
+        "color": "#000",
+        "white-space":"nowrap"
       }
     },
 
     "mapLabels":[
     	{
-    		"text":"Street",
-    		"x":100,
-    		"y":100,
-    		"rotation":90,
+    		"text":"Nimitz Fwy",
+    		"x":1860,
+    		"y":1125,
+    		"rotation":0,
     		"class":"highway"
     	},
     	{
-    		"text":"Street 2",
-    		"x":1000,
-    		"y":1000,
+    		"text":"Stevens Creek Blvd",
+    		"x":2470,
+    		"y":2025,
     		"rotation":90,
-    		"class":"major-street",
-    		"mapSequence":"0"
+    		"class":"major-street"
     	},
     	{
-    		"text":"Street",
-    		"x":500,
-    		"y":500,
-    		"rotation":180,
-    		"class":"major-street",
-    		"mapSequence":"0"
+    		"text":"Forest Ave",
+    		"x":1477,
+    		"y":2060,
+    		"rotation":90,
+    		"class":"major-street"
+    	},
+    	{
+    		"text":"Winchester Blvd",
+    		"x":1860,
+    		"y":3181,
+    		"rotation":0,
+    		"class":"major-street"
     	}
     ],
 
