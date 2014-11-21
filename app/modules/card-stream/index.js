@@ -19,7 +19,7 @@ module.exports = angular.module("CardStream", [])
 
   self.show = function () {
     self.shown = true;
-    self.boxTransitionable.set([0, 0, 100], {
+    self.boxTransitionable.set([0, 0, 50], {
       duration: 500,
       curve: Easing.inOutBack
     }, function () {
@@ -31,12 +31,11 @@ module.exports = angular.module("CardStream", [])
     if (!self.shownDone) {
       return false;
     }
-    self.boxTransitionable.set([0, 0, 20], {
+    self.boxTransitionable.set([0, 0, 0], {
       duration: 500,
       curve: Easing.inOutBack
     }, function () {
       self.shown = false;
-      self.shownDone = false;
       self.applyScope();
     });
   };
