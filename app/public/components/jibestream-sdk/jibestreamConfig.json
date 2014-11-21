@@ -30,7 +30,12 @@
         "colorFill": "#b6b28c",
         "highLightColor": "#fff",
         "clickable": true,
-        "addLabel": true
+        "addLabel": true,
+        "sponsorship":75,
+        "label":{
+          "font-size": "10px",
+          "color": "#000"
+        }
    },
       {
         "name": "Amenities",
@@ -49,7 +54,12 @@
         "strokeWidth": "2px",
         "clickable": true,
         "highLightColor": "#fff",
-        "addLabel": true
+        "addLabel": true,
+        "sponsorship":50,
+        "label":{
+          "font-size": "10px",
+          "color": "#000"
+        }
    },
 
       {
@@ -131,7 +141,12 @@
         "colorFill": "#b6b28c",
         "highLightColor": "#fff",
         "clickable": true,
-        "addLabel": true
+        "addLabel": true,
+        "sponsorship":75,
+        "label":{
+          "font-size": "10px",
+          "color": "#000"
+        }
    },
       {
         "name": "Amenities_1_",
@@ -140,6 +155,7 @@
         "colorFill": "#000",
         "highLightColor": "",
         "clickable": false
+        
    },
       {
         "name": "Units_1_",
@@ -151,7 +167,12 @@
         "highLightColor": "#fff",
 
         "clickable": true,
-        "addLabel": true
+        "addLabel": true,
+        "sponsorship":50,
+        "label":{
+          "font-size": "10px",
+          "color": "#000"
+        }
    },
       {
         "name": "Floor_1_",
