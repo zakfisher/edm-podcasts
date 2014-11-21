@@ -152,8 +152,8 @@ g.active .key-background {
   border: 1px solid black;
   float: left; }
   .miniMap svg {
-    max-width: 300px;
-    max-height: 300px; }
+    width: 300px;
+    height: 300px; }
 
 .large-directory-card {
   -webkit-border-bottom-right-radius: 15px;
