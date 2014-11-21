@@ -80,8 +80,7 @@ module.exports = angular.module("CardStream", [])
           a.forEach(function (map) {
             for (var i = 0; i < map.length; i++) {
               mapsContainer.append(map[i]);
-            };
-            
+            }
           });
           console.log(mapsContainer[0]);
         }

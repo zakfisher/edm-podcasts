@@ -2138,7 +2138,7 @@ var __extends = this.__extends || function (d, b) {
 			newElement.style["stroke-linecap"] = "round";
 			var lt = newElement.getTotalLength();
 			newElement.style["stroke-dasharray"] = lt;
-			newElement.style["stroke-dashoffset"] = lt;
+			newElement.style["stroke-dashoffset"] = "0px";
 
 			newElement.style.fill = "none";
 
@@ -2231,7 +2231,6 @@ var __extends = this.__extends || function (d, b) {
 
 			returnValue.push($('<?xml version="1.0" encoding="utf-8" ?>' + newSVG.outerHTML));
 
-    		debugger;
 
     	}
 
@@ -2713,6 +2712,9 @@ var __extends = this.__extends || function (d, b) {
 			this.polyRef = {};
 			var _this = this;
 
+			this.prepareLabels();
+
+
 			//-----------------------
 			for (var i = 0; i < this.styles.mapStyles.mapLayers.length; i++) {
 				var currentStyle = this.styles.mapStyles.mapLayers[i];
@@ -2775,6 +2777,33 @@ var __extends = this.__extends || function (d, b) {
 				this.styles.mapStyles.mapLayers[i] = currentStyle;
 				this.styleRef[currentStyle.name] = currentStyle;
 			};
+
+
+
+        };
+
+
+        Floor.prototype.prepareLabels = function(){
+        	this.destinations = JMap.getDestinationsByFloorId(this.id);
+        	this.customBounds = this.styles.mapStyles.storeLabelBounds[this.sequence];
+			if(!this.customBounds)this.customBounds = [];
+
+            function getDistance(p1, p2) {return Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2));};
+
+			for (var i = 0; i < this.customBounds.length; i++) {
+				this.customBounds[i].id = this.customBounds[i].type + this.customBounds[i].x + this.customBounds[i].y;
+				var currentCloset = this.destinations[0]
+				for (var j = 1; j < this.destinations.length; j++) {
+					if(getDistance(this.destinations[j].wp, {x:this.customBounds[i]["origin-x"], y:this.customBounds[i]["origin-y"]}) < getDistance(currentCloset.wp, {x:this.customBounds[i]["origin-x"], y:this.customBounds[i]["origin-y"]}))currentCloset = this.destinations[j];
+				};
+
+				this.customBounds[i].closestDestination = currentCloset;
+				currentCloset.hasCustomBounds = true;
+				currentCloset.customBounds = this.customBounds[i];
+			};
+
+
+
         };
 
         Floor.prototype.getDestinationWithinBounds = function(poly){
@@ -2837,72 +2866,113 @@ var __extends = this.__extends || function (d, b) {
         	this.setStoreLabels();
         };
 
-        Floor.prototype.isPointInBounds = function(point, poly){
-        	var pd = d3.select(poly);
-        	var bb = pd.node().getBBox();
-        	// console.log(point, bb);
+        Floor.prototype.getBoundsOfPoly = function(poly){
+			var bounds = {};
+        	switch(poly.tagName){
+        		case "rect":
+	        		bounds.x = Number(poly.getAttribute("x"));
+	        		bounds.width = Number(poly.getAttribute("width"));
+	        		bounds.y = Number(poly.getAttribute("y"));
+	        		bounds.height = Number(poly.getAttribute("height"));
+        			break;
+        		case "polygon":
+        			var polyPoints = poly.getAttribute("points").split(" ");
+					for (var i = 0; i < polyPoints.length - 1; i++) {
+						var pt = polyPoints[i].split(",");	
+						if(!bounds.x || Number(pt[0]) < bounds.x)bounds.x = Number(pt[0]);
+						if(!bounds.xMax || Number(pt[0]) > bounds.xMax)bounds.xMax = Number(pt[0]);
+						if(!bounds.y || Number(pt[1]) < bounds.y)bounds.y = Number(pt[1]);
+						if(!bounds.yMax || Number(pt[1]) > bounds.yMax)bounds.yMax = Number(pt[1]);
+					};
+					bounds.width = bounds.xMax - bounds.x;
+					bounds.height = bounds.yMax - bounds.y;
+					break;
+				}
+				return bounds;
+        };
 
-        	if(point.x > bb.x && point.x < (bb.x + bb.width) && point.y > bb.y && point.y < (bb.y + bb.height)){
+        Floor.prototype.isPointInBounds = function(point, bounds){
+        	if(point.x > bounds.x && point.x < (bounds.x + bounds.width) && point.y > bounds.y && point.y < (bounds.y + bounds.height)){
 				return true;
 			}
 			return false;
-
         };
+
         	
         Floor.prototype.setStoreLabels = function(groupPar){
-        	this.destinations = JMap.getDestinationsByFloorId(this.id);
-        	this.customBounds = this.styles.mapStyles.storeLabelBounds[this.sequence];
-        	if(!this.customBounds)this.customBounds = [];
 
-        	var destinationsAr = this.destinations;
+        	return;
+        	for (var i = 0; i < this.customBounds.length; i++) if(this.customBounds[i].polygons === undefined)this.customBounds[i].polygons = [];
+        	for (var i = 0; i < this.destinations.length; i++) if(this.destinations[i].polygons === undefined)this.destinations[i].polygons = [];
 
 
         	//All polygons that have boundaries containing the custom bounds' origin point
         	for(var k = 0; k < groupPar.group.length; k++){
+        		var g = groupPar.group[k];
+        		if(g.tagName == "g" || g.tagName == "path")continue;
+        		var bounds = this.getBoundsOfPoly(g);
         		for (var i = 0; i < this.customBounds.length; i++) {
-        		if(!this.customBounds[i].polygons)this.customBounds[i].polygons = [];
-        		// var g  = groupPar.group;
-
-        			if(groupPar.group[k].tagName == "g" || groupPar.group[k].tagName == "path"){
-        				//is group
-        			}else{
-		    			if(this.isPointInBounds({x:this.customBounds[i]["origin-x"] + this.positionOffset.x, y:this.customBounds[i]["origin-y"] + this.positionOffset.y}, groupPar.group[k])){
-		    				this.customBounds[i].polygons.push(groupPar.group[k]);
-		    			}
+	    			if(this.isPointInBounds({x:this.customBounds[i]["origin-x"] + this.positionOffset.x, y:this.customBounds[i]["origin-y"] + this.positionOffset.y}, bounds) == true){
+	    				this.customBounds[i].polygons.push(g);
+	    			}
+        		};
+        		for (i = 0; i < this.destinations.length; i++) {
+        			if(this.isPointInBounds({x:this.destinations[i].wp.x + this.positionOffset.x, y:this.destinations[i].wp.y + this.positionOffset.y}, bounds) == true){
+		    			this.destinations[i].polygons.push(g);
         			}
         		};
+
         	};
 
+        	var c = 0;
 
-        	// debugger;
-
-        	for(var i = 0; i < groupPar.group.length; i++){
-			
 			var newGroup = document.createElementNS("http://www.w3.org/2000/svg", 'g');
 			newGroup.id = groupPar.name +  "-labels-" + this.id;
 
-        	// this.destinationsByWPID = {};
+			var svg = document.getElementById("L" + (this.sequence + 1).toString());
+
+        	for(i = 0; i < this.destinations.length; i ++){
+        		for(k = 0; k < this.destinations[i].polygons.length; k++ ){
+        			if($(this.destinations[i].polygons[k]).parent().attr("id") == groupPar.name){
+        				var textElement = document.c
+        				if(this.destination[i].hasCustomBounds == true){
+        					//do custom bounds here
+        				}else{
+        					var bd = this.getBoundsOfPoly(this.destinations.polygons[k]);
+
+							var txtElem = document.createElementNS("http://www.w3.org/2000/svg", "text");
+							 
+							txtElem.setAttribute("x",bd.x);
+							txtElem.setAttribute("y",bd.y);
+							txtElem.setAttribute("width",bd.width);
+							txtElem.setAttribute("height",bd.height);
+							txtElem.setAttribute("font-size",15);
+							txtElem.setAttribute("color","#fff");
+							txtElem.setAttribute("text-anchor","middle");
+
+							var helloTxt = document.createTextNode(this.destinations[i].name);
+							txtElem.appendChild(helloTxt)
+							 
+
+        				}
+        				c++;
+        			}
+        		}
+        	}
+
+			newGroup.appendChild(txtElem);
+			svg.appendChild(newGroup);
 
 
-			var zd = this.getZoomData();
-        	// var destLabels = [];
-        	// for(var i = 0; i < groupPar.group.length; i++){
-
-        		var g = groupPar.group[i];
-        		var dtn = this.getLPosWithinBounds(g);
-        	
-        	// for(var i = 0; i < this.destinations.length; i++){
-    //     		var dtn = this.destinations[i];
-    //     		var wp = dtn.wp;
-
-
-    //     		var pd = d3.select(cpoly);
-				// var bounds = pd.node().getBBox();
+        	console.log(groupPar.name + " has " + c + " stores that need labels");
+				
 
 
 
-            }
-            var labelStyles = this.styles.mapStyles.labelStyle;
+
+
+
+			var labelStyles = this.styles.mapStyles.labelStyle;
 
             function applyStyleTo(styles, selector){
             	for(var str in styles){	
@@ -2912,6 +2982,7 @@ var __extends = this.__extends || function (d, b) {
 
            	applyStyleTo(labelStyles["hightraffic-store-label"], ".map-floor-container-base .landmarks .item.hightraffic-store-label.store-labels>div");           	
            	applyStyleTo(labelStyles["anchor-store-label"], ".map-floor-container-base .landmarks .item.anchor-store-label.store-labels>div");
+           
 
         };
 
