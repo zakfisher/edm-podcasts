@@ -22,6 +22,12 @@
   </head>
   <body>
     <fa-app fa-perspective="250">
+      <fa-view>
+        <fa-surface ng-if="mapReady" ng-show="mapShow">
+          <jmap></jmap>
+        </fa-surface>
+      </fa-view>
+      </fa-modifer>
       <div ui-view></div>
       <kioskmenu></kioskmenu>
       <card-stream></card-stream>

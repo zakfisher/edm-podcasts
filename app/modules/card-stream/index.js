@@ -1,6 +1,6 @@
 module.exports = angular.module("CardStream", [])
 
-.service("CardStream", function ($famous) {
+.service("CardStream", function ($famous, Map) {
   var self = {};
 
   var Transitionable = $famous['famous/transitions/Transitionable'];
@@ -12,6 +12,9 @@ module.exports = angular.module("CardStream", [])
 
   self.setStore = function (store) {
     self.currentStore = store;
+    var jibestreamStore = JMap.getDestinationByClientId(store.id.toString());
+    self.currentStore.maps = JMap.storage.maps.building.getMapsWithDirections(store.id.toString());
+    console.log(self.currentStore.maps);
   };
 
   self.show = function () {
@@ -54,7 +57,6 @@ module.exports = angular.module("CardStream", [])
     controller: function ($scope) {
       $scope.cardStream = CardStream;
       $scope.cardStream.scope = $scope;
-
     }
   };
 });

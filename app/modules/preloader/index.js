@@ -1,6 +1,6 @@
 module.exports = angular.module('LoadingScreen', [])
 
-.service('Preloader', function ($q) {
+.service('Preloader', function ($q, $rootScope) {
   var Preloader = {};
   var tasks = [];
 
@@ -24,7 +24,7 @@ module.exports = angular.module('LoadingScreen', [])
 
 
 
-.controller('LoadingScreenController', function ($scope, KioskMenu, Preloader, $state, $famous) {
+.controller('LoadingScreenController', function ($scope, KioskMenu, Preloader, $state, $famous, $rootScope) {
 
   var Transitionable = $famous['famous/transitions/Transitionable'];
   var Timer = $famous['famous/utilities/Timer'];
@@ -41,7 +41,8 @@ module.exports = angular.module('LoadingScreen', [])
   }, 1);
 
   Preloader.whenFinished().then(function () {
-    $state.go('largescreen');
+    $state.go(initialView);
+    $rootScope.mapReady = true;
     KioskMenu.show();
   });
 })

@@ -4,10 +4,11 @@
   </fa-modifier>
   <fa-modifier fa-size="[800, 600]" fa-align="[0.5, 0.5]" fa-origin="[0.5, 0.5]" fa-scale="[0.7,0.7]" fa-translate="cardStream.boxTransitionable.get()">
     <fa-surface fa-background-color="'#fff'" ng-if="cardStream.shown">
-      <div ng-if="cardStream.currentStore._links.store_front.href" style="background-size: cover; background-position: center; height: 15em; background-image: url({{cardStream.currentStore._links.store_front.href}});"/>
+      <div ng-if="cardStream.currentStore._links.store_front.href" style="background-size: cover; background-position: center; height: 15em; background-image: url({{cardStream.currentStore._links.store_front.href}});"></div>
       <div style="padding: 3em">
         <h3>{{cardStream.currentStore.name}}</h3>
         <p>{{cardStream.currentStore.description}}</p>
+        <div ng-repeat="map in cardStream.currentStore.maps">{{map}}</div>
       </div>
     </fa-surface>
   </fa-modifier>
