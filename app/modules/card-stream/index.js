@@ -49,13 +49,41 @@ module.exports = angular.module("CardStream", [])
   return self;
 })
 
+.directive("injectSvg", function () {
+  return {
+    restrict: "E",
+    template: "<span></span>",
+    replace: true,
+    scope: {
+      svgElement: "=element"
+    },
+    controller: function ($scope, $element) {
+      console.log("svg element", $scope.svgElement);
+      $element.append($scope.svgElement);
+    }
+  };
+})
+
 .directive("cardStream", function (CardStream) {
   return {
     restrict: "E",
     template: require('./card-stream.html'),
-    controller: function ($scope) {
+    controller: function ($scope, $element) {
       $scope.cardStream = CardStream;
       $scope.cardStream.scope = $scope;
+      var mapsContainer = $element.find('.maps');
+
+      $scope.$watch('cardStream.currentStore.maps', function (a, b) {
+        console.log('new maps', mapsContainer, a);
+        if (a !== b) {
+          // mapsContainer.empty();
+          a.forEach(function (map) {
+            mapsContainer.append(map);
+          });
+          console.log(mapsContainer[0]);
+        }
+      });
+
     }
   };
 });
