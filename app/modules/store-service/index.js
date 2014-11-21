@@ -54,6 +54,24 @@ module.exports = angular.module('StoreService', [])
     return stores;
   };
 
+  self.getRelatedStoresOf = function (store) {
+    var storesInCategory,
+      relatedIndex1,
+      relatedIndex2,
+      related1,
+      related2,
+      relatedStores;
+    storesInCategory = self.getStoresByCategory(store.category_codes);
+    storesInCategory.splice(storesInCategory.indexOf(store), 1);
+    relatedIndex1 = Math.floor(Math.random() * storesInCategory.length);
+    related1 = storesInCategory.splice(relatedIndex1, 1)[0];
+    relatedIndex2 = Math.floor(Math.random() * storesInCategory.length);
+    related2 = storesInCategory.splice(relatedIndex2, 1)[0];
+    relatedStores = [related1, related2];
+    console.log('related stores', relatedStores);
+    return relatedStores;
+  };
+
   return self;
 
 });
