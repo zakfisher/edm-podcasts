@@ -1797,7 +1797,7 @@ var __extends = this.__extends || function (d, b) {
 
        Building.prototype.pathAnimationComplete = function (){
             this.clearAllTimeouts();
-            this.currentFloor.addDragHandler();
+            // this.currentFloor.addDragHandler();
         };
 
         /**************************************************************************/
@@ -2221,7 +2221,7 @@ var __extends = this.__extends || function (d, b) {
 			newSVG.appendChild(startImg);
 			newSVG.appendChild(endImg);
 
-			returnValue.push({svg:newSVG});
+			returnValue.push(newSVG);
 
     		// debugger;
 
@@ -2689,7 +2689,7 @@ var __extends = this.__extends || function (d, b) {
 
                     $( '#graphicCont-' + _this.id ).show().css('opacity',1);
                     $('#graphicCont-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
-                    _this.addDragHandler(_this);
+                    // _this.addDragHandler(_this);
 					setTimeout($.proxy(_this.styleSVG, _this), 10);
 					setTimeout($.proxy(_this.assignMapLabels, _this), 20);
 				}, 10);
@@ -2841,6 +2841,7 @@ var __extends = this.__extends || function (d, b) {
         };
         	
         Floor.prototype.setStoreLabels = function(groupPar){
+        	return;
 
         	this.destinations = JMap.getDestinationsByFloorId(this.id);
         	this.customBounds = this.styles.mapStyles.storeLabelBounds[this.sequence];
@@ -3139,415 +3140,167 @@ var __extends = this.__extends || function (d, b) {
             }
         };
 
-        Floor.prototype.addDragHandler = function(fl) {
+        // Floor.prototype.addDragHandler = function(fl) {
 
-        	return;
+        // 	return;
 
-            // $('#svg-' + fl.id).on("click",$.proxy(this.startDrag, this));
-            $('#svg-' + fl.id).on("touchstart",$.proxy(this.startDrag, this));
-
-
-            var _this = this;
-            if($(".legendItem").length === 0) {
-                this.autoAddLegendClick = true;
-            } else {
-                $(".legendItem").on("click", function(){_this.mapLegendsClicked(this);});
-            }
-        };
-
-        Floor.prototype.hideTooltip = function() {
-            TweenLite.to($(this.nameToolTip), 0, {x: 0, alpha:0});
-            $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "none");
-        };
-
-        Floor.prototype.hideSVGHilight = function() {
-            var $body = $('#svg-' + this.id).find('*');
-            for(var i = 0; i < $body.length; i++) {
-                $body[i].style.fillOpacity = 0;
-            }
-        };
+        //     // $('#svg-' + fl.id).on("click",$.proxy(this.startDrag, this));
+        //     $('#svg-' + fl.id).on("touchstart",$.proxy(this.startDrag, this));
 
 
-        Floor.prototype.stopDrag = function(evt) {
-            this.isZooming = false;
-             $('#svg-' + this.id).off("touchstart");
-             this.addDragHandler(this);
-             this.hideSVGHilight();
-             $(window).off("touchend");
-            this.previousX = undefined;
-            this.previousY = undefined;
-            var _this = this;
-            clearTimeout(this.dragLabelTimer);
-            this.dragLabelTimer = setTimeout(function() {
-                _this.hideTooltip();
-                _this = null;
-            }, 2000);
-        };
+        //     var _this = this;
+        //     if($(".legendItem").length === 0) {
+        //         this.autoAddLegendClick = true;
+        //     } else {
+        //         $(".legendItem").on("click", function(){_this.mapLegendsClicked(this);});
+        //     }
+        // };
 
-        Floor.prototype.startDrag = function(evt) {
-        	// console.log("click", evt);
+        // Floor.prototype.hideTooltip = function() {
+        //     TweenLite.to($(this.nameToolTip), 0, {x: 0, alpha:0});
+        //     $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "none");
+        // };
 
-            if(evt.originalEvent.touches && evt.originalEvent.touches.length > 1) return;
-            var _this = this;
-            // console.log(_this)
-            this.isZooming = false;
-            //Check if Map is zoomed appropriately in order to start zooming!
-            // if(this.currentScale < this.zoomLevel.labelsVisible){return;}
-            clearTimeout(this.dragLabelTimer);
-            $(window).on("touchend", $.proxy(this.stopDrag, this));
-
-            this.useSVGHitzones = 1;
-
-            this.dragMove(evt);
+        // Floor.prototype.hideSVGHilight = function() {
+        //     var $body = $('#svg-' + this.id).find('*');
+        //     for(var i = 0; i < $body.length; i++) {
+        //         $body[i].style.fillOpacity = 0;
+        //     }
+        // };
 
 
-            // console.log("EVENT", evt.originalEvent.touches.length)
-            return;
+        // Floor.prototype.stopDrag = function(evt) {
+        //     this.isZooming = false;
+        //      $('#svg-' + this.id).off("touchstart");
+        //      // this.addDragHandler(this);
+        //      this.hideSVGHilight();
+        //      $(window).off("touchend");
+        //     this.previousX = undefined;
+        //     this.previousY = undefined;
+        //     var _this = this;
+        //     clearTimeout(this.dragLabelTimer);
+        //     this.dragLabelTimer = setTimeout(function() {
+        //         _this.hideTooltip();
+        //         _this = null;
+        //     }, 2000);
+        // };
+
+        // Floor.prototype.startDrag = function(evt) {
+        // 	// console.log("click", evt);
+
+        //     if(evt.originalEvent.touches && evt.originalEvent.touches.length > 1) return;
+        //     var _this = this;
+        //     // console.log(_this)
+        //     this.isZooming = false;
+        //     //Check if Map is zoomed appropriately in order to start zooming!
+        //     // if(this.currentScale < this.zoomLevel.labelsVisible){return;}
+        //     clearTimeout(this.dragLabelTimer);
+        //     $(window).on("touchend", $.proxy(this.stopDrag, this));
+
+        //     this.useSVGHitzones = 1;
+
+        //     this.dragMove(evt);
+
+
+        //     // console.log("EVENT", evt.originalEvent.touches.length)
+        //     return;
             
-            if(this.useSVGHitzones == 1) {
-                $('#svg-' + _this.id).on("touchstart", $.proxy(this.dragMove, this));
-                this.dragMove(evt);
-            } else{
-                // $('#svg-' + _this.id).on("touchstart", $.proxy(this.radiusDrag, this));
-                // this.radiusDrag(evt);
-            }
+        //     if(this.useSVGHitzones == 1) {
+        //         $('#svg-' + _this.id).on("touchstart", $.proxy(this.dragMove, this));
+        //         this.dragMove(evt);
+        //     } else{
+        //         // $('#svg-' + _this.id).on("touchstart", $.proxy(this.radiusDrag, this));
+        //         // this.radiusDrag(evt);
+        //     }
 
-        };
+        // };
 
-        Floor.prototype.onToolTipClicked = function(e){JMap.fire("DESTINATION_CLICK", [JMap.getDestinationById(this.nameToolTip.getAttribute("data-id"))]);};
+        // Floor.prototype.onToolTipClicked = function(e){JMap.fire("DESTINATION_CLICK", [JMap.getDestinationById(this.nameToolTip.getAttribute("data-id"))]);};
 
-        Floor.prototype.dragMove = function(evt) {
-            // console.log(evt)
-            // if(this.isZooming === true)return;
-
-            this.isZooming =  true;
-            
-            // this.legendsView.style.pointerEvents = "none";
-            var evtX = evt.offsetX;
-            var evtY = evt.offsetY;
-            var clickX = evt.pageX;
-            var clickY = evt.pageY;
-            var list, $list, offset, range;
-            var $body = $('#svg-' + this.id).find('*');
-            // console.log(evt);
-            if(!evt.originalEvent)return;
-            var oEvtTouch = evt.originalEvent.changedTouches[0];
-            var eleTag = document.elementFromPoint(oEvtTouch.clientX, oEvtTouch.clientY);
-
-            // console.log(oEvtTouch.clientX, oEvtTouch.clientY, this.clickTolerance);
-
-            
-            if(eleTag.tagName != "polygon" && eleTag.tagName != "rect" && eleTag.tagName != "path") {
-                if(this.useRadiusCombo > 0) {
-                    
-                    if(eleTag.tagName == "svg") {
-                        this.isZooming =  false;
-                        // this.radiusDrag(evt, true);
-                    }
-                }
-                return;
-            }
-            // console.log("SVG ITEM");
-
-            
-            // for(var i = 0; i < $body.length; i++) {
-                // if(eleTag != $body[i]) {
-                //     $body[i].style.fillOpacity = 0;
-                // } else {
-                //     // $body[i].style.fillOpacity = 0.7;
-                //     $body[i].style.fill = this.svgFill;
-                // }
-            // }
-
-            // if(evt.currentTarget != this.svgContainer)return;
-
-            // var flagOffsetX = 0;
-            // var flagOffsetY = 0;
-
-
-            
-            var polygonBounds = eleTag.getBoundingClientRect();
-            polygonBounds = this.convertBoundingRect(polygonBounds);
-            // console.log('POLYGON', polygonBounds);
-            
-            // var testZone = document.createElement("DIV");
-            // testZone.style.position = "absolute";
-            // testZone.style.top = polygonBounds.top;
-            // testZone.style.left = polygonBounds.left;
-            // testZone.style.width = polygonBounds.width;
-            // testZone.style.height = polygonBounds.height;
-            // testZone.style.backgroundColor = "rgba(0,0,255, 0.2)";
-            // //this.svgContainer.appendChild(testZone);
-            
-
-            // var nearPoints = this.getDestinationInBox(polygonBounds.left,polygonBounds.top,polygonBounds.width,polygonBounds.height);
-
-            // // console.log("NEARPOINTS",nearPoints);
-            
-            // //var nearPoints = this.getDestinationsNearCoor(evtX, evtY, 50);
-            
-
-            // var allNearLocations = [];
-            // // console.log("floor dest",this.floorDestinations);
-            // for(i = 0; i < nearPoints.length; i++) {
-            //     for(var j = 0; j < this.floorDestinations.length; j++) {
-                    
-
-                    
-            //         if(nearPoints[i].id == this.floorDestinations[j].wp.id) {
-                        
-
-            //             if(this.floorDestinations[j].clickRadius > 0) {
-            //                 // console.log(this.floorDestinations[j].name, nearPoints[i].distance);
-            //                 if(this.floorDestinations[j].clickRadius > nearPoints[i].distance) {
-                                
-            //                     allNearLocations.push(this.floorDestinations[j]);
-            //                 } else {
-            //                     // console.log(this.floorDestinations[j].name, nearPoints[i].distance);
-            //                 }
-                            
-            //             } else {
-            //                 allNearLocations.push(this.floorDestinations[j]);
-            //             }
-            //             //
-            //         }
-
-            //     }
-            // }
-            // // console.log("All Near", allNearLocations);
-
-            // //console.log(nearLocations);
-            // //Test if near point is under poly
-            // var nearLocations = [];
-            // var intersect = null;
-            // var convertedPoint = null;
-
-            // // console.log('DIRTY',allNearLocations);
-
-            // for(i = 0; i < allNearLocations.length; i++) {
-                
-            //     // console.log('GLOBALPOINT', allNearLocations[i].wp.x, allNearLocations[i].wp.y);
-            //     var globalPoint = this.mapToGlobal(allNearLocations[i].wp.x, allNearLocations[i].wp.y);
-            //     var intersect = document.elementFromPoint(globalPoint.x, globalPoint.y);
-
-            //     if(intersect == eleTag) {
-            //         nearLocations.push(allNearLocations[i]);
-            //     }
-            // }
-
-            // console.log("Clean", nearLocations);
-            JMap.fire('SHOW_DESTINATION', nearLocations);
-
-            // if(nearLocations.length > 1) {
-            //     // alert(nearLocations[0]["name"]);
-            //     $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
-            //     this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
-            //     this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
-            //     this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
-            //     flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
-
-            //     this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
-            //     this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
-            //     this.nameToolTip.setAttribute("data-scale", 1);
-            //     this.nameToolTip.setAttribute("data-opacity", 1);
-            //     this.nameToolTip.setAttribute("data-sizeoffset", true);
-            //     this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
-            //     this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
-            //     this.localToMap(this.nameToolTip);
-            //     TweenLite.to($(this.nameToolTip), 0, {alpha:1});
-            //     $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
-            //     this.showWaypointSVG( nearLocations[0].wp.x,  nearLocations[0].wp.y );
-            // } else if (nearLocations.length > 0) {
-            //     $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
-            //     this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
-            //     this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
-            //     this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
-            //     flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
-
-            //     this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
-            //     this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
-            //     this.nameToolTip.setAttribute("data-scale", 1);
-            //     this.nameToolTip.setAttribute("data-opacity", 1);
-            //     this.nameToolTip.setAttribute("data-sizeoffset", true);
-            //     this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
-            //     this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
-            //     this.localToMap(this.nameToolTip);
-            //     TweenLite.to($(this.nameToolTip), 0, {alpha:1});
-            //     $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
-            // } else {
-            //     clearTimeout(this.dragLabelTimer);
-            //     var _this = this;
-            //     this.dragLabelTimer = setTimeout(function() {
-            //         _this.hideTooltip();
-            //         _this = null;
-            //     }, 2000);
-            // }
-
-            // this.legendsView.style.pointerEvents = "auto";
-            this.isZooming =  false;
-        };
-
-        Floor.prototype.showWaypointSVG = function(x,y) {
-        	console.log("Show wp svg");
-            var globalPoint = this.mapToGlobal(x, y);
-            var eleTag = document.elementFromPoint(globalPoint.x, globalPoint.y);
-            if(eleTag.tagName != "polygon" && eleTag.tagName != "rect" && eleTag.tagName != "path") {
-                // console.log(eleTag);
-                return;
-            }
-
-            var $body = $('#svg-' + this.id).find('*');
-            // console.log($body)
-            for(var i = 0; i < $body.length; i++) {
-                if(eleTag != $body[i]) {
-                    $body[i].style.fillOpacity = 0;
-                } else {
-                    $body[i].style.fillOpacity = 0.5;
-                    $body[i].style.fill = "#f19220";
-                }
-            }
-        };
-
-        // Floor.prototype.radiusDrag = function(evt, omitSVG) {
-        //     if(this.isZooming === true)return;
+        // Floor.prototype.dragMove = function(evt) {
+        //     // console.log(evt)
+        //     // if(this.isZooming === true)return;
 
         //     this.isZooming =  true;
             
         //     // this.legendsView.style.pointerEvents = "none";
         //     var evtX = evt.offsetX;
         //     var evtY = evt.offsetY;
-        //     // var touch = evt.touches[0];
-        //     var svgContainer = 'svg-' + this.id;
-        //     if(evt.currentTarget.id != svgContainer)return;
-
-        //     var flagOffsetX = 0;
-        //     var flagOffsetY = 0;
+        //     var clickX = evt.pageX;
+        //     var clickY = evt.pageY;
+        //     var list, $list, offset, range;
+        //     var $body = $('#svg-' + this.id).find('*');
+        //     // console.log(evt);
+        //     if(!evt.originalEvent)return;
         //     var oEvtTouch = evt.originalEvent.changedTouches[0];
-
-        //     // console.log(oEvtTouch.clientX, oEvtTouch.clientY, this.clickTolerance);
-
-
+        //     var eleTag = document.elementFromPoint(oEvtTouch.clientX, oEvtTouch.clientY);
             
-        
-
-        //     //var nearPoints = this.getDestinationInBox(polygonBounds.left,polygonBounds.top,polygonBounds.width,polygonBounds.height);
-
-        //     var nearPoints = this.getDestinationsNearCoor(oEvtTouch.clientX, oEvtTouch.clientY, this.clickTolerance);
-
-        //     // console.log(nearPoints);
-
-
-        //     var allNearLocations = [];
-        //     for(i = 0; i < nearPoints.length; i++) {
-
-        //         for(var j = 0; j < this.floorDestinations.length; j++) {
-
-        //             if(nearPoints[i].id == this.floorDestinations[j].wp.id) {
-                        
-        //                 if(omitSVG) {
-
-        //                     var globalPoint = this.mapToGlobal(this.floorDestinations[j].wp.x, this.floorDestinations[j].wp.y);
-        //                     var intersect = document.elementFromPoint(globalPoint.x, globalPoint.y);
-        //                     if(intersect.tagName != "polygon" && intersect.tagName != "rect" && intersect.tagName != "path") {
-        //                         allNearLocations.push(this.floorDestinations[j]);
-        //                     }
-
-        //                 } else {
-        //                     allNearLocations.push(this.floorDestinations[j]);
-        //                 }
-                        
+        //     if(eleTag.tagName != "polygon" && eleTag.tagName != "rect" && eleTag.tagName != "path") {
+        //         if(this.useRadiusCombo > 0) {
+                    
+        //             if(eleTag.tagName == "svg") {
+        //                 this.isZooming =  false;
+        //                 // this.radiusDrag(evt, true);
         //             }
         //         }
+        //         return;
         //     }
 
-
-
-        //     var nearLocations = allNearLocations;
-        //     var intersect = null;
-        //     var convertedPoint = null;
-
-        //     // console.log("Clean", nearLocations);
-
-        //     if(nearLocations.length > 1) {
-        //         // alert(nearLocations[0]["name"]);
-        //         JMap.fire('SHOW_DESTINATION', [nearLocations[0]]);
-        //         $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
-        //         this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
-        //         this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
-        //         this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
-        //         flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
-
-        //         this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
-        //         this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
-        //         this.nameToolTip.setAttribute("data-scale", 1);
-        //         this.nameToolTip.setAttribute("data-opacity", 1);
-        //         this.nameToolTip.setAttribute("data-sizeoffset", true);
-        //         this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
-        //         this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
-        //         this.localToMap(this.nameToolTip);
-        //         TweenLite.to($(this.nameToolTip), 0, {alpha:1});
-        //         $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
-        //         this.showWaypointSVG( nearLocations[0].wp.x,  nearLocations[0].wp.y );
-
-        //     } else if (nearLocations.length > 0) {
-        //         $("#" + this.nameToolTip.id + " p").html(nearLocations[0]["name"]);
-        //         this.nameToolTip.setAttribute("data-id", nearLocations[0].id);
-        //         this.nameToolTip.setAttribute("data-x", nearLocations[0].wp.x);
-        //         this.nameToolTip.setAttribute("data-y", nearLocations[0].wp.y);
-        //         flagOffsetX = $("#" + this.nameToolTip.id + " p").width() / 2;
-
-        //         this.nameToolTip.setAttribute("data-offsetx", flagOffsetX);
-        //         this.nameToolTip.setAttribute("data-offsety", flagOffsetY);
-        //         this.nameToolTip.setAttribute("data-scale", 1);
-        //         this.nameToolTip.setAttribute("data-opacity", 1);
-        //         this.nameToolTip.setAttribute("data-sizeoffset", true);
-        //         this.nameToolTip.setAttribute("data-width", $("#" + this.nameToolTip.id + " p").width());
-        //         this.nameToolTip.setAttribute("data-height", $("#" + this.nameToolTip.id).height());
-        //         this.localToMap(this.nameToolTip);
-        //         TweenLite.to($(this.nameToolTip), 0, {alpha:1});
-        //         $("#" + this.nameToolTip.id + " .toolTipPrompt").css("pointer-events", "auto");
-        //     } else {
-        //         clearTimeout(this.dragLabelTimer);
-        //         var _this = this;
-        //         this.dragLabelTimer = setTimeout(function() {
-        //             _this.hideTooltip();
-        //             _this = null;
-        //         }, 2000);
-        //     }
-
-        //     this.removeDragHandler
-        //     // this.legendsView.style.pointerEvents = "auto";
+        //     var polygonBounds = eleTag.getBoundingClientRect();
+        //     polygonBounds = this.convertBoundingRect(polygonBounds);
+        //     JMap.fire('SHOW_DESTINATION', nearLocations);
         //     this.isZooming =  false;
         // };
 
-        Floor.prototype.removeDragHandler = function() {
-            $('#svg-' + this.id).off("touchstart");
-            $(window).off("mouseup");
-            $(".legendItem").off("click");
-        };
+        // Floor.prototype.showWaypointSVG = function(x,y) {
+        // 	console.log("Show wp svg");
+        //     var globalPoint = this.mapToGlobal(x, y);
+        //     var eleTag = document.elementFromPoint(globalPoint.x, globalPoint.y);
+        //     if(eleTag.tagName != "polygon" && eleTag.tagName != "rect" && eleTag.tagName != "path") {
+        //         // console.log(eleTag);
+        //         return;
+        //     }
 
-        Floor.prototype.mapToGlobal = function(x, y) {
+        //     var $body = $('#svg-' + this.id).find('*');
+        //     // console.log($body)
+        //     for(var i = 0; i < $body.length; i++) {
+        //         if(eleTag != $body[i]) {
+        //             $body[i].style.fillOpacity = 0;
+        //         } else {
+        //             $body[i].style.fillOpacity = 0.5;
+        //             $body[i].style.fill = "#f19220";
+        //         }
+        //     }
+        // };
+
+        // Floor.prototype.removeDragHandler = function() {
+        //     $('#svg-' + this.id).off("touchstart");
+        //     $(window).off("mouseup");
+        //     $(".legendItem").off("click");
+        // };
+
+        // Floor.prototype.mapToGlobal = function(x, y) {
 
 
-            var mapObj = $(this.mapView);
-            var map_width = mapObj.width();
-            var map_height = mapObj.height();
-            var mapViewOffset = this.mapView.getBoundingClientRect();
+        //     var mapObj = $(this.mapView);
+        //     var map_width = mapObj.width();
+        //     var map_height = mapObj.height();
+        //     var mapViewOffset = this.mapView.getBoundingClientRect();
 
-            var actualMapWidth = mapViewOffset.width;
-            var actualMapHeight = mapViewOffset.height;
+        //     var actualMapWidth = mapViewOffset.width;
+        //     var actualMapHeight = mapViewOffset.height;
 
-            var newX = (x  *  (mapViewOffset.width / map_width));
-            var newY = (y  * (mapViewOffset.height / map_height));
+        //     var newX = (x  *  (mapViewOffset.width / map_width));
+        //     var newY = (y  * (mapViewOffset.height / map_height));
 
-            newX = newX + mapViewOffset.left;
-            newY = newY + mapViewOffset.top;
+        //     newX = newX + mapViewOffset.left;
+        //     newY = newY + mapViewOffset.top;
 
 
-            var returnObj = {"x":newX, "y":newY};
+        //     var returnObj = {"x":newX, "y":newY};
 
-            return returnObj;
-        };
+        //     return returnObj;
+        // };
 
 
 
@@ -3647,9 +3400,9 @@ var __extends = this.__extends || function (d, b) {
 
 
 
-        Floor.prototype.rebuildPath = function(){
-            // for(var i = 0, n = this.pathView.childNodes.length; i<n; i++)this.localToMap(this.pathView.childNodes[i]);
-        };
+        // Floor.prototype.rebuildPath = function(){
+        //     // for(var i = 0, n = this.pathView.childNodes.length; i<n; i++)this.localToMap(this.pathView.childNodes[i]);
+        // };
 
         
 
@@ -3753,46 +3506,46 @@ var __extends = this.__extends || function (d, b) {
             $(this.mapView).smoothZoom("removeLandmark", ["yah"]);
         };
 
-        Floor.prototype.convertBoundingRect = function(rect, local) {
-            var mapContainerOffset = $(this.mapView).offset();
-            var mapViewOffset = this.mapView.getBoundingClientRect();
-            var returnRect = {};
-            var mapObj = this.mapView;
-            var map_width = $(mapObj).width();
-            var map_height = $(mapObj).height();
-            // console.log(map_width,map_height);
-            //console.log(this.currentScale);
-            //console.log(mapViewOffset);
+        // Floor.prototype.convertBoundingRect = function(rect, local) {
+        //     var mapContainerOffset = $(this.mapView).offset();
+        //     var mapViewOffset = this.mapView.getBoundingClientRect();
+        //     var returnRect = {};
+        //     var mapObj = this.mapView;
+        //     var map_width = $(mapObj).width();
+        //     var map_height = $(mapObj).height();
+        //     // console.log(map_width,map_height);
+        //     //console.log(this.currentScale);
+        //     //console.log(mapViewOffset);
 
-            returnRect.width = rect.width / this.currentScale;
-            returnRect.height = rect.height / this.currentScale;
+        //     returnRect.width = rect.width / this.currentScale;
+        //     returnRect.height = rect.height / this.currentScale;
 
             
-            var actualMapWidth = mapViewOffset.width;
-            var actualMapHeight = mapViewOffset.height;
+        //     var actualMapWidth = mapViewOffset.width;
+        //     var actualMapHeight = mapViewOffset.height;
 
-            //console.log(mapViewOffset.top);
+        //     //console.log(mapViewOffset.top);
 
 
-            returnRect.top = (rect.top - mapViewOffset.top) / (mapViewOffset.height / map_height);
-            returnRect.bottom = (rect.bottom - (this.containerY) - mapContainerOffset.top);
-            returnRect.left = (rect.left - mapViewOffset.left) / (mapViewOffset.width / map_width);
-            returnRect.right = (rect.right - (this.containerX) - mapContainerOffset.left);
+        //     returnRect.top = (rect.top - mapViewOffset.top) / (mapViewOffset.height / map_height);
+        //     returnRect.bottom = (rect.bottom - (this.containerY) - mapContainerOffset.top);
+        //     returnRect.left = (rect.left - mapViewOffset.left) / (mapViewOffset.width / map_width);
+        //     returnRect.right = (rect.right - (this.containerX) - mapContainerOffset.left);
  
-            var mapObj = this.mapView;
-            var map_width = mapObj.getAttribute("data-width");
-            var map_height = mapObj.getAttribute("data-height");
+        //     var mapObj = this.mapView;
+        //     var map_width = mapObj.getAttribute("data-width");
+        //     var map_height = mapObj.getAttribute("data-height");
 
-            //var mapSizeDiffWidth = (map_width * (this.currentScale)) - map_width;
-            //var mapSizeDiffHeight = (map_height * (this.currentScale)) - map_height;
+        //     //var mapSizeDiffWidth = (map_width * (this.currentScale)) - map_width;
+        //     //var mapSizeDiffHeight = (map_height * (this.currentScale)) - map_height;
 
-            //var mapCoor = this.mapToGlobal(returnRect.left, returnRect.top);
-            returnRect.left = (returnRect.left);
-            returnRect.top = (returnRect.top);
+        //     //var mapCoor = this.mapToGlobal(returnRect.left, returnRect.top);
+        //     returnRect.left = (returnRect.left);
+        //     returnRect.top = (returnRect.top);
    
 
-            return returnRect;
-        };
+        //     return returnRect;
+        // };
 
 
 
