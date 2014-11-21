@@ -1374,6 +1374,9 @@ var __extends = this.__extends || function (d, b) {
 	        	
 	    		addedStyles += this.generatePathStyle(pathStyle);    	
 
+	    		addedStyles += "svg text {overflow:hidden}"
+
+
 	        	addedStyles += "</style>";
 	        	$("body").append(addedStyles);
         	}catch(e){
@@ -2107,7 +2110,8 @@ var __extends = this.__extends || function (d, b) {
     	}
 
     	var pStyle = this.styles.mapStyles.pathStyles;
-    	var pathData = this.pathProcessor.compile(JMap.storage.maps.model.findWay(this.destYah, JMap.storage.maps.model.getWPByJid(destinationId)), destination.name);
+    	var AllData = this.pathProcessor.compileForExport(JMap.storage.maps.model.findWay(this.destYah, JMap.storage.maps.model.getWPByJid(destinationId)), destination.name);
+    	var pathData = AllData.pathData;
 
     	for(var i =0; i < pathData.length; i++){
     		var dataObj = {};
@@ -2116,6 +2120,14 @@ var __extends = this.__extends || function (d, b) {
     		var currFloor = this.floors[pathData[i].mapid];
     		var $svgOrig = $("#svg-" + currFloor.id).find("svg");
     		var svgHtml = $svgOrig.html();
+    		// for (var i = 0; i < currFloor.excludeLayers.length; i++) {
+    		// 	var st = svgHtml.indexOf('<g id="' +  currFloor.excludeLayers[i] + '"');
+    		// 	var lt = svgHtml.indexOf("</g>", st + 1);
+    		// 	console.log(st, lt);
+
+    		// };
+
+
 
 			var newSVG = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
 
@@ -2236,7 +2248,7 @@ var __extends = this.__extends || function (d, b) {
 
 
 
-    	return returnValue;
+    	return {svgs:returnValue, textDirections:AllData.textDirections};
 
 
     };
@@ -2298,6 +2310,20 @@ var __extends = this.__extends || function (d, b) {
             }
             JMap.fire("onTextDirections", [dt.textArrayData, dest]);
             return p_data;
+        };
+
+        PathProcessor.prototype.compileForExport = function(data, dest, steps){
+            var dt = this.processDirections(data);
+
+            var p_data = dt.points;
+
+            for(var i = 0, len = p_data.length; i < len; i++){
+                p_data[i].steps = this.breakToSteps(p_data[i].points, steps?steps:20);
+                p_data[i].svgPath = this.convertSVG(p_data[i].points);
+
+            }
+
+            return {pathData:p_data, textDirections:dt.textArrayData};
         };
 
         PathProcessor.prototype.breakToSteps = function (points, step) {
@@ -2737,6 +2763,8 @@ var __extends = this.__extends || function (d, b) {
 
 
 					if(currentStyle.clickable == true){
+						var isDragging = false;
+
 						$(p).on("touchstart", function(){
 							var lbl = undefined;
 							var prnt = $(this);
@@ -2746,10 +2774,20 @@ var __extends = this.__extends || function (d, b) {
 								if(prnt.prop("tagName") == "DIV") break;
 							}
 							$(this).css("fill", _this.styleRef[lbl].highLightColor);
+
+							var _polyThis = this;
+							this.addEventListener("touchend", onTouchEnd);
+							$(window).on("touchmove", function(evt){
+								console.log(evt);
+								_polyThis.removeEventListener("touchend", onTouchEnd);
+								$(window).off("touchmove");
+							});
+
 						});
 
-
+					
 						$(p).on("touchend", function(){
+							$(window).off("touchdrag");
 							lbl = undefined;
 							var prnt = $(this);
 							while(lbl == undefined) {
@@ -2761,7 +2799,8 @@ var __extends = this.__extends || function (d, b) {
 
 						});
 
-						p.addEventListener("touchend", function(evt){
+
+						function onTouchEnd(evt){
 						// $(p).on("click", function(evt){
 							if(this.tagName == "g")return;
 							var d = _this.getDestinationWithinBounds(this, evt);
@@ -2769,7 +2808,7 @@ var __extends = this.__extends || function (d, b) {
 							if(!d)return;
 							JMap.fire("SHOW_DESTINATION", [d]);
 							_this.showCard(d);
-						});
+						};
 
 
 					}
@@ -2786,6 +2825,7 @@ var __extends = this.__extends || function (d, b) {
         Floor.prototype.prepareLabels = function(){
         	this.destinations = JMap.getDestinationsByFloorId(this.id);
         	this.customBounds = this.styles.mapStyles.storeLabelBounds[this.sequence];
+        	this.excludeLayers = [];
 			if(!this.customBounds)this.customBounds = [];
 
             function getDistance(p1, p2) {return Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2));};
@@ -2861,7 +2901,6 @@ var __extends = this.__extends || function (d, b) {
         // };
 
         Floor.prototype.setCustomBounds = function(data){
-        	console.log("Bounds", data);
         	this.customBounds = data;
         	this.setStoreLabels();
         };
@@ -2898,10 +2937,14 @@ var __extends = this.__extends || function (d, b) {
 			return false;
         };
 
+        Floor.prototype.getCenterOfBounds = function(bounds){
+        	return {x: bounds.x + (bounds.width/2) ,y:bounds.y + (bounds.height / 2)}
+        };
+
         	
         Floor.prototype.setStoreLabels = function(groupPar){
 
-        	return;
+
         	for (var i = 0; i < this.customBounds.length; i++) if(this.customBounds[i].polygons === undefined)this.customBounds[i].polygons = [];
         	for (var i = 0; i < this.destinations.length; i++) if(this.destinations[i].polygons === undefined)this.destinations[i].polygons = [];
 
@@ -2924,47 +2967,82 @@ var __extends = this.__extends || function (d, b) {
 
         	};
 
+            function getDistance(p1, p2) {return Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2));};
+
+        	for (i = 0; i < this.destinations.length; i++) {
+    			if(this.destinations[i].polygons.length > 1){
+    				var currentClosest = this.destinations[i].polygons;
+    				for (k = 1; k < this.destinations[i].polygons.length; k++) {
+    					if(getDistance(this.destinations[i].polygons[k], this.destinations[i].wp) < getDistance(currentClosest, this.destinations[i].wp)){
+    						currentClosest = this.destinations[i].polygons[k];
+    					} 
+    				};
+    				this.destinations[i].centerPolygon = currentClosest;
+    			}else{
+    				this.destinations[i].centerPolygon = this.destinations[i].polygons[0];
+    			}
+    		};
+
+
         	var c = 0;
 
 			var newGroup = document.createElementNS("http://www.w3.org/2000/svg", 'g');
 			newGroup.id = groupPar.name +  "-labels-" + this.id;
+        	this.excludeLayers.push(newGroup.id);
+
+
+			var d3Group = d3.select(newGroup);
 
 			var svg = document.getElementById("L" + (this.sequence + 1).toString());
 
+			var pixelWidthThreshold = 7;
+
         	for(i = 0; i < this.destinations.length; i ++){
-        		for(k = 0; k < this.destinations[i].polygons.length; k++ ){
-        			if($(this.destinations[i].polygons[k]).parent().attr("id") == groupPar.name){
+        		// for(k = 0; k < this.destinations[i].polygons.length; k++ ){
+        			if(!this.destinations[i].centerPolygon)continue;
         				var textElement = document.c
-        				if(this.destination[i].hasCustomBounds == true){
+        				var textF;
+        				var destName = this.destinations[i].name.split("&amp;").join("&");
+
+        				if(this.destinations[i].hasCustomBounds == true){
         					//do custom bounds here
+        					var cb = this.destinations[i].customBounds;
+        					if(cb.type == "line"){
+        						//drawline
+        					}
+        					if(destName.length * pixelWidthThreshold > cb.width){
+
+        						// console.log(destName + " Overlap hasCustom");
+        						// debugger;
+        					}
+        					console.log(destName, cb.type);
+        					textF = d3Group.append("text").attr("x",cb.x + this.positionOffset.x).attr("y",cb.y + this.positionOffset.y).attr("width",cb.width).attr("height",cb.height).attr("font-size",9).attr("color","#f00").attr("text-anchor","middle").text(destName);
+
         				}else{
-        					var bd = this.getBoundsOfPoly(this.destinations.polygons[k]);
-
-							var txtElem = document.createElementNS("http://www.w3.org/2000/svg", "text");
-							 
-							txtElem.setAttribute("x",bd.x);
-							txtElem.setAttribute("y",bd.y);
-							txtElem.setAttribute("width",bd.width);
-							txtElem.setAttribute("height",bd.height);
-							txtElem.setAttribute("font-size",15);
-							txtElem.setAttribute("color","#fff");
-							txtElem.setAttribute("text-anchor","middle");
-
-							var helloTxt = document.createTextNode(this.destinations[i].name);
-							txtElem.appendChild(helloTxt)
-							 
-
+        					var bd = this.getBoundsOfPoly(this.destinations[i].centerPolygon);
+        					if(!bd.x)continue;
+        					var center = this.getCenterOfBounds(bd);
+        					if(destName.length * pixelWidthThreshold > bd.width){
+        						// console.log(destName + " Overlap");
+        					}else{
+								textF = d3Group.append("text").attr("x",center.x).attr("y",center.y).attr("width",bd.width).attr("height",bd.height).attr("font-size",9).attr("color","#fff").attr("text-anchor","middle").text(destName);
+        					}
+							// if($(textF).width() > bd.width)console.log("OVERLAP", this.destinations[i].name);
         				}
         				c++;
+
+        			if($(this.destinations[i].centerPolygon).parent().attr("id") != groupPar.name){
+        				d3Group.remove(textF);
         			}
-        		}
+        		// }
         	}
 
-			newGroup.appendChild(txtElem);
+        	
+			// newGroup.appendChild(txtElem);
 			svg.appendChild(newGroup);
 
 
-        	console.log(groupPar.name + " has " + c + " stores that need labels");
+        	// console.log(groupPar.name + " has " + c + " stores that need labels");
 				
 
 

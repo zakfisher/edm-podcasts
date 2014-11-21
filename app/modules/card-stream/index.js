@@ -13,7 +13,9 @@ module.exports = angular.module("CardStream", [])
   self.setStore = function (store) {
     self.currentStore = store;
     var jibestreamStore = JMap.getDestinationByClientId(store.id.toString());
-    self.currentStore.maps = JMap.storage.maps.building.getMapsWithDirections(store.id.toString());
+    var data = JMap.storage.maps.building.getMapsWithDirections(store.id.toString());
+    self.currentStore.textDirections = data.textDirections;
+    self.currentStore.maps = data.svgs;
     console.log(self.currentStore.maps);
     var related = StoreService.getRelatedStoresOf(store);
   };
