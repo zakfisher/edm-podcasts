@@ -2118,10 +2118,14 @@ var __extends = this.__extends || function (d, b) {
     		var svgHtml = $svgOrig.html();
 
 			var newSVG = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
+
 			newSVG.innerHTML = svgHtml;
-			newSVG.setAttribute("version" , "1.1");
-			newSVG.setAttribute("x" , "0");
-			newSVG.setAttribute("y" , "0");
+			newSVG.setAttributeNS("http://www.w3.org/2000/svg","version" , "1.1");
+			newSVG.setAttributeNS("http://www.w3.org/2000/svg", "x" , "0");
+			newSVG.setAttributeNS("http://www.w3.org/2000/svg", "y" , "0");
+			newSVG.setAttribute("xmlns" , "http://www.w3.org/2000/svg");
+			newSVG.setAttribute("xmlns:xlink" , "http://www.w3.org/1999/xlink");
+			newSVG.setAttribute("xml:space" , "preserve");
 
 			var newGroup = document.createElementNS("http://www.w3.org/2000/svg", 'g');
 			newGroup.id = "pathLayer-" + currFloor.id;
@@ -2145,9 +2149,11 @@ var __extends = this.__extends || function (d, b) {
 			var bounds = d3.select(newElement).node().getBBox();
 			var bounds2 = this.getBoundsOfPath(pathData[i].originalPoints);
 
-			newSVG.setAttribute("viewbox", (bounds2.x - 75) + " " + (bounds2.y - 75)+ " " + bounds2.width + " " + bounds2.height);
-
 			var wGh = bounds2.width > bounds2.height?bounds2.width:bounds2.height;
+
+			newSVG.setAttributeNS("http://www.w3.org/2000/svg", "viewbox", (bounds2.x - 75) + " " + (bounds2.y - 75)+ " " + (wGh + 150)   + " " + (wGh + 150));
+			newSVG.setAttributeNS("http://www.w3.org/2000/svg", "enable-background", "new " + (bounds2.x - 75) + " " + (bounds2.y - 75)+ " " + (wGh + 150)   + " " + (wGh + 150));
+
 
 			// newSVG.setAttribute("width", bounds2.width);
 			// newSVG.setAttribute("height" , bounds2.height);
@@ -2182,7 +2188,7 @@ var __extends = this.__extends || function (d, b) {
 						startImg.setAttribute("y", startpoint.y + positionOffset.y - parseInt(iconStyles.youarehere.offset.y.substr(0, iconStyles.youarehere.offset.y.length - 2)));
 
 						//mover
-						endImg.setAttribute("xlink:href", pathData[0].imagePath);
+						endImg.setAttribute("xlink:href", JMap.serverUrl +  pathData[0].mover.imagePath);
 						endImg.setAttribute("x", endpoint.x + positionOffset.x - parseInt(iconStyles.movers.offset.x.substr(0, iconStyles.movers.offset.x.length - 2)));
 						endImg.setAttribute("y", endpoint.y + positionOffset.y - parseInt(iconStyles.movers.offset.y.substr(0, iconStyles.movers.offset.y.length - 2)));
 
@@ -2192,7 +2198,7 @@ var __extends = this.__extends || function (d, b) {
 						
 
 						//mover
-						startImg.setAttribute("xlink:href", pathData[0].imagePath);
+						startImg.setAttribute("xlink:href", JMap.serverUrl + pathData[0].mover.imagePath);
 						startImg.setAttribute("x", startpoint.x + positionOffset.x - parseInt(iconStyles.movers.offset.x.substr(0, iconStyles.movers.offset.x.length - 2)));
 						startImg.setAttribute("y", startpoint.y + positionOffset.y - parseInt(iconStyles.movers.offset.y.substr(0, iconStyles.movers.offset.y.length - 2)));
 
@@ -2221,9 +2227,11 @@ var __extends = this.__extends || function (d, b) {
 			newSVG.appendChild(startImg);
 			newSVG.appendChild(endImg);
 
-			returnValue.push(newSVG);
 
-    		// debugger;
+
+			returnValue.push($('<?xml version="1.0" encoding="utf-8" ?>' + newSVG.outerHTML));
+
+    		debugger;
 
     	}
 
@@ -2808,20 +2816,20 @@ var __extends = this.__extends || function (d, b) {
 
 
 
-        Floor.prototype.getCenterOfBounds = function(bounds){
-        	var scOffSet = 860/1920;
-        	bounds = {x:bounds.x*scOffSet,y:bounds.y*scOffSet,width:bounds.width*scOffSet,height:bounds.height*scOffSet};
-        	return {x: bounds.x + (bounds.width/2) ,y:bounds.y + (bounds.height / 2)}
-        };
+        // Floor.prototype.getCenterOfBounds = function(bounds){
+        // 	var scOffSet = 860/1920;
+        // 	bounds = {x:bounds.x*scOffSet,y:bounds.y*scOffSet,width:bounds.width*scOffSet,height:bounds.height*scOffSet};
+        // 	return {x: bounds.x + (bounds.width/2) ,y:bounds.y + (bounds.height / 2)}
+        // };
 
-        Floor.prototype.checkStoreBounds = function(){
-        	var bnds = this.styles.mapStyles.storeLabelBounds[this.sequence];
-            if(bnds){
-            	$.get(bnds, null, $.proxy(this.setCustomBounds, this));
-            }else{
-            	this.setStoreLabels();
-            }
-        };
+        // Floor.prototype.checkStoreBounds = function(){
+        // 	var bnds = this.styles.mapStyles.storeLabelBounds[this.sequence];
+        //     if(bnds){
+        //     	$.get(bnds, null, $.proxy(this.setCustomBounds, this));
+        //     }else{
+        //     	this.setStoreLabels();
+        //     }
+        // };
 
         Floor.prototype.setCustomBounds = function(data){
         	console.log("Bounds", data);
@@ -2832,6 +2840,7 @@ var __extends = this.__extends || function (d, b) {
         Floor.prototype.isPointInBounds = function(point, poly){
         	var pd = d3.select(poly);
         	var bb = pd.node().getBBox();
+        	// console.log(point, bb);
 
         	if(point.x > bb.x && point.x < (bb.x + bb.width) && point.y > bb.y && point.y < (bb.y + bb.height)){
 				return true;
@@ -2841,8 +2850,6 @@ var __extends = this.__extends || function (d, b) {
         };
         	
         Floor.prototype.setStoreLabels = function(groupPar){
-        	return;
-
         	this.destinations = JMap.getDestinationsByFloorId(this.id);
         	this.customBounds = this.styles.mapStyles.storeLabelBounds[this.sequence];
         	if(!this.customBounds)this.customBounds = [];
@@ -2851,17 +2858,23 @@ var __extends = this.__extends || function (d, b) {
 
 
         	//All polygons that have boundaries containing the custom bounds' origin point
-        	for (var i = 0; i < this.customBounds.length; i++) {
-        		this.customBounds[i].polygons = [];
-        		for(var k = 0; k < groupPar.group.length; k++){
-        			if(this.isPointInBounds({x:this.customBounds[i]["origin-x"] + this.positionOffset.x, y:this.customBounds[i]["origin-y"] + this.positionOffset.y}, groupPar.group[k])){
-        				this.customBounds[i].polygons.push(groupPar.group[k]);
+        	for(var k = 0; k < groupPar.group.length; k++){
+        		for (var i = 0; i < this.customBounds.length; i++) {
+        		if(!this.customBounds[i].polygons)this.customBounds[i].polygons = [];
+        		// var g  = groupPar.group;
+
+        			if(groupPar.group[k].tagName == "g" || groupPar.group[k].tagName == "path"){
+        				//is group
+        			}else{
+		    			if(this.isPointInBounds({x:this.customBounds[i]["origin-x"] + this.positionOffset.x, y:this.customBounds[i]["origin-y"] + this.positionOffset.y}, groupPar.group[k])){
+		    				this.customBounds[i].polygons.push(groupPar.group[k]);
+		    			}
         			}
         		};
         	};
 
 
-        	debugger;
+        	// debugger;
 
         	for(var i = 0; i < groupPar.group.length; i++){
 			
@@ -2876,7 +2889,7 @@ var __extends = this.__extends || function (d, b) {
         	// for(var i = 0; i < groupPar.group.length; i++){
 
         		var g = groupPar.group[i];
-        		var dtn = this.getDestinationWithinBoundsStatic(g);
+        		var dtn = this.getLPosWithinBounds(g);
         	
         	// for(var i = 0; i < this.destinations.length; i++){
     //     		var dtn = this.destinations[i];
