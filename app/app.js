@@ -24,6 +24,7 @@ var app = angular.module('wfWayfinding', [
   // '.name' is provided by angular.module, index.js is picked up as the included file
   require('./modules/map').name,
   require('./modules/largescreen').name,
+  require('./modules/largescreen-sidebar').name,
   require('./modules/dining').name,
   require('./modules/search').name,
   require('./modules/shopping').name,
