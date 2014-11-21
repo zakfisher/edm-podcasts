@@ -1,6 +1,6 @@
 module.exports = angular.module("CardStream", [])
 
-.service("CardStream", function ($famous) {
+.service("CardStream", function ($famous, Map) {
   var self = {};
 
   var Transitionable = $famous['famous/transitions/Transitionable'];
@@ -12,11 +12,14 @@ module.exports = angular.module("CardStream", [])
 
   self.setStore = function (store) {
     self.currentStore = store;
+    var jibestreamStore = JMap.getDestinationByClientId(store.id.toString());
+    self.currentStore.maps = JMap.storage.maps.building.getMapsWithDirections(store.id.toString());
+    console.log(self.currentStore.maps);
   };
 
   self.show = function () {
     self.shown = true;
-    self.boxTransitionable.set([0, 0, 100], {
+    self.boxTransitionable.set([0, 0, 50], {
       duration: 500,
       curve: Easing.inOutBack
     }, function () {
@@ -28,12 +31,11 @@ module.exports = angular.module("CardStream", [])
     if (!self.shownDone) {
       return false;
     }
-    self.boxTransitionable.set([0, 0, 20], {
+    self.boxTransitionable.set([0, 0, 0], {
       duration: 500,
       curve: Easing.inOutBack
     }, function () {
       self.shown = false;
-      self.shownDone = false;
       self.applyScope();
     });
   };
@@ -47,13 +49,40 @@ module.exports = angular.module("CardStream", [])
   return self;
 })
 
+.directive("injectSvg", function () {
+  return {
+    restrict: "E",
+    template: "<span></span>",
+    replace: true,
+    scope: {
+      svgElement: "=element"
+    },
+    controller: function ($scope, $element) {
+      console.log("svg element", $scope.svgElement);
+      $element.append($scope.svgElement);
+    }
+  };
+})
+
 .directive("cardStream", function (CardStream) {
   return {
     restrict: "E",
     template: require('./card-stream.html'),
-    controller: function ($scope) {
+    controller: function ($scope, $element) {
       $scope.cardStream = CardStream;
       $scope.cardStream.scope = $scope;
+      var mapsContainer = $element.find('.maps');
+
+      $scope.$watch('cardStream.currentStore.maps', function (a, b) {
+        console.log('new maps', mapsContainer, a);
+        if (a !== b) {
+          // mapsContainer.empty();
+          a.forEach(function (map) {
+            mapsContainer.append(map);
+          });
+          console.log(mapsContainer[0]);
+        }
+      });
 
     }
   };
