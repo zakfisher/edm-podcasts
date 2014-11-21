@@ -145,6 +145,16 @@ g.active .key-background {
 #popup-render-container {
   display: none; }
 
+.miniMap {
+  width: 300px;
+  height: 300px;
+  margin-right: 10px;
+  border: 1px solid black;
+  float: left; }
+  .miniMap svg {
+    max-width: 300px;
+    max-height: 300px; }
+
 .large-directory-card {
   -webkit-border-bottom-right-radius: 15px;
   -webkit-border-bottom-left-radius: 15px;

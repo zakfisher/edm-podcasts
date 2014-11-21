@@ -1,14 +1,16 @@
 // Jibestream Integration
 module.exports = angular.module('JibestreamMap', [])
 
-.run(function (Preloader, StoreService, CardStream, $rootScope) {
+.run(function (Preloader, StoreService, CardStream, $rootScope, Map) {
   // Preload maps api data
   var JMapInitTask = Preloader.createTask("Jibestream Bootstrap");
   JMap.initMapsStandAlone("http://jibestream2.cloudapp.net:8082", {
     deviceId: 126092,
     languageCode: "en"
   });
-  JMap.addListener("StandAloneMapsReady", JMapInitTask.resolve);
+  JMap.addListener("StandAloneMapsReady", function () {
+    JMapInitTask.resolve();
+  });
 
   var JMapConfigTask = Preloader.createTask("Load Jibestream Config");
   $.ajax({
@@ -36,19 +38,45 @@ module.exports = angular.module('JibestreamMap', [])
   // @todo change this to the event when clicking on the map
   JMap.addListener("SHOW_DESTINATION", showStoreCardFromDestination);
 
+  //Only show map on map view. @todo unhack this
+  $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+    if (toState.name === 'kioskmap') {
+      Map.show();
+    } else {
+      Map.hide();
+    }
+  });
+
 })
 
-.controller('JibestreamMapController', function ($scope, $element, CardStream, StoreService) {
+.service('Map', function ($rootScope) {
+  var self = {};
+  self.building = false;
+
+  self.setBuilding = function (building) {
+    self.building = building;
+  };
+
+  self.reset = function () {
+    self.building.resetAllMaps();
+  };
+
+  self.show = function () {
+    $rootScope.mapShow = true;
+  };
+
+  self.hide = function () {
+    $rootScope.mapShow = false;
+  };
+
+  return self;
+
+})
+
+.controller('JibestreamMapController', function ($scope, $element, CardStream, StoreService, Map) {
   var mapObject = new JMap.Building($element.find(".map-container"), $element.offsetWidth, $element.offsetHeight, JMap._stylingData);
   mapObject.setDefaultLocation();
-  window.mo = mapObject;
-  /*Exposed Calls*/
-  function resetMap() {
-    mapObject.resetAllMaps();
-  }
-
-  // mapObject.showCustomPopupDestination(JMap.getDestinationByClientId("7700"), $("#popup-render-container").html());
-
+  Map.setBuilding(mapObject);
 })
 
 .directive('jmap', function () {
