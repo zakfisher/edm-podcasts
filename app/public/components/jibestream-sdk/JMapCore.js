@@ -1262,6 +1262,83 @@ var JMap = {
 };
 
 
+JMap.ui = {};
+JMap.clickbuster = {};
+
+JMap.ui.FastButton = function(element, handler) {
+  this.element = element;
+  this.handler = handler;
+
+  element.addEventListener('touchstart', this, false);
+  element.addEventListener('click', this, false);
+};
+
+JMap.ui.FastButton.prototype.handleEvent = function(event) {
+  switch (event.type) {
+    case 'touchstart': this.onTouchStart(event); break;
+    case 'touchmove': this.onTouchMove(event); break;
+    case 'touchend': this.onClick(event); break;
+    case 'click': this.onClick(event); break;
+  }
+};
+
+JMap.ui.FastButton.prototype.onTouchStart = function(event) {
+  event.stopPropagation();
+
+  this.element.addEventListener('touchend', this, false);
+  document.body.addEventListener('touchmove', this, false);
+
+  this.startX = event.touches[0].clientX;
+  this.startY = event.touches[0].clientY;
+};
+
+JMap.ui.FastButton.prototype.onTouchMove = function(event) {
+  if (Math.abs(event.touches[0].clientX - this.startX) > 10 ||
+      Math.abs(event.touches[0].clientY - this.startY) > 10) {
+    this.reset();
+  }
+};
+
+JMap.ui.FastButton.prototype.onClick = function(event) {
+  event.stopPropagation();
+  this.reset();
+  this.handler(event);
+
+  if (event.type == 'touchend') {
+    JMap.clickbuster.preventGhostClick(this.startX, this.startY);
+  }
+};
+
+JMap.ui.FastButton.prototype.reset = function() {
+  this.element.removeEventListener('touchend', this, false);
+  document.body.removeEventListener('touchmove', this, false);
+};
+
+JMap.clickbuster.preventGhostClick = function(x, y) {
+  JMap.clickbuster.coordinates.push(x, y);
+  window.setTimeout(JMap.clickbuster.pop, 2500);
+};
+
+JMap.clickbuster.pop = function() {
+  JMap.clickbuster.coordinates.splice(0, 2);
+};
+
+JMap.clickbuster.onClick = function(event) {
+  for (var i = 0; i < JMap.clickbuster.coordinates.length; i += 2) {
+    var x = JMap.clickbuster.coordinates[i];
+    var y = JMap.clickbuster.coordinates[i + 1];
+    if (Math.abs(event.clientX - x) < 25 && Math.abs(event.clientY - y) < 25) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+  }
+};
+
+document.addEventListener('click', JMap.clickbuster.onClick, true);
+JMap.clickbuster.coordinates = [];
+
+
+
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -2739,6 +2816,7 @@ var __extends = this.__extends || function (d, b) {
 			var _this = this;
 
 			this.prepareLabels();
+			this.startCoord ={};
 
 
 			//-----------------------
@@ -2751,6 +2829,7 @@ var __extends = this.__extends || function (d, b) {
 				if(currentStyle.addLabel == true){
 					this.setStoreLabels(currentStyle);
 				}
+
 
 				for(var j = 0; j < $group.length; j++){
 					var p = $group[j];
@@ -2765,7 +2844,17 @@ var __extends = this.__extends || function (d, b) {
 					if(currentStyle.clickable == true){
 						var isDragging = false;
 
-						$(p).on("touchstart", function(){
+						// var clickPoly = new JMap.ui.FastButton(p, onTouchEndPoly);
+
+						// p.addEventListener("touchstart", function(e){
+						$(p).on("touchstart", function(e){
+							console.log("Start", e);
+						// function onTouchStartPoly(){
+							// _this.startCoord.startX = e.touches[0].clientX;
+							// _this.startCoord.startY = e.touches[0].clientY;
+
+							_this.startCoord.startX = e.originalEvent.changedTouches[0].clientX;
+							_this.startCoord.startY = e.originalEvent.changedTouches[0].clientY;
 							var lbl = undefined;
 							var prnt = $(this);
 							while(lbl == undefined) {
@@ -2775,13 +2864,9 @@ var __extends = this.__extends || function (d, b) {
 							}
 							$(this).css("fill", _this.styleRef[lbl].highLightColor);
 
-							var _polyThis = this;
-							this.addEventListener("touchend", onTouchEnd);
-							$(window).on("touchmove", function(evt){
-								console.log(evt);
-								_polyThis.removeEventListener("touchend", onTouchEnd);
-								$(window).off("touchmove");
-							});
+
+
+							// var _polyThis = this;
 
 						});
 
@@ -2799,8 +2884,21 @@ var __extends = this.__extends || function (d, b) {
 
 						});
 
+							// $(window).on("touchmove", function(evt){
+							// 	console.log(evt);
+							// 	_polyThis.removeEventListener("touchend", onTouchEnd);
+							// 	$(window).off("touchmove");
+							// });
 
-						function onTouchEnd(evt){
+						p.addEventListener("touchend", onTouchEndPoly);
+
+						function onTouchEndPoly(evt){
+							console.log(evt);
+
+							console.log(_this.startCoord,  evt.changedTouches[0].clientX - _this.startCoord.startX , evt.changedTouches[0].clientY - _this.startCoord.startY );
+							if(evt.changedTouches[0].clientX - _this.startCoord.startX > 10 || evt.changedTouches[0].clientY - _this.startCoord.startY > 10){
+								return;
+							}
 						// $(p).on("click", function(evt){
 							if(this.tagName == "g")return;
 							var d = _this.getDestinationWithinBounds(this, evt);
@@ -3004,31 +3102,37 @@ var __extends = this.__extends || function (d, b) {
         				var textF;
         				var destName = this.destinations[i].name.split("&amp;").join("&");
 
-        				if(this.destinations[i].hasCustomBounds == true){
-        					//do custom bounds here
-        					var cb = this.destinations[i].customBounds;
-        					if(cb.type == "line"){
-        						//drawline
-        					}
-        					if(destName.length * pixelWidthThreshold > cb.width){
+        				// if(this.destinations[i].hasCustomBounds == true){
+        				// 	//do custom bounds here
+        				// 	var cb = this.destinations[i].customBounds;
+        				// 	var clr = "#00f";
+        				// 	if(cb.type == "line"){
+        				// 		//drawline
+        				// 		clr = "#f00"
+        				// 	}
+        				// 	// if(destName.length * pixelWidthThreshold > cb.width){
 
-        						// console.log(destName + " Overlap hasCustom");
-        						// debugger;
-        					}
-        					console.log(destName, cb.type);
-        					textF = d3Group.append("text").attr("x",cb.x + this.positionOffset.x).attr("y",cb.y + this.positionOffset.y).attr("width",cb.width).attr("height",cb.height).attr("font-size",9).attr("color","#f00").attr("text-anchor","middle").text(destName);
+        				// 		// console.log(destName + " Overlap hasCustom");
+        				// 		// debugger;
+        				// 		d3Group.append("circle").attr("x",cb.x + this.positionOffset.x).attr("y",cb.y + this.positionOffset.y).attr("width",2).attr("height",2).attr("fill","#f00");
+        				// 		d3Group.append("circle").attr("x",cb["origin-x"] + this.positionOffset.x).attr("y",cb["origin-y"] + this.positionOffset.y).attr("width",2).attr("height",2).attr("fill","#0f0");
+        				// 	    d3Group.append("rect").attr("x",cb.x + this.positionOffset.x).attr("y",cb.y + this.positionOffset.y).attr("width",cb.width).attr("height",cb.height).attr("stroke-width",1).attr("stroke", clr).attr("fill-opacity", 0.2).attr("stroke-opacity", 0.5);//fill-opacity:0.1;stroke-opacity:0.9
 
-        				}else{
+        				// 	// }
+        				// 	console.log(destName, cb.type);
+        				// 	textF = d3Group.append("text").attr("x",cb.x + this.positionOffset.x).attr("y",cb.y + this.positionOffset.y).attr("width",cb.width).attr("height",cb.height).attr("font-size",9).attr("fill","#f00").attr("text-anchor","middle").text(destName);
+
+        				// }else{
         					var bd = this.getBoundsOfPoly(this.destinations[i].centerPolygon);
         					if(!bd.x)continue;
         					var center = this.getCenterOfBounds(bd);
-        					if(destName.length * pixelWidthThreshold > bd.width){
-        						// console.log(destName + " Overlap");
-        					}else{
-								textF = d3Group.append("text").attr("x",center.x).attr("y",center.y).attr("width",bd.width).attr("height",bd.height).attr("font-size",9).attr("color","#fff").attr("text-anchor","middle").text(destName);
-        					}
+        					// if(destName.length * pixelWidthThreshold > bd.width){
+        					// 	// console.log(destName + " Overlap");
+        					// }else{
+								textF = d3Group.append("text").attr("x",center.x).attr("y",center.y).attr("width",bd.width).attr("height",bd.height).attr("font-size",9).attr("fill","#000").attr("text-anchor","middle").text(destName);
+        					// }
 							// if($(textF).width() > bd.width)console.log("OVERLAP", this.destinations[i].name);
-        				}
+        				// }
         				c++;
 
         			if($(this.destinations[i].centerPolygon).parent().attr("id") != groupPar.name){
@@ -3040,6 +3144,7 @@ var __extends = this.__extends || function (d, b) {
         	
 			// newGroup.appendChild(txtElem);
 			svg.appendChild(newGroup);
+			$(newGroup).css("pointer-events", "none");
 
 
         	// console.log(groupPar.name + " has " + c + " stores that need labels");
@@ -3165,6 +3270,7 @@ var __extends = this.__extends || function (d, b) {
             if(!zoomData)return;
             var currentScale = zoomData.ratio *100;
             for (var i = 0; i < this.styles.mapStyles.mapLayers.length; i++) {
+            	if(this.styles.mapStyles.mapLayers[i].zoomLevel == 0)continue;
             	var zoomAlpha = 1;
             	if(this.styles.mapStyles.mapLayers[i].zoomLevel < currentScale)zoomAlpha = 1;
             	else zoomAlpha = 0;

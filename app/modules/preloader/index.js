@@ -41,7 +41,7 @@ module.exports = angular.module('LoadingScreen', [])
   }, 1);
 
   Preloader.whenFinished().then(function () {
-    $state.go(initialView);
+    $state.go("kioskmap");
     $rootScope.mapReady = true;
     KioskMenu.show();
   });
