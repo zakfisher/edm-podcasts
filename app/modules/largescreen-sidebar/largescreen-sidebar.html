@@ -1,14 +1,29 @@
-<fa-modifier fa-size="sidebar.sizeTransitionable.get()" fa-translate="sidebar.position">
+<fa-modifier fa-size="sidebar.size" fa-translate="sidebar.positionTransitionable.get()">
   <fa-view>
 
     <fa-modifier fa-size="menu.size">
-      <fa-surface class="sidebar-menu">
-        <h1>Content Here</h1>
-      </fa-surface>
+      <fa-surface class="sidebar-menu-bg"></fa-surface>
+      
+      <fa-modifier fa-size="content.size" fa-origin="content.origin" fa-align="content.alignment">
+
+        <fa-surface class="sidebar-menu-content">
+          <em>Select a category</em>
+          <ul>
+            <li ng-repeat="category in categories">{{category.name}}</li>
+          </ul>
+          <em>Select a floor</em>
+          <ul>
+            <li ng-repeat="floor in floors">Floor {{floor.level}}</li>
+          </ul>
+        </fa-surface>
+
+      </fa-modifier>
+
     </fa-modifier>
 
     <fa-modifier fa-size="btn.size" fa-origin="btn.origin" fa-align="btn.alignment" fa-rotate-z="btn.rotation">
-      <fa-surface class="sidebar-menu-btn txt-center">
+      <fa-surface class="sidebar-menu-btn txt-center" fa-click="sidebar.toggle()">
+        <div class="caret" ng-class="{up:!sidebar.active}"></div>
         <p>menu</p>
       </fa-surface>
     </fa-modifier>
