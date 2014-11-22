@@ -1,6 +1,8 @@
 // Generic + Base Styles
 // ----------------------------------------------------------------------
 
+
+
 body {
     margin: 0;
     font-family: 'FlamaCondensed', 'helvetica neue', 'helvetica', 'arial', 'sans';
@@ -175,6 +177,10 @@ webview {
   text-align: center;
 }
 
+.txt-reversed {
+  color: #fff !important;
+}
+
 .directoryStoreSurface {
   opacity: 0.9 !important;
 }
@@ -223,6 +229,29 @@ g.active {
 
 // Store Card
 // -----------------------------------------------------------------------
+
+.cardstream-card {
+  padding-bottom: 40px;
+  h2 {
+    background-color: #d7d0c7;
+    margin: 0;
+    padding: 10px 20px;
+  }
+}
+
+.related-card {
+  background-color: #d7d0c7;
+   h3 {
+    margin: 0;
+    padding: 5px 10px;
+  }
+}
+
+.light-title {
+  font-family: 'FlamaCondensed', 'helvetica neue', 'helvetica', 'arial', 'sans';
+  font-weight: 500;
+  text-transform: uppercase;
+}
 
 .miniMap {
   width: 300px;

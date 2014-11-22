@@ -1,19 +1,52 @@
-<fa-view ng-show="cardStream.show">
+<fa-view ng-if="cardStream.shown">
+
   <!-- Background overlay -->
-  <fa-modifier fa-translate="[0,0,10]" fa-opacity="0.25">
+  <fa-modifier fa-translate="[0,0,10]" fa-opacity="0.95">
     <fa-surface fa-background-color="'rgba(0,0,0,0.8)'" ng-if="cardStream.shown" fa-click="cardStream.hide()"></fa-surface>
   </fa-modifier>
 
-  <fa-modifier fa-size="[800, 1000]" fa-align="[0.5, 0.5]" fa-origin="[0.5, 0.5]" fa-scale="[0.7,0.7]" fa-translate="cardStream.boxTransitionable.get()">
-    <fa-surface fa-background-color="'#fff'" ng-if="cardStream.shown">
-      <div ng-if="cardStream.currentStore._links.store_front.href" style="background-size: cover; background-position: center; height: 15em; background-image: url({{cardStream.currentStore._links.store_front.href}});"></div>
-      <div style="padding: 3em">
-        <h3>{{cardStream.currentStore.name}}</h3>
-        <p>{{cardStream.currentStore.description}}</p>
-        <div class="miniMap" ng-repeat="map in cardStream.currentStore.maps">
-          <inject-svg element="map"></inject-svg>
-        </div>
-      </div>
-    </fa-surface>
+  <fa-modifier fa-size="[1000, 1000]" fa-align="[0.5, 0.5]" fa-origin="[0.5, 0.5]" fa-scale="[0.7,0.7]" fa-translate="cardStream.boxTransitionable.get()">
+    <fa-sequential-layout>
+      <fa-view>
+        <fa-modifier fa-size="[undefined, 1000]">
+          <fa-surface fa-background-color="'#fff'" class="cardstream-card">
+            <h2 class="light-title">{{cardStream.currentStore.name}}</h2>
+            <div style="background-size: cover; background-position: center; height: 15em; background-image: url({{cardStream.currentStore._links.store_front.href}}); background-color: #444;">
+            </div>
+            <div style="padding: 3em">
+              <p>Description: {{cardStream.currentStore.description}}</p>
+              <p>Level: {{cardStream.currentStore.level}}</p>
+              <p>Shop Number: {{cardStream.currentStore.shop_number}}</p>
+              <div class="miniMap" ng-repeat="map in cardStream.currentStore.maps">
+                <inject-svg element="map"></inject-svg>
+              </div>
+            </div>
+          </fa-surface>
+        </fa-modifier>
+      </fa-view>
+
+      <fa-view ng-if="isLarge">
+          <fa-modifier fa-size="[undefined, 150]">
+            <fa-surface fa-click="cardStream.hide()">
+              <h1 class="txt-center txt-reversed light-title">Related Stores</h1>
+            </fa-surface>
+          </fa-modifier>
+      </fa-view>
+
+      <fa-view ng-if="isLarge">
+        <fa-modifier fa-size="[undefined, 320]">
+          <fa-grid-layout fa-options="{dimensions:[2,1], gutterSize: [20, 20]}">
+            <fa-surface class="related-card" ng-repeat="relatedStore in cardStream.relatedStores" fa-touchend="cardStream.setStore(relatedStore)">
+              <h3>{{relatedStore.name}}</h3>
+              <div ng-if="relatedStore._links.store_front.href" style="background-size: cover; background-position: center; height: 15em; background-image: url({{relatedStore._links.store_front.href}});"></div>
+              <div style="padding: 3em">
+              </div>
+            </fa-surface>
+          </fa-grid-layout>
+        </fa-modifier>
+      </fa-view>
+
+    </fa-sequential-layout>
   </fa-modifier>
+
 </fa-view>
