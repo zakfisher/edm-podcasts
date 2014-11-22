@@ -15,8 +15,8 @@
             </div>
             <div style="padding: 3em">
               <p>Description: {{cardStream.currentStore.description}}</p>
-              <p>Level: {{cardStream.currentStore.level}}</p>
-              <p>Shop Number: {{cardStream.currentStore.shop_number}}</p>
+              <h3>Level: {{cardStream.currentStore.level}}</h3>
+              <h3>Shop Number: {{cardStream.currentStore.shop_number}}</h3>
               <div class="miniMap" ng-repeat="map in cardStream.currentStore.maps">
                 <inject-svg element="map"></inject-svg>
               </div>
