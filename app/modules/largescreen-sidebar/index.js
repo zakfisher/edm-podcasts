@@ -132,8 +132,8 @@ module.exports = angular.module('LargescreenSidebar', [])
     context.add(sidebar.scrollview);
 
     // Scroll Event Listeners
-    scrollSync.on("end", function() {
-      sidebar.active = (sidebar.scrollview.getAbsolutePosition() < 0);
+    scrollSync.on("update", function() {
+      sidebar.active = (sidebar.scrollview.getAbsolutePosition() < 150);
       if (sidebar.active) {
         $('div.caret').removeClass('up');
       }
