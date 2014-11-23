@@ -1,18 +1,11 @@
 module.exports = angular.module('LargescreenSidebar', [])
 
-.service('LargescreenSidebar', function ($famous, $state, $stateParams, $rootScope) {
-  var sidebar = {},
-    Transitionable = $famous['famous/transitions/Transitionable'],
-    Easing = $famous['famous/transitions/Easing'];
+.service('LargescreenSidebar', function ($famous, $state, $stateParams, $rootScope, CategoryService) {
+  var sidebar = {};
 
-  sidebar.size = [309, undefined];
-
-  var openPosition = [0, 0, 0];
-  var closePosition = [-254, 0, 0];
-
-  sidebar.positionTransitionable = new Transitionable(closePosition);
-
-  sidebar.getContentHeight = function (floorCount, categoryCount) {
+  sidebar.getContentHeight = function () {
+    var categoryCount = sidebar.categories.length;
+    var floorCount = sidebar.floors.length;
     var contentHeight = 0;
     var listCount = 2;
     var listTitleHeight = 25;
@@ -29,53 +22,125 @@ module.exports = angular.module('LargescreenSidebar', [])
     return contentHeight;
   };
 
-  sidebar.toggle = function() {
-    if (sidebar.active) {
-      sidebar.contract();
-    }
-    else {
-      sidebar.expand();
-    }
-  };
-
-  sidebar.expand = function () {
-    console.log('expand sidebar');
+  sidebar.show = function() {
+    sidebar.scrollview.goToPage(0);
     sidebar.active = true;
-    sidebar.positionTransitionable.set(
-      openPosition, {
-        duration: 200,
-        curve: Easing.inSine
-      }
-    );
   };
 
-  sidebar.contract = function () {
-    console.log('contract sidebar');
+  sidebar.hide = function() {
+    sidebar.scrollview.goToPage(1);
     sidebar.active = false;
-    sidebar.positionTransitionable.set(
-      closePosition, {
-        duration: 200,
-        curve: Easing.inSine
+  };
+
+  sidebar.render = function() {
+    var Engine     = $famous['famous/core/Engine'];
+    var Modifier   = $famous['famous/core/Modifier'];
+    var View       = $famous['famous/core/View'];
+    var Surface    = $famous['famous/core/Surface'];
+    var Transform  = $famous['famous/core/Transform'];
+    var ScrollSync = $famous['famous/inputs/ScrollSync'];
+    var Scrollview = $famous['famous/views/Scrollview'];
+
+    sidebar.categories = CategoryService.getCategories();
+
+    sidebar.floors = [
+      { level: 2 },
+      { level: 1 }
+    ];
+
+    sidebar.size = [309, undefined];
+    sidebar.position = [0, 0, 0];
+
+    // Create Scrollview
+    var scrollSync = new ScrollSync();
+    sidebar.scrollview = new Scrollview({
+      clipSize: 282,
+      paginated: true,
+      speedLimit: 100,
+      drag: 0,
+      direction: 0,
+      friction: 0,
+      pageStopSpeed: 1
+    });
+
+    // Create Menu Content View
+    var menuView = new View();
+    var menuModifier = new Modifier();
+    var menuBgSurface = new Surface();
+    var menuContentModifier = new Modifier();
+    var menuContentSurface = new Surface();
+    menuModifier
+      .setSize([374, undefined])
+      .setTransform(Transform.translate(-100, 0, 0));
+      menuBgSurface
+        .addClass('sidebar-menu-bg')
+        .pipe(scrollSync)
+        .pipe(sidebar.scrollview);
+      menuContentModifier
+        .setAlign([0.62, 0.5])
+        .setOrigin([0.5, 0.5])
+        .setSize([184, sidebar.getContentHeight()]);
+        menuContentSurface
+          .addClass('sidebar-menu-content')
+          .pipe(scrollSync)
+          .pipe(sidebar.scrollview);
+    var menuContentNode = menuView.add(menuModifier);
+    menuContentNode.add(menuBgSurface);
+    menuContentNode.add(menuContentModifier).add(menuContentSurface);
+
+    // Add Menu Content
+    var content = '';
+    content += '<em>Select a category</em>';
+    content += '<ul>';
+    sidebar.categories.forEach(function(category) {
+      content += '<li>' + category.name + '</li>';
+    });
+    content += '</ul>';
+    content += '<em>Select a floor</em>';
+    content += '<ul>';
+    sidebar.floors.forEach(function(floor) {
+      content += '<li>Floor ' + floor.level + '</li>';
+    });
+    content += '</ul>';
+    menuContentSurface.setContent(content);
+
+    // Create Menu Button View
+    var menuBtnView = new View();
+    var menuBtnModifier = new Modifier();
+    var menuBtnSurface = new Surface();
+    menuBtnModifier
+      .setAlign([-0.06, 0.5])
+      .setOrigin([0.5, 0])
+      .setSize([160, 45])
+      .setTransform(Transform.rotateZ(Math.PI / 2));
+      menuBtnSurface
+        .addClass('sidebar-menu-btn')
+        .addClass('txt-center')
+        .pipe(scrollSync)
+        .pipe(sidebar.scrollview);
+    menuBtnView.add(menuBtnModifier).add(menuBtnSurface);
+
+    // Add Menu Button Content
+    var btnContent = '';
+    btnContent += '<div class="caret up"></div>';
+    btnContent += '<p>menu</p>';
+    menuBtnSurface.setContent(btnContent);
+
+    // Render
+    sidebar.scrollview.sequenceFrom([menuView, menuBtnView]);
+    var context = Engine.createContext();
+    context.add(sidebar.scrollview);
+
+    // Scroll Event Listeners
+    scrollSync.on("end", function() {
+      sidebar.active = (sidebar.scrollview.getAbsolutePosition() < 0);
+      if (sidebar.active) {
+        $('div.caret').removeClass('up');
       }
-    );
-  };
-
-  sidebar.open = function () {
-    console.log('open sidebar');
-    sidebar.active = true;
-    sidebar.positionTransitionable.set(
-      openPosition, 
-      { duration: 0 }
-    );
-  };
-
-  sidebar.close = function () {
-    console.log('close sidebar');
-    sidebar.active = false;
-    sidebar.positionTransitionable.set(
-      closePosition, 
-      { duration: 0 }
-    );
+      else {
+        $('div.caret').addClass('up'); 
+      }
+    });
   };
 
   return sidebar;
@@ -85,33 +150,10 @@ module.exports = angular.module('LargescreenSidebar', [])
   return {
     restrict: 'E',
     template: require('./largescreen-sidebar.html'),
-    controller: function ($scope, LargescreenSidebar, CategoryService) {
+    controller: function ($scope, $famous, LargescreenSidebar) {
       $scope.sidebar = LargescreenSidebar;
-      $scope.categories = CategoryService.getCategories();
-      $scope.floors = [
-        { level: 2 },
-        { level: 1 }
-      ];
-
-      $scope.menu = {
-        size: [274, undefined]
-      };
-
-      $scope.content = {
-        alignment: [0.5, 0.5],
-        origin: [0.5, 0.5],
-        size: [184, $scope.sidebar.getContentHeight($scope.floors.length, $scope.categories.length)]
-      };
-
-      $scope.btn = {
-        alignment: [1, 0.5],
-        origin: [0.5, 0],
-        rotation: Math.PI / 2,
-        size: [160, 45]
-      };
-
-      $scope.sidebar.close();
-
+      $scope.sidebar.render();
+      $scope.sidebar.hide();
     }
   };
 });
