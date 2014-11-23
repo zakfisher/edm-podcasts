@@ -1262,83 +1262,6 @@ var JMap = {
 };
 
 
-JMap.ui = {};
-JMap.clickbuster = {};
-
-JMap.ui.FastButton = function(element, handler) {
-  this.element = element;
-  this.handler = handler;
-
-  element.addEventListener('touchstart', this, false);
-  element.addEventListener('click', this, false);
-};
-
-JMap.ui.FastButton.prototype.handleEvent = function(event) {
-  switch (event.type) {
-    case 'touchstart': this.onTouchStart(event); break;
-    case 'touchmove': this.onTouchMove(event); break;
-    case 'touchend': this.onClick(event); break;
-    case 'click': this.onClick(event); break;
-  }
-};
-
-JMap.ui.FastButton.prototype.onTouchStart = function(event) {
-  event.stopPropagation();
-
-  this.element.addEventListener('touchend', this, false);
-  document.body.addEventListener('touchmove', this, false);
-
-  this.startX = event.touches[0].clientX;
-  this.startY = event.touches[0].clientY;
-};
-
-JMap.ui.FastButton.prototype.onTouchMove = function(event) {
-  if (Math.abs(event.touches[0].clientX - this.startX) > 10 ||
-      Math.abs(event.touches[0].clientY - this.startY) > 10) {
-    this.reset();
-  }
-};
-
-JMap.ui.FastButton.prototype.onClick = function(event) {
-  event.stopPropagation();
-  this.reset();
-  this.handler(event);
-
-  if (event.type == 'touchend') {
-    JMap.clickbuster.preventGhostClick(this.startX, this.startY);
-  }
-};
-
-JMap.ui.FastButton.prototype.reset = function() {
-  this.element.removeEventListener('touchend', this, false);
-  document.body.removeEventListener('touchmove', this, false);
-};
-
-JMap.clickbuster.preventGhostClick = function(x, y) {
-  JMap.clickbuster.coordinates.push(x, y);
-  window.setTimeout(JMap.clickbuster.pop, 2500);
-};
-
-JMap.clickbuster.pop = function() {
-  JMap.clickbuster.coordinates.splice(0, 2);
-};
-
-JMap.clickbuster.onClick = function(event) {
-  for (var i = 0; i < JMap.clickbuster.coordinates.length; i += 2) {
-    var x = JMap.clickbuster.coordinates[i];
-    var y = JMap.clickbuster.coordinates[i + 1];
-    if (Math.abs(event.clientX - x) < 25 && Math.abs(event.clientY - y) < 25) {
-      event.stopPropagation();
-      event.preventDefault();
-    }
-  }
-};
-
-document.addEventListener('click', JMap.clickbuster.onClick, true);
-JMap.clickbuster.coordinates = [];
-
-
-
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -1599,6 +1522,7 @@ var __extends = this.__extends || function (d, b) {
                     if(this.floors[floorClientID.mapId]) {
                         var currentDestination = JMap.storage.destinations[j];
                         currentDestination.wp = JMap.storage.maps.model.getWPByJid(JMap.storage.destinations[j].clientId);
+                        currentDestination.wps = JMap.storage.maps.model.getWPsByJid(JMap.storage.destinations[j].clientId);
                         var destinationMatch = null;
 
 
@@ -2815,6 +2739,8 @@ var __extends = this.__extends || function (d, b) {
 			this.polyRef = {};
 			var _this = this;
 
+			var dragThreshold = 10;
+
 			this.prepareLabels();
 			this.startCoord ={};
 
@@ -2896,7 +2822,7 @@ var __extends = this.__extends || function (d, b) {
 							console.log(evt);
 
 							console.log(_this.startCoord,  evt.changedTouches[0].clientX - _this.startCoord.startX , evt.changedTouches[0].clientY - _this.startCoord.startY );
-							if(evt.changedTouches[0].clientX - _this.startCoord.startX > 10 || evt.changedTouches[0].clientY - _this.startCoord.startY > 10){
+							if(evt.changedTouches[0].clientX - _this.startCoord.startX > (dragThreshold) || evt.changedTouches[0].clientY - _this.startCoord.startY > (dragThreshold) || evt.changedTouches[0].clientX - _this.startCoord.startX < -(dragThreshold) || evt.changedTouches[0].clientY - _this.startCoord.startY < -(dragThreshold)){
 								return;
 							}
 						// $(p).on("click", function(evt){
@@ -2922,23 +2848,21 @@ var __extends = this.__extends || function (d, b) {
 
         Floor.prototype.prepareLabels = function(){
         	this.destinations = JMap.getDestinationsByFloorId(this.id);
-        	this.customBounds = this.styles.mapStyles.storeLabelBounds[this.sequence];
         	this.excludeLayers = [];
-			if(!this.customBounds)this.customBounds = [];
 
             function getDistance(p1, p2) {return Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2));};
 
-			for (var i = 0; i < this.customBounds.length; i++) {
-				this.customBounds[i].id = this.customBounds[i].type + this.customBounds[i].x + this.customBounds[i].y;
-				var currentCloset = this.destinations[0]
-				for (var j = 1; j < this.destinations.length; j++) {
-					if(getDistance(this.destinations[j].wp, {x:this.customBounds[i]["origin-x"], y:this.customBounds[i]["origin-y"]}) < getDistance(currentCloset.wp, {x:this.customBounds[i]["origin-x"], y:this.customBounds[i]["origin-y"]}))currentCloset = this.destinations[j];
-				};
+			// for (var i = 0; i < this.customBounds.length; i++) {
+			// 	this.customBounds[i].id = this.customBounds[i].type + this.customBounds[i].x + this.customBounds[i].y;
+			// 	var currentCloset = this.destinations[0]
+			// 	for (var j = 1; j < this.destinations.length; j++) {
+			// 		if(getDistance(this.destinations[j].wp, {x:this.customBounds[i]["origin-x"], y:this.customBounds[i]["origin-y"]}) < getDistance(currentCloset.wp, {x:this.customBounds[i]["origin-x"], y:this.customBounds[i]["origin-y"]}))currentCloset = this.destinations[j];
+			// 	};
 
-				this.customBounds[i].closestDestination = currentCloset;
-				currentCloset.hasCustomBounds = true;
-				currentCloset.customBounds = this.customBounds[i];
-			};
+			// 	this.customBounds[i].closestDestination = currentCloset;
+			// 	currentCloset.hasCustomBounds = true;
+			// 	currentCloset.customBounds = this.customBounds[i];
+			// };
 
 
 
@@ -2947,20 +2871,25 @@ var __extends = this.__extends || function (d, b) {
         Floor.prototype.getDestinationWithinBounds = function(poly){
         	var scOffSet = this.scaleOffset;
         	for (var i = 0; i < this.destinations.length; i++) {
-        		var wp = JMap.storage.maps.model.getWPByJid(this.destinations[i].clientId);
-        		if(!wp)continue;
+        		var wps = this.destinations[i].wps;
+        		for (var j = 0; j < wps.length; j++) {
+        			var wp = wps[j];
+	        		
+	        		// var wp = JMap.storage.maps.model.getWPByJid(this.destinations[i].clientId);
+	        		if(!wp)continue;
 
-        		var zd = this.getZoomData();
-        		var cwp = {
-        			x:(zd.ratio * ((wp.x + this.positionOffset.x) - Number(zd.normX))), 
-        			y:(zd.ratio * ((wp.y + this.positionOffset.y) - Number(zd.normY)))
+	        		var zd = this.getZoomData();
+	        		var cwp = {
+	        			x:(zd.ratio * ((wp.x + this.positionOffset.x) - Number(zd.normX))), 
+	        			y:(zd.ratio * ((wp.y + this.positionOffset.y) - Number(zd.normY)))
+	        		};
+	        		if(cwp.x < 0 || cwp.y < 0)continue;
+
+	        		var cpoly = document.elementFromPoint(cwp.x, cwp.y);
+	    //     		var pd = d3.select(poly);
+					// var bounds = pd.node().getBBox();
+	        		if(poly === cpoly)return this.destinations[i];
         		};
-        		if(cwp.x < 0 || cwp.y < 0)continue;
-
-        		var cpoly = document.elementFromPoint(cwp.x, cwp.y);
-    //     		var pd = d3.select(poly);
-				// var bounds = pd.node().getBBox();
-        		if(poly === cpoly)return this.destinations[i];
         	}
         };
 
@@ -3043,7 +2972,6 @@ var __extends = this.__extends || function (d, b) {
         Floor.prototype.setStoreLabels = function(groupPar){
 
 
-        	for (var i = 0; i < this.customBounds.length; i++) if(this.customBounds[i].polygons === undefined)this.customBounds[i].polygons = [];
         	for (var i = 0; i < this.destinations.length; i++) if(this.destinations[i].polygons === undefined)this.destinations[i].polygons = [];
 
 
@@ -3052,11 +2980,6 @@ var __extends = this.__extends || function (d, b) {
         		var g = groupPar.group[k];
         		if(g.tagName == "g" || g.tagName == "path")continue;
         		var bounds = this.getBoundsOfPoly(g);
-        		for (var i = 0; i < this.customBounds.length; i++) {
-	    			if(this.isPointInBounds({x:this.customBounds[i]["origin-x"] + this.positionOffset.x, y:this.customBounds[i]["origin-y"] + this.positionOffset.y}, bounds) == true){
-	    				this.customBounds[i].polygons.push(g);
-	    			}
-        		};
         		for (i = 0; i < this.destinations.length; i++) {
         			if(this.isPointInBounds({x:this.destinations[i].wp.x + this.positionOffset.x, y:this.destinations[i].wp.y + this.positionOffset.y}, bounds) == true){
 		    			this.destinations[i].polygons.push(g);
@@ -3095,50 +3018,30 @@ var __extends = this.__extends || function (d, b) {
 
 			var pixelWidthThreshold = 7;
 
+			var parentChildBoundaryReference = [];
+
         	for(i = 0; i < this.destinations.length; i ++){
-        		// for(k = 0; k < this.destinations[i].polygons.length; k++ ){
-        			if(!this.destinations[i].centerPolygon)continue;
-        				var textElement = document.c
-        				var textF;
-        				var destName = this.destinations[i].name.split("&amp;").join("&");
+    			if(!this.destinations[i].centerPolygon)continue;
 
-        				// if(this.destinations[i].hasCustomBounds == true){
-        				// 	//do custom bounds here
-        				// 	var cb = this.destinations[i].customBounds;
-        				// 	var clr = "#00f";
-        				// 	if(cb.type == "line"){
-        				// 		//drawline
-        				// 		clr = "#f00"
-        				// 	}
-        				// 	// if(destName.length * pixelWidthThreshold > cb.width){
+				// var textElement = document.c
+				var textF;
+				var destName = this.destinations[i].name.split("&amp;").join("&");
 
-        				// 		// console.log(destName + " Overlap hasCustom");
-        				// 		// debugger;
-        				// 		d3Group.append("circle").attr("x",cb.x + this.positionOffset.x).attr("y",cb.y + this.positionOffset.y).attr("width",2).attr("height",2).attr("fill","#f00");
-        				// 		d3Group.append("circle").attr("x",cb["origin-x"] + this.positionOffset.x).attr("y",cb["origin-y"] + this.positionOffset.y).attr("width",2).attr("height",2).attr("fill","#0f0");
-        				// 	    d3Group.append("rect").attr("x",cb.x + this.positionOffset.x).attr("y",cb.y + this.positionOffset.y).attr("width",cb.width).attr("height",cb.height).attr("stroke-width",1).attr("stroke", clr).attr("fill-opacity", 0.2).attr("stroke-opacity", 0.5);//fill-opacity:0.1;stroke-opacity:0.9
+				var bd = this.getBoundsOfPoly(this.destinations[i].centerPolygon);
+				if(!bd.x)continue;
+				var center = this.getCenterOfBounds(bd);
+				textF = d3Group.append("text").attr("x",center.x).attr("y",center.y).attr("width",bd.width).attr("height",bd.height).attr("font-size",9).attr("fill","#000").attr("text-anchor","middle").text(destName);
 
-        				// 	// }
-        				// 	console.log(destName, cb.type);
-        				// 	textF = d3Group.append("text").attr("x",cb.x + this.positionOffset.x).attr("y",cb.y + this.positionOffset.y).attr("width",cb.width).attr("height",cb.height).attr("font-size",9).attr("fill","#f00").attr("text-anchor","middle").text(destName);
+				var tbd = textF.node().getBBox();
+					console.log("BOOM");
+				bd.textNode = textF;
 
-        				// }else{
-        					var bd = this.getBoundsOfPoly(this.destinations[i].centerPolygon);
-        					if(!bd.x)continue;
-        					var center = this.getCenterOfBounds(bd);
-        					// if(destName.length * pixelWidthThreshold > bd.width){
-        					// 	// console.log(destName + " Overlap");
-        					// }else{
-								textF = d3Group.append("text").attr("x",center.x).attr("y",center.y).attr("width",bd.width).attr("height",bd.height).attr("font-size",9).attr("fill","#000").attr("text-anchor","middle").text(destName);
-        					// }
-							// if($(textF).width() > bd.width)console.log("OVERLAP", this.destinations[i].name);
-        				// }
-        				c++;
+				parentChildBoundaryReference.push(bd);
+				c++;
 
-        			if($(this.destinations[i].centerPolygon).parent().attr("id") != groupPar.name){
-        				d3Group.remove(textF);
-        			}
-        		// }
+    			if($(this.destinations[i].centerPolygon).parent().attr("id") != groupPar.name){
+    				d3Group.remove(textF);
+    			}
         	}
 
         	
@@ -3147,24 +3050,24 @@ var __extends = this.__extends || function (d, b) {
 			$(newGroup).css("pointer-events", "none");
 
 
-        	// console.log(groupPar.name + " has " + c + " stores that need labels");
-				
+			for (var ch = 0; ch < parentChildBoundaryReference.length; ch++){
+				console.log(parentChildBoundaryReference[ch].width,  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength());
+				if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() - 20){
+					//parentChildBoundaryReference[ch].textNode.attr("fill", "#f00");
+					parentChildBoundaryReference[ch].textNode.attr("font-size", "5px");
+				}
+			}
 
+			// var labelStyles = this.styles.mapStyles.labelStyle;
 
+   //          function applyStyleTo(styles, selector){
+   //          	for(var str in styles){	
+   //          	    $(selector).css(str, styles[str]);
+   //          	}
+   //          }
 
-
-
-
-			var labelStyles = this.styles.mapStyles.labelStyle;
-
-            function applyStyleTo(styles, selector){
-            	for(var str in styles){	
-            	    $(selector).css(str, styles[str]);
-            	}
-            }
-
-           	applyStyleTo(labelStyles["hightraffic-store-label"], ".map-floor-container-base .landmarks .item.hightraffic-store-label.store-labels>div");           	
-           	applyStyleTo(labelStyles["anchor-store-label"], ".map-floor-container-base .landmarks .item.anchor-store-label.store-labels>div");
+   //         	applyStyleTo(labelStyles["hightraffic-store-label"], ".map-floor-container-base .landmarks .item.hightraffic-store-label.store-labels>div");           	
+   //         	applyStyleTo(labelStyles["anchor-store-label"], ".map-floor-container-base .landmarks .item.anchor-store-label.store-labels>div");
            
 
         };
@@ -4324,6 +4227,23 @@ var BuildingModelGrid = (function () {
                     return wp;
             }
             return null;
+        };
+
+        BuildingModelGrid.prototype.getWPsByJid = function(jid){
+        	var returnArray = [];
+        	for (var i = 0; i < this.waypoints.length; i++) {
+        		var wp = this.waypoints[i]
+
+        		if (!wp.jids)
+                    continue;
+
+                if (wp.jids.indexOf(jid) != -1)
+                    returnArray.push(wp);
+        	};
+
+        	return returnArray;
+
+
         };
 
         /**
