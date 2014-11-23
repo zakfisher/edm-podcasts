@@ -121,6 +121,9 @@ webview {
 .directoryStoreSurface {
   opacity: 0.9 !important; }
 
+svg text {
+  pointer-events: none; }
+
 svg * {
   pointer-events: all; }
 

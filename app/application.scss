@@ -183,6 +183,10 @@ webview {
 // Keyboard
 // ----------------------------------------------------------------------
 
+svg text {
+  pointer-events:none;
+}
+
 svg * { pointer-events: all; }
 
 g.active {

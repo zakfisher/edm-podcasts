@@ -9,7 +9,7 @@
       "container": {
         "width": 1920,
         "height": 1080,
-        "zoomMax": 600,
+        "zoomMax": 800,
         "zoomMin": 50,
         "background": "#c1cdd3"
       },

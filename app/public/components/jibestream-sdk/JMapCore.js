@@ -2716,6 +2716,7 @@ var __extends = this.__extends || function (d, b) {
 				setTimeout(function(){
                     // console.log("LOADED");
                     $('#svg-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
+                    $('#svg-' + _this.id + ' > svg').css('shape-rendering', "geometricPrecision");
                     $( '#svg-' + _this.id ).show().css('opacity',1);
 		            $('#svg-' + _this.id).css("background", _this.styles.mapStyles.mapConfig.container.background);
 		            $(_this.view).css("background", _this.styles.mapStyles.mapConfig.container.background);
@@ -2978,7 +2979,7 @@ var __extends = this.__extends || function (d, b) {
         	//All polygons that have boundaries containing the custom bounds' origin point
         	for(var k = 0; k < groupPar.group.length; k++){
         		var g = groupPar.group[k];
-        		if(g.tagName == "g" || g.tagName == "path")continue;
+        		if(g.tagName == "g" /*|| g.tagName == "path"*/)continue;
         		var bounds = this.getBoundsOfPoly(g);
         		for (i = 0; i < this.destinations.length; i++) {
         			if(this.isPointInBounds({x:this.destinations[i].wp.x + this.positionOffset.x, y:this.destinations[i].wp.y + this.positionOffset.y}, bounds) == true){
@@ -3007,8 +3008,9 @@ var __extends = this.__extends || function (d, b) {
 
         	var c = 0;
 
-			var newGroup = document.createElementNS("http://www.w3.org/2000/svg", 'g');
-			newGroup.id = groupPar.name +  "-labels-" + this.id;
+			var newGroup = document.createElementNS("http://www.w3.org/2000/svg", 'g'),
+				labelLayerName = groupPar.name +  "-labels-" + this.id;
+			newGroup.id = labelLayerName;
         	this.excludeLayers.push(newGroup.id);
 
 
@@ -3020,6 +3022,18 @@ var __extends = this.__extends || function (d, b) {
 
 			var parentChildBoundaryReference = [];
 
+			var lblStyles = {};
+			// switch(groupPar.sponsorship){
+				// case 75://anchor stores
+					lblStyles.fill = "#000";
+					// lblStyles["font-size"] = "12px";
+					// break;
+				// case 50://other sotres
+					// lblStyles.fill = "#f00";
+					lblStyles["font-size"] = "9px";
+					// break;
+			// }
+
         	for(i = 0; i < this.destinations.length; i ++){
     			if(!this.destinations[i].centerPolygon)continue;
 
@@ -3030,10 +3044,19 @@ var __extends = this.__extends || function (d, b) {
 				var bd = this.getBoundsOfPoly(this.destinations[i].centerPolygon);
 				if(!bd.x)continue;
 				var center = this.getCenterOfBounds(bd);
-				textF = d3Group.append("text").attr("x",center.x).attr("y",center.y).attr("width",bd.width).attr("height",bd.height).attr("font-size",9).attr("fill","#000").attr("text-anchor","middle").text(destName);
+
+
+				textF = d3Group.append("text").attr("x",center.x).attr("y",center.y+ 3).attr("width",bd.width).attr("height",bd.height)
+
+				for(var str in lblStyles){
+					textF.attr(str,lblStyles[str]);
+					// textF.attr("font-size","9px").attr("fill","#000")
+				}
+
+				textF.attr("text-anchor","middle").text(destName);
 
 				var tbd = textF.node().getBBox();
-					console.log("BOOM");
+					// console.log("BOOM");
 				bd.textNode = textF;
 
 				parentChildBoundaryReference.push(bd);
@@ -3051,10 +3074,21 @@ var __extends = this.__extends || function (d, b) {
 
 
 			for (var ch = 0; ch < parentChildBoundaryReference.length; ch++){
-				console.log(parentChildBoundaryReference[ch].width,  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength());
-				if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() - 20){
+				// console.log(parentChildBoundaryReference[ch].width,  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength());
+				if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
 					//parentChildBoundaryReference[ch].textNode.attr("fill", "#f00");
 					parentChildBoundaryReference[ch].textNode.attr("font-size", "5px");
+					if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
+						parentChildBoundaryReference[ch].textNode.attr("font-size", "3px");
+						if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
+							parentChildBoundaryReference[ch].textNode.attr("fill-opacity", 0);
+							parentChildBoundaryReference[ch].textNode.attr("style", "display:none");
+							// parentChildBoundaryReference[ch].textNode.attr("fill", "#f00");
+
+
+							// d3Group.remove(parentChildBoundaryReference[ch].textNode);
+						}
+					}
 				}
 			}
 
@@ -3069,6 +3103,15 @@ var __extends = this.__extends || function (d, b) {
    //         	applyStyleTo(labelStyles["hightraffic-store-label"], ".map-floor-container-base .landmarks .item.hightraffic-store-label.store-labels>div");           	
    //         	applyStyleTo(labelStyles["anchor-store-label"], ".map-floor-container-base .landmarks .item.anchor-store-label.store-labels>div");
            
+
+           //TO DO make this PER sponsorship or per size
+           this.styles.mapStyles.mapLayers.push({
+           		"name": labelLayerName,
+		        "class": "StoreLabels",
+		        "zoomLevel": 150,
+		        "clickable": false
+           });
+
 
         };
 
@@ -3180,8 +3223,10 @@ var __extends = this.__extends || function (d, b) {
         		
             	// console.log(this.styles.mapStyles.mapLayers[i], zoomAlpha);
             	var $group = $('#svg-' + this.id ).find("#" + this.styles.mapStyles.mapLayers[i].name).find("*");
+            	// $group.hide().show();//Force render
         		TweenLite.to($group, 0.3, {"fill-opacity":zoomAlpha, "stroke-opacity":zoomAlpha});
             }
+
         };
   
 
