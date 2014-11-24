@@ -12,11 +12,6 @@ module.exports = angular.module('Largescreen', [])
     self.scrollView.goToPage(self.categoryIndex[code]);
   };
 
-  $(window).on('keyup', function () {
-    console.log(self);
-    self.goToCategory('shoes');
-  });
-
   return self;
 })
 
