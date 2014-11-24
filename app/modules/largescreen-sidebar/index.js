@@ -30,6 +30,7 @@ module.exports = angular.module('LargescreenSidebar', [])
   sidebar.hide = function() {
     sidebar.scrollview.goToPage(1);
     sidebar.active = false;
+    //$('div.caret').addClass('up');
   };
 
   sidebar.render = function() {
@@ -42,6 +43,7 @@ module.exports = angular.module('LargescreenSidebar', [])
     var Scrollview = $famous['famous/views/Scrollview'];
 
     sidebar.categories = CategoryService.getCategories();
+    
     // API call to Jibestream for floor count (from Phiroze)
     // sidebar.floors = JMap.getMaps(function(data) {
     //   console.log('map', data);
@@ -157,15 +159,13 @@ module.exports = angular.module('LargescreenSidebar', [])
       var code = $(e.currentTarget).attr('data-code');
       LargescreenDirectory.goToCategory(code);
       sidebar.hide();
-      $('div.caret').addClass('up');
     });
 
     // Floor Filter Listener
-    $(document).on('click', 'ul.sidebar-floor-list', function(e) {
+    $(document).on('click', 'ul.sidebar-floor-list li', function(e) {
       var level = $(e.currentTarget).attr('data-level');
       LargescreenDirectory.selectFloor(level);
       sidebar.hide();
-      $('div.caret').addClass('up');
     });
 
   };
