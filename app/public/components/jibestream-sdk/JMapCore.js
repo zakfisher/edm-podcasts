@@ -411,11 +411,20 @@ var JMap = {
 
 		var floorArray = [];
 		for(var i = 0, len = JMap.storage.destinations.length; i < len; i++){
-			var f = JMap.getFloorById(JMap.storage.destinations[i].clientId);
-			if(!f)continue;
-			if(f.mapId === mapId){
-				floorArray.push(JMap.storage.destinations[i]);
+			// var f = JMap.getFloorById(JMap.storage.destinations[i].clientId);
+			// if(!f)continue;
+			// if(f.mapId === mapId){
+			// 	floorArray.push(JMap.storage.destinations[i]);
+			// }
+			var wps = JMap.storage.maps.model.getWPsByJid(JMap.storage.destinations[i].clientId);
+			if(!wps)continue;
+			for(var j =0; j < wps.length; j++){
+				if(wps[j].mapid == mapId){
+					floorArray.push(JMap.storage.destinations[i]);
+					continue;
+				}
 			}
+
 		}
 		JMap.storage.destinationsByFloor[mapId] = floorArray;			
 		// console.error("There was no destination found with the id: " + id);
@@ -2954,6 +2963,9 @@ var __extends = this.__extends || function (d, b) {
 					bounds.width = bounds.xMax - bounds.x;
 					bounds.height = bounds.yMax - bounds.y;
 					break;
+				case "path":
+					bounds = d3.select(poly).node().getBBox();
+					break;
 				}
 				return bounds;
         };
@@ -2973,7 +2985,12 @@ var __extends = this.__extends || function (d, b) {
         Floor.prototype.setStoreLabels = function(groupPar){
 
 
-        	for (var i = 0; i < this.destinations.length; i++) if(this.destinations[i].polygons === undefined)this.destinations[i].polygons = [];
+        	for (var i = 0; i < this.destinations.length; i++) {
+        		
+        		// console.log(this.destinations[i].name, this.destinations[i]);
+
+        		if(this.destinations[i].polygons === undefined)this.destinations[i].polygons = [];
+        	}
 
 
         	//All polygons that have boundaries containing the custom bounds' origin point
@@ -2982,11 +2999,14 @@ var __extends = this.__extends || function (d, b) {
         		if(g.tagName == "g" /*|| g.tagName == "path"*/)continue;
         		var bounds = this.getBoundsOfPoly(g);
         		for (i = 0; i < this.destinations.length; i++) {
-        			if(this.isPointInBounds({x:this.destinations[i].wp.x + this.positionOffset.x, y:this.destinations[i].wp.y + this.positionOffset.y}, bounds) == true){
-		    			this.destinations[i].polygons.push(g);
+        			for(var j = 0; j < this.destinations[i].wps.length; j++){	
+        				if(this.destinations[i].wps[j].mapid == this.id){
+		        			if(this.isPointInBounds({x:this.destinations[i].wps[j].x + this.positionOffset.x, y:this.destinations[i].wps[j].y + this.positionOffset.y}, bounds) == true){
+				    			this.destinations[i].polygons.push(g);
+		        			}
+        				}
         			}
         		};
-
         	};
 
             function getDistance(p1, p2) {return Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2));};
@@ -2995,9 +3015,11 @@ var __extends = this.__extends || function (d, b) {
     			if(this.destinations[i].polygons.length > 1){
     				var currentClosest = this.destinations[i].polygons;
     				for (k = 1; k < this.destinations[i].polygons.length; k++) {
-    					if(getDistance(this.destinations[i].polygons[k], this.destinations[i].wp) < getDistance(currentClosest, this.destinations[i].wp)){
-    						currentClosest = this.destinations[i].polygons[k];
-    					} 
+        				for(var j = 0; j < this.destinations[i].wps; j++){	
+	    					if(getDistance(this.destinations[i].polygons[k], this.destinations[i].wps[j]) < getDistance(currentClosest, this.destinations[i].wps[j])){
+	    						currentClosest = this.destinations[i].polygons[k];
+	    					}
+	    				} 
     				};
     				this.destinations[i].centerPolygon = currentClosest;
     			}else{
@@ -3008,13 +3030,20 @@ var __extends = this.__extends || function (d, b) {
 
         	var c = 0;
 
-			var newGroup = document.createElementNS("http://www.w3.org/2000/svg", 'g'),
+			var newGroupL = document.createElementNS("http://www.w3.org/2000/svg", 'g'),
+			    newGroupM = document.createElementNS("http://www.w3.org/2000/svg", 'g'),
+			    newGroupS = document.createElementNS("http://www.w3.org/2000/svg", 'g'),
 				labelLayerName = groupPar.name +  "-labels-" + this.id;
-			newGroup.id = labelLayerName;
-        	this.excludeLayers.push(newGroup.id);
+				
+				newGroupL.id = labelLayerName + "L";
+				newGroupM.id = labelLayerName + "M";
+				newGroupS.id = labelLayerName + "S";
+        		// this.excludeLayers.push(newGroup.id);
 
 
-			var d3Group = d3.select(newGroup);
+			var d3GroupL = d3.select(newGroupL);
+			var d3GroupM = d3.select(newGroupM);
+			var d3GroupS = d3.select(newGroupS);
 
 			var svg = document.getElementById("L" + (this.sequence + 1).toString());
 
@@ -3023,21 +3052,12 @@ var __extends = this.__extends || function (d, b) {
 			var parentChildBoundaryReference = [];
 
 			var lblStyles = {};
-			// switch(groupPar.sponsorship){
-				// case 75://anchor stores
-					lblStyles.fill = "#000";
-					// lblStyles["font-size"] = "12px";
-					// break;
-				// case 50://other sotres
-					// lblStyles.fill = "#f00";
-					lblStyles["font-size"] = "9px";
-					// break;
-			// }
+			lblStyles.fill = "#000";
+			lblStyles["font-size"] = groupPar.sponsorship == 75?"12px":"9px";
 
         	for(i = 0; i < this.destinations.length; i ++){
     			if(!this.destinations[i].centerPolygon)continue;
 
-				// var textElement = document.c
 				var textF;
 				var destName = this.destinations[i].name.split("&amp;").join("&");
 
@@ -3046,11 +3066,10 @@ var __extends = this.__extends || function (d, b) {
 				var center = this.getCenterOfBounds(bd);
 
 
-				textF = d3Group.append("text").attr("x",center.x).attr("y",center.y+ 3).attr("width",bd.width).attr("height",bd.height)
+				textF = d3GroupL.append("text").attr("x",center.x).attr("y",center.y+ 3).attr("width",bd.width).attr("height",bd.height)
 
 				for(var str in lblStyles){
 					textF.attr(str,lblStyles[str]);
-					// textF.attr("font-size","9px").attr("fill","#000")
 				}
 
 				textF.attr("text-anchor","middle").text(destName);
@@ -3062,15 +3081,24 @@ var __extends = this.__extends || function (d, b) {
 				parentChildBoundaryReference.push(bd);
 				c++;
 
-    			if($(this.destinations[i].centerPolygon).parent().attr("id") != groupPar.name){
-    				d3Group.remove(textF);
+				var par = $(this.destinations[i].centerPolygon).parent();
+				var parId = par.attr("id");
+				if(parId == undefined){
+					parId = par.parent().attr("id");
+				}
+
+    			if(parId != groupPar.name){
+    				console.log(destName + " doesn't belong in " + groupPar.name, parId);
+    				textF.remove();
     			}
         	}
 
         	
 			// newGroup.appendChild(txtElem);
-			svg.appendChild(newGroup);
-			$(newGroup).css("pointer-events", "none");
+			svg.appendChild(newGroupL);
+			svg.appendChild(newGroupM);
+			svg.appendChild(newGroupS);
+			// $(newGroup).css("pointer-events", "none");
 
 
 			for (var ch = 0; ch < parentChildBoundaryReference.length; ch++){
@@ -3081,13 +3109,21 @@ var __extends = this.__extends || function (d, b) {
 					if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
 						parentChildBoundaryReference[ch].textNode.attr("font-size", "3px");
 						if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
-							parentChildBoundaryReference[ch].textNode.attr("fill-opacity", 0);
-							parentChildBoundaryReference[ch].textNode.attr("style", "display:none");
-							// parentChildBoundaryReference[ch].textNode.attr("fill", "#f00");
+							// parentChildBoundaryReference[ch].textNode.attr("fill-opacity", 0);
+							// parentChildBoundaryReference[ch].textNode.attr("style", "display:none");
+							parentChildBoundaryReference[ch].textNode.attr("fill", "#f00");
 
 
 							// d3Group.remove(parentChildBoundaryReference[ch].textNode);
+						}else{
+							//add to small
+							// d3GroupL.remove(parentChildBoundaryReference[ch].textNode);
+							// d3GroupS.append(parentChildBoundaryReference[ch].textNode);
 						}
+					}else{
+						//add to medium
+						// d3GroupL.remove(parentChildBoundaryReference[ch].textNode);
+						// d3GroupM.append(parentChildBoundaryReference[ch].textNode);
 					}
 				}
 			}
@@ -3106,7 +3142,21 @@ var __extends = this.__extends || function (d, b) {
 
            //TO DO make this PER sponsorship or per size
            this.styles.mapStyles.mapLayers.push({
-           		"name": labelLayerName,
+           		"name": labelLayerName + "L",
+		        "class": "StoreLabels",
+		        "zoomLevel": 100,
+		        "clickable": false
+           });
+
+           this.styles.mapStyles.mapLayers.push({
+           		"name": labelLayerName + "M",
+		        "class": "StoreLabels",
+		        "zoomLevel": 150,
+		        "clickable": false
+           });
+
+           this.styles.mapStyles.mapLayers.push({
+           		"name": labelLayerName + "S",
 		        "class": "StoreLabels",
 		        "zoomLevel": 150,
 		        "clickable": false
