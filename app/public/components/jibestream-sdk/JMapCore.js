@@ -2968,13 +2968,7 @@ var __extends = this.__extends || function (d, b) {
         Floor.prototype.setStoreLabels = function(groupPar){
 
 
-        	for (var i = 0; i < this.destinations.length; i++) {
-        		
-        		// console.log(this.destinations[i].name, this.destinations[i]);
-
-        		if(this.destinations[i].polygons === undefined)this.destinations[i].polygons = [];
-        	}
-
+        	for (var i = 0; i < this.destinations.length; i++) if(this.destinations[i].polygons === undefined)this.destinations[i].polygons = [];
 
         	//All polygons that have boundaries containing the custom bounds' origin point
         	for(var k = 0; k < groupPar.group.length; k++){
@@ -2996,7 +2990,7 @@ var __extends = this.__extends || function (d, b) {
 
         	for (i = 0; i < this.destinations.length; i++) {
     			if(this.destinations[i].polygons.length > 1){
-    				var currentClosest = this.destinations[i].polygons;
+    				var currentClosest = this.destinations[i].polygons[0];
     				for (k = 1; k < this.destinations[i].polygons.length; k++) {
         				for(var j = 0; j < this.destinations[i].wps; j++){	
 	    					if(getDistance(this.destinations[i].polygons[k], this.destinations[i].wps[j]) < getDistance(currentClosest, this.destinations[i].wps[j])){
@@ -3013,21 +3007,15 @@ var __extends = this.__extends || function (d, b) {
 
         	var c = 0;
 
-			var newGroupL = document.createElementNS("http://www.w3.org/2000/svg", 'g'),
-			    newGroupM = document.createElementNS("http://www.w3.org/2000/svg", 'g'),
-			    newGroupS = document.createElementNS("http://www.w3.org/2000/svg", 'g'),
+			var newGroup = document.createElementNS("http://www.w3.org/2000/svg", 'g'),
 				labelLayerName = groupPar.name +  "-labels-" + this.id;
 				
-				newGroupL.id = labelLayerName + "L";
-				newGroupM.id = labelLayerName + "M";
-				newGroupS.id = labelLayerName + "S";
+				newGroup.id = labelLayerName;
         		// this.excludeLayers.push(newGroup.id);
 
 
-			var d3GroupL = d3.select(newGroupL);
-			var d3GroupM = d3.select(newGroupM);
-			var d3GroupS = d3.select(newGroupS);
-
+			var d3Group = d3.select(newGroup);
+			
 			var svg = document.getElementById("L" + (this.sequence + 1).toString());
 
 			var pixelWidthThreshold = 7;
@@ -3049,7 +3037,7 @@ var __extends = this.__extends || function (d, b) {
 				var center = this.getCenterOfBounds(bd);
 
 
-				textF = d3GroupL.append("text").attr("x",center.x).attr("y",center.y+ 3).attr("width",bd.width).attr("height",bd.height)
+				textF = d3Group.append("text").attr("x",center.x).attr("y",center.y+ 3).attr("width",bd.width).attr("height",bd.height)
 
 				for(var str in lblStyles){
 					textF.attr(str,lblStyles[str]);
@@ -3078,16 +3066,13 @@ var __extends = this.__extends || function (d, b) {
 
         	
 			// newGroup.appendChild(txtElem);
-			svg.appendChild(newGroupL);
-			svg.appendChild(newGroupM);
-			svg.appendChild(newGroupS);
+			svg.appendChild(newGroup);
 			// $(newGroup).css("pointer-events", "none");
 
 
 			for (var ch = 0; ch < parentChildBoundaryReference.length; ch++){
 				// console.log(parentChildBoundaryReference[ch].width,  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength());
 				if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
-					//parentChildBoundaryReference[ch].textNode.attr("fill", "#f00");
 					parentChildBoundaryReference[ch].textNode.attr("font-size", "5px");
 					if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
 						parentChildBoundaryReference[ch].textNode.attr("font-size", "3px");
@@ -3095,19 +3080,14 @@ var __extends = this.__extends || function (d, b) {
 							// parentChildBoundaryReference[ch].textNode.attr("fill-opacity", 0);
 							// parentChildBoundaryReference[ch].textNode.attr("style", "display:none");
 							// parentChildBoundaryReference[ch].textNode.attr("fill", "#f00");
-
-
-							// d3Group.remove(parentChildBoundaryReference[ch].textNode);
 						}else{
 							//add to small
-							// d3GroupL.remove(parentChildBoundaryReference[ch].textNode);
-							// d3GroupS.append(parentChildBoundaryReference[ch].textNode);
 						}
 					}else{
 						//add to medium
-						// d3GroupL.remove(parentChildBoundaryReference[ch].textNode);
-						// d3GroupM.append(parentChildBoundaryReference[ch].textNode);
 					}
+				}else{
+					//add to large
 				}
 			}
 
