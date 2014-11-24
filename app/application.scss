@@ -282,6 +282,35 @@ g.active {
   -moz-border-radius-bottomleft: 15px;
   border-bottom-right-radius: 15px;
   border-bottom-left-radius: 15px;
+
+  li {
+    overflow: hidden;
+    .floor-number {
+      display: block;
+    }
+  }
+
+  li.highlighted {
+    .store-listing{
+      background: #e01f26;
+      color: #fff;
+      font-size: 90%;
+      display: inline block;
+      margin-right: 10px;
+      border-radius: 20px;
+      padding: 2px 10px;
+
+
+
+      span.floor-name {
+        float: right;
+        // display: inline-block;
+      }
+
+    }
+
+  }
+
 }
 
 .large-directory-card-main {

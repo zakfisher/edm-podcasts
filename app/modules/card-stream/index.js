@@ -15,6 +15,7 @@ module.exports = angular.module("CardStream", [])
     try {
       var jibestreamStore = JMap.getDestinationByClientId(store.id.toString());
       var data = JMap.storage.maps.building.getMapsWithDirections(store.id.toString());
+      console.log('jibestream data', data);
       self.currentStore.textDirections = data.textDirections;
       self.currentStore.maps = data.svgs;
     } catch (e) {
