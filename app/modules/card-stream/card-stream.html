@@ -1,6 +1,5 @@
 <fa-view ng-if="cardStream.shown">
 
-  <!-- Background overlay -->
   <fa-modifier fa-translate="[0,0,10]" fa-opacity="0.95">
     <fa-surface fa-background-color="'rgba(0,0,0,0.8)'" ng-if="cardStream.shown" fa-click="cardStream.hide()"></fa-surface>
   </fa-modifier>
@@ -25,7 +24,7 @@
         </fa-modifier>
       </fa-view>
 
-      <fa-view ng-if="isLarge">
+      <fa-view ng-if="cardStream.isLarge">
           <fa-modifier fa-size="[undefined, 150]">
             <fa-surface fa-click="cardStream.hide()">
               <h1 class="txt-center txt-reversed light-title">Related Stores</h1>
@@ -33,7 +32,7 @@
           </fa-modifier>
       </fa-view>
 
-      <fa-view ng-if="isLarge">
+      <fa-view ng-if="cardStream.isLarge">
         <fa-modifier fa-size="[undefined, 320]">
           <fa-grid-layout fa-options="{dimensions:[2,1], gutterSize: [20, 20]}">
             <fa-surface class="related-card" ng-repeat="relatedStore in cardStream.relatedStores" fa-touchend="cardStream.setStore(relatedStore)">
