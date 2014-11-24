@@ -2,6 +2,7 @@ module.exports = angular.module('Largescreen', [])
 
 .controller('Largescreen', function ($scope, $famous, $http, CategoryService, KioskMenu, StoreService, CardStream) {
   KioskMenu.hide();
+  CardStream.isLarge = true;
   var EventHandler = $famous['famous/core/EventHandler'];
   $scope.myEventHandler = new EventHandler();
 
