@@ -1,15 +1,14 @@
 <fa-view>
   <fa-image-surface fa-image-url="bigBG.jpg"></fa-image-surface>
-  <largescreen-directory></largescreen-directory>
-
   <fa-header-footer-layout fa-options="{direction: 1, headerSize: 270, footerSize: 155}">
 
     <fa-view></fa-view>
 
     <fa-view>
       <fa-modifier fa-translate="[pageInset,0,0]" fa-size="scrollViewSize">
-      <fa-scroll-view fa-pipe-from="myEventHandler" fa-options="options.myScrollView">
-        <fa-modifier fa-size="[pageWidth, undefined]" ng-repeat="page in pages">
+      <largescreen-directory>
+      <fa-scroll-view fa-pipe-from="myEventHandler" fa-options="options.myScrollView" id="largeDirectoryScrollView">
+        <fa-modifier fa-size="[pageWidth, undefined]" ng-repeat="page in directory.pages">
           <fa-modifier fa-size="[(pageWidth - pageGutter), undefined]">
             <fa-view>
               <fa-surface fa-background-color="'rgba(255,255,255,0.7)'" fa-pipe-to="myEventHandler" class="large-directory-card">
@@ -23,22 +22,11 @@
                   </ul>
                 </div>
               </fa-surface>
-              <!-- Alternate fa-grid based layout
-              <fa-modifier fa-size="[undefined, page.gridHeight]" fa-translate="[30,20,0.01]">
-                <fa-grid-layout fa-options="page.gridOptions">
-                  <fa-modifier ng-repeat="item in page.items track by $index">
-                    <fa-surface fa-pipe-to="myEventHandler" fa-click="handleItemClick(item)" fa-size="[undefined, gridItemHeight]">
-                      <h2 ng-if="item.category">{{item.name}}</h2>
-                      <p ng-if="!item.category">{{item.name}}</p>
-                    </fa-surface>
-                  </fa-modifier>
-                </fa-grid-layout>
-              </fa-modifier>
-              -->
             </fa-view>
           </fa-modifier>
         </fa-modifier>
       </fa-scroll-view>
+      </largescreen-directory>
     </fa-modifier>
 
     </fa-view>

@@ -1,7 +1,31 @@
 module.exports = angular.module('Largescreen', [])
 
-.controller('Largescreen', function ($scope, $famous, $http, CategoryService, KioskMenu, StoreService, CardStream) {
+.service('LargescreenDirectory', function () {
+  var self = {};
+
+  self.highlightStoresByFloor = function (category) {
+
+  };
+
+  self.categoryIndex = {};
+  self.goToCategory = function (code) {
+    self.scrollView.goToPage(self.categoryIndex[code]);
+  };
+
+  $(window).on('keyup', function () {
+    console.log(self);
+    self.goToCategory('shoes');
+  });
+
+  return self;
+})
+
+
+.controller('Largescreen', function ($scope, $famous, $http, CategoryService, KioskMenu, StoreService, CardStream, LargescreenDirectory) {
   KioskMenu.hide();
+  CardStream.isLarge = true;
+  $scope.directory = LargescreenDirectory;
+
   var EventHandler = $famous['famous/core/EventHandler'];
   $scope.myEventHandler = new EventHandler();
 
@@ -12,16 +36,17 @@ module.exports = angular.module('Largescreen', [])
   $scope.pageGutter = 50;
   $scope.pageInset = 150;
   $scope.scrollViewSize = [window.innerWidth - $scope.pageInset, undefined];
-  $scope.allStores = [];
+  $scope.directory.allStores = [];
 
-  var categories = CategoryService.getCategories();
-  categories.forEach(function (category) {
-    $scope.allStores.push({
+  $scope.directory.categories = CategoryService.getCategories();
+  $scope.directory.categories.forEach(function (category) {
+    $scope.directory.allStores.push({
       'name': category.name,
-      'category': true
+      'category': true,
+      'code': category.code
     });
     StoreService.getStoresByCategory(category.code).forEach(function (store) {
-      $scope.allStores.push(store);
+      $scope.directory.allStores.push(store);
     });
   });
 
@@ -47,10 +72,10 @@ module.exports = angular.module('Largescreen', [])
 
   // Split items into pages
   // @todo: make this less heinous.
-  $scope.allStores.forEach(function (store, i) {
+  $scope.directory.allStores.forEach(function (store, i) {
     group.push(store);
     count++;
-    if (count === $scope.itemsPerPage || i === $scope.allStores.length - 1) {
+    if (count === $scope.itemsPerPage || i === $scope.directory.allStores.length - 1) {
       var items = group.slice(0);
 
       // Split page items into columns
@@ -60,6 +85,11 @@ module.exports = angular.module('Largescreen', [])
       var column = [];
 
       items.forEach(function (item, i) {
+
+        item.pageNumber = groups.length;
+        if (item.category) {
+          $scope.directory.categoryIndex[item.code] = groups.length;
+        }
         column.push(item);
         columnItemsCount++;
         if (columnItemsCount === itemsPerColumn || i === items.length - 1) {
@@ -82,9 +112,8 @@ module.exports = angular.module('Largescreen', [])
     }
   });
 
-  $scope.pages = groups;
+  $scope.directory.pages = groups;
 
-  console.log($scope.pages);
 
   $scope.handleItemClick = function (item) {
     CardStream.setStore(item);
@@ -93,11 +122,23 @@ module.exports = angular.module('Largescreen', [])
 
 })
 
+//Link up the famo.us scrollview renderNode to the directory scope in a postlink function, where it's available.
+.directive('largescreenDirectory', function ($famous) {
+  return {
+    restrict: 'E',
+    link: {
+      post: function ($scope) {
+        $scope.directory.scrollView = $famous.find('#largeDirectoryScrollView')[0].renderNode;
+      }
+    }
+  };
+})
+
 //Routes / States
 .config(function ($stateProvider) {
   $stateProvider.state('largescreen', {
     url: '/largescreen',
     template: require('./largescreen.html'),
-    controller: 'Largescreen'
+    controller: 'Largescreen',
   });
 });

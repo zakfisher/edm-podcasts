@@ -118,6 +118,9 @@ webview {
 .txt-center {
   text-align: center; }
 
+.txt-reversed {
+  color: #fff !important; }
+
 .directoryStoreSurface {
   opacity: 0.9 !important; }
 
@@ -144,6 +147,24 @@ g.active .key-background {
 /**** Pop Up ****/
 #popup-render-container {
   display: none; }
+
+.cardstream-card {
+  padding-bottom: 40px; }
+  .cardstream-card h2 {
+    background-color: #d7d0c7;
+    margin: 0;
+    padding: 10px 20px; }
+
+.related-card {
+  background-color: #d7d0c7; }
+  .related-card h3 {
+    margin: 0;
+    padding: 5px 10px; }
+
+.light-title {
+  font-family: 'FlamaCondensed', 'helvetica neue', 'helvetica', 'arial', 'sans';
+  font-weight: 500;
+  text-transform: uppercase; }
 
 .miniMap {
   width: 300px;

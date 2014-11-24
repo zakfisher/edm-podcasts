@@ -12,12 +12,15 @@ module.exports = angular.module("CardStream", [])
 
   self.setStore = function (store) {
     self.currentStore = store;
-    var jibestreamStore = JMap.getDestinationByClientId(store.id.toString());
-    var data = JMap.storage.maps.building.getMapsWithDirections(store.id.toString());
-    self.currentStore.textDirections = data.textDirections;
-    self.currentStore.maps = data.svgs;
-    console.log(self.currentStore.maps);
-    var related = StoreService.getRelatedStoresOf(store);
+    try {
+      var jibestreamStore = JMap.getDestinationByClientId(store.id.toString());
+      var data = JMap.storage.maps.building.getMapsWithDirections(store.id.toString());
+      self.currentStore.textDirections = data.textDirections;
+      self.currentStore.maps = data.svgs;
+    } catch (e) {
+      console.warn('Could not get jibestream data for store', store.id);
+    }
+    self.relatedStores = StoreService.getRelatedStoresOf(store);
   };
 
   self.show = function () {
@@ -39,6 +42,7 @@ module.exports = angular.module("CardStream", [])
       curve: Easing.inOutBack
     }, function () {
       self.shown = false;
+      self.shownDone = false;
       self.applyScope();
     });
   };
@@ -71,23 +75,17 @@ module.exports = angular.module("CardStream", [])
   return {
     restrict: "E",
     template: require('./card-stream.html'),
-    controller: function ($scope, $element) {
+    controller: function ($scope, $element, StoreService) {
       $scope.cardStream = CardStream;
       $scope.cardStream.scope = $scope;
-      var mapsContainer = $element.find('.maps');
 
-      $scope.$watch('cardStream.currentStore.maps', function (a, b) {
-        console.log('new maps', mapsContainer, a);
-        if (a !== b) {
-          // mapsContainer.empty();
-          a.forEach(function (map) {
-            for (var i = 0; i < map.length; i++) {
-              mapsContainer.append(map[i]);
-            }
-          });
-          console.log(mapsContainer[0]);
-        }
-      });
+      $scope.isLarge = true;
+
+      if ($scope.isLarge) {
+        $scope.layoutSize = 1500;
+      } else {
+        $scope.layoutSize = 1000;
+      }
 
     }
   };
