@@ -411,11 +411,20 @@ var JMap = {
 
 		var floorArray = [];
 		for(var i = 0, len = JMap.storage.destinations.length; i < len; i++){
-			var f = JMap.getFloorById(JMap.storage.destinations[i].clientId);
-			if(!f)continue;
-			if(f.mapId === mapId){
-				floorArray.push(JMap.storage.destinations[i]);
+			// var f = JMap.getFloorById(JMap.storage.destinations[i].clientId);
+			// if(!f)continue;
+			// if(f.mapId === mapId){
+			// 	floorArray.push(JMap.storage.destinations[i]);
+			// }
+			var wps = JMap.storage.maps.model.getWPsByJid(JMap.storage.destinations[i].clientId);
+			if(!wps)continue;
+			for(var j =0; j < wps.length; j++){
+				if(wps[j].mapid == mapId){
+					floorArray.push(JMap.storage.destinations[i]);
+					continue;
+				}
 			}
+
 		}
 		JMap.storage.destinationsByFloor[mapId] = floorArray;			
 		// console.error("There was no destination found with the id: " + id);
@@ -1440,6 +1449,7 @@ var __extends = this.__extends || function (d, b) {
             var iconStyles = this.styles.mapStyles.iconStyles;
             // console.log(iconStyles);
             if(iconStyles.youarehere)this.yahImage = iconStyles.youarehere;
+            this.yahImage.heading = parseInt(JMap.storage.deviceDetails.heading);
             if(iconStyles.destination)this.destinationImage = {url:iconStyles.destination.url, heading:0};
         };
 
@@ -1522,6 +1532,7 @@ var __extends = this.__extends || function (d, b) {
                     if(this.floors[floorClientID.mapId]) {
                         var currentDestination = JMap.storage.destinations[j];
                         currentDestination.wp = JMap.storage.maps.model.getWPByJid(JMap.storage.destinations[j].clientId);
+                        currentDestination.wps = JMap.storage.maps.model.getWPsByJid(JMap.storage.destinations[j].clientId);
                         var destinationMatch = null;
 
 
@@ -2100,7 +2111,7 @@ var __extends = this.__extends || function (d, b) {
     /*********************** SVG MAPS ***********************/
     /********************************************************/
 
-    Building.prototype.getMapsWithDirections = function(destinationId){
+    Building.prototype.getMapsWithDirections = function(destinationId, opWidth, opHeight){
 
     	var destination = JMap.getDestinationByClientId(destinationId);
     	var returnValue = [];
@@ -2118,8 +2129,7 @@ var __extends = this.__extends || function (d, b) {
 
 
     		var currFloor = this.floors[pathData[i].mapid];
-    		var $svgOrig = $("#svg-" + currFloor.id).find("svg");
-    		var svgHtml = $svgOrig.html();
+    		var svgHtml = currFloor.svgHtml;
     		// for (var i = 0; i < currFloor.excludeLayers.length; i++) {
     		// 	var st = svgHtml.indexOf('<g id="' +  currFloor.excludeLayers[i] + '"');
     		// 	var lt = svgHtml.indexOf("</g>", st + 1);
@@ -2161,18 +2171,18 @@ var __extends = this.__extends || function (d, b) {
 			var bounds = d3.select(newElement).node().getBBox();
 			var bounds2 = this.getBoundsOfPath(pathData[i].originalPoints);
 
-			var wGh = bounds2.width > bounds2.height?bounds2.width:bounds2.height;
+			if(!opWidth)opWidth = 300;
+			if(!opHeight)opHeight = 300;
 
-			newSVG.setAttributeNS("http://www.w3.org/2000/svg", "viewbox", (bounds2.x - 75) + " " + (bounds2.y - 75)+ " " + (wGh + 150)   + " " + (wGh + 150));
-			newSVG.setAttributeNS("http://www.w3.org/2000/svg", "enable-background", "new " + (bounds2.x - 75) + " " + (bounds2.y - 75)+ " " + (wGh + 150)   + " " + (wGh + 150));
+			var wG = bounds2.width < opWidth?opWidth:bounds2.width;
+			var hG = bounds2.height < bounds2.height?opHeight:bounds2.height;
 
+			newSVG.setAttributeNS("http://www.w3.org/2000/svg", "viewbox", (bounds2.x - 75) + " " + (bounds2.y - 75)+ " " + (wG + 150)   + " " + (hG + 150));
+			newSVG.setAttributeNS("http://www.w3.org/2000/svg", "enable-background", "new " + (bounds2.x - 75) + " " + (bounds2.y - 75)+ " " + (wG + 150)   + " " + (hG + 150));
 
-			// newSVG.setAttribute("width", bounds2.width);
-			// newSVG.setAttribute("height" , bounds2.height);
-
-			newSVG.setAttribute("width", wGh + 150);
-			newSVG.setAttribute("height" , wGh + 150);
-
+			newSVG.setAttribute("width", opWidth);
+			newSVG.setAttribute("height" , opHeight);
+			newSVG.style.background = this.styles.mapStyles.mapConfig.container.background;
 
 
 			var iconStyles = this.styles.mapStyles.iconStyles;
@@ -2180,6 +2190,8 @@ var __extends = this.__extends || function (d, b) {
 			var startImg = document.createElementNS("http://www.w3.org/2000/svg", 'image');
 			startImg.setAttribute("width", iconStyles.youarehere.width);
 			startImg.setAttribute("height", iconStyles.youarehere.height);
+			startImg.setAttribute("style", "transform-origin:50% 50%;transform:rotate(" + JMap.storage.deviceDetails.heading+ "deg)");
+
 			var endImg = document.createElementNS("http://www.w3.org/2000/svg", 'image');
 			endImg.setAttribute("width", iconStyles.destination.width);
 			endImg.setAttribute("height", iconStyles.destination.height);
@@ -2715,6 +2727,7 @@ var __extends = this.__extends || function (d, b) {
 				setTimeout(function(){
                     // console.log("LOADED");
                     $('#svg-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
+                    $('#svg-' + _this.id + ' > svg').css('shape-rendering', "geometricPrecision");
                     $( '#svg-' + _this.id ).show().css('opacity',1);
 		            $('#svg-' + _this.id).css("background", _this.styles.mapStyles.mapConfig.container.background);
 		            $(_this.view).css("background", _this.styles.mapStyles.mapConfig.container.background);
@@ -2738,7 +2751,10 @@ var __extends = this.__extends || function (d, b) {
 			this.polyRef = {};
 			var _this = this;
 
+			var dragThreshold = 10;
+
 			this.prepareLabels();
+			this.startCoord ={};
 
 
 			//-----------------------
@@ -2751,6 +2767,7 @@ var __extends = this.__extends || function (d, b) {
 				if(currentStyle.addLabel == true){
 					this.setStoreLabels(currentStyle);
 				}
+
 
 				for(var j = 0; j < $group.length; j++){
 					var p = $group[j];
@@ -2765,7 +2782,17 @@ var __extends = this.__extends || function (d, b) {
 					if(currentStyle.clickable == true){
 						var isDragging = false;
 
-						$(p).on("touchstart", function(){
+						// var clickPoly = new JMap.ui.FastButton(p, onTouchEndPoly);
+
+						// p.addEventListener("touchstart", function(e){
+						$(p).on("touchstart", function(e){
+							console.log("Start", e);
+						// function onTouchStartPoly(){
+							// _this.startCoord.startX = e.touches[0].clientX;
+							// _this.startCoord.startY = e.touches[0].clientY;
+
+							_this.startCoord.startX = e.originalEvent.changedTouches[0].clientX;
+							_this.startCoord.startY = e.originalEvent.changedTouches[0].clientY;
 							var lbl = undefined;
 							var prnt = $(this);
 							while(lbl == undefined) {
@@ -2775,13 +2802,9 @@ var __extends = this.__extends || function (d, b) {
 							}
 							$(this).css("fill", _this.styleRef[lbl].highLightColor);
 
-							var _polyThis = this;
-							this.addEventListener("touchend", onTouchEnd);
-							$(window).on("touchmove", function(evt){
-								console.log(evt);
-								_polyThis.removeEventListener("touchend", onTouchEnd);
-								$(window).off("touchmove");
-							});
+
+
+							// var _polyThis = this;
 
 						});
 
@@ -2799,8 +2822,21 @@ var __extends = this.__extends || function (d, b) {
 
 						});
 
+							// $(window).on("touchmove", function(evt){
+							// 	console.log(evt);
+							// 	_polyThis.removeEventListener("touchend", onTouchEnd);
+							// 	$(window).off("touchmove");
+							// });
 
-						function onTouchEnd(evt){
+						p.addEventListener("touchend", onTouchEndPoly);
+
+						function onTouchEndPoly(evt){
+							console.log(evt);
+
+							console.log(_this.startCoord,  evt.changedTouches[0].clientX - _this.startCoord.startX , evt.changedTouches[0].clientY - _this.startCoord.startY );
+							if(evt.changedTouches[0].clientX - _this.startCoord.startX > (dragThreshold) || evt.changedTouches[0].clientY - _this.startCoord.startY > (dragThreshold) || evt.changedTouches[0].clientX - _this.startCoord.startX < -(dragThreshold) || evt.changedTouches[0].clientY - _this.startCoord.startY < -(dragThreshold)){
+								return;
+							}
 						// $(p).on("click", function(evt){
 							if(this.tagName == "g")return;
 							var d = _this.getDestinationWithinBounds(this, evt);
@@ -2817,52 +2853,39 @@ var __extends = this.__extends || function (d, b) {
 				this.styleRef[currentStyle.name] = currentStyle;
 			};
 
-
+			this.svgHtml = $('#svg-' + _this.id).find("svg").html();
+			// debugger;
 
         };
 
 
         Floor.prototype.prepareLabels = function(){
         	this.destinations = JMap.getDestinationsByFloorId(this.id);
-        	this.customBounds = this.styles.mapStyles.storeLabelBounds[this.sequence];
         	this.excludeLayers = [];
-			if(!this.customBounds)this.customBounds = [];
-
-            function getDistance(p1, p2) {return Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2));};
-
-			for (var i = 0; i < this.customBounds.length; i++) {
-				this.customBounds[i].id = this.customBounds[i].type + this.customBounds[i].x + this.customBounds[i].y;
-				var currentCloset = this.destinations[0]
-				for (var j = 1; j < this.destinations.length; j++) {
-					if(getDistance(this.destinations[j].wp, {x:this.customBounds[i]["origin-x"], y:this.customBounds[i]["origin-y"]}) < getDistance(currentCloset.wp, {x:this.customBounds[i]["origin-x"], y:this.customBounds[i]["origin-y"]}))currentCloset = this.destinations[j];
-				};
-
-				this.customBounds[i].closestDestination = currentCloset;
-				currentCloset.hasCustomBounds = true;
-				currentCloset.customBounds = this.customBounds[i];
-			};
-
-
-
         };
 
         Floor.prototype.getDestinationWithinBounds = function(poly){
         	var scOffSet = this.scaleOffset;
         	for (var i = 0; i < this.destinations.length; i++) {
-        		var wp = JMap.storage.maps.model.getWPByJid(this.destinations[i].clientId);
-        		if(!wp)continue;
+        		var wps = this.destinations[i].wps;
+        		for (var j = 0; j < wps.length; j++) {
+        			var wp = wps[j];
+	        		
+	        		// var wp = JMap.storage.maps.model.getWPByJid(this.destinations[i].clientId);
+	        		if(!wp)continue;
 
-        		var zd = this.getZoomData();
-        		var cwp = {
-        			x:(zd.ratio * ((wp.x + this.positionOffset.x) - Number(zd.normX))), 
-        			y:(zd.ratio * ((wp.y + this.positionOffset.y) - Number(zd.normY)))
+	        		var zd = this.getZoomData();
+	        		var cwp = {
+	        			x:(zd.ratio * ((wp.x + this.positionOffset.x) - Number(zd.normX))), 
+	        			y:(zd.ratio * ((wp.y + this.positionOffset.y) - Number(zd.normY)))
+	        		};
+	        		if(cwp.x < 0 || cwp.y < 0)continue;
+
+	        		var cpoly = document.elementFromPoint(cwp.x, cwp.y);
+	    //     		var pd = d3.select(poly);
+					// var bounds = pd.node().getBBox();
+	        		if(poly === cpoly)return this.destinations[i];
         		};
-        		if(cwp.x < 0 || cwp.y < 0)continue;
-
-        		var cpoly = document.elementFromPoint(cwp.x, cwp.y);
-    //     		var pd = d3.select(poly);
-				// var bounds = pd.node().getBBox();
-        		if(poly === cpoly)return this.destinations[i];
         	}
         };
 
@@ -2925,16 +2948,53 @@ var __extends = this.__extends || function (d, b) {
 					};
 					bounds.width = bounds.xMax - bounds.x;
 					bounds.height = bounds.yMax - bounds.y;
+
+					//added formula 
+					bounds.center = this.getCenterOfBounds(bounds);
+					polyPoints.pop();
+					for(i = 0; i < polyPoints.length; i++){
+						pt = polyPoints[i].split(",");
+						polyPoints[i] = {x:Number(pt[0]), y: Number(pt[1])};
+						if(bounds.center.x > polyPoints[i].x)polyPoints[i].xW = 1;
+						else polyPoints[i].xW = -1;
+						if(bounds.center.y > polyPoints[i].y)polyPoints[i].yW = 1;
+						else polyPoints[i].yW = -1;
+					}
+					bounds.segments = polyPoints;
+
+
+					break;
+				case "path":
+					bounds = d3.select(poly).node().getBBox();
 					break;
 				}
 				return bounds;
         };
 
-        Floor.prototype.isPointInBounds = function(point, bounds){
-        	if(point.x > bounds.x && point.x < (bounds.x + bounds.width) && point.y > bounds.y && point.y < (bounds.y + bounds.height)){
-				return true;
-			}
-			return false;
+        Floor.prototype.isPointInBounds = function(point, bounds, extensiveCheck){
+        	if(bounds.segments && extensiveCheck == true){
+        		//this is where the fun happens
+        		var successCount = 0;
+        		for(var i = 0; i < bounds.segments.length; i++){
+        			var xW, yW;
+        			if(point.x <= bounds.segments[i].x)xW = 1;
+        			else xW = -1;
+        			if(point.y <= bounds.segments[i].y)yW = 1;
+        			else yW = -1;
+
+        			if(xW === bounds.xW && yW === bounds.yW)successCount++;
+        		}
+
+        		//RULE
+        		var limit = bounds.segments.length >= 6?bounds.segments.length-1:bounds.segments.length;
+        		if(successCount >= bounds.segments.length)return true;
+        		else return false;
+
+
+        	}else{
+	        	if(point.x > bounds.x && point.x < (bounds.x + bounds.width) && point.y > bounds.y && point.y < (bounds.y + bounds.height))return true;
+				return false;
+        	}
         };
 
         Floor.prototype.getCenterOfBounds = function(bounds){
@@ -2945,37 +3005,35 @@ var __extends = this.__extends || function (d, b) {
         Floor.prototype.setStoreLabels = function(groupPar){
 
 
-        	for (var i = 0; i < this.customBounds.length; i++) if(this.customBounds[i].polygons === undefined)this.customBounds[i].polygons = [];
         	for (var i = 0; i < this.destinations.length; i++) if(this.destinations[i].polygons === undefined)this.destinations[i].polygons = [];
-
 
         	//All polygons that have boundaries containing the custom bounds' origin point
         	for(var k = 0; k < groupPar.group.length; k++){
         		var g = groupPar.group[k];
-        		if(g.tagName == "g" || g.tagName == "path")continue;
+        		if(g.tagName == "g" /*|| g.tagName == "path"*/)continue;
         		var bounds = this.getBoundsOfPoly(g);
-        		for (var i = 0; i < this.customBounds.length; i++) {
-	    			if(this.isPointInBounds({x:this.customBounds[i]["origin-x"] + this.positionOffset.x, y:this.customBounds[i]["origin-y"] + this.positionOffset.y}, bounds) == true){
-	    				this.customBounds[i].polygons.push(g);
-	    			}
-        		};
         		for (i = 0; i < this.destinations.length; i++) {
-        			if(this.isPointInBounds({x:this.destinations[i].wp.x + this.positionOffset.x, y:this.destinations[i].wp.y + this.positionOffset.y}, bounds) == true){
-		    			this.destinations[i].polygons.push(g);
+        			for(var j = 0; j < this.destinations[i].wps.length; j++){	
+        				if(this.destinations[i].wps[j].mapid == this.id){
+		        			if(this.isPointInBounds({x:this.destinations[i].wps[j].x + this.positionOffset.x, y:this.destinations[i].wps[j].y + this.positionOffset.y}, bounds, this.styles.mapStyles.secondCheck.indexOf(this.destinations[i].clientId)!=-1) == true){
+				    			this.destinations[i].polygons.push(g);
+		        			}
+        				}
         			}
         		};
-
         	};
 
             function getDistance(p1, p2) {return Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2));};
 
         	for (i = 0; i < this.destinations.length; i++) {
     			if(this.destinations[i].polygons.length > 1){
-    				var currentClosest = this.destinations[i].polygons;
+    				var currentClosest = this.destinations[i].polygons[0];
     				for (k = 1; k < this.destinations[i].polygons.length; k++) {
-    					if(getDistance(this.destinations[i].polygons[k], this.destinations[i].wp) < getDistance(currentClosest, this.destinations[i].wp)){
-    						currentClosest = this.destinations[i].polygons[k];
-    					} 
+        				for(var j = 0; j < this.destinations[i].wps; j++){	
+	    					if(getDistance(this.destinations[i].polygons[k], this.destinations[i].wps[j]) < getDistance(currentClosest, this.destinations[i].wps[j])){
+	    						currentClosest = this.destinations[i].polygons[k];
+	    					}
+	    				} 
     				};
     				this.destinations[i].centerPolygon = currentClosest;
     			}else{
@@ -2986,84 +3044,100 @@ var __extends = this.__extends || function (d, b) {
 
         	var c = 0;
 
-			var newGroup = document.createElementNS("http://www.w3.org/2000/svg", 'g');
-			newGroup.id = groupPar.name +  "-labels-" + this.id;
-        	this.excludeLayers.push(newGroup.id);
+			var newGroup = document.createElementNS("http://www.w3.org/2000/svg", 'g'),
+				labelLayerName = groupPar.name +  "-labels-" + this.id;
+				
+				newGroup.id = labelLayerName;
+        		// this.excludeLayers.push(newGroup.id);
 
 
 			var d3Group = d3.select(newGroup);
-
+			
 			var svg = document.getElementById("L" + (this.sequence + 1).toString());
 
 			var pixelWidthThreshold = 7;
 
+			var parentChildBoundaryReference = [];
+
+			var lblStyles = groupPar.label;
+			// lblStyles.fill = "#000";
+			// lblStyles["font-size"] = groupPar.sponsorship == 75?"12px":"9px";
+
         	for(i = 0; i < this.destinations.length; i ++){
-        		// for(k = 0; k < this.destinations[i].polygons.length; k++ ){
-        			if(!this.destinations[i].centerPolygon)continue;
-        				var textElement = document.c
-        				var textF;
-        				var destName = this.destinations[i].name.split("&amp;").join("&");
+    			if(!this.destinations[i].centerPolygon)continue;
+    			if(this.styles.mapStyles.hideLabels.indexOf(this.destinations[i].clientId) > -1)continue;
 
-        				if(this.destinations[i].hasCustomBounds == true){
-        					//do custom bounds here
-        					var cb = this.destinations[i].customBounds;
-        					if(cb.type == "line"){
-        						//drawline
-        					}
-        					if(destName.length * pixelWidthThreshold > cb.width){
+				var textF;
+				var destName = this.destinations[i].name.split("&amp;").join("&").split("&eacute;").join("é");
 
-        						// console.log(destName + " Overlap hasCustom");
-        						// debugger;
-        					}
-        					console.log(destName, cb.type);
-        					textF = d3Group.append("text").attr("x",cb.x + this.positionOffset.x).attr("y",cb.y + this.positionOffset.y).attr("width",cb.width).attr("height",cb.height).attr("font-size",9).attr("color","#f00").attr("text-anchor","middle").text(destName);
+				var bd = this.getBoundsOfPoly(this.destinations[i].centerPolygon);
+				if(!bd.x)continue;
+				var center = this.getCenterOfBounds(bd);
 
-        				}else{
-        					var bd = this.getBoundsOfPoly(this.destinations[i].centerPolygon);
-        					if(!bd.x)continue;
-        					var center = this.getCenterOfBounds(bd);
-        					if(destName.length * pixelWidthThreshold > bd.width){
-        						// console.log(destName + " Overlap");
-        					}else{
-								textF = d3Group.append("text").attr("x",center.x).attr("y",center.y).attr("width",bd.width).attr("height",bd.height).attr("font-size",9).attr("color","#fff").attr("text-anchor","middle").text(destName);
-        					}
-							// if($(textF).width() > bd.width)console.log("OVERLAP", this.destinations[i].name);
-        				}
-        				c++;
 
-        			if($(this.destinations[i].centerPolygon).parent().attr("id") != groupPar.name){
-        				d3Group.remove(textF);
-        			}
-        		// }
+				textF = d3Group.append("text").attr("x",center.x).attr("y",center.y+ 3).attr("width",bd.width).attr("height",bd.height)
+
+				for(var str in lblStyles){
+					textF.attr(str,lblStyles[str]);
+				}
+
+				textF.attr("text-anchor","middle").text(destName);
+
+				var tbd = textF.node().getBBox();
+					// console.log("BOOM");
+				bd.textNode = textF;
+
+				parentChildBoundaryReference.push(bd);
+				c++;
+
+				var par = $(this.destinations[i].centerPolygon).parent();
+				var parId = par.attr("id");
+				if(parId == undefined){
+					parId = par.parent().attr("id");
+				}
+
+    			if(parId != groupPar.name){
+    				console.log(destName + " doesn't belong in " + groupPar.name, parId);
+    				textF.remove();
+    			}
         	}
 
         	
 			// newGroup.appendChild(txtElem);
 			svg.appendChild(newGroup);
+			// $(newGroup).css("pointer-events", "none");
 
 
-        	// console.log(groupPar.name + " has " + c + " stores that need labels");
-				
+			for (var ch = 0; ch < parentChildBoundaryReference.length; ch++){
+				// console.log(parentChildBoundaryReference[ch].width,  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength());
+				if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
+					parentChildBoundaryReference[ch].textNode.attr("font-size", "7px");
+					if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
+						parentChildBoundaryReference[ch].textNode.attr("font-size", "5px");
+						if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
+							parentChildBoundaryReference[ch].textNode.attr("font-size", "3px").attr("class", "tinyLabel");
+							// parentChildBoundaryReference[ch].textNode.attr("fill-opacity", 0);
+							// parentChildBoundaryReference[ch].textNode.attr("style", "display:none");
+							// parentChildBoundaryReference[ch].textNode.attr("fill", "#f00");
+						}else{
+							//add to small
+							parentChildBoundaryReference[ch].textNode.attr("class", "smallLabel");
+						}
+					}else{
+						//add to medium
+						parentChildBoundaryReference[ch].textNode.attr("class", "mediumLabel");
+					}
+				}else{
+					//add to large
+					parentChildBoundaryReference[ch].textNode.attr("class", "largeLabel");
+				}
+			}
+           //TO DO make this PER sponsorship or per size
 
-
-
-
-
-
-			var labelStyles = this.styles.mapStyles.labelStyle;
-
-            function applyStyleTo(styles, selector){
-            	for(var str in styles){	
-            	    $(selector).css(str, styles[str]);
-            	}
-            }
-
-           	applyStyleTo(labelStyles["hightraffic-store-label"], ".map-floor-container-base .landmarks .item.hightraffic-store-label.store-labels>div");           	
-           	applyStyleTo(labelStyles["anchor-store-label"], ".map-floor-container-base .landmarks .item.anchor-store-label.store-labels>div");
-           
 
         };
 
+        //Not being used
         Floor.prototype.getLPosWithinBounds = function(poly){
         	var scOffSet = this.scaleOffset;
         	for (var i = 0; i < this.destinations.length; i++) {
@@ -3165,14 +3239,36 @@ var __extends = this.__extends || function (d, b) {
             if(!zoomData)return;
             var currentScale = zoomData.ratio *100;
             for (var i = 0; i < this.styles.mapStyles.mapLayers.length; i++) {
+            	if(this.styles.mapStyles.mapLayers[i].zoomLevel == 0)continue;
             	var zoomAlpha = 1;
             	if(this.styles.mapStyles.mapLayers[i].zoomLevel < currentScale)zoomAlpha = 1;
             	else zoomAlpha = 0;
         		
             	// console.log(this.styles.mapStyles.mapLayers[i], zoomAlpha);
             	var $group = $('#svg-' + this.id ).find("#" + this.styles.mapStyles.mapLayers[i].name).find("*");
+            	// $group.hide().show();//Force render
         		TweenLite.to($group, 0.3, {"fill-opacity":zoomAlpha, "stroke-opacity":zoomAlpha});
             }
+
+            if(currentScale >= 100)$(".largeLabel").show();
+            else $(".largeLabel").hide();
+            if(currentScale >= 150)$(".mediumLabel").show();
+            else $(".mediumLabel").hide();
+            if(currentScale >= 200)$(".smallLabel").show();
+            else $(".smallLabel").hide();
+            if(currentScale >= 400)$(".tinyLabel").show();
+            else $(".tinyLabel").hide();
+
+
+            setTimeout(function(){
+
+		        //Force render for chrome
+		        var jmap = document.getElementsByTagName("jmap")[0];
+		        var p = jmap.parentElement;
+		        p.removeChild(jmap);
+		        p.appendChild(jmap)
+
+            }, 100);
         };
   
 
@@ -4218,6 +4314,23 @@ var BuildingModelGrid = (function () {
                     return wp;
             }
             return null;
+        };
+
+        BuildingModelGrid.prototype.getWPsByJid = function(jid){
+        	var returnArray = [];
+        	for (var i = 0; i < this.waypoints.length; i++) {
+        		var wp = this.waypoints[i]
+
+        		if (!wp.jids)
+                    continue;
+
+                if (wp.jids.indexOf(jid) != -1)
+                    returnArray.push(wp);
+        	};
+
+        	return returnArray;
+
+
         };
 
         /**
