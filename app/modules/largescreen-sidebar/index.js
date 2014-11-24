@@ -157,15 +157,13 @@ module.exports = angular.module('LargescreenSidebar', [])
       var code = $(e.currentTarget).attr('data-code');
       LargescreenDirectory.goToCategory(code);
       sidebar.hide();
-      $('div.caret').addClass('up');
     });
 
     // Floor Filter Listener
-    $(document).on('click', 'ul.sidebar-floor-list', function(e) {
+    $(document).on('click', 'ul.sidebar-floor-list li', function(e) {
       var level = $(e.currentTarget).attr('data-level');
       LargescreenDirectory.selectFloor(level);
       sidebar.hide();
-      $('div.caret').addClass('up');
     });
 
   };
