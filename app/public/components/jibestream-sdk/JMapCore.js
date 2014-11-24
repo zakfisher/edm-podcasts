@@ -1449,6 +1449,7 @@ var __extends = this.__extends || function (d, b) {
             var iconStyles = this.styles.mapStyles.iconStyles;
             // console.log(iconStyles);
             if(iconStyles.youarehere)this.yahImage = iconStyles.youarehere;
+            this.yahImage.heading = parseInt(JMap.storage.deviceDetails.heading);
             if(iconStyles.destination)this.destinationImage = {url:iconStyles.destination.url, heading:0};
         };
 
@@ -2189,6 +2190,8 @@ var __extends = this.__extends || function (d, b) {
 			var startImg = document.createElementNS("http://www.w3.org/2000/svg", 'image');
 			startImg.setAttribute("width", iconStyles.youarehere.width);
 			startImg.setAttribute("height", iconStyles.youarehere.height);
+			startImg.setAttribute("style", "transform-origin:50% 50%;transform:rotate(" + JMap.storage.deviceDetails.heading+ "deg)");
+
 			var endImg = document.createElementNS("http://www.w3.org/2000/svg", 'image');
 			endImg.setAttribute("width", iconStyles.destination.width);
 			endImg.setAttribute("height", iconStyles.destination.height);
@@ -2945,6 +2948,21 @@ var __extends = this.__extends || function (d, b) {
 					};
 					bounds.width = bounds.xMax - bounds.x;
 					bounds.height = bounds.yMax - bounds.y;
+
+					//added formula 
+					bounds.center = this.getCenterOfBounds(bounds);
+					polyPoints.pop();
+					for(i = 0; i < polyPoints.length; i++){
+						pt = polyPoints[i].split(",");
+						polyPoints[i] = {x:Number(pt[0]), y: Number(pt[1])};
+						if(bounds.center.x > polyPoints[i].x)polyPoints[i].xW = 1;
+						else polyPoints[i].xW = -1;
+						if(bounds.center.y > polyPoints[i].y)polyPoints[i].yW = 1;
+						else polyPoints[i].yW = -1;
+					}
+					bounds.segments = polyPoints;
+
+
 					break;
 				case "path":
 					bounds = d3.select(poly).node().getBBox();
@@ -2953,11 +2971,30 @@ var __extends = this.__extends || function (d, b) {
 				return bounds;
         };
 
-        Floor.prototype.isPointInBounds = function(point, bounds){
-        	if(point.x > bounds.x && point.x < (bounds.x + bounds.width) && point.y > bounds.y && point.y < (bounds.y + bounds.height)){
-				return true;
-			}
-			return false;
+        Floor.prototype.isPointInBounds = function(point, bounds, extensiveCheck){
+        	if(bounds.segments && extensiveCheck == true){
+        		//this is where the fun happens
+        		var successCount = 0;
+        		for(var i = 0; i < bounds.segments.length; i++){
+        			var xW, yW;
+        			if(point.x <= bounds.segments[i].x)xW = 1;
+        			else xW = -1;
+        			if(point.y <= bounds.segments[i].y)yW = 1;
+        			else yW = -1;
+
+        			if(xW === bounds.xW && yW === bounds.yW)successCount++;
+        		}
+
+        		//RULE
+        		var limit = bounds.segments.length >= 6?bounds.segments.length-1:bounds.segments.length;
+        		if(successCount >= bounds.segments.length)return true;
+        		else return false;
+
+
+        	}else{
+	        	if(point.x > bounds.x && point.x < (bounds.x + bounds.width) && point.y > bounds.y && point.y < (bounds.y + bounds.height))return true;
+				return false;
+        	}
         };
 
         Floor.prototype.getCenterOfBounds = function(bounds){
@@ -2978,7 +3015,7 @@ var __extends = this.__extends || function (d, b) {
         		for (i = 0; i < this.destinations.length; i++) {
         			for(var j = 0; j < this.destinations[i].wps.length; j++){	
         				if(this.destinations[i].wps[j].mapid == this.id){
-		        			if(this.isPointInBounds({x:this.destinations[i].wps[j].x + this.positionOffset.x, y:this.destinations[i].wps[j].y + this.positionOffset.y}, bounds) == true){
+		        			if(this.isPointInBounds({x:this.destinations[i].wps[j].x + this.positionOffset.x, y:this.destinations[i].wps[j].y + this.positionOffset.y}, bounds, this.styles.mapStyles.secondCheck.indexOf(this.destinations[i].clientId)!=-1) == true){
 				    			this.destinations[i].polygons.push(g);
 		        			}
         				}
@@ -3022,15 +3059,16 @@ var __extends = this.__extends || function (d, b) {
 
 			var parentChildBoundaryReference = [];
 
-			var lblStyles = {};
-			lblStyles.fill = "#000";
-			lblStyles["font-size"] = groupPar.sponsorship == 75?"12px":"9px";
+			var lblStyles = groupPar.label;
+			// lblStyles.fill = "#000";
+			// lblStyles["font-size"] = groupPar.sponsorship == 75?"12px":"9px";
 
         	for(i = 0; i < this.destinations.length; i ++){
     			if(!this.destinations[i].centerPolygon)continue;
+    			if(this.styles.mapStyles.hideLabels.indexOf(this.destinations[i].clientId) > -1)continue;
 
 				var textF;
-				var destName = this.destinations[i].name.split("&amp;").join("&");
+				var destName = this.destinations[i].name.split("&amp;").join("&").split("&eacute;").join("é");
 
 				var bd = this.getBoundsOfPoly(this.destinations[i].centerPolygon);
 				if(!bd.x)continue;
@@ -3073,57 +3111,28 @@ var __extends = this.__extends || function (d, b) {
 			for (var ch = 0; ch < parentChildBoundaryReference.length; ch++){
 				// console.log(parentChildBoundaryReference[ch].width,  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength());
 				if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
-					parentChildBoundaryReference[ch].textNode.attr("font-size", "5px");
+					parentChildBoundaryReference[ch].textNode.attr("font-size", "7px");
 					if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
-						parentChildBoundaryReference[ch].textNode.attr("font-size", "3px");
+						parentChildBoundaryReference[ch].textNode.attr("font-size", "5px");
 						if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
+							parentChildBoundaryReference[ch].textNode.attr("font-size", "3px").attr("class", "tinyLabel");
 							// parentChildBoundaryReference[ch].textNode.attr("fill-opacity", 0);
 							// parentChildBoundaryReference[ch].textNode.attr("style", "display:none");
 							// parentChildBoundaryReference[ch].textNode.attr("fill", "#f00");
 						}else{
 							//add to small
+							parentChildBoundaryReference[ch].textNode.attr("class", "smallLabel");
 						}
 					}else{
 						//add to medium
+						parentChildBoundaryReference[ch].textNode.attr("class", "mediumLabel");
 					}
 				}else{
 					//add to large
+					parentChildBoundaryReference[ch].textNode.attr("class", "largeLabel");
 				}
 			}
-
-			// var labelStyles = this.styles.mapStyles.labelStyle;
-
-   //          function applyStyleTo(styles, selector){
-   //          	for(var str in styles){	
-   //          	    $(selector).css(str, styles[str]);
-   //          	}
-   //          }
-
-   //         	applyStyleTo(labelStyles["hightraffic-store-label"], ".map-floor-container-base .landmarks .item.hightraffic-store-label.store-labels>div");           	
-   //         	applyStyleTo(labelStyles["anchor-store-label"], ".map-floor-container-base .landmarks .item.anchor-store-label.store-labels>div");
-           
-
            //TO DO make this PER sponsorship or per size
-           this.styles.mapStyles.mapLayers.push({
-           		"name": labelLayerName + "L",
-		        "class": "StoreLabels",
-		        "zoomLevel": 100,
-		        "clickable": false
-           });
-
-           this.styles.mapStyles.mapLayers.push({
-           		"name": labelLayerName + "M",
-		        "class": "StoreLabels",
-		        "zoomLevel": 150,
-		        "clickable": false
-           });
-
-           this.styles.mapStyles.mapLayers.push({
-           		"name": labelLayerName + "S",
-		        "class": "StoreLabels",
-		        "zoomLevel": 150,
-		        "clickable": false
-           });
 
 
         };
@@ -3240,6 +3249,16 @@ var __extends = this.__extends || function (d, b) {
             	// $group.hide().show();//Force render
         		TweenLite.to($group, 0.3, {"fill-opacity":zoomAlpha, "stroke-opacity":zoomAlpha});
             }
+
+            if(currentScale >= 100)$(".largeLabel").show();
+            else $(".largeLabel").hide();
+            if(currentScale >= 150)$(".mediumLabel").show();
+            else $(".mediumLabel").hide();
+            if(currentScale >= 200)$(".smallLabel").show();
+            else $(".smallLabel").hide();
+            if(currentScale >= 400)$(".tinyLabel").show();
+            else $(".tinyLabel").hide();
+
 
             setTimeout(function(){
 
