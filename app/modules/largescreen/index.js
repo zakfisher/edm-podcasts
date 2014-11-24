@@ -4,6 +4,7 @@ module.exports = angular.module('Largescreen', [])
   var self = {};
 
   self.selectFloor = function (floor) {
+    console.log('select floor', floor);
     self.selectedFloor = floor;
   };
 
@@ -111,7 +112,7 @@ module.exports = angular.module('Largescreen', [])
   console.log('All stores', $scope.directory.allStores);
 
   $scope.directory.pages = groups;
-  $scope.directory.selectedFloor = "1";
+  // $scope.directory.selectedFloor = "1";
 
 
   $scope.handleItemClick = function (item) {
