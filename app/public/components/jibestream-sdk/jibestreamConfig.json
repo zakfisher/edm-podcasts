@@ -69,7 +69,13 @@
         "colorFill": "#dddabf",
         "strokeColor": "#fff",
         "strokeWidth": "2px",
-        "clickable": false
+         "clickable": true,
+        "addLabel": true,
+        "sponsorship":75,
+        "label":{
+          "font-size": "10px",
+          "color": "#000"
+        }
    },
       {
         "name": "Floor",

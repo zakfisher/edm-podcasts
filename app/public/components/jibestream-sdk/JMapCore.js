@@ -2110,7 +2110,7 @@ var __extends = this.__extends || function (d, b) {
     /*********************** SVG MAPS ***********************/
     /********************************************************/
 
-    Building.prototype.getMapsWithDirections = function(destinationId){
+    Building.prototype.getMapsWithDirections = function(destinationId, opWidth, opHeight){
 
     	var destination = JMap.getDestinationByClientId(destinationId);
     	var returnValue = [];
@@ -2128,8 +2128,7 @@ var __extends = this.__extends || function (d, b) {
 
 
     		var currFloor = this.floors[pathData[i].mapid];
-    		var $svgOrig = $("#svg-" + currFloor.id).find("svg");
-    		var svgHtml = $svgOrig.html();
+    		var svgHtml = currFloor.svgHtml;
     		// for (var i = 0; i < currFloor.excludeLayers.length; i++) {
     		// 	var st = svgHtml.indexOf('<g id="' +  currFloor.excludeLayers[i] + '"');
     		// 	var lt = svgHtml.indexOf("</g>", st + 1);
@@ -2171,18 +2170,18 @@ var __extends = this.__extends || function (d, b) {
 			var bounds = d3.select(newElement).node().getBBox();
 			var bounds2 = this.getBoundsOfPath(pathData[i].originalPoints);
 
-			var wGh = bounds2.width > bounds2.height?bounds2.width:bounds2.height;
+			if(!opWidth)opWidth = 300;
+			if(!opHeight)opHeight = 300;
 
-			newSVG.setAttributeNS("http://www.w3.org/2000/svg", "viewbox", (bounds2.x - 75) + " " + (bounds2.y - 75)+ " " + (wGh + 150)   + " " + (wGh + 150));
-			newSVG.setAttributeNS("http://www.w3.org/2000/svg", "enable-background", "new " + (bounds2.x - 75) + " " + (bounds2.y - 75)+ " " + (wGh + 150)   + " " + (wGh + 150));
+			var wG = bounds2.width < opWidth?opWidth:bounds2.width;
+			var hG = bounds2.height < bounds2.height?opHeight:bounds2.height;
 
+			newSVG.setAttributeNS("http://www.w3.org/2000/svg", "viewbox", (bounds2.x - 75) + " " + (bounds2.y - 75)+ " " + (wG + 150)   + " " + (hG + 150));
+			newSVG.setAttributeNS("http://www.w3.org/2000/svg", "enable-background", "new " + (bounds2.x - 75) + " " + (bounds2.y - 75)+ " " + (wG + 150)   + " " + (hG + 150));
 
-			// newSVG.setAttribute("width", bounds2.width);
-			// newSVG.setAttribute("height" , bounds2.height);
-
-			newSVG.setAttribute("width", wGh + 150);
-			newSVG.setAttribute("height" , wGh + 150);
-
+			newSVG.setAttribute("width", opWidth);
+			newSVG.setAttribute("height" , opHeight);
+			newSVG.style.background = this.styles.mapStyles.mapConfig.container.background;
 
 
 			var iconStyles = this.styles.mapStyles.iconStyles;
@@ -2851,7 +2850,8 @@ var __extends = this.__extends || function (d, b) {
 				this.styleRef[currentStyle.name] = currentStyle;
 			};
 
-
+			this.svgHtml = $('#svg-' + _this.id).find("svg").html();
+			// debugger;
 
         };
 
@@ -2859,23 +2859,6 @@ var __extends = this.__extends || function (d, b) {
         Floor.prototype.prepareLabels = function(){
         	this.destinations = JMap.getDestinationsByFloorId(this.id);
         	this.excludeLayers = [];
-
-            function getDistance(p1, p2) {return Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2));};
-
-			// for (var i = 0; i < this.customBounds.length; i++) {
-			// 	this.customBounds[i].id = this.customBounds[i].type + this.customBounds[i].x + this.customBounds[i].y;
-			// 	var currentCloset = this.destinations[0]
-			// 	for (var j = 1; j < this.destinations.length; j++) {
-			// 		if(getDistance(this.destinations[j].wp, {x:this.customBounds[i]["origin-x"], y:this.customBounds[i]["origin-y"]}) < getDistance(currentCloset.wp, {x:this.customBounds[i]["origin-x"], y:this.customBounds[i]["origin-y"]}))currentCloset = this.destinations[j];
-			// 	};
-
-			// 	this.customBounds[i].closestDestination = currentCloset;
-			// 	currentCloset.hasCustomBounds = true;
-			// 	currentCloset.customBounds = this.customBounds[i];
-			// };
-
-
-
         };
 
         Floor.prototype.getDestinationWithinBounds = function(poly){
@@ -3111,7 +3094,7 @@ var __extends = this.__extends || function (d, b) {
 						if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
 							// parentChildBoundaryReference[ch].textNode.attr("fill-opacity", 0);
 							// parentChildBoundaryReference[ch].textNode.attr("style", "display:none");
-							parentChildBoundaryReference[ch].textNode.attr("fill", "#f00");
+							// parentChildBoundaryReference[ch].textNode.attr("fill", "#f00");
 
 
 							// d3Group.remove(parentChildBoundaryReference[ch].textNode);
@@ -3165,6 +3148,7 @@ var __extends = this.__extends || function (d, b) {
 
         };
 
+        //Not being used
         Floor.prototype.getLPosWithinBounds = function(poly){
         	var scOffSet = this.scaleOffset;
         	for (var i = 0; i < this.destinations.length; i++) {
@@ -3277,6 +3261,15 @@ var __extends = this.__extends || function (d, b) {
         		TweenLite.to($group, 0.3, {"fill-opacity":zoomAlpha, "stroke-opacity":zoomAlpha});
             }
 
+            setTimeout(function(){
+
+		        //Force render for chrome
+		        var jmap = document.getElementsByTagName("jmap")[0];
+		        var p = jmap.parentElement;
+		        p.removeChild(jmap);
+		        p.appendChild(jmap)
+
+            }, 100);
         };
   
 
