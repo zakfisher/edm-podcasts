@@ -42,6 +42,7 @@ module.exports = angular.module('LargescreenSidebar', [])
     var Scrollview = $famous['famous/views/Scrollview'];
 
     sidebar.categories = CategoryService.getCategories();
+    
     // API call to Jibestream for floor count (from Phiroze)
     // sidebar.floors = JMap.getMaps(function(data) {
     //   console.log('map', data);
@@ -146,9 +147,11 @@ module.exports = angular.module('LargescreenSidebar', [])
       sidebar.active = (sidebar.scrollview.getAbsolutePosition() < 150);
       if (sidebar.active) {
         $('div.caret').removeClass('up');
+        $('.sidebar-overlay').show();
       }
       else {
         $('div.caret').addClass('up'); 
+        $('.sidebar-overlay').hide();
       }
     });
 
@@ -157,6 +160,7 @@ module.exports = angular.module('LargescreenSidebar', [])
       var code = $(e.currentTarget).attr('data-code');
       LargescreenDirectory.goToCategory(code);
       sidebar.hide();
+      $('div.caret').addClass('up');
     });
 
     // Floor Filter Listener
@@ -164,8 +168,29 @@ module.exports = angular.module('LargescreenSidebar', [])
       var level = $(e.currentTarget).attr('data-level');
       LargescreenDirectory.selectFloor(level);
       sidebar.hide();
+      $('div.caret').addClass('up');
     });
 
+    // Menu Button Display Toggle Listener
+    $(document).on('click', '.sidebar-menu-btn', function(e) {
+      if (sidebar.active) {
+        sidebar.hide();
+        $('.sidebar-overlay').hide();
+        $('div.caret').addClass('up');
+      }
+      else {
+        sidebar.show();
+        $('.sidebar-overlay').show();
+        $('div.caret').removeClass('up');
+      }
+    });
+
+    // Overlay Close Menu Listener
+    $(document).on('click', '.sidebar-overlay', function(e) {
+        sidebar.hide();
+        $('div.caret').addClass('up');
+        $('.sidebar-overlay').hide();
+    });
   };
 
   return sidebar;
