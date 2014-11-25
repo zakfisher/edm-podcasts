@@ -147,9 +147,11 @@ module.exports = angular.module('LargescreenSidebar', [])
       sidebar.active = (sidebar.scrollview.getAbsolutePosition() < 150);
       if (sidebar.active) {
         $('div.caret').removeClass('up');
+        $('.sidebar-overlay').show();
       }
       else {
         $('div.caret').addClass('up'); 
+        $('.sidebar-overlay').hide();
       }
     });
 
@@ -169,6 +171,26 @@ module.exports = angular.module('LargescreenSidebar', [])
       $('div.caret').addClass('up');
     });
 
+    // Menu Button Display Toggle Listener
+    $(document).on('click', '.sidebar-menu-btn', function(e) {
+      if (sidebar.active) {
+        sidebar.hide();
+        $('.sidebar-overlay').hide();
+        $('div.caret').addClass('up');
+      }
+      else {
+        sidebar.show();
+        $('.sidebar-overlay').show();
+        $('div.caret').removeClass('up');
+      }
+    });
+
+    // Overlay Close Menu Listener
+    $(document).on('click', '.sidebar-overlay', function(e) {
+        sidebar.hide();
+        $('div.caret').addClass('up');
+        $('.sidebar-overlay').hide();
+    });
   };
 
   return sidebar;
