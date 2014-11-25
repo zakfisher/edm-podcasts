@@ -30,7 +30,6 @@ module.exports = angular.module('LargescreenSidebar', [])
   sidebar.hide = function() {
     sidebar.scrollview.goToPage(1);
     sidebar.active = false;
-    //$('div.caret').addClass('up');
   };
 
   sidebar.render = function() {
@@ -159,6 +158,7 @@ module.exports = angular.module('LargescreenSidebar', [])
       var code = $(e.currentTarget).attr('data-code');
       LargescreenDirectory.goToCategory(code);
       sidebar.hide();
+      $('div.caret').addClass('up');
     });
 
     // Floor Filter Listener
@@ -166,6 +166,7 @@ module.exports = angular.module('LargescreenSidebar', [])
       var level = $(e.currentTarget).attr('data-level');
       LargescreenDirectory.selectFloor(level);
       sidebar.hide();
+      $('div.caret').addClass('up');
     });
 
   };
