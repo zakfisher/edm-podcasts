@@ -1,6 +1,6 @@
 module.exports = angular.module('LargescreenSidebar', [])
 
-.service('LargescreenSidebar', function ($famous, $state, $stateParams, $rootScope, CategoryService) {
+.service('LargescreenSidebar', function ($famous, $state, $stateParams, $rootScope, CategoryService, LargescreenDirectory) {
   var sidebar = {};
 
   sidebar.getContentHeight = function () {
@@ -42,6 +42,10 @@ module.exports = angular.module('LargescreenSidebar', [])
     var Scrollview = $famous['famous/views/Scrollview'];
 
     sidebar.categories = CategoryService.getCategories();
+    // API call to Jibestream for floor count (from Phiroze)
+    // sidebar.floors = JMap.getMaps(function(data) {
+    //   console.log('map', data);
+    // });
 
     sidebar.floors = [
       { level: 2 },
@@ -90,18 +94,24 @@ module.exports = angular.module('LargescreenSidebar', [])
 
     // Add Menu Content
     var content = '';
+
+    // Categories
     content += '<em>Select a category</em>';
-    content += '<ul>';
+    content += '<ul class="sidebar-category-list">';
     sidebar.categories.forEach(function(category) {
-      content += '<li>' + category.name + '</li>';
+      content += '<li data-code="' + category.code + '">' + category.name + '</li>';
     });
     content += '</ul>';
+
+    // Floors
     content += '<em>Select a floor</em>';
-    content += '<ul>';
+    content += '<ul class="sidebar-floor-list">';
     sidebar.floors.forEach(function(floor) {
-      content += '<li>Floor ' + floor.level + '</li>';
+      content += '<li data-level="' + floor.level + '">Floor ' + floor.level + '</li>';
     });
     content += '</ul>';
+
+    // Append Markup
     menuContentSurface.setContent(content);
 
     // Create Menu Button View
@@ -141,6 +151,21 @@ module.exports = angular.module('LargescreenSidebar', [])
         $('div.caret').addClass('up'); 
       }
     });
+
+    // Category Filter Listener
+    $(document).on('click', 'ul.sidebar-category-list li', function(e) {
+      var code = $(e.currentTarget).attr('data-code');
+      LargescreenDirectory.goToCategory(code);
+      sidebar.hide();
+    });
+
+    // Floor Filter Listener
+    $(document).on('click', 'ul.sidebar-floor-list li', function(e) {
+      var level = $(e.currentTarget).attr('data-level');
+      LargescreenDirectory.selectFloor(level);
+      sidebar.hide();
+    });
+
   };
 
   return sidebar;

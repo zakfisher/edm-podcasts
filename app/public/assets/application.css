@@ -186,6 +186,20 @@ g.active .key-background {
   -moz-border-radius-bottomleft: 15px;
   border-bottom-right-radius: 15px;
   border-bottom-left-radius: 15px; }
+  .large-directory-card li {
+    overflow: hidden; }
+    .large-directory-card li .floor-number {
+      display: block; }
+  .large-directory-card li.highlighted .store-listing {
+    background: #e01f26;
+    color: #fff;
+    font-size: 90%;
+    display: inline block;
+    margin-right: 10px;
+    border-radius: 20px;
+    padding: 2px 10px; }
+    .large-directory-card li.highlighted .store-listing span.floor-name {
+      float: right; }
 
 .large-directory-card-main {
   padding: 40px 40px; }

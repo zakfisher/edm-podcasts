@@ -3,8 +3,9 @@ module.exports = angular.module('Largescreen', [])
 .service('LargescreenDirectory', function () {
   var self = {};
 
-  self.highlightStoresByFloor = function (category) {
-
+  self.selectFloor = function (floor) {
+    console.log('select floor', floor);
+    self.selectedFloor = floor;
   };
 
   self.categoryIndex = {};
@@ -32,6 +33,7 @@ module.exports = angular.module('Largescreen', [])
   $scope.pageInset = 150;
   $scope.scrollViewSize = [window.innerWidth - $scope.pageInset, undefined];
   $scope.directory.allStores = [];
+
 
   $scope.directory.categories = CategoryService.getCategories();
   $scope.directory.categories.forEach(function (category) {
@@ -106,8 +108,11 @@ module.exports = angular.module('Largescreen', [])
       count = 0;
     }
   });
+  console.log('Index', $scope.directory.categoryIndex);
+  console.log('All stores', $scope.directory.allStores);
 
   $scope.directory.pages = groups;
+  // $scope.directory.selectedFloor = "1";
 
 
   $scope.handleItemClick = function (item) {
