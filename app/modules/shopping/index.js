@@ -3,7 +3,6 @@
 module.exports = angular.module('Shopping', [])
 
 .controller('Shopping', function ($scope, $famous, $http, filterFilter, $filter, KioskService, CardStream, CategoryService, LargescreenSidebar) {
-  LargescreenSidebar.hide();
   $scope.categories = CategoryService.getCategories();
   $scope.categories.unshift({
     name: "All Stores",

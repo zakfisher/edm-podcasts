@@ -1,5 +1,4 @@
 var pkg = require('../package.json');
-window.initialView = 'largescreen';
 
 // Debug
 // ----------------------------------------------------------------------
@@ -115,6 +114,14 @@ app.config(function ($urlRouterProvider, $locationProvider) {
 });
 
 app.run(function ($state, Preloader, $q, KioskService) {
+
+  if(window.innerHeight > window.innerWidth) {
+    window.isLargescreen = true;
+    window.initialView = 'largescreen';
+  } else {
+    window.initialView = 'kioskmap';
+  };
+
   $state.go('preloader');
   KioskService.saveState(false);
   // Backdoor to switch to largescreen view

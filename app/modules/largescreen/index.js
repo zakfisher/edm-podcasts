@@ -1,11 +1,17 @@
 module.exports = angular.module('Largescreen', [])
 
-.service('LargescreenDirectory', function () {
+.service('LargescreenDirectory', function ($rootScope) {
   var self = {};
+
+  self.selectedFloor = false;
 
   self.selectFloor = function (floor) {
     console.log('select floor', floor);
     self.selectedFloor = floor;
+    setTimeout(function(){
+      self.selectedFloor = false;
+      $rootScope.$apply();
+    }, 25000);
   };
 
   self.categoryIndex = {};
@@ -66,7 +72,6 @@ module.exports = angular.module('Largescreen', [])
   var groups = [];
   var group = [];
   var count = 0;
-
   // Split items into pages
   // @todo: make this less heinous.
   $scope.directory.allStores.forEach(function (store, i) {
