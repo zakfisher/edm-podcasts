@@ -161,6 +161,7 @@ module.exports = angular.module('LargescreenSidebar', [])
       LargescreenDirectory.goToCategory(code);
       sidebar.hide();
       $('div.caret').addClass('up');
+      $('.sidebar-overlay').hide();
     });
 
     // Floor Filter Listener
@@ -169,6 +170,7 @@ module.exports = angular.module('LargescreenSidebar', [])
       LargescreenDirectory.selectFloor(level);
       sidebar.hide();
       $('div.caret').addClass('up');
+      $('.sidebar-overlay').hide();
     });
 
     // Menu Button Display Toggle Listener
