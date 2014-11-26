@@ -408,3 +408,28 @@ g.active {
   }
 }
 
+// Large Screen Sidebar
+// ----------------------------------------------------------------------
+.largescreen-weather {
+  color: white;
+  text-align: right;
+
+  h1, h2, h3 {
+    font-family: 'Flama', 'helvetica neue', 'helvetica', 'arial', 'sans';
+    margin: 0;
+  }
+
+  h1 {
+    font-weight: 500;
+    margin-bottom: -10px;
+  }
+
+  h2 {
+    font-weight: 600;
+  }
+
+  h3 {
+    font-size: 40px;
+    font-weight: 500;
+  }
+}
