@@ -42,7 +42,7 @@ module.exports = angular.module('LargescreenSidebar', [])
     var Scrollview = $famous['famous/views/Scrollview'];
 
     sidebar.categories = CategoryService.getCategories();
-    
+
     // API call to Jibestream for floor count (from Phiroze)
     // sidebar.floors = JMap.getMaps(function(data) {
     //   console.log('map', data);
@@ -152,7 +152,6 @@ module.exports = angular.module('LargescreenSidebar', [])
       if (sidebar.active) {
         $('div.caret').removeClass('up');
         $('.sidebar-overlay').show();
-      }
       } else {
         $('div.caret').addClass('up');
         $('.sidebar-overlay').hide();

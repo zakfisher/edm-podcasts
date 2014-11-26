@@ -17,6 +17,49 @@ module.exports = angular.module("CardStream", [])
       var data = JMap.storage.maps.building.getMapsWithDirections(store.id.toString());
       console.log('jibestream data', data);
       self.currentStore.textDirections = data.textDirections;
+
+      console.log('\n\nDIRECTIONS TO', self.currentStore.name);
+      var previousDirection = false;
+      var concatenatedDirection = false;
+      var directionList = [];
+
+      data.textDirections.forEach(function (direction) {
+
+        var nearPoint = direction.nearPoint || {};
+
+        var directionObject = {
+          direction: direction.direction,
+          intensity: "Go " + direction.intensity,
+          near: nearPoint.name,
+          distance: direction.distance
+        };
+
+        //If the direction is too similar to the previous, concatenate them
+        if (previousDirection.direction == direction.direction) {
+          direction.distance += previousDirection.distance;
+          directionList[directionList.length - 1] = direction;
+        } else {
+          directionList.push(direction);
+        }
+
+        switch (directionObject.direction) {
+        case 'end':
+          console.log('arrive at', store.name);
+          break;
+        case 'floordown':
+          console.log('take elevator');
+          break;
+        default:
+          console.log(directionObject.intensity, directionObject.direction, "near", directionObject.near);
+        }
+
+        previousDirection = direction;
+      });
+
+      console.log('\n\n');
+
+      console.log('shorter directions', directionList);
+
       self.currentStore.maps = data.svgs;
       console.log('directions', self.getDirections(data.textDirections, 'test'));
     } catch (e) {
@@ -49,13 +92,13 @@ module.exports = angular.module("CardStream", [])
     });
   };
 
-  self.showCurrentStoreOnMap = function(){
+  self.showCurrentStoreOnMap = function () {
     var jibestreamStore = JMap.getDestinationByClientId(self.currentStore.id.toString());
     JMap.storage.maps.building.resetAllMaps();
     if (!window.isLargescreen) {
       self.hide();
       $state.go('kioskmap');
-      setTimeout(function(){
+      setTimeout(function () {
         Map.building.startWayFinding("start", jibestreamStore, false);
         console.log('show jibestream store on map', jibestreamStore);
       }, 1000);
