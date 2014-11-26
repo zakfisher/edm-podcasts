@@ -100,6 +100,18 @@ webview {
 .map-container {
   background-color: #c1cdd3; }
 
+.map-level-selector-surface.active {
+  background-color: rgba(0, 0, 0, 0.8); }
+
+.map-level-selector-surface {
+  background-color: rgba(100, 100, 100, 0.8); }
+
+.map-level-selector {
+  color: #fff;
+  text-transform: uppercase;
+  text-align: center;
+  padding-top: 35%; }
+
 .directoryCategory {
   border-right: 25px solid #dfdfde; }
 
@@ -170,14 +182,14 @@ g.active .key-background {
   text-transform: uppercase; }
 
 .miniMap {
-  width: 300px;
-  height: 300px;
+  width: 400px;
+  height: 400px;
   margin-right: 10px;
   border: 1px solid black;
   float: left; }
   .miniMap svg {
-    width: 300px;
-    height: 300px; }
+    width: 400px;
+    height: 400px; }
 
 .large-directory-card {
   -webkit-border-bottom-right-radius: 15px;
@@ -188,15 +200,18 @@ g.active .key-background {
   border-bottom-left-radius: 15px; }
   .large-directory-card li {
     overflow: hidden; }
-    .large-directory-card li .floor-number {
-      display: block; }
+    .large-directory-card li .floor-name {
+      display: none; }
+    .large-directory-card li .store-listing {
+      -webkit-transition: background-color 1s, color 1s;
+      margin-right: 10px;
+      border-radius: 20px;
+      padding: 2px 10px 2px 0; }
   .large-directory-card li.highlighted .store-listing {
-    background: #e01f26;
+    background-color: #e01f26;
     color: #fff;
     font-size: 90%;
     display: inline block;
-    margin-right: 10px;
-    border-radius: 20px;
     padding: 2px 10px; }
     .large-directory-card li.highlighted .store-listing span.floor-name {
       float: right; }
@@ -210,6 +225,8 @@ g.active .key-background {
   padding: 0;
   float: left;
   list-style-type: none; }
+  .large-directory-column .store-listing {
+    margin: 0 0 0.8em 0; }
   .large-directory-column li {
     list-style-type: none; }
   .large-directory-column p {

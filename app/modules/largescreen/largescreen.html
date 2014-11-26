@@ -15,7 +15,7 @@
               <img src="/cardHeader.png" width="100%" />
                 <div class="large-directory-card-main">
                   <ul class="large-directory-column" ng-repeat="column in page.columns track by $index">
-                    <li ng-repeat="item in column track by $index" ng-class="{highlighted: (directory.selectedFloor == item.level)}">
+                    <li ng-repeat="item in column track by $index" ng-class="{highlighted: (directory.selectedFloor == item.level && item.level !== undefined)}">
                       <h2 ng-if="item.category">{{item.name}}</h2>
                       <p ng-if="!item.category" ng-click="handleItemClick(item)" class="store-listing">
                         <span class="name">{{item.name}}</span>
