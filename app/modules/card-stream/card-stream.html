@@ -17,7 +17,7 @@
               <h3>Level: {{cardStream.currentStore.level}}</h3>
               <h3>Shop Number: {{cardStream.currentStore.shop_number}}</h3>
               <div class="miniMap" ng-repeat="map in cardStream.currentStore.maps">
-                <inject-svg element="map"></inject-svg>
+                <inject-svg element="map" ng-click="cardStream.showCurrentStoreOnMap()"></inject-svg>
               </div>
             </div>
           </fa-surface>

@@ -17,7 +17,7 @@ module.exports = angular.module('keyboard', [])
           $scope.string = $scope.string.substring(0, $scope.string.length - 1);
           break;
         case 'go':
-          alert($scope.string);
+          // alert($scope.string);
           break;
         case 'shift':
           $scope.keyboardShift = true;

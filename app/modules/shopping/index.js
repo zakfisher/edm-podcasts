@@ -2,7 +2,7 @@
 
 module.exports = angular.module('Shopping', [])
 
-.controller('Shopping', function ($scope, $famous, $http, filterFilter, $filter, KioskService, CardStream, CategoryService) {
+.controller('Shopping', function ($scope, $famous, $http, filterFilter, $filter, KioskService, CardStream, CategoryService, LargescreenSidebar) {
   $scope.categories = CategoryService.getCategories();
   $scope.categories.unshift({
     name: "All Stores",

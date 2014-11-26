@@ -21,194 +21,194 @@ if("function"!=typeof t.setAttribute)return!1;this._target=t,this._proxy={};for(
 * @constructor
 */
 var JMap = {
-	/**************************************************/
-	/******************** NovoScript ******************/
-	/**************************************************/
+  /**************************************************/
+  /******************** NovoScript ******************/
+  /**************************************************/
 
-	globalDispatcher:{},
-	orgHtml:"",
-	retryCounter:0,
-	RESTENDPOINT:'/rest/web',
-	iLoad:0,
-	bootStrapCounter:0,
-	modulesLoaded:0,
-	modCheck:0,
-	laces:[],
-
-
-	// Events
-	MAPS_LOADED:"JMAPS_LOADED",
-	MODULE_READY:"ModuleInitComplete",
-
-	/**
-	 * The initialization method used to properly load formatted modules into the application.
-	 *
-	 * @method initModules
-	 * @param {Array} modules An array of the modules your application should load.
-	 * @param {String} moduleContainerId The ID of the element where you modules should load into.
-	 * @param {Function} templateInit The application initialize function.
-	 * @param {String} serverUrl The server location. If null or empty uses the root of the directory.
-	 * @param {Object} debugDevice For development purposes. If this is not defined the device and language code will be read from the url.
-	 */
-
-	initModules:function(modules, moduleContainerId, templateInit, serverUrl, debugDevice){
-	    try{global.networkCache.clear();}catch(e){/*console.log("Global cache clearing not supported");*/}
-
-	    if(serverUrl)JMap.serverUrl = serverUrl;
-	    if(debugDevice !== undefined){
-	        JMap.storage.device = debugDevice;
-	        JMap.getUrlParams();
-	    } else JMap.storage.device = JMap.getUrlParams();
-	    
-	    JMap.moduleContainerId = moduleContainerId;
-	    JMap.moduleContainer = $("#" + moduleContainerId);
-	    JMap.storage.modules = modules;
-	    
-	    JMap.addExtraHTMLJQUERYFuncs();
-
-	    $(JMap.globalDispatcher).on("DataLoaded", JMap.loadModule);
-	    $(JMap.globalDispatcher).on("ModulesReady", JMap.initAll);
-	    $(JMap.globalDispatcher).on(JMap.MODULE_READY, JMap.onModuleInit);
-	    $(JMap.globalDispatcher).on("ModulesInit", function(){
-	    	templateInit();
-	    	JMap.fire("AppReady");
-	    });
-	    orgHtml = JMap.moduleContainer.html();
-	    JMap.getRequiredServerData();
-	},
+  globalDispatcher:{},
+  orgHtml:"",
+  retryCounter:0,
+  RESTENDPOINT:'/rest/web',
+  iLoad:0,
+  bootStrapCounter:0,
+  modulesLoaded:0,
+  modCheck:0,
+  laces:[],
 
 
-	initMapsStandAlone:function(serverUrl, debugDevice){
-		// console.log("Init Standalone maps");
-		if(serverUrl)JMap.serverUrl = serverUrl;
-		if(debugDevice !== undefined){
-	        JMap.storage.device = debugDevice;
-	        JMap.getUrlParams();
-	    } else JMap.storage.device = JMap.getUrlParams();
+  // Events
+  MAPS_LOADED:"JMAPS_LOADED",
+  MODULE_READY:"ModuleInitComplete",
 
-	    JMap.addExtraHTMLJQUERYFuncs();
-	    
-	    JMap.getRequiredServerData();
-	    
-	    $(JMap.globalDispatcher).on("DataLoaded", function(){
-			// JMap.storage.maps = {};
-		    JMap.storage.maps.model = new JMap.BuildingModelGrid();
-			JMap.storage.maps.model.load(function(){
-				JMap.fire("StandAloneMapsReady");
-			});
-	    });
+  /**
+   * The initialization method used to properly load formatted modules into the application.
+   *
+   * @method initModules
+   * @param {Array} modules An array of the modules your application should load.
+   * @param {String} moduleContainerId The ID of the element where you modules should load into.
+   * @param {Function} templateInit The application initialize function.
+   * @param {String} serverUrl The server location. If null or empty uses the root of the directory.
+   * @param {Object} debugDevice For development purposes. If this is not defined the device and language code will be read from the url.
+   */
 
-	},
+  initModules:function(modules, moduleContainerId, templateInit, serverUrl, debugDevice){
+      try{global.networkCache.clear();}catch(e){/*console.log("Global cache clearing not supported");*/}
 
-	/**
-	 * This event gets fired once all the modules have been loaded and the Application has been initialized.
-	 *
-	 * @event AppReady
-	 */
+      if(serverUrl)JMap.serverUrl = serverUrl;
+      if(debugDevice !== undefined){
+          JMap.storage.device = debugDevice;
+          JMap.getUrlParams();
+      } else JMap.storage.device = JMap.getUrlParams();
 
-	addExtraHTMLJQUERYFuncs:function(){
-	    //Prepend
-	    if(!Element.prototype.prependChild)
-		Element.prototype.prependChild = function(child) { this.insertBefore(child, this.firstChild); };
-	    // Add Jquery html callback
-	    // var htmlOriginal = $.fn.html;
-    	// $.fn.html = function(html,callback){
-	    //   var ret = htmlOriginal.apply(this, arguments);
-	    //   if(typeof callback == "function"){callback();}
-	    //   return ret;
-	    // };
+      JMap.moduleContainerId = moduleContainerId;
+      JMap.moduleContainer = $("#" + moduleContainerId);
+      JMap.storage.modules = modules;
 
-	    //double click here
+      JMap.addExtraHTMLJQUERYFuncs();
 
-	},
-	getRequiredServerData:function(){
-	    JMap.laces = [JMap.getDeviceDetails, JMap.getDeviceParams, JMap.getDestinations, JMap.getLabels, JMap.getMaps, JMap.getMapData];
-	    JMap.tieLaces();
-	},
-	retry:function(){
-	    JMap.retryCounter++;
-	    if(JMap.retryCounter >= 5){
-	        alert("This application had a hic up, it will restart.");
-	        if(navigator.app && navigator.app.exitApp)navigator.app.exitApp();//FOR CORDOVA
-	        return;
-	    }
+      $(JMap.globalDispatcher).on("DataLoaded", JMap.loadModule);
+      $(JMap.globalDispatcher).on("ModulesReady", JMap.initAll);
+      $(JMap.globalDispatcher).on(JMap.MODULE_READY, JMap.onModuleInit);
+      $(JMap.globalDispatcher).on("ModulesInit", function(){
+        templateInit();
+        JMap.fire("AppReady");
+      });
+      orgHtml = JMap.moduleContainer.html();
+      JMap.getRequiredServerData();
+  },
 
-	    JMap.moduleContainer.html(JMap.orgHtml);
-	    JMap.modulesLoaded = 0;
-	    JMap.iLoad = 0;
 
-		JMap.loadModule();
-	},
+  initMapsStandAlone:function(serverUrl, debugDevice){
+    // console.log("Init Standalone maps");
+    if(serverUrl)JMap.serverUrl = serverUrl;
+    if(debugDevice !== undefined){
+          JMap.storage.device = debugDevice;
+          JMap.getUrlParams();
+      } else JMap.storage.device = JMap.getUrlParams();
 
-	tieLaces:function(action){
-	    JMap.laces[JMap.bootStrapCounter](JMap.checkBoots);
-	},
+      JMap.addExtraHTMLJQUERYFuncs();
 
-	checkBoots:function(){
-	    JMap.bootStrapCounter++;
-	    if(JMap.bootStrapCounter < JMap.laces.length)JMap.tieLaces();
-	    else JMap.dataIsReady();
-	},
+      JMap.getRequiredServerData();
 
-	dataIsReady:function(){
-	    $(JMap.globalDispatcher).trigger("DataLoaded");
-	},
-	getUrlParams:function(){
-	    var url = document.location.toString();
-	    JMap.storage.url = url;
-	    var h = url.indexOf('#');
-	    
-	    //Just get params
-	    if (h > -1)url = url.substr(0, h);
-	    var q = url.indexOf('?');
-	    var params = {};
-	    if (q > -1) {
-	        var qv = url.substr(q + 1).split('&');
-	        for (var i = 0, n = qv.length; i < n; i++) {
-	            var ar = qv[i].split('=');
-	            params[ar[0]] = ar[1];
-	        }
-	    }
-	    JMap.storage.params = params;
-	    var brokenUrl = url.split("/");
-	    var xInt = brokenUrl.indexOf("x");
-	    var dev = {deviceId: brokenUrl[xInt + 1], languageCode:brokenUrl[xInt + 2]};
+      $(JMap.globalDispatcher).on("DataLoaded", function(){
+      // JMap.storage.maps = {};
+        JMap.storage.maps.model = new JMap.BuildingModelGrid();
+      JMap.storage.maps.model.load(function(){
+        JMap.fire("StandAloneMapsReady");
+      });
+      });
 
-	    brokenUrl.pop();//languageCode
-	    brokenUrl.pop();//device id
+  },
 
-	    JMap.storage.urlnoparams = brokenUrl.join("/");
-	    return dev;
-	},
-	
+  /**
+   * This event gets fired once all the modules have been loaded and the Application has been initialized.
+   *
+   * @event AppReady
+   */
 
-	loadModule:function(mod){
-	    var date = new Date();
-	    if(mod === undefined || (mod !== undefined && mod.isTrigger))mod = JMap.storage.modules[JMap.iLoad];
-	    if(mod.parent === undefined){
-	        var element = document.createElement("div");
-	        $(element).attr("id", mod.name);
-	        $(element).load(mod.url + "?ts=" + date.getTime(), null, JMap.checkModLoaded);
-	        if(mod.prepend) JMap.moduleContainer.prepend(element);
-	        else JMap.moduleContainer.append(element);
-	    }else{
+  addExtraHTMLJQUERYFuncs:function(){
+      //Prepend
+      if(!Element.prototype.prependChild)
+    Element.prototype.prependChild = function(child) { this.insertBefore(child, this.firstChild); };
+      // Add Jquery html callback
+      // var htmlOriginal = $.fn.html;
+      // $.fn.html = function(html,callback){
+      //   var ret = htmlOriginal.apply(this, arguments);
+      //   if(typeof callback == "function"){callback();}
+      //   return ret;
+      // };
+
+      //double click here
+
+  },
+  getRequiredServerData:function(){
+      JMap.laces = [JMap.getDeviceDetails, JMap.getDeviceParams, JMap.getDestinations, JMap.getLabels, JMap.getMaps, JMap.getMapData];
+      JMap.tieLaces();
+  },
+  retry:function(){
+      JMap.retryCounter++;
+      if(JMap.retryCounter >= 5){
+          alert("This application had a hic up, it will restart.");
+          if(navigator.app && navigator.app.exitApp)navigator.app.exitApp();//FOR CORDOVA
+          return;
+      }
+
+      JMap.moduleContainer.html(JMap.orgHtml);
+      JMap.modulesLoaded = 0;
+      JMap.iLoad = 0;
+
+    JMap.loadModule();
+  },
+
+  tieLaces:function(action){
+      JMap.laces[JMap.bootStrapCounter](JMap.checkBoots);
+  },
+
+  checkBoots:function(){
+      JMap.bootStrapCounter++;
+      if(JMap.bootStrapCounter < JMap.laces.length)JMap.tieLaces();
+      else JMap.dataIsReady();
+  },
+
+  dataIsReady:function(){
+      $(JMap.globalDispatcher).trigger("DataLoaded");
+  },
+  getUrlParams:function(){
+      var url = document.location.toString();
+      JMap.storage.url = url;
+      var h = url.indexOf('#');
+
+      //Just get params
+      if (h > -1)url = url.substr(0, h);
+      var q = url.indexOf('?');
+      var params = {};
+      if (q > -1) {
+          var qv = url.substr(q + 1).split('&');
+          for (var i = 0, n = qv.length; i < n; i++) {
+              var ar = qv[i].split('=');
+              params[ar[0]] = ar[1];
+          }
+      }
+      JMap.storage.params = params;
+      var brokenUrl = url.split("/");
+      var xInt = brokenUrl.indexOf("x");
+      var dev = {deviceId: brokenUrl[xInt + 1], languageCode:brokenUrl[xInt + 2]};
+
+      brokenUrl.pop();//languageCode
+      brokenUrl.pop();//device id
+
+      JMap.storage.urlnoparams = brokenUrl.join("/");
+      return dev;
+  },
+
+
+  loadModule:function(mod){
+      var date = new Date();
+      if(mod === undefined || (mod !== undefined && mod.isTrigger))mod = JMap.storage.modules[JMap.iLoad];
+      if(mod.parent === undefined){
+          var element = document.createElement("div");
+          $(element).attr("id", mod.name);
+          $(element).load(mod.url + "?ts=" + date.getTime(), null, JMap.checkModLoaded);
+          if(mod.prepend) JMap.moduleContainer.prepend(element);
+          else JMap.moduleContainer.append(element);
+      }else{
             var element2 = document.createElement("div");
             $(element2).attr("id", mod.name);
             $(element2).load(mod.url + "?ts=" + date.getTime(), null, JMap.checkModLoaded);
             if(mod.prepend) $(mod.parent).prepend(element2);
             else $(mod.parent).append(element2);
-	    }
-	},
-	checkModLoaded:function(reponseText, textStatus){
-	    if(JMap.storage.modules[JMap.iLoad].childrenMods && JMap.storage.modules[JMap.iLoad].childrenMods.length > 0){
-	        if(JMap.storage.modules[JMap.iLoad].headCount === undefined)JMap.storage.modules[JMap.iLoad].headCount = 0;
-	        else JMap.storage.modules[JMap.iLoad].headCount++;
+      }
+  },
+  checkModLoaded:function(reponseText, textStatus){
+      if(JMap.storage.modules[JMap.iLoad].childrenMods && JMap.storage.modules[JMap.iLoad].childrenMods.length > 0){
+          if(JMap.storage.modules[JMap.iLoad].headCount === undefined)JMap.storage.modules[JMap.iLoad].headCount = 0;
+          else JMap.storage.modules[JMap.iLoad].headCount++;
 
-	        if(JMap.storage.modules[JMap.iLoad].headCount < JMap.storage.modules[JMap.iLoad].childrenMods.length){
-	            JMap.loadModule(JMap.storage.modules[JMap.iLoad].childrenMods[JMap.storage.modules[JMap.iLoad].headCount]);
-	            return;
-	        }
-	    }
+          if(JMap.storage.modules[JMap.iLoad].headCount < JMap.storage.modules[JMap.iLoad].childrenMods.length){
+              JMap.loadModule(JMap.storage.modules[JMap.iLoad].childrenMods[JMap.storage.modules[JMap.iLoad].headCount]);
+              return;
+          }
+      }
 
         JMap.iLoad++;
         if(JMap.iLoad >= JMap.storage.modules.length){
@@ -216,228 +216,228 @@ var JMap = {
         }else{
             JMap.loadModule();
         }
-	},
+  },
 
-	onModuleInit:function(evt, from) {
-	    JMap.initNextModule();
-	},
+  onModuleInit:function(evt, from) {
+      JMap.initNextModule();
+  },
 
-	initNextModule:function(){
-	    if(JMap.storage.modules[JMap.modulesLoaded].childrenMods && JMap.storage.modules[JMap.modulesLoaded].childrenMods.length > 0){
-	        if(JMap.storage.modules[JMap.modulesLoaded].initHeadCount === undefined)JMap.storage.modules[JMap.modulesLoaded].initHeadCount = 0;
-	        else JMap.storage.modules[JMap.modulesLoaded].initHeadCount++;
-	        if(JMap.storage.modules[JMap.modulesLoaded].initHeadCount < JMap.storage.modules[JMap.modulesLoaded].childrenMods.length){
-	            JMap.initModule(JMap.storage.modules[JMap.modulesLoaded].initHeadCount, JMap.storage.modules[JMap.modulesLoaded].childrenMods);
-	            return;
-	        }
-	    }
-	    JMap.modulesLoaded++;
-	    if(JMap.modulesLoaded < JMap.storage.modules.length) {
-	        JMap.initModule(JMap.modulesLoaded, JMap.storage.modules);
-	    } else {
-	        $(JMap.globalDispatcher).trigger("ModulesInit");
-	    }
-	},
+  initNextModule:function(){
+      if(JMap.storage.modules[JMap.modulesLoaded].childrenMods && JMap.storage.modules[JMap.modulesLoaded].childrenMods.length > 0){
+          if(JMap.storage.modules[JMap.modulesLoaded].initHeadCount === undefined)JMap.storage.modules[JMap.modulesLoaded].initHeadCount = 0;
+          else JMap.storage.modules[JMap.modulesLoaded].initHeadCount++;
+          if(JMap.storage.modules[JMap.modulesLoaded].initHeadCount < JMap.storage.modules[JMap.modulesLoaded].childrenMods.length){
+              JMap.initModule(JMap.storage.modules[JMap.modulesLoaded].initHeadCount, JMap.storage.modules[JMap.modulesLoaded].childrenMods);
+              return;
+          }
+      }
+      JMap.modulesLoaded++;
+      if(JMap.modulesLoaded < JMap.storage.modules.length) {
+          JMap.initModule(JMap.modulesLoaded, JMap.storage.modules);
+      } else {
+          $(JMap.globalDispatcher).trigger("ModulesInit");
+      }
+  },
 
-	initModule:function(arrayInt, modArray){
-	    var mod = modArray[arrayInt];
-	    var f = window[mod.init];
-	    if(f !== undefined && typeof f == "function")f(mod.params);
-	    else {
-	        // console.log("No init function for " + mod.name + "    -- Retrying");
-	        JMap.retry();
-	    }
-	},
+  initModule:function(arrayInt, modArray){
+      var mod = modArray[arrayInt];
+      var f = window[mod.init];
+      if(f !== undefined && typeof f == "function")f(mod.params);
+      else {
+          // console.log("No init function for " + mod.name + "    -- Retrying");
+          JMap.retry();
+      }
+  },
 
-	initAll:function(){
-	    JMap.initModule(0, JMap.storage.modules);
-	},
+  initAll:function(){
+      JMap.initModule(0, JMap.storage.modules);
+  },
 
-	/**************************************************/
-	/******************** NovoScript ******************/
-	/**************************************************/
-
-
-	/**
-	 * JMap's custom event listener. Call this to add a handler to any known event.
-	 * @method addListener
-	 * @param {String} eventName The name or identifier of the event.
-	 * @param {function} handler The function to be called when this event gets fired.
-	 * @return 
-	 */
-	addListener:function(eventName, handler){
-		//Gives more control if needed
-		$(JMap.globalDispatcher).on(eventName, handler);
-	},
-	/**
-	 * JMap's custom event trigger. Call this to trigger any known event.
-	 * @method fire
-	 * @param {String} eventName The name or identifier of the event.
-	 * @param {Array} params An array of parameters or data to be sent to all event handlers of this specific event.
-	 */
-	fire:function(eventName, params){
-		//Gives more control if needed
-		$(JMap.globalDispatcher).trigger(eventName, params);
-	},
-
-	/**************************************************/
-	/******************** CMS calls *******************/
-	/**************************************************/
+  /**************************************************/
+  /******************** NovoScript ******************/
+  /**************************************************/
 
 
-	serverUrl:"",
-	storage:{},
-	/**
-	 * Call to get all the destinations from the CMS. The application caches the results the first time it is called.
-	 *
-	 * @method getDestinations
-	 * @param {Function} callback
-	 * @return {Array} Returns and array of the destinations fed from the CMS
-	 */
-	getDestinations:function(callback){
-		if(JMap.storage.destinations === undefined){
-			$.ajax({url:JMap.serverUrl + "/rest/web/destination/all/"  + JMap.storage.device.deviceId + "/" + JMap.storage.device.languageCode ,
-				type:"GET",
-				contentType:"application/json",
-				dataType: 'json',
-				headers: {
-		            'Accept': 'application/json',
-		            'Content-Type': 'application/json'
-		        },
-				success:function(result){
-					var parsedResult = result;
-					for(var i = 0, len = result.length; i < len; i++){
-						parsedResult[i].label = parsedResult[i].name;
-						parsedResult[i].value = parsedResult[i].name;
-						parsedResult[i].keywordsAr=parsedResult[i].keywords?parsedResult[i].keywords.toLowerCase().split(','):[];
-					}
-					JMap.storage.destinations = parsedResult;
-					// console.log("DESTINATIONS", JMap.storage.destinations);
-					callback(JMap.storage.destinations);
-				}});
-		}else{
-			callback(JMap.storage.destinations);
-		}
-	},
-	/**
-	 * Returns the destination associated with the specified Client destination ID. This allows for clients to reference the destination using their proprietary naming convention.
-	 *
-	 * @method getDestinationByClientId
-	 * @param {String} id Reference this under the "Client Id" column in the CMS.
-	 * @return Destination Object
-	 */
-	getDestinationByClientId:function(id){
-		if(JMap.storage.destinations === undefined){
-			console.error("Desitnations list empty. Make sure you call JMap.getDestinations(callback) first before trying to get a specific destination.");
-		}else{
-			for(var i = 0, len = JMap.storage.destinations.length; i < len; i++){
-				if(JMap.storage.destinations[i].clientId === id)return JMap.storage.destinations[i];
-			}
-			console.error("There was no destination found with the clientId: " + id);
-			return null;
-		}
-	},
-	/**
-	 * Returns the destination associated with the specified Jibestream destination ID
-	 *
-	 * @method getDestinationById
-	 * @param {int} id Reference this under the "Id" column in the CMS.
-	 * @return Destination object
-	 */
-	getDestinationById:function(id){
-		if(JMap.storage.destinations === undefined){
-			console.error("Desitnations list empty. Make sure you call JMap.getDestinations(callback) first before trying to get a specific destination.");
-		}else{
-			for(var i = 0, len = JMap.storage.destinations.length; i < len; i++){
-				if(JMap.storage.destinations[i].id == id)return JMap.storage.destinations[i];
-			}
-			console.error("There was no destination found with the id: " + id);
-			return null;
-		}
-	},
-	/**
-	 * Uses a specific keyword to retrieve an array of Destination objects with a matching keyword.
-	 *
-	 * @method getDestinationByKeyword
-	 * @param {String} word Reference this under the "Keywords" column in the CMS.
-	 * @return Array of destinations with the matching keyword provided.
-	 */
-	getDestinationByKeyword:function(word){
-		word=word.toLowerCase();		
-		var ar=[];	
-		if(JMap.storage.destinations === undefined){
-			console.error("Desitnations list empty. Make sure you call JMap.getDestinations(callback) first before trying to get a specific destination.");
-		}else	for(var i = 0, len = JMap.storage.destinations.length; i < len; i++)if(JMap.storage.destinations[i].keywordsAr.indexOf(word) !=-1)ar.push(JMap.storage.destinations[i]);
-						
-		return ar;
-	},
-	/**
-	 * TODO Rewrtite Returns the destination associated with the specified Jibestream destination ID
-	 *
-	 * @method getDestinationsByFloorSequence
-	 * @param {int} id Reference this under the "Id" column in the CMS.
-	 * @return Destination object
-	 */
+  /**
+   * JMap's custom event listener. Call this to add a handler to any known event.
+   * @method addListener
+   * @param {String} eventName The name or identifier of the event.
+   * @param {function} handler The function to be called when this event gets fired.
+   * @return
+   */
+  addListener:function(eventName, handler){
+    //Gives more control if needed
+    $(JMap.globalDispatcher).on(eventName, handler);
+  },
+  /**
+   * JMap's custom event trigger. Call this to trigger any known event.
+   * @method fire
+   * @param {String} eventName The name or identifier of the event.
+   * @param {Array} params An array of parameters or data to be sent to all event handlers of this specific event.
+   */
+  fire:function(eventName, params){
+    //Gives more control if needed
+    $(JMap.globalDispatcher).trigger(eventName, params);
+  },
 
-	 //TODO MAKE THIS WORK
-	getDestinationsByFloorSequence:function(seq){
-		if(JMap.storage.destinationsBySequence === undefined){
-			JMap.storage.destinationsBySequence = {};
-		}
-		var floorArray = [];
-		for(var i = 0, len = JMap.storage.destinations.length; i < len; i++){
-			var f = JMap.getFloorById(JMap.storage.destinations[i].clientId);
-			if(!f)continue;
-			if(f.floorSequence === seq){
-				floorArray.push(JMap.storage.destinations[i]);
-			}
-		}
-		JMap.storage.destinationsBySequence[seq] = floorArray;	
-		// console.error("There was no destination found with the id: " + id);
-		return floorArray;
-	},
-	/**
-	 * TODO Rewrtite Returns the destination associated with the specified Jibestream destination ID
-	 *
-	 * @method getDestinationById
-	 * @param {int} id Reference this under the "Id" column in the CMS.
-	 * @return Destination object
-	 */
-	getDestinationsByFloorId:function(mapId){
-		if(JMap.storage.destinationsByFloor === undefined){
-			JMap.storage.destinationsByFloor = {};
-		}
-		if(JMap.storage.destinationsByFloor[mapId])return JMap.storage.destinationsByFloor[mapId];
+  /**************************************************/
+  /******************** CMS calls *******************/
+  /**************************************************/
 
-		var floorArray = [];
-		for(var i = 0, len = JMap.storage.destinations.length; i < len; i++){
-			// var f = JMap.getFloorById(JMap.storage.destinations[i].clientId);
-			// if(!f)continue;
-			// if(f.mapId === mapId){
-			// 	floorArray.push(JMap.storage.destinations[i]);
-			// }
-			var wps = JMap.storage.maps.model.getWPsByJid(JMap.storage.destinations[i].clientId);
-			if(!wps)continue;
-			for(var j =0; j < wps.length; j++){
-				if(wps[j].mapid == mapId){
-					floorArray.push(JMap.storage.destinations[i]);
-					continue;
-				}
-			}
 
-		}
-		JMap.storage.destinationsByFloor[mapId] = floorArray;			
-		// console.error("There was no destination found with the id: " + id);
-		return floorArray;
-	},
-	/**
-	 * Uses a specific category ID to retrieve the array of destinations assigned to the specific category
-	 *
-	 * @method getDesitnationsByCategoryId
-	 * @param {int} id Reference this under the "Id" column in the CMS.
-	 * @return Array of destination objects
-	 */
-	getDesitnationsByCategoryId:function(id){
+  serverUrl:"",
+  storage:{},
+  /**
+   * Call to get all the destinations from the CMS. The application caches the results the first time it is called.
+   *
+   * @method getDestinations
+   * @param {Function} callback
+   * @return {Array} Returns and array of the destinations fed from the CMS
+   */
+  getDestinations:function(callback){
+    if(JMap.storage.destinations === undefined){
+      $.ajax({url:JMap.serverUrl + "/rest/web/destination/all/"  + JMap.storage.device.deviceId + "/" + JMap.storage.device.languageCode ,
+        type:"GET",
+        contentType:"application/json",
+        dataType: 'json',
+        headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        success:function(result){
+          var parsedResult = result;
+          for(var i = 0, len = result.length; i < len; i++){
+            parsedResult[i].label = parsedResult[i].name;
+            parsedResult[i].value = parsedResult[i].name;
+            parsedResult[i].keywordsAr=parsedResult[i].keywords?parsedResult[i].keywords.toLowerCase().split(','):[];
+          }
+          JMap.storage.destinations = parsedResult;
+          // console.log("DESTINATIONS", JMap.storage.destinations);
+          callback(JMap.storage.destinations);
+        }});
+    }else{
+      callback(JMap.storage.destinations);
+    }
+  },
+  /**
+   * Returns the destination associated with the specified Client destination ID. This allows for clients to reference the destination using their proprietary naming convention.
+   *
+   * @method getDestinationByClientId
+   * @param {String} id Reference this under the "Client Id" column in the CMS.
+   * @return Destination Object
+   */
+  getDestinationByClientId:function(id){
+    if(JMap.storage.destinations === undefined){
+      console.error("Desitnations list empty. Make sure you call JMap.getDestinations(callback) first before trying to get a specific destination.");
+    }else{
+      for(var i = 0, len = JMap.storage.destinations.length; i < len; i++){
+        if(JMap.storage.destinations[i].clientId === id)return JMap.storage.destinations[i];
+      }
+      console.error("There was no destination found with the clientId: " + id);
+      return null;
+    }
+  },
+  /**
+   * Returns the destination associated with the specified Jibestream destination ID
+   *
+   * @method getDestinationById
+   * @param {int} id Reference this under the "Id" column in the CMS.
+   * @return Destination object
+   */
+  getDestinationById:function(id){
+    if(JMap.storage.destinations === undefined){
+      console.error("Desitnations list empty. Make sure you call JMap.getDestinations(callback) first before trying to get a specific destination.");
+    }else{
+      for(var i = 0, len = JMap.storage.destinations.length; i < len; i++){
+        if(JMap.storage.destinations[i].id == id)return JMap.storage.destinations[i];
+      }
+      console.error("There was no destination found with the id: " + id);
+      return null;
+    }
+  },
+  /**
+   * Uses a specific keyword to retrieve an array of Destination objects with a matching keyword.
+   *
+   * @method getDestinationByKeyword
+   * @param {String} word Reference this under the "Keywords" column in the CMS.
+   * @return Array of destinations with the matching keyword provided.
+   */
+  getDestinationByKeyword:function(word){
+    word=word.toLowerCase();
+    var ar=[];
+    if(JMap.storage.destinations === undefined){
+      console.error("Desitnations list empty. Make sure you call JMap.getDestinations(callback) first before trying to get a specific destination.");
+    }else for(var i = 0, len = JMap.storage.destinations.length; i < len; i++)if(JMap.storage.destinations[i].keywordsAr.indexOf(word) !=-1)ar.push(JMap.storage.destinations[i]);
+
+    return ar;
+  },
+  /**
+   * TODO Rewrtite Returns the destination associated with the specified Jibestream destination ID
+   *
+   * @method getDestinationsByFloorSequence
+   * @param {int} id Reference this under the "Id" column in the CMS.
+   * @return Destination object
+   */
+
+   //TODO MAKE THIS WORK
+  getDestinationsByFloorSequence:function(seq){
+    if(JMap.storage.destinationsBySequence === undefined){
+      JMap.storage.destinationsBySequence = {};
+    }
+    var floorArray = [];
+    for(var i = 0, len = JMap.storage.destinations.length; i < len; i++){
+      var f = JMap.getFloorById(JMap.storage.destinations[i].clientId);
+      if(!f)continue;
+      if(f.floorSequence === seq){
+        floorArray.push(JMap.storage.destinations[i]);
+      }
+    }
+    JMap.storage.destinationsBySequence[seq] = floorArray;
+    // console.error("There was no destination found with the id: " + id);
+    return floorArray;
+  },
+  /**
+   * TODO Rewrtite Returns the destination associated with the specified Jibestream destination ID
+   *
+   * @method getDestinationById
+   * @param {int} id Reference this under the "Id" column in the CMS.
+   * @return Destination object
+   */
+  getDestinationsByFloorId:function(mapId){
+    if(JMap.storage.destinationsByFloor === undefined){
+      JMap.storage.destinationsByFloor = {};
+    }
+    if(JMap.storage.destinationsByFloor[mapId])return JMap.storage.destinationsByFloor[mapId];
+
+    var floorArray = [];
+    for(var i = 0, len = JMap.storage.destinations.length; i < len; i++){
+      // var f = JMap.getFloorById(JMap.storage.destinations[i].clientId);
+      // if(!f)continue;
+      // if(f.mapId === mapId){
+      //  floorArray.push(JMap.storage.destinations[i]);
+      // }
+      var wps = JMap.storage.maps.model.getWPsByJid(JMap.storage.destinations[i].clientId);
+      if(!wps)continue;
+      for(var j =0; j < wps.length; j++){
+        if(wps[j].mapid == mapId){
+          floorArray.push(JMap.storage.destinations[i]);
+          continue;
+        }
+      }
+
+    }
+    JMap.storage.destinationsByFloor[mapId] = floorArray;
+    // console.error("There was no destination found with the id: " + id);
+    return floorArray;
+  },
+  /**
+   * Uses a specific category ID to retrieve the array of destinations assigned to the specific category
+   *
+   * @method getDesitnationsByCategoryId
+   * @param {int} id Reference this under the "Id" column in the CMS.
+   * @return Array of destination objects
+   */
+  getDesitnationsByCategoryId:function(id){
         if(JMap.storage.destinations === undefined){
             console.error("Desitnations list empty. Make sure you call JMap.getDestinations(callback) first before trying to get a specific destination.");
         }else if(JMap.storage.categories === undefined){
@@ -459,325 +459,325 @@ var JMap = {
 
         return [];
     },
-	/**
-	 * Retrieves the maps associated to the specific project. After the first time this is called the application caches the data.
-	 * @method getMaps
-	 * @param {Function} callback This function gets called once the data has been retrieved and passes it to the function as a parameter(Array).
-	 */
-	getMaps:function(callback){
-		if(JMap.storage.maps === undefined)JMap.storage.maps = {};
-		if(JMap.storage.maps.data === undefined){
+  /**
+   * Retrieves the maps associated to the specific project. After the first time this is called the application caches the data.
+   * @method getMaps
+   * @param {Function} callback This function gets called once the data has been retrieved and passes it to the function as a parameter(Array).
+   */
+  getMaps:function(callback){
+    if(JMap.storage.maps === undefined)JMap.storage.maps = {};
+    if(JMap.storage.maps.data === undefined){
             //$.get(JMap.serverUrl + '/rest/maps/all', null, function (res) {
             // console.log(JMap.serverUrl + '/rest/web/maps/all/' + JMap.storage.device.deviceId);
             $.get(JMap.serverUrl + '/rest/web/maps/all/' + JMap.storage.device.deviceId, null, function (res) {
-                
+
                 // console.log('MAPS');
                 // console.log(res);
                 // JMap.storage.maps = {};
                 JMap.storage.maps.data = res;
                 JMap.storage.maps.model = new JMap.BuildingModelGrid();
-				JMap.storage.maps.model.load(function(){console.log("Model Ready");});
+        JMap.storage.maps.model.load(function(){console.log("Model Ready");});
                 callback(JMap.storage.maps.data);
 
             }, 'json');
-		}else{
-			callback(JMap.storage.maps.data);
-		}
-	},
-	/**
-	 * Retrieves an array of legend objects assigned to the specific project. After the first time this is called the application caches the data.
-	 * @method getLegends
-	 * @param {Function} callback This function gets called once the data has been retrieved and passes it to the function as a parameter(Array).
-	 */
-	getLegends:function(callback){
-		if(JMap.storage.legends === undefined){
-			$.ajax({url:JMap.serverUrl + "/rest/web/legends/"  + JMap.storage.device.deviceId + "/" + JMap.storage.device.languageCode, 
+    }else{
+      callback(JMap.storage.maps.data);
+    }
+  },
+  /**
+   * Retrieves an array of legend objects assigned to the specific project. After the first time this is called the application caches the data.
+   * @method getLegends
+   * @param {Function} callback This function gets called once the data has been retrieved and passes it to the function as a parameter(Array).
+   */
+  getLegends:function(callback){
+    if(JMap.storage.legends === undefined){
+      $.ajax({url:JMap.serverUrl + "/rest/web/legends/"  + JMap.storage.device.deviceId + "/" + JMap.storage.device.languageCode,
             type:"GET" ,
-			contentType:"application/json",
-			dataType: 'json',
-			data:JSON.stringify(JMap.storage.device),
-			headers: {
+      contentType:"application/json",
+      dataType: 'json',
+      data:JSON.stringify(JMap.storage.device),
+      headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-			success:function(res){
-				JMap.storage.legends = res;
-				callback(JMap.storage.legends);
-			}});
-		}else{
-			callback(JMap.storage.legends);
-		}
-	},
-	/**
-	 * Uses an integer identifier to retrieve the specific legend object.
-	 *
-	 * @method getLegendById
-	 * @param {int} id Reference this under the "Id" column in the CMS.
-	 * @return Legend Object
-	 */
-	getLegendById:function(id){
-		for(var i = 0; i < JMap.storage.legends.length; i++){
-			if(JMap.storage.legends[i].componentId == id)return JMap.storage.legends[i];
-		}
-		return "No legend matching this id";
-	},
-	/**
-	 * Retrieves the map data associated to the specific project. This includes waypoint objects, assigned destinations and floor transition points (people movers). After the first time this is called the application caches the data.
-	 *
-	 * @method getMapData
-	 * @param {Function} callback This function gets called once the data has been retrieved and passes it to the function as a parameter(Array).
-	 */
-	getMapData:function(callback){
-		// console.log("Getting map data");
-		if(JMap.storage.maps === undefined)JMap.storage.maps = {};
-		if(JMap.storage.maps.mapbuilderData === undefined){
-			$.ajax({
-				type:"GET",
-				url:JMap.serverUrl + '/rest/web/maps/mapbuilderdata/'  + JMap.storage.device.deviceId, 
-				accepts: {
-			        text: "application/json"
-			    },
-				success:function (res) {
-					// console.log("MapData");
-					// console.log(res);
-				// $.get('/rest/maps/mapbuilderdata', null, function (res) {
-					JMap.storage.maps.mapbuilderData = res;
-					// console.log(JMap.storage.maps.mapbuilderData);
-		            callback(JMap.storage.maps.mapbuilderData);
-	        	}
-	        });
-		}else{
-	        callback(JMap.storage.maps.mapbuilderData);
-		}
-	},
-	/**
-	 * Retrieves the generic people mover objects created for the specific project.
-	 *
-	 * @method getPeopleMovers
-	 * @param {Function} callback  This function gets called once the data has been retrieved and passes it to the function as a parameter(Array).
-	 */
-	getPeopleMovers:function(callback){
-		if(JMap.storage.maps === undefined)JMap.storage.maps = {};
-		if(JMap.storage.maps.peoplemovers === undefined){
-	        $.ajax({url:JMap.serverUrl + '/rest/web/peoplemover/all/' , 
-				type:"GET" ,
-                // data:JSON.stringify(JMap.storage.device), 
-	        	dataType: 'json',
-	            headers: {
-		            'Accept': 'application/json',
-		            'Content-Type': 'application/json'
-		        },
-        		success:function (res) {
-		        	JMap.storage.maps.peoplemovers = res;
-		        	callback(JMap.storage.maps.peoplemovers);
-	        	}});
-	    }else{
-	        callback(JMap.storage.maps.peoplemovers);
-	    }
+      success:function(res){
+        JMap.storage.legends = res;
+        callback(JMap.storage.legends);
+      }});
+    }else{
+      callback(JMap.storage.legends);
+    }
+  },
+  /**
+   * Uses an integer identifier to retrieve the specific legend object.
+   *
+   * @method getLegendById
+   * @param {int} id Reference this under the "Id" column in the CMS.
+   * @return Legend Object
+   */
+  getLegendById:function(id){
+    for(var i = 0; i < JMap.storage.legends.length; i++){
+      if(JMap.storage.legends[i].componentId == id)return JMap.storage.legends[i];
+    }
+    return "No legend matching this id";
+  },
+  /**
+   * Retrieves the map data associated to the specific project. This includes waypoint objects, assigned destinations and floor transition points (people movers). After the first time this is called the application caches the data.
+   *
+   * @method getMapData
+   * @param {Function} callback This function gets called once the data has been retrieved and passes it to the function as a parameter(Array).
+   */
+  getMapData:function(callback){
+    // console.log("Getting map data");
+    if(JMap.storage.maps === undefined)JMap.storage.maps = {};
+    if(JMap.storage.maps.mapbuilderData === undefined){
+      $.ajax({
+        type:"GET",
+        url:JMap.serverUrl + '/rest/web/maps/mapbuilderdata/'  + JMap.storage.device.deviceId,
+        accepts: {
+              text: "application/json"
+          },
+        success:function (res) {
+          // console.log("MapData");
+          // console.log(res);
+        // $.get('/rest/maps/mapbuilderdata', null, function (res) {
+          JMap.storage.maps.mapbuilderData = res;
+          // console.log(JMap.storage.maps.mapbuilderData);
+                callback(JMap.storage.maps.mapbuilderData);
+            }
+          });
+    }else{
+          callback(JMap.storage.maps.mapbuilderData);
+    }
+  },
+  /**
+   * Retrieves the generic people mover objects created for the specific project.
+   *
+   * @method getPeopleMovers
+   * @param {Function} callback  This function gets called once the data has been retrieved and passes it to the function as a parameter(Array).
+   */
+  getPeopleMovers:function(callback){
+    if(JMap.storage.maps === undefined)JMap.storage.maps = {};
+    if(JMap.storage.maps.peoplemovers === undefined){
+          $.ajax({url:JMap.serverUrl + '/rest/web/peoplemover/all/' ,
+        type:"GET" ,
+                // data:JSON.stringify(JMap.storage.device),
+            dataType: 'json',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            success:function (res) {
+              JMap.storage.maps.peoplemovers = res;
+              callback(JMap.storage.maps.peoplemovers);
+            }});
+      }else{
+          callback(JMap.storage.maps.peoplemovers);
+      }
     },
-	/**
-	 * Retrieves an array of header objects assigned to the specific project. After the first time this is called the application caches the data.
-	 *
-	 * @method getHeader
-	 * @param {Function} callback This function gets called once the data has been retrieved and passes it to the function as a parameter(Array).
-	 */
-	getHeader:function(callback){
-    	if(JMap.storage.header === undefined){
-	        $.ajax({
-	        	url: JMap.serverUrl + '/rest/web/header/' + JMap.storage.device.deviceId + "/" + JMap.storage.device.languageCode ,
-	        	data: JSON.stringify(JMap.storage.device), 
-	        	type:"GET",
-	        	dataType:'json',
-	        	contentType:"application/json",
-	        	headers: {
-		            'Accept': 'application/json',
-		            'Content-Type': 'application/json'
-		        },
-	        	success:function (res) {
-	        		JMap.storage.header = res;
-	        		callback(JMap.storage.header);
-	        	}
-	        });
-	    }else{
-	        callback(JMap.storage.header);
-	    }
-	},
-	/**
-	 * Retrieves an array of advertisement or message objects assigned to the specific project.
-	 *
-	 * @method getAds
-	 * @param {Function} callback This function gets called once the data has been retrieved and passes it to the function as a parameter(Array).
-	 */
-	getAds:function(callback){
-		if(JMap.storage.ads === undefined)JMap.storage.ads = [];
-	 	$.ajax({ url: JMap.serverUrl + '/rest/web/ads/'  + JMap.storage.device.deviceId + "/" + JMap.storage.device.languageCode ,
+  /**
+   * Retrieves an array of header objects assigned to the specific project. After the first time this is called the application caches the data.
+   *
+   * @method getHeader
+   * @param {Function} callback This function gets called once the data has been retrieved and passes it to the function as a parameter(Array).
+   */
+  getHeader:function(callback){
+      if(JMap.storage.header === undefined){
+          $.ajax({
+            url: JMap.serverUrl + '/rest/web/header/' + JMap.storage.device.deviceId + "/" + JMap.storage.device.languageCode ,
+            data: JSON.stringify(JMap.storage.device),
+            type:"GET",
+            dataType:'json',
+            contentType:"application/json",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            success:function (res) {
+              JMap.storage.header = res;
+              callback(JMap.storage.header);
+            }
+          });
+      }else{
+          callback(JMap.storage.header);
+      }
+  },
+  /**
+   * Retrieves an array of advertisement or message objects assigned to the specific project.
+   *
+   * @method getAds
+   * @param {Function} callback This function gets called once the data has been retrieved and passes it to the function as a parameter(Array).
+   */
+  getAds:function(callback){
+    if(JMap.storage.ads === undefined)JMap.storage.ads = [];
+    $.ajax({ url: JMap.serverUrl + '/rest/web/ads/'  + JMap.storage.device.deviceId + "/" + JMap.storage.device.languageCode ,
                 data: JSON.stringify(JMap.storage.device),
                 dataType: 'json',
                 contentType: 'application/json',
                 type: "GET",
                 headers: {
-		            'Accept': 'application/json',
-		            'Content-Type': 'application/json'
-		        },
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
         }).done(function(res){
-        	JMap.storage.ads = res; 
-        	callback(JMap.storage.ads);
+          JMap.storage.ads = res;
+          callback(JMap.storage.ads);
         }).fail(function(res){
-        	callback(JMap.storage.ads);
+          callback(JMap.storage.ads);
         });
-	},
-	/**
-	 * Retrieves an array of Label objects assigned to the specific project. After the first time this is called the application caches the data.
-	 *
-	 * @method getLabels
-	 * @param {Function} callback This function gets called once the data has been retrieved and passes it to the function as a parameter(Array).
-	 */
-	getLabels:function(callback){
-    	if(JMap.storage.labels === undefined){
-	        $.ajax({
-	        	url: JMap.serverUrl + '/rest/web/labels/'  + JMap.storage.device.deviceId + "/" + JMap.storage.device.languageCode ,
-	        	data: JSON.stringify(JMap.storage.device), 
-	        	type:"GET",
-	        	dataType:'json',
-	        	contentType:"application/json",
-	        	headers: {
-		            'Accept': 'application/json',
-		            'Content-Type': 'application/json'
-		        },
-	        	success:function (res) {
-	        		// console.log(res);
-	        		var parsedResult = res;
-					for(var i = 0, len = res.length; i < len; i++){						
-						parsedResult[i].filePath = JMap.serverUrl + parsedResult[i].filePath;
-					}
-	        		JMap.storage.labels = parsedResult;
-	        		callback(JMap.storage.labels);
-	        	}
-	        });
-	    }else{
-	        callback(JMap.storage.labels);
-	    }
-	},
-	/**
-	 * Uses a String identifier to retrieve the specific Label object.
-	 *
-	 * @method getLabelById
-	 * @param {String} id Reference this under the "Name" column in the CMS.
-	 */
-	getLabelById:function(id){
-    	if(JMap.storage.labels === undefined){
-	        console.error("Labels are not cached. Please call JMap.getLabels before trying to retrieve a specfic label.");
-	    }else{
-	    	return JMap.getAlphaByBeta(JMap.storage.labels, id, "description");
-	    }
-	},
-	/**
-	 * A call made to the CMS to check when the last known update (to the data) had been made.
-	 *
-	 * @method getRefresh
-	 * @param {Function} callback This function gets called once the data has been retrieved and passes it to the function as a parameter(Object).
-	 */
-	getRefresh:function(callback){
-		var dev = JMap.storage.device;
-		$.ajax({ url: JMap.serverUrl + '/rest/web/device/refresh/'  + JMap.storage.device.deviceId ,
+  },
+  /**
+   * Retrieves an array of Label objects assigned to the specific project. After the first time this is called the application caches the data.
+   *
+   * @method getLabels
+   * @param {Function} callback This function gets called once the data has been retrieved and passes it to the function as a parameter(Array).
+   */
+  getLabels:function(callback){
+      if(JMap.storage.labels === undefined){
+          $.ajax({
+            url: JMap.serverUrl + '/rest/web/labels/'  + JMap.storage.device.deviceId + "/" + JMap.storage.device.languageCode ,
+            data: JSON.stringify(JMap.storage.device),
+            type:"GET",
+            dataType:'json',
+            contentType:"application/json",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            success:function (res) {
+              // console.log(res);
+              var parsedResult = res;
+          for(var i = 0, len = res.length; i < len; i++){
+            parsedResult[i].filePath = JMap.serverUrl + parsedResult[i].filePath;
+          }
+              JMap.storage.labels = parsedResult;
+              callback(JMap.storage.labels);
+            }
+          });
+      }else{
+          callback(JMap.storage.labels);
+      }
+  },
+  /**
+   * Uses a String identifier to retrieve the specific Label object.
+   *
+   * @method getLabelById
+   * @param {String} id Reference this under the "Name" column in the CMS.
+   */
+  getLabelById:function(id){
+      if(JMap.storage.labels === undefined){
+          console.error("Labels are not cached. Please call JMap.getLabels before trying to retrieve a specfic label.");
+      }else{
+        return JMap.getAlphaByBeta(JMap.storage.labels, id, "description");
+      }
+  },
+  /**
+   * A call made to the CMS to check when the last known update (to the data) had been made.
+   *
+   * @method getRefresh
+   * @param {Function} callback This function gets called once the data has been retrieved and passes it to the function as a parameter(Object).
+   */
+  getRefresh:function(callback){
+    var dev = JMap.storage.device;
+    $.ajax({ url: JMap.serverUrl + '/rest/web/device/refresh/'  + JMap.storage.device.deviceId ,
                 data: JSON.stringify(dev),
                 dataType: 'json',
                 contentType: 'application/json',
                 headers: {
-		            'Accept': 'application/json',
-		            'Content-Type': 'application/json'
-		        },
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
                 type: "POST"
         }).done(function(res){
-        	callback(res);
+          callback(res);
         });
     },
     getLegendsByFloor:function(id, callback){
-		if(JMap.storage.maps === undefined)JMap.storage.maps = {};
-		if(JMap.storage.maps.legends === undefined)JMap.storage.maps.legends = {};
-        $.ajax({url:JMap.serverUrl + '/rest/web/locations/legends/'  + JMap.storage.device.deviceId + '/' + JMap.storage.device.languageCode + '/' + id, 
-        	data: JSON.stringify(JMap.storage.device),
+    if(JMap.storage.maps === undefined)JMap.storage.maps = {};
+    if(JMap.storage.maps.legends === undefined)JMap.storage.maps.legends = {};
+        $.ajax({url:JMap.serverUrl + '/rest/web/locations/legends/'  + JMap.storage.device.deviceId + '/' + JMap.storage.device.languageCode + '/' + id,
+          data: JSON.stringify(JMap.storage.device),
             dataType: 'json',
             contentType: 'application/json',
             type: "GET",
             headers: {
-	            'Accept': 'application/json',
-	            'Content-Type': 'application/json'
-	        },
-        	success:function (res) {
-	        	JMap.storage.maps.legends[id] = res;
-	        	callback(JMap.storage.maps.legends[id]);
-	        	// console.log("============================", id, res);
-        	}});
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+          },
+          success:function (res) {
+            JMap.storage.maps.legends[id] = res;
+            callback(JMap.storage.maps.legends[id]);
+            // console.log("============================", id, res);
+          }});
     },
     getAllMapLabels:function(callback){
-		if(JMap.storage.allMapLabels === undefined){
-	        $.ajax({url:JMap.serverUrl + '/rest/web/maplabels/'  + JMap.storage.device.deviceId + '/' + JMap.storage.device.languageCode, 
-	        	data: JSON.stringify(JMap.storage.device),
-	            dataType: 'json',
-	            contentType: 'application/json',
-	            type: "GET",
-	            headers: {
-		            'Accept': 'application/json',
-		            'Content-Type': 'application/json'
-		        },
-        		success:function (res) {
-		        	JMap.storage.allMapLabels = res;
-		        	callback(JMap.storage.allMapLabels);
-		        	// console.log("============================", id, res);
-	        	}});	
-	    }else{
-			callback(JMap.storage.allMapLabels);
-		}
-	},
-	getMapLabelById:function(id){
-		if(JMap.storage.allMapLabels === undefined){
-	        console.error("Map Labels are not cached. Please call JMap.getAllMapLabels before trying to retrieve a specfic label.");
-	    }else{
-	    	return JMap.getAlphaByBeta(JMap.storage.allMapLabels, id, "componentId")
-	    }
-	},
+    if(JMap.storage.allMapLabels === undefined){
+          $.ajax({url:JMap.serverUrl + '/rest/web/maplabels/'  + JMap.storage.device.deviceId + '/' + JMap.storage.device.languageCode,
+            data: JSON.stringify(JMap.storage.device),
+              dataType: 'json',
+              contentType: 'application/json',
+              type: "GET",
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            success:function (res) {
+              JMap.storage.allMapLabels = res;
+              callback(JMap.storage.allMapLabels);
+              // console.log("============================", id, res);
+            }});
+      }else{
+      callback(JMap.storage.allMapLabels);
+    }
+  },
+  getMapLabelById:function(id){
+    if(JMap.storage.allMapLabels === undefined){
+          console.error("Map Labels are not cached. Please call JMap.getAllMapLabels before trying to retrieve a specfic label.");
+      }else{
+        return JMap.getAlphaByBeta(JMap.storage.allMapLabels, id, "componentId")
+      }
+  },
     getMapLabelsByFloor:function(id, callback){
-		if(JMap.storage.maps === undefined)JMap.storage.maps = {};
-		if(JMap.storage.maps.maplabels === undefined)JMap.storage.maps.maplabels = {};
-		if(JMap.storage.maps.maplabels[id+"map"] === undefined){
-	        $.ajax({url:JMap.serverUrl + '/rest/web/locations/maplabels/' + JMap.storage.device.deviceId + '/' + JMap.storage.device.languageCode + '/' + id, 
-	            dataType: 'json',
-	            contentType: 'application/json',
-	            type: "GET",
-	            headers: {
-		            'Accept': 'application/json',
-		            'Content-Type': 'application/json'
-		        },
-        		success:function (res) {
-		        	JMap.storage.maps.maplabels[id + "map"] = res;
-		        	callback(JMap.storage.maps.maplabels[id + "map"]);
-		        	// console.log("================Maplabels============",res);
-	        	}});
-		}else{
-			callback(JMap.storage.maps.maplabels[id+"map"]);
-		}
+    if(JMap.storage.maps === undefined)JMap.storage.maps = {};
+    if(JMap.storage.maps.maplabels === undefined)JMap.storage.maps.maplabels = {};
+    if(JMap.storage.maps.maplabels[id+"map"] === undefined){
+          $.ajax({url:JMap.serverUrl + '/rest/web/locations/maplabels/' + JMap.storage.device.deviceId + '/' + JMap.storage.device.languageCode + '/' + id,
+              dataType: 'json',
+              contentType: 'application/json',
+              type: "GET",
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            success:function (res) {
+              JMap.storage.maps.maplabels[id + "map"] = res;
+              callback(JMap.storage.maps.maplabels[id + "map"]);
+              // console.log("================Maplabels============",res);
+            }});
+    }else{
+      callback(JMap.storage.maps.maplabels[id+"map"]);
+    }
     },
     getDestinationLabelsByFloor:function(id, callback){
-		if(JMap.storage.maps === undefined)JMap.storage.maps = {};
-		if(JMap.storage.maps.maplabels === undefined)JMap.storage.maps.maplabels = {};
-		if(JMap.storage.maps.maplabels[id+"dest"] === undefined){
-	        $.ajax({url:JMap.serverUrl + '/rest/web/locations/destinationlabels/'   + JMap.storage.device.deviceId + '/' + JMap.storage.device.languageCode + '/' + id,
-	            dataType: 'json',
-	            contentType: 'application/json',
-	            type: "GET",
-	            headers: {
-		            'Accept': 'application/json',
-		            'Content-Type': 'application/json'
-		        },
-        		success:function (res) {
-		        	JMap.storage.maps.maplabels[id + "dest"] = res;
-		        	callback(JMap.storage.maps.maplabels[id + "dest"]);
-		        	//console.log("================Desinationlabels============",res);
-	        	}});
-		}else{
-			callback(JMap.storage.maps.maplabels[id+"dest"]);
-		}
+    if(JMap.storage.maps === undefined)JMap.storage.maps = {};
+    if(JMap.storage.maps.maplabels === undefined)JMap.storage.maps.maplabels = {};
+    if(JMap.storage.maps.maplabels[id+"dest"] === undefined){
+          $.ajax({url:JMap.serverUrl + '/rest/web/locations/destinationlabels/'   + JMap.storage.device.deviceId + '/' + JMap.storage.device.languageCode + '/' + id,
+              dataType: 'json',
+              contentType: 'application/json',
+              type: "GET",
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            success:function (res) {
+              JMap.storage.maps.maplabels[id + "dest"] = res;
+              callback(JMap.storage.maps.maplabels[id + "dest"]);
+              //console.log("================Desinationlabels============",res);
+            }});
+    }else{
+      callback(JMap.storage.maps.maplabels[id+"dest"]);
+    }
     },
     /**
      * Retrieves an array of Category objects in the specific project. After the first time this is called the application caches the data.
@@ -786,23 +786,23 @@ var JMap = {
      * @param {Function} callback This function gets called once the data has been retrieved and passes it to the function as a parameter(Array).
      */
     getCategories:function(callback){
-    	if(JMap.storage.categories === undefined){
-	        $.ajax({
-	        	type: 'GET',
-	            url: JMap.serverUrl + "/rest/web/category/all/" + JMap.storage.device.deviceId + '/' + JMap.storage.device.languageCode,
-	            dataType: 'json',
-	            contentType: 'application/json',
-	            headers: {
-		            'Accept': 'application/json',
-		            'Content-Type': 'application/json'
-		        },
-	        }).success(function(response){
-	            JMap.storage.categories = response;
-	            callback(JMap.storage.categories);
-	        });
-	    }else{
-	        callback(JMap.storage.categories);
-	    }
+      if(JMap.storage.categories === undefined){
+          $.ajax({
+            type: 'GET',
+              url: JMap.serverUrl + "/rest/web/category/all/" + JMap.storage.device.deviceId + '/' + JMap.storage.device.languageCode,
+              dataType: 'json',
+              contentType: 'application/json',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+          }).success(function(response){
+              JMap.storage.categories = response;
+              callback(JMap.storage.categories);
+          });
+      }else{
+          callback(JMap.storage.categories);
+      }
     },
     /**
      * Queries the server using the search query provided to retrieve the appropriate keywords.
@@ -813,13 +813,13 @@ var JMap = {
      * @param {int} key_maxValue The maximum number of results to be provided from the server. Defaults to 100.
      */
     getSearckByKeyWord:function(query, callback, key_maxValue){
-    	//put online/offline logic here
-    	if(query === ""){
-    		callback([]);
-    		return;
-    	}
-    	if(key_maxValue === undefined)key_maxValue = 100;
-    	$.getJSON(JMap.serverUrl + "/rest/web/searchkeywords/get/"+JMap.storage.device.deviceId+"/"+JMap.storage.device.languageCode+"/" + query +"/" + key_maxValue, {}, callback);
+      //put online/offline logic here
+      if(query === ""){
+        callback([]);
+        return;
+      }
+      if(key_maxValue === undefined)key_maxValue = 100;
+      $.getJSON(JMap.serverUrl + "/rest/web/searchkeywords/get/"+JMap.storage.device.deviceId+"/"+JMap.storage.device.languageCode+"/" + query +"/" + key_maxValue, {}, callback);
     },
     /**
      * Using a query string this method will search through all the destinations those destination's keywords to find the appropriate results.
@@ -830,90 +830,90 @@ var JMap = {
      * @return An array of destination objects.
      */
     getSearchByQuery:function(query, key_maxValue) {
-    	if(query === ""){
-    		callback([]);
-    		return;
-    	}
+      if(query === ""){
+        callback([]);
+        return;
+      }
 
-    	var ar = JMap.storage.destinations;
-    	var loosePatternArray = query.split(" ");
-    	var patternMatchResults = [];
-    	var results = [];
-    	var searchPattern = new RegExp(query.toUpperCase());
-    	var matchHigh = [];
-    	var keyMatchHigh = [];
-    	var matchLow = [];
-    	var keyMatchLow = [];
+      var ar = JMap.storage.destinations;
+      var loosePatternArray = query.split(" ");
+      var patternMatchResults = [];
+      var results = [];
+      var searchPattern = new RegExp(query.toUpperCase());
+      var matchHigh = [];
+      var keyMatchHigh = [];
+      var matchLow = [];
+      var keyMatchLow = [];
 
-    	for(var i = 0; i < loosePatternArray.length; i++) {
-    		loosePatternArray[i] = new RegExp(loosePatternArray[i].toUpperCase());
-    		patternMatchResults.push([]);
-    	}
+      for(var i = 0; i < loosePatternArray.length; i++) {
+        loosePatternArray[i] = new RegExp(loosePatternArray[i].toUpperCase());
+        patternMatchResults.push([]);
+      }
 
-    	if(key_maxValue === undefined)key_maxValue = 50;
-    	//Destination matching code
+      if(key_maxValue === undefined)key_maxValue = 50;
+      //Destination matching code
 
-    	//First query test matches full destination name with spaces
-		for(var i = 0; i < ar.length; i++) {
-			
-			var searchIndex = ar[i].name.toUpperCase().search(searchPattern);
-			var bestKeywordIndex = 5000;
-			var perfectMatchScore = 0;
+      //First query test matches full destination name with spaces
+    for(var i = 0; i < ar.length; i++) {
 
-			for(var j = 0; j < loosePatternArray.length; j++) {
-				for(var k = 0; k < ar[i].keywordsAr.length; k++) {
-					var keyIndex = ar[i].keywordsAr[k].toUpperCase().search(loosePatternArray[j]);
-					if(keyIndex > -1) {
-						if(bestKeywordIndex > keyIndex) {
-							bestKeywordIndex = keyIndex;
-						}
+      var searchIndex = ar[i].name.toUpperCase().search(searchPattern);
+      var bestKeywordIndex = 5000;
+      var perfectMatchScore = 0;
 
-						if(keyIndex == 0) {
-							perfectMatchScore++;
-						}
+      for(var j = 0; j < loosePatternArray.length; j++) {
+        for(var k = 0; k < ar[i].keywordsAr.length; k++) {
+          var keyIndex = ar[i].keywordsAr[k].toUpperCase().search(loosePatternArray[j]);
+          if(keyIndex > -1) {
+            if(bestKeywordIndex > keyIndex) {
+              bestKeywordIndex = keyIndex;
+            }
 
-					}
-				}
-			}
+            if(keyIndex == 0) {
+              perfectMatchScore++;
+            }
 
-			//console.log(searchIndex, ar[i].name, searchPattern);
-			if(searchIndex == 0) {
-				matchHigh.push(ar[i]);
-			} else if(bestKeywordIndex === 0) {
-				if(!patternMatchResults[perfectMatchScore]) patternMatchResults[perfectMatchScore] = [];
-				patternMatchResults[perfectMatchScore].push(ar[i]);
-				keyMatchHigh.push(ar[i]);
-			} else if (searchIndex >= 0) {
-				matchLow.push(ar[i]);
-			} else if (bestKeywordIndex != 5000) {
-				keyMatchLow.push(ar[i]);
-			}
-		}
+          }
+        }
+      }
 
-		results = matchHigh;
+      //console.log(searchIndex, ar[i].name, searchPattern);
+      if(searchIndex == 0) {
+        matchHigh.push(ar[i]);
+      } else if(bestKeywordIndex === 0) {
+        if(!patternMatchResults[perfectMatchScore]) patternMatchResults[perfectMatchScore] = [];
+        patternMatchResults[perfectMatchScore].push(ar[i]);
+        keyMatchHigh.push(ar[i]);
+      } else if (searchIndex >= 0) {
+        matchLow.push(ar[i]);
+      } else if (bestKeywordIndex != 5000) {
+        keyMatchLow.push(ar[i]);
+      }
+    }
 
-		//console.log(patternMatchResults)
+    results = matchHigh;
 
-		patternMatchResults.reverse();
-		if(patternMatchResults.length) {
-			for(var i = 0; i < patternMatchResults.length; i++) {
-				if(results.length < key_maxValue) {
-					results = results.concat(patternMatchResults[i]);
-				}
-			}			
-		}
-		results = results.slice(0,key_maxValue);
+    //console.log(patternMatchResults)
 
-		//Tests if the minimum length requirement has been met. If not, continues with a search against lower levels
-		if(results.length < key_maxValue) {
-			results = results.concat(matchLow);
-			results = results.slice(0,key_maxValue);
-			if(results.length < key_maxValue) {
-				results = results.concat(keyMatchLow);
-				results = results.slice(0,key_maxValue);
-			}			
-		}
-		return results;
+    patternMatchResults.reverse();
+    if(patternMatchResults.length) {
+      for(var i = 0; i < patternMatchResults.length; i++) {
+        if(results.length < key_maxValue) {
+          results = results.concat(patternMatchResults[i]);
+        }
+      }
+    }
+    results = results.slice(0,key_maxValue);
+
+    //Tests if the minimum length requirement has been met. If not, continues with a search against lower levels
+    if(results.length < key_maxValue) {
+      results = results.concat(matchLow);
+      results = results.slice(0,key_maxValue);
+      if(results.length < key_maxValue) {
+        results = results.concat(keyMatchLow);
+        results = results.slice(0,key_maxValue);
+      }
+    }
+    return results;
     },
     /**
      * Retrieves an array of AttractLoop objects in the specific project.
@@ -929,39 +929,39 @@ var JMap = {
             contentType: 'application/json',
             type: "GET",
             headers: {
-	            'Accept': 'application/json',
-	            'Content-Type': 'application/json'
-	        },
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+          },
         }).done(callback);
     },
     getFloorById:function(id){//by clientId
-    	if(!JMap.storage.maps || !JMap.storage.maps.model){
-    		console.error("There is not model or building data");
-    	}else{
-    		var wp = JMap.storage.maps.model.getWPByJid(id);
-    		// console.log(wp);
-    		if(!wp){
-    			//console.log("No waypoint assign to this id: " + id);
-    			return;
-    		}
-    		return JMap.storage.maps.model.getFloorById(wp.mapid);
-    	}
+      if(!JMap.storage.maps || !JMap.storage.maps.model){
+        console.error("There is not model or building data");
+      }else{
+        var wp = JMap.storage.maps.model.getWPByJid(id);
+        // console.log(wp);
+        if(!wp){
+          //console.log("No waypoint assign to this id: " + id);
+          return;
+        }
+        return JMap.storage.maps.model.getFloorById(wp.mapid);
+      }
     },
     getFloorDataByClientId:function(id){//by destinationId
-    	if(!JMap.storage.maps || !JMap.storage.maps.model){
-    		console.error("There is not model or building data");
-    	}else{
-    		var f = JMap.getFloorById(JMap.getDestinationById(id).clientId);
-    		if(f)return f;
-    	}
+      if(!JMap.storage.maps || !JMap.storage.maps.model){
+        console.error("There is not model or building data");
+      }else{
+        var f = JMap.getFloorById(JMap.getDestinationById(id).clientId);
+        if(f)return f;
+      }
     },
     getFloorDataBySequence:function(seq){//by sequence
-    	if(!JMap.storage.maps || !JMap.storage.maps.model){
-    		console.error("There is not model or building data");
-    	}else{
-    		console.log("Checking Sequence", seq);
-    		return JMap.storage.maps.model.getFloorBySequence(seq);
-    	}
+      if(!JMap.storage.maps || !JMap.storage.maps.model){
+        console.error("There is not model or building data");
+      }else{
+        console.log("Checking Sequence", seq);
+        return JMap.storage.maps.model.getFloorBySequence(seq);
+      }
     },
     /**
      * Retrieves the details specific to the requesting device. This is pulled and stored automatically if using the JMap Modular approach
@@ -971,24 +971,24 @@ var JMap = {
      * @return Once cached this method will return the Device Details object if no callback parameter is specified.
      */
     getDeviceDetails:function(callback){
-    	if(!JMap.storage.deviceDetails){
-    	  	$.ajax({
-		        type:"GET",
-		        url:JMap.serverUrl + "/rest/web/device/getDetails/" + JMap.storage.device.deviceId,
-		        headers: {
-		            'Accept': 'application/json',
-		            'Content-Type': 'application/json'
-		        },
-		        dataType: "json",
-        		success: function(data){
-		            JMap.storage.deviceDetails = data;
-		            callback(JMap.storage.deviceDetails);
-		        }
-		    });
-    	}else{
-    		if(callback)callback(JMap.storage.deviceDetails);
-    		else return JMap.storage.deviceDetails;
-    	}
+      if(!JMap.storage.deviceDetails){
+          $.ajax({
+            type:"GET",
+            url:JMap.serverUrl + "/rest/web/device/getDetails/" + JMap.storage.device.deviceId,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            dataType: "json",
+            success: function(data){
+                JMap.storage.deviceDetails = data;
+                callback(JMap.storage.deviceDetails);
+            }
+        });
+      }else{
+        if(callback)callback(JMap.storage.deviceDetails);
+        else return JMap.storage.deviceDetails;
+      }
     },
     /**
      * Retrieves the parameters specific to the project requesting. This is pulled and stored automatically if using the JMap Modular approach.
@@ -998,24 +998,24 @@ var JMap = {
      * @return Once cached this method will return the Device Parameters object if no callback parameter is specified.
      */
     getDeviceParams: function (callback) {
-    	if(!JMap.storage.deviceParams){
-    	  	$.ajax({
-		        type:"GET",
-		        url:JMap.serverUrl + "/rest/web/parameters/all/" + JMap.storage.device.deviceId,
-		        headers: {
-		            'Accept': 'application/json',
-		            'Content-Type': 'application/json'
-		        },
-		        dataType: "json",
-        		success: function(data){
-		            JMap.storage.deviceParams = data;
-		            callback(JMap.storage.deviceParams);
-		        }
-		    });
-    	}else{
-    		if(callback !== undefined)callback(JMap.storage.deviceParams);
-    		else return JMap.storage.deviceParams;
-    	}
+      if(!JMap.storage.deviceParams){
+          $.ajax({
+            type:"GET",
+            url:JMap.serverUrl + "/rest/web/parameters/all/" + JMap.storage.device.deviceId,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            dataType: "json",
+            success: function(data){
+                JMap.storage.deviceParams = data;
+                callback(JMap.storage.deviceParams);
+            }
+        });
+      }else{
+        if(callback !== undefined)callback(JMap.storage.deviceParams);
+        else return JMap.storage.deviceParams;
+      }
     },
     /**
      * Uses a String Identifier(Key) to retrieve a specific parameter's value.
@@ -1025,12 +1025,12 @@ var JMap = {
      * @return String The value of the Key specified in the CMS. User's may choose to insert JSON into the field and can use "JSON.parse(value);" to convert the string to an object.
      */
     getDeviceParamByKey: function (key) {
-	   	for(var i = 0, len = JMap.storage.deviceParams.length; i < len; i++){
-	   		if(key === JMap.storage.deviceParams[i].parameterKey)return JMap.storage.deviceParams[i].parameterValue;
-	   	}
+      for(var i = 0, len = JMap.storage.deviceParams.length; i < len; i++){
+        if(key === JMap.storage.deviceParams[i].parameterKey)return JMap.storage.deviceParams[i].parameterValue;
+      }
     },
     /**
-     * Uses a specific category integer identifier to retrieve an array of destination objects under the specified category. 
+     * Uses a specific category integer identifier to retrieve an array of destination objects under the specified category.
      *
      * @method getDestinationByCategory
      * @param {int} id Reference this under the "Id" column in the CMS.
@@ -1039,25 +1039,25 @@ var JMap = {
      */
 
     getDestinationByCategory:function(id, callback){
-    	if(!JMap.storage.destinationCategory)JMap.storage.destinationCategory = {};
-    	if(!JMap.storage.destinationCategory[id]){
-	    	$.ajax({
-				type: 'GET',
-				data: JSON.stringify(JMap.storage.device),
-				headers: {
-		            'Accept': 'application/json',
-		            'Content-Type': 'application/json'
-		        },
-				url: JMap.serverUrl + '/rest/web/destination/byCategory/'   + JMap.storage.device.deviceId + '/' + JMap.storage.device.languageCode + '/' + id, 
-				dataType: 'json', contentType: 'application/json'
-			}).done(function(res){
-				JMap.storage.destinationCategory[id] = res;
-				callback(JMap.storage.destinationCategory[id]);
-			});
-    	}else{
-    		// console.log("CACHED");
-			callback(JMap.storage.destinationCategory[id]);
-    	}
+      if(!JMap.storage.destinationCategory)JMap.storage.destinationCategory = {};
+      if(!JMap.storage.destinationCategory[id]){
+        $.ajax({
+        type: 'GET',
+        data: JSON.stringify(JMap.storage.device),
+        headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        url: JMap.serverUrl + '/rest/web/destination/byCategory/'   + JMap.storage.device.deviceId + '/' + JMap.storage.device.languageCode + '/' + id,
+        dataType: 'json', contentType: 'application/json'
+      }).done(function(res){
+        JMap.storage.destinationCategory[id] = res;
+        callback(JMap.storage.destinationCategory[id]);
+      });
+      }else{
+        // console.log("CACHED");
+      callback(JMap.storage.destinationCategory[id]);
+      }
     },
     /**
      * Checks the server for any triggered messages or advertisements assigned to the specific component.
@@ -1068,63 +1068,63 @@ var JMap = {
      * @param {int} compId The component's identifier. Reference this under the "Id" column in the CMS.
      */
     getTriggeredAd:function(callback, type, compId){
-            var trig_dev = {deviceId:JMap.storage.device.deviceId, 
-            	languageCode:JMap.storage.device.languageCode,
-            	eventType:type,
-            	componentId:Number(compId)
+            var trig_dev = {deviceId:JMap.storage.device.deviceId,
+              languageCode:JMap.storage.device.languageCode,
+              eventType:type,
+              componentId:Number(compId)
             };
             // console.log("REQUEST", trig_dev);
             $.ajax({
                 url: ' /rest/web/triggerads/' + JMap.storage.device.deviceId + '/' + JMap.storage.device.languageCode + '/' + type + '/' + compId,
                 data: JSON.stringify(trig_dev),
-	            dataType: 'json',
-	            contentType: 'application/json',
-	            type: "GET",
-	            headers: {
-		            'Accept': 'application/json',
-		            'Content-Type': 'application/json'
-		        },
+              dataType: 'json',
+              contentType: 'application/json',
+              type: "GET",
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
             }).done(function (res) {
-            	// console.log("TRIGGERED RESULT", res);
+              // console.log("TRIGGERED RESULT", res);
                 if (res[0]){
-                	callback(res);
+                  callback(res);
                 }
             });
     },
     getDestinationsBySearchKey:function(key){
-    	if(!JMap.storage.destinations){console.error("Destinations haven't been loaded yet.");}
-    	var ar = [];
-    	for(var i = 0, len = JMap.storage.destinations; i < len; i++){
+      if(!JMap.storage.destinations){console.error("Destinations haven't been loaded yet.");}
+      var ar = [];
+      for(var i = 0, len = JMap.storage.destinations; i < len; i++){
 
 
-    	}
-    	return ar;
+      }
+      return ar;
     },
     getAlphaByBeta:function(source, key, identifier){
-    	for(var i = 0, len = source.length; i < len; i++){
-	   		if(key === source[i][identifier])return source[i];
-	   	}
+      for(var i = 0, len = source.length; i < len; i++){
+        if(key === source[i][identifier])return source[i];
+      }
     },
     getCorsOfUrl:function(urlToEncode, callback){
-    	// console.log("Getting CORS for: "+ urlToEncode);
-    	if(urlToEncode.charAt(0) === "/"){
-    		urlToEncode = urlToEncode.substr(1, urlToEncode.length);
-    		// console.log("New url ", urlToEncode);
-    	}
-		$.ajax({
-			type: 'GET',
-			// data: JSON.stringify(JMap.storage.device),
-			// headers: {
-	  //           'Accept': 'application/json',
-	  //           'Content-Type': 'application/json'
-	  //       },
-			url: JMap.serverUrl + '/rest/web/cors/get/'  + window.btoa(urlToEncode),
-			// dataType: 'json', contentType: 'application/json'
-		}).done(function(res){
+      // console.log("Getting CORS for: "+ urlToEncode);
+      if(urlToEncode.charAt(0) === "/"){
+        urlToEncode = urlToEncode.substr(1, urlToEncode.length);
+        // console.log("New url ", urlToEncode);
+      }
+    $.ajax({
+      type: 'GET',
+      // data: JSON.stringify(JMap.storage.device),
+      // headers: {
+    //           'Accept': 'application/json',
+    //           'Content-Type': 'application/json'
+    //       },
+      url: JMap.serverUrl + '/rest/web/cors/get/'  + window.btoa(urlToEncode),
+      // dataType: 'json', contentType: 'application/json'
+    }).done(function(res){
 
-			// console.log("Got CORS ", res);
-			callback(res);
-		});
+      // console.log("Got CORS ", res);
+      callback(res);
+    });
 
 
     },
@@ -1132,21 +1132,21 @@ var JMap = {
      * Method used to track application life cycles and user interactions. Data is pushed to the Jibestream server.
      *
      * @method logEvent
-     * @param {Object} log Specific object that has all required data for the Platform to track appropriately. 
-     * @param {Funciton} onResult Optional callback for a successful log. 
-	 *
-     * @example 
+     * @param {Object} log Specific object that has all required data for the Platform to track appropriately.
+     * @param {Funciton} onResult Optional callback for a successful log.
+   *
+     * @example
      * JMap.addListener("DESTINATION_CLICK", function(ev, data){<br>
-	 *	    <span style='padding-left:15px;'>var logData = {</span><br>
-	 *	        <span style='padding-left:35px;'>deviceId:JMap.storage.device.deviceId,</span><br>
-	 *	        <span style='padding-left:35px;'>languageCode:JMap.storage.device.languageCode,</span><br>
-	 *	        <span style='padding-left:35px;'>componentTypeName:'destination',</span><br>
-	 *	        <span style='padding-left:35px;'>eventTypeName:'clicked',</span><br>
-	 *	        <span style='padding-left:35px;'>componentId:data.id, </span><br>
-	 *	        <span style='padding-left:35px;'>keyword:''</span><br>
-	 *	    <span style='padding-left:15px;'>};</span><br>
-	 *	    <span style='padding-left:15px;'>JMap.logEvent(logData);</span><br>
-	 * });
+   *      <span style='padding-left:15px;'>var logData = {</span><br>
+   *          <span style='padding-left:35px;'>deviceId:JMap.storage.device.deviceId,</span><br>
+   *          <span style='padding-left:35px;'>languageCode:JMap.storage.device.languageCode,</span><br>
+   *          <span style='padding-left:35px;'>componentTypeName:'destination',</span><br>
+   *          <span style='padding-left:35px;'>eventTypeName:'clicked',</span><br>
+   *          <span style='padding-left:35px;'>componentId:data.id, </span><br>
+   *          <span style='padding-left:35px;'>keyword:''</span><br>
+   *      <span style='padding-left:15px;'>};</span><br>
+   *      <span style='padding-left:15px;'>JMap.logEvent(logData);</span><br>
+   * });
      *
      */
 
@@ -1165,18 +1165,18 @@ var JMap = {
             }
             if(onResult !== undefined)onResult(out);
          });
-    }, 
+    },
 
     /**************** Smart Cities *****************/
-    
+
     /**
-	* Class with calls specific to the smart cities portion of the CMS.
-	*
-	* @class SmartCities
-	* @constructor
-	* @example 
-	*      JMap.smartCities.getCategories(myCallBack);
-	*/
+  * Class with calls specific to the smart cities portion of the CMS.
+  *
+  * @class SmartCities
+  * @constructor
+  * @example
+  *      JMap.smartCities.getCategories(myCallBack);
+  */
     smartCities:{
         /**
          * Retrieves an Array of Attraction Objects from the CMS. After the first time this is called the application caches the data.
@@ -1289,10 +1289,10 @@ var __extends = this.__extends || function (d, b) {
             this.styles = styles;
 
             // if(styles.mapStyles.mapConfig.positionOffset){
-            // 	JMap.storage.maps.model.setOffset(styles.mapStyles.mapConfig.positionOffset);
+            //  JMap.storage.maps.model.setOffset(styles.mapStyles.mapConfig.positionOffset);
             // }
 
-        	this.addExtraStyles();
+          this.addExtraStyles();
 
             this.container = container;
             this.containerWidth = width;
@@ -1311,108 +1311,108 @@ var __extends = this.__extends || function (d, b) {
 
 
         Building.prototype.addExtraStyles = function(){
-        	var iconStyles = this.styles.mapStyles.iconStyles;
-        	var labelStyle = this.styles.mapStyles.labelStyle;
-        	var pathStyle = this.styles.mapStyles.pathStyles;
-        	var popUpStyle = this.styles.mapStyles.popupCard;
+          var iconStyles = this.styles.mapStyles.iconStyles;
+          var labelStyle = this.styles.mapStyles.labelStyle;
+          var pathStyle = this.styles.mapStyles.pathStyles;
+          var popUpStyle = this.styles.mapStyles.popupCard;
 
-        	// console.log(labelStyle);
+          // console.log(labelStyle);
 
-        	try{
+          try{
 
-	        	var addedStyles = "<style>";
-	        	addedStyles += ".point{width:15px;height:15px;position:absolute}"+
-	        	"#map-mainview{position:absolute;width:100%;height:100%}"+
-	        	".map-floor{position:absolute;height:100%;width:100%}"+
-	        	".map-floor-base.inactive{pointer-events:none}"+
-	        	".map-floor-base{position:absolute;transform-origin:0 0 0;-webit-perspective:1000px;display:block;left:0;top:0}"+
-	        	".map-floor-container-base,.map-floor-legendsview-base,.map-floor-legendsview-base img{position:absolute}"+
-	        	".map-floor-legendsview-base img.yahPoint{position:absolute;-webkit-transform-origin:50% 0;transform-origin:50% 0}"+
-	        	".legendItem{background-size:100%;display:none}"+
-	        	".legendItemActive{background:rgba(0,0,0,.2);border:4px solid #fff;border-radius:100px;display:block!important}"+
-	        	".bubbleText{text-align:center;position:absolute;color:#fff;font-size:25px;width:250px;height:60px;line-height:30px;display:inline-block;vertical-align:middle}"+
-	        	"#bubbleLeft>img{pointer-events:none}.pathView{position:absolute;z-index:10;pointer-events:none}"+
-	        	".pathView img{position:absolute}.legendLabelItem{position:absolute;font-size:12px;white-space:nowrap}"+
-	        	".legendsLabelsView{position:absolute}"+
-	        	".map-floor-container-base .landmarks{position:absolute;z-index:10;font-family:Helvetica,Arial,Verdana;font-size:12px;color:#fff;transform-origin:0 0 0}"+
-	        	".map-floor-container-base .landmarks .item{position:absolute;text-align:center;display:none;padding:0;margin:0}"+
-	        	".map-floor-container-base .landmarks .lable div{position:absolute;font-size:20px;width:auto;text-align:center;background:none!important;color:#ccc}"+
-	        	".map-floor-container-base .landmarks .mark .text{background-color:#000}"+
-	        	".map-floor-container-base .landmarks #bubbleLeft.item,.map-floor-container-base .landmarks #yah.item,.map-floor-container-base .landmarks .item.mover{z-index:3!important}";
-	        	
-	        	addedStyles += ".map-floor-container-base .landmarks .item.legends img{position:absolute;top:-" + (iconStyles.mover?iconStyles.legends.offset.y :"15") + "px!important;left:-" + (iconStyles.mover?iconStyles.legends.offset.x:"15") + "px!important;width:" + (iconStyles.mover?iconStyles.legends.width:"15") + "px!important;height:" + (iconStyles.mover?iconStyles.legends.height + "px":"30") + "px!important}";
+            var addedStyles = "<style>";
+            addedStyles += ".point{width:15px;height:15px;position:absolute}"+
+            "#map-mainview{position:absolute;width:100%;height:100%}"+
+            ".map-floor{position:absolute;height:100%;width:100%}"+
+            ".map-floor-base.inactive{pointer-events:none}"+
+            ".map-floor-base{position:absolute;transform-origin:0 0 0;-webit-perspective:1000px;display:block;left:0;top:0}"+
+            ".map-floor-container-base,.map-floor-legendsview-base,.map-floor-legendsview-base img{position:absolute}"+
+            ".map-floor-legendsview-base img.yahPoint{position:absolute;-webkit-transform-origin:50% 0;transform-origin:50% 0}"+
+            ".legendItem{background-size:100%;display:none}"+
+            ".legendItemActive{background:rgba(0,0,0,.2);border:4px solid #fff;border-radius:100px;display:block!important}"+
+            ".bubbleText{text-align:center;position:absolute;color:#fff;font-size:25px;width:250px;height:60px;line-height:30px;display:inline-block;vertical-align:middle}"+
+            "#bubbleLeft>img{pointer-events:none}.pathView{position:absolute;z-index:10;pointer-events:none}"+
+            ".pathView img{position:absolute}.legendLabelItem{position:absolute;font-size:12px;white-space:nowrap}"+
+            ".legendsLabelsView{position:absolute}"+
+            ".map-floor-container-base .landmarks{position:absolute;z-index:10;font-family:Helvetica,Arial,Verdana;font-size:12px;color:#fff;transform-origin:0 0 0}"+
+            ".map-floor-container-base .landmarks .item{position:absolute;text-align:center;display:none;padding:0;margin:0}"+
+            ".map-floor-container-base .landmarks .lable div{position:absolute;font-size:20px;width:auto;text-align:center;background:none!important;color:#ccc}"+
+            ".map-floor-container-base .landmarks .mark .text{background-color:#000}"+
+            ".map-floor-container-base .landmarks #bubbleLeft.item,.map-floor-container-base .landmarks #yah.item,.map-floor-container-base .landmarks .item.mover{z-index:3!important}";
 
-	        	addedStyles += ".map-floor-container-base .landmarks .item.mover img{position:absolute;top:-" + (iconStyles.mover?iconStyles.mover.offset.y :"25") + "px!important;left:-" + (iconStyles.mover?iconStyles.mover.offset.x:"25") + "px!important;width:" + (iconStyles.mover?iconStyles.mover.width :"50") + "px;height:" + (iconStyles.mover?iconStyles.mover.offset.y :"50") + "px}";
-	        	
-	        	if(labelStyle){
-	        		for(var str in labelStyle){
-		        		addedStyles += ".map-floor-container-base .landmarks .item" + (str == "all"?"":"." + str) + " >div{"
-		        		var ls = labelStyle[str];
-		            	for(var k in  ls){
-		            	    addedStyles += k + ":" + ls[k] + ";";
-		            	}
-			        	addedStyles += "}";
-	            	}
-	        	}else addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img,.map-floor-container-base .landmarks .item>div{font-size:14px;color:#fff;}";
-	        	
-	        	// addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img{left:-40px!important}";
-	        	addedStyles += ".map-floor-container-base .landmarks .item.legends{z-index:4!important}";
+            addedStyles += ".map-floor-container-base .landmarks .item.legends img{position:absolute;top:-" + (iconStyles.mover?iconStyles.legends.offset.y :"15") + "px!important;left:-" + (iconStyles.mover?iconStyles.legends.offset.x:"15") + "px!important;width:" + (iconStyles.mover?iconStyles.legends.width:"15") + "px!important;height:" + (iconStyles.mover?iconStyles.legends.height + "px":"30") + "px!important}";
 
-	            //Map Icons
-	        	addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img{top:" + (iconStyles.destination?"-" + iconStyles.destination.offset.y:"-20px") + "!important;left:" + (iconStyles.destination?"-" + iconStyles.destination.offset.x:"-20px") + "!important;width:" + (iconStyles.destination?iconStyles.destination.width:"40px") + ";height:" + (iconStyles.destination?iconStyles.destination.height:"40px") + "}";
-	        	addedStyles += ".map-floor-container-base .landmarks #yah.item img{top:" + (iconStyles.youarehere?"-" + iconStyles.youarehere.offset.y:"-20px") + "!important;left:" + (iconStyles.youarehere?"-" + iconStyles.youarehere.offset.x:"-20px") + "!important;width:" + (iconStyles.youarehere?iconStyles.youarehere.width:"40px") + ";height:" + (iconStyles.youarehere?iconStyles.youarehere.height:"40px") + "}";
+            addedStyles += ".map-floor-container-base .landmarks .item.mover img{position:absolute;top:-" + (iconStyles.mover?iconStyles.mover.offset.y :"25") + "px!important;left:-" + (iconStyles.mover?iconStyles.mover.offset.x:"25") + "px!important;width:" + (iconStyles.mover?iconStyles.mover.width :"50") + "px;height:" + (iconStyles.mover?iconStyles.mover.offset.y :"50") + "px}";
 
-	        	if(popUpStyle){
+            if(labelStyle){
+              for(var str in labelStyle){
+                addedStyles += ".map-floor-container-base .landmarks .item" + (str == "all"?"":"." + str) + " >div{"
+                var ls = labelStyle[str];
+                  for(var k in  ls){
+                      addedStyles += k + ":" + ls[k] + ";";
+                  }
+                addedStyles += "}";
+                }
+            }else addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img,.map-floor-container-base .landmarks .item>div{font-size:14px;color:#fff;}";
 
-	        		var moarStyle = ".map-floor-container-base .landmarks .item.card{z-index:3!important}";
-	        		// console.log(popUpStyle);
-	        		for(var str in popUpStyle.css){
+            // addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img{left:-40px!important}";
+            addedStyles += ".map-floor-container-base .landmarks .item.legends{z-index:4!important}";
 
-	        			moarStyle += ".map-floor-container-base .landmarks .item.card div." + str + "{";
-	        			var cls = popUpStyle.css[str];
-	        			for(var stl in cls){
-	        				// console.log(stl, cls[stl]);
-	        				moarStyle += stl + ":" + cls[stl] + ";"
-	        			}
-	        			moarStyle += "} "
-	        		}
-	        		// console.log();
-	        		// debugger;
-	        	}
-	        	addedStyles += moarStyle;
-	        	
-	    		addedStyles += this.generatePathStyle(pathStyle);    	
+              //Map Icons
+            addedStyles += ".map-floor-container-base .landmarks #bubbleLeft.item img{top:" + (iconStyles.destination?"-" + iconStyles.destination.offset.y:"-20px") + "!important;left:" + (iconStyles.destination?"-" + iconStyles.destination.offset.x:"-20px") + "!important;width:" + (iconStyles.destination?iconStyles.destination.width:"40px") + ";height:" + (iconStyles.destination?iconStyles.destination.height:"40px") + "}";
+            addedStyles += ".map-floor-container-base .landmarks #yah.item img{top:" + (iconStyles.youarehere?"-" + iconStyles.youarehere.offset.y:"-20px") + "!important;left:" + (iconStyles.youarehere?"-" + iconStyles.youarehere.offset.x:"-20px") + "!important;width:" + (iconStyles.youarehere?iconStyles.youarehere.width:"40px") + ";height:" + (iconStyles.youarehere?iconStyles.youarehere.height:"40px") + "}";
 
-	    		addedStyles += "svg text {overflow:hidden}"
+            if(popUpStyle){
+
+              var moarStyle = ".map-floor-container-base .landmarks .item.card{z-index:3!important}";
+              // console.log(popUpStyle);
+              for(var str in popUpStyle.css){
+
+                moarStyle += ".map-floor-container-base .landmarks .item.card div." + str + "{";
+                var cls = popUpStyle.css[str];
+                for(var stl in cls){
+                  // console.log(stl, cls[stl]);
+                  moarStyle += stl + ":" + cls[stl] + ";"
+                }
+                moarStyle += "} "
+              }
+              // console.log();
+              // debugger;
+            }
+            addedStyles += moarStyle;
+
+          addedStyles += this.generatePathStyle(pathStyle);
+
+          addedStyles += "svg text {overflow:hidden}"
 
 
-	        	addedStyles += "</style>";
-	        	$("body").append(addedStyles);
-        	}catch(e){
-        		console.log("There was an Error generating added styles. ", e);
-        	}
+            addedStyles += "</style>";
+            $("body").append(addedStyles);
+          }catch(e){
+            console.log("There was an Error generating added styles. ", e);
+          }
         }
 
 
         Building.prototype.generatePathStyle = function(pathStyle){
-        	var st = "";
-			if(pathStyle){
-				switch(pathStyle.pathType){
-					case "dots":
-        		        st += ".map-floor-container-base .landmarks .step.item img{top:-" + (pathStyle.pathWidth/2).toString() + "px!important;left:-" + (pathStyle.pathWidth/2).toString() + "px!important}.step.item.mark{background:" + pathStyle.pathColor + ";width:" + pathStyle.pathWidth.toString() + "px;height:" + pathStyle.pathWidth.toString() + "px;border-radius:" + pathStyle.pathWidth + "px}";
-						this.stepOffsetValue = pathStyle.spacing;
-						break;
-					case "line":
-        		        st += ".map-floor-container-base .landmarks .step.item img{top:-" + (pathStyle.pathWidth/2).toString() + "px!important;left:-" + (pathStyle.pathWidth/2).toString() + "px!important}.step.item.mark{background:" + pathStyle.pathColor + ";width:" + pathStyle.pathWidth.toString() + "px;height:" + pathStyle.pathWidth.toString() + "px}";
-        		        this.stepOffsetValue = pathStyle.pathWidth;
-						break;
-				}
-        		if(pathStyle.additionalCss)st += ".step.item.mark{" + pathStyle.additionalCss + "}";
-        	}else{
-        		st += ".map-floor-container-base .landmarks .step.item img{top:-5px!important;left:-5px!important}.step.item.mark{background:#f00;width:10px;height:10px;border-radius:10px}";
-        		this.stepOffsetValue = 14;
-        	}
-        	return st;
+          var st = "";
+      if(pathStyle){
+        switch(pathStyle.pathType){
+          case "dots":
+                    st += ".map-floor-container-base .landmarks .step.item img{top:-" + (pathStyle.pathWidth/2).toString() + "px!important;left:-" + (pathStyle.pathWidth/2).toString() + "px!important}.step.item.mark{background:" + pathStyle.pathColor + ";width:" + pathStyle.pathWidth.toString() + "px;height:" + pathStyle.pathWidth.toString() + "px;border-radius:" + pathStyle.pathWidth + "px}";
+            this.stepOffsetValue = pathStyle.spacing;
+            break;
+          case "line":
+                    st += ".map-floor-container-base .landmarks .step.item img{top:-" + (pathStyle.pathWidth/2).toString() + "px!important;left:-" + (pathStyle.pathWidth/2).toString() + "px!important}.step.item.mark{background:" + pathStyle.pathColor + ";width:" + pathStyle.pathWidth.toString() + "px;height:" + pathStyle.pathWidth.toString() + "px}";
+                    this.stepOffsetValue = pathStyle.pathWidth;
+            break;
+        }
+            if(pathStyle.additionalCss)st += ".step.item.mark{" + pathStyle.additionalCss + "}";
+          }else{
+            st += ".map-floor-container-base .landmarks .step.item img{top:-5px!important;left:-5px!important}.step.item.mark{background:#f00;width:10px;height:10px;border-radius:10px}";
+            this.stepOffsetValue = 14;
+          }
+          return st;
         };
 
         Building.prototype.init = function () {
@@ -1459,7 +1459,7 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Building.prototype.setYah = function () {
-			if(!this.destYah || this.yahImage === undefined) return;
+      if(!this.destYah || this.yahImage === undefined) return;
             this.yahIsSet = true;
             var fl = this.floors[this.destYah.mapid];
             fl.putYahByCoor(this.destYah.x, this.destYah.y, this.yahImage.url, this.yahImage.heading);
@@ -1480,7 +1480,7 @@ var __extends = this.__extends || function (d, b) {
             var maps = JMap.storage.maps.data;
             var labels = [];
             var _this = this;
-           
+
            function getFloorLabels(floor){
                 JMap.getDestinationLabelsByFloor(floor.id, function(res){renderFloorLabels(res, floor)});
            }
@@ -1488,7 +1488,7 @@ var __extends = this.__extends || function (d, b) {
            function renderFloorLabels(res, floor){
                 floor.renderLabels(res, "mapLabels"+ floor.id, floor)
            }
-          
+
             for (var i = 0, n = maps.length; i < n; i++) {
                 var fl = this.floors[maps[i].mapId];
                 getFloorLabels(fl)
@@ -1684,9 +1684,9 @@ var __extends = this.__extends || function (d, b) {
             //get closest wp to location.
             var mapId = JMap.getFloorDataBySequence(floorSeq).mapId;
 
-           	var fl = this.floors[mapId];
+            var fl = this.floors[mapId];
 
-           	var newPoint = fl.getWayPointNearCoor(x,y,50)[0];
+            var newPoint = fl.getWayPointNearCoor(x,y,50)[0];
             this.destYah = newPoint?newPoint:this.destYah;
             this.yahImage.heading = heading;
             this.setYah();
@@ -1700,12 +1700,12 @@ var __extends = this.__extends || function (d, b) {
 
         Building.prototype.fromYahToDest = function (useElevator) {
             // this.resetAllMaps();
-        
+
 
             var speed = this.styles.mapStyles.pathStyles.duration * 1000;
 
             this.pathData = this.pathProcessor.compile(JMap.storage.maps.model.findWay(this.destYah, this.targetDestination, useElevator), this.endDestination.name, this.stepOffsetValue);
-            
+
             var floorInfo = [];
             for(var i = 0; i < this.pathData.length; i++){
                 if(this.pathData[i].steps.length === 0){
@@ -1770,7 +1770,7 @@ var __extends = this.__extends || function (d, b) {
                     this.timeouts.push(setTimeout(function(){
                         var t2 = _this.displayPathOnFloor(_this.pathData[1], _this.floors[_this.pathData[1].mapid]);
                         _this.showDestinationByFloor(_this.pathData[1].mapid, speed * 0.7);
-                    	_this.showMoverByFloor(_this.pathData[1].mapid, _this.pathData[0].mover.imagePath, _this.pathData[1].points[0], 100);//timeout plus floor transition time
+                      _this.showMoverByFloor(_this.pathData[1].mapid, _this.pathData[0].mover.imagePath, _this.pathData[1].points[0], 100);//timeout plus floor transition time
                         _this.timeouts.push(setTimeout(function(){
                             _this.clearAllTimeouts();
                             JMap.fire("pathAnimationComplete");
@@ -1783,7 +1783,7 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Building.prototype.determinFloorsInvolved = function (){
-			if(!this.pathData || !this.pathData[0]) return null;
+      if(!this.pathData || !this.pathData[0]) return null;
             var numFloors = [this.pathData[0].mapid];
             if(this.pathData.length === 1){
                 return numFloors;
@@ -1970,19 +1970,19 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Building.prototype.onFloorLoaded = function () {
-            	this.mapsCounter++;
-            	// console.log("FLOOR LOADED", this.mapsCounter, this.mapsData.length);
-            	if(this.mapsData.length >= this.mapsCounter){
-            		// JMap.fire(JMap.MODULE_READY);
-            		JMap.fire(JMap.MAPS_LOADED);
-            		var _this = this;
+              this.mapsCounter++;
+              // console.log("FLOOR LOADED", this.mapsCounter, this.mapsData.length);
+              if(this.mapsData.length >= this.mapsCounter){
+                // JMap.fire(JMap.MODULE_READY);
+                JMap.fire(JMap.MAPS_LOADED);
+                var _this = this;
 
-            		// var rotation = 0;
-            		// $("#svg-" + this.currentFloor.id).on("click", function(e){
-            		// 	console.log("Clickity click click >>--->", e);
-            		// 	_this.updateCurrentLocation(e.pageX, e.pageY, rotation += 45, _this.currentFloor.sequence);
-            		// });
-            	}
+                // var rotation = 0;
+                // $("#svg-" + this.currentFloor.id).on("click", function(e){
+                //  console.log("Clickity click click >>--->", e);
+                //  _this.updateCurrentLocation(e.pageX, e.pageY, rotation += 45, _this.currentFloor.sequence);
+                // });
+              }
 
         };
 
@@ -1991,7 +1991,7 @@ var __extends = this.__extends || function (d, b) {
             var _this = this;
             this.defaultMap = 1;
             this.mapsCounter = 0;
-           	// console.log("THIS IS LE DATER!", this.container, this.containerWidth, this.containerHeight, this.styles);
+            // console.log("THIS IS LE DATER!", this.container, this.containerWidth, this.containerHeight, this.styles);
             // console.log('MAPSSS', maps)
             // for (var i = maps.length - 1, n = -1; i > n; i--) {
             JMap.addListener("floorLoaded", $.proxy(this.onFloorLoaded, this));
@@ -2002,18 +2002,18 @@ var __extends = this.__extends || function (d, b) {
                 fl.floorTitle = this.mapsData[i].locationName;
                 fl.setGridReference(this.mapsData[i].grid);
                 fl.loadImage(this.mapsData[i].uri);
-                
+
                 fl.description = this.mapsData[i].description;
                 fl.sequence = this.mapsData[i].floorSequence;
                 this.floors[this.mapsData[i].mapId] = fl;
                 this.view.appendChild(fl.view);
 
                 if(this.mapsData[i].svgMap) {
-                	JMap.getCorsOfUrl(this.mapsData[i].svgMap, $.proxy(fl.loadSVG, fl));
-                	// fl.loadSVG(JMap.serverUrl + '/rest/web/cors/get/'  + window.btoa(this.mapsData[i].svgMap));
+                  JMap.getCorsOfUrl(this.mapsData[i].svgMap, $.proxy(fl.loadSVG, fl));
+                  // fl.loadSVG(JMap.serverUrl + '/rest/web/cors/get/'  + window.btoa(this.mapsData[i].svgMap));
                     // fl.loadSVG(this.mapsData[i].svgMap);
                 }else{
-                	// fl.loadSVG("");
+                  // fl.loadSVG("");
                 }
 
                 if(this.mapsData[i].defaultMapForDevice === true){
@@ -2034,7 +2034,7 @@ var __extends = this.__extends || function (d, b) {
                 fingers:1
             });
 
-        
+
             JMap.getDestinations(function(res){_this.onDestintations(res);});
 
             this.destYah = JMap.storage.maps.model.getYah();
@@ -2096,9 +2096,9 @@ var __extends = this.__extends || function (d, b) {
         };
 
 
-        
 
-        
+
+
         Building.prototype.setFrom = function (newYah) {
             var fl = this.floors[newYah.mapid];
             this.destYah = newYah;
@@ -2107,180 +2107,180 @@ var __extends = this.__extends || function (d, b) {
 
 
 
-	/********************************************************/
+  /********************************************************/
     /*********************** SVG MAPS ***********************/
     /********************************************************/
 
     Building.prototype.getMapsWithDirections = function(destinationId, opWidth, opHeight){
 
-    	var destination = JMap.getDestinationByClientId(destinationId);
-    	var returnValue = [];
-    	if(!destination){
-    		console.log("NO MATCHING DESTINATION TO THE ID: " + destinationId);
-    		return returnValue;;
-    	}
+      var destination = JMap.getDestinationByClientId(destinationId);
+      var returnValue = [];
+      if(!destination){
+        console.log("NO MATCHING DESTINATION TO THE ID: " + destinationId);
+        return returnValue;;
+      }
 
-    	var pStyle = this.styles.mapStyles.pathStyles;
-    	var AllData = this.pathProcessor.compileForExport(JMap.storage.maps.model.findWay(this.destYah, JMap.storage.maps.model.getWPByJid(destinationId)), destination.name);
-    	var pathData = AllData.pathData;
+      var pStyle = this.styles.mapStyles.pathStyles;
+      var AllData = this.pathProcessor.compileForExport(JMap.storage.maps.model.findWay(this.destYah, JMap.storage.maps.model.getWPByJid(destinationId)), destination.name);
+      var pathData = AllData.pathData;
 
-    	for(var i =0; i < pathData.length; i++){
-    		var dataObj = {};
-
-
-    		var currFloor = this.floors[pathData[i].mapid];
-    		var svgHtml = currFloor.svgHtml;
-    		// for (var i = 0; i < currFloor.excludeLayers.length; i++) {
-    		// 	var st = svgHtml.indexOf('<g id="' +  currFloor.excludeLayers[i] + '"');
-    		// 	var lt = svgHtml.indexOf("</g>", st + 1);
-    		// 	console.log(st, lt);
-
-    		// };
+      for(var i =0; i < pathData.length; i++){
+        var dataObj = {};
 
 
+        var currFloor = this.floors[pathData[i].mapid];
+        var svgHtml = currFloor.svgHtml;
+        // for (var i = 0; i < currFloor.excludeLayers.length; i++) {
+        //  var st = svgHtml.indexOf('<g id="' +  currFloor.excludeLayers[i] + '"');
+        //  var lt = svgHtml.indexOf("</g>", st + 1);
+        //  console.log(st, lt);
 
-			var newSVG = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
-
-			newSVG.innerHTML = svgHtml;
-			newSVG.setAttributeNS("http://www.w3.org/2000/svg","version" , "1.1");
-			newSVG.setAttributeNS("http://www.w3.org/2000/svg", "x" , "0");
-			newSVG.setAttributeNS("http://www.w3.org/2000/svg", "y" , "0");
-			newSVG.setAttribute("xmlns" , "http://www.w3.org/2000/svg");
-			newSVG.setAttribute("xmlns:xlink" , "http://www.w3.org/1999/xlink");
-			newSVG.setAttribute("xml:space" , "preserve");
-
-			var newGroup = document.createElementNS("http://www.w3.org/2000/svg", 'g');
-			newGroup.id = "pathLayer-" + currFloor.id;
-
-			var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
-			newElement.setAttribute("d",pathData[i].svgPath);
-			newElement.style.stroke = pStyle.pathColor?pStyle.pathColor:"#000";
-			newElement.style.strokeWidth = pStyle.pathWidth?pStyle.pathWidth:"5px";
-			newElement.style["stroke-linejoin"] = "round";
-			newElement.style["stroke-linecap"] = "round";
-			var lt = newElement.getTotalLength();
-			newElement.style["stroke-dasharray"] = lt;
-			newElement.style["stroke-dashoffset"] = "0px";
-
-			newElement.style.fill = "none";
-
-			newGroup.appendChild(newElement);
-
-    		newSVG.appendChild(newGroup);
-
-			var bounds = d3.select(newElement).node().getBBox();
-			var bounds2 = this.getBoundsOfPath(pathData[i].originalPoints);
-
-			if(!opWidth)opWidth = 300;
-			if(!opHeight)opHeight = 300;
-
-			var wG = bounds2.width < opWidth?opWidth:bounds2.width;
-			var hG = bounds2.height < bounds2.height?opHeight:bounds2.height;
-
-			newSVG.setAttributeNS("http://www.w3.org/2000/svg", "viewbox", (bounds2.x - 75) + " " + (bounds2.y - 75)+ " " + (wG + 150)   + " " + (hG + 150));
-			newSVG.setAttributeNS("http://www.w3.org/2000/svg", "enable-background", "new " + (bounds2.x - 75) + " " + (bounds2.y - 75)+ " " + (wG + 150)   + " " + (hG + 150));
-
-			newSVG.setAttribute("width", opWidth);
-			newSVG.setAttribute("height" , opHeight);
-			newSVG.style.background = this.styles.mapStyles.mapConfig.container.background;
-
-
-			var iconStyles = this.styles.mapStyles.iconStyles;
-
-			var startImg = document.createElementNS("http://www.w3.org/2000/svg", 'image');
-			startImg.setAttribute("width", iconStyles.youarehere.width);
-			startImg.setAttribute("height", iconStyles.youarehere.height);
-			startImg.setAttribute("style", "transform-origin:50% 50%;transform:rotate(" + JMap.storage.deviceDetails.heading+ "deg)");
-
-			var endImg = document.createElementNS("http://www.w3.org/2000/svg", 'image');
-			endImg.setAttribute("width", iconStyles.destination.width);
-			endImg.setAttribute("height", iconStyles.destination.height);
-			var startpoint = pathData[i].points[0];
-			var endpoint = pathData[i].points[pathData[i].points.length - 1];
-
-			var positionOffset = this.styles.mapStyles.mapConfig.positionOffset;
-
-		
-
-			if(pathData.length > 1){
-				
-				switch(i){
-					case 0:
-
-						startImg.setAttribute("xlink:href", iconStyles.youarehere.url);
-						startImg.setAttribute("x", startpoint.x + positionOffset.x - parseInt(iconStyles.youarehere.offset.x.substr(0, iconStyles.youarehere.offset.x.length - 2)));
-						startImg.setAttribute("y", startpoint.y + positionOffset.y - parseInt(iconStyles.youarehere.offset.y.substr(0, iconStyles.youarehere.offset.y.length - 2)));
-
-						//mover
-						endImg.setAttribute("xlink:href", JMap.serverUrl +  pathData[0].mover.imagePath);
-						endImg.setAttribute("x", endpoint.x + positionOffset.x - parseInt(iconStyles.movers.offset.x.substr(0, iconStyles.movers.offset.x.length - 2)));
-						endImg.setAttribute("y", endpoint.y + positionOffset.y - parseInt(iconStyles.movers.offset.y.substr(0, iconStyles.movers.offset.y.length - 2)));
-
-						break;
-					case 1:
-						
-						
-
-						//mover
-						startImg.setAttribute("xlink:href", JMap.serverUrl + pathData[0].mover.imagePath);
-						startImg.setAttribute("x", startpoint.x + positionOffset.x - parseInt(iconStyles.movers.offset.x.substr(0, iconStyles.movers.offset.x.length - 2)));
-						startImg.setAttribute("y", startpoint.y + positionOffset.y - parseInt(iconStyles.movers.offset.y.substr(0, iconStyles.movers.offset.y.length - 2)));
-
-						endImg.setAttribute("xlink:href", iconStyles.destination.url);
-						endImg.setAttribute("x", endpoint.x + positionOffset.x - parseInt(iconStyles.youarehere.offset.x.substr(0, iconStyles.youarehere.offset.x.length - 2)));
-						endImg.setAttribute("y", endpoint.y + positionOffset.y - parseInt(iconStyles.youarehere.offset.y.substr(0, iconStyles.youarehere.offset.y.length - 2)));
-						break;
-				}
-
-			}else{
-				
-
-				startImg.setAttribute("xlink:href", iconStyles.youarehere.url);
-				startImg.setAttribute("x", startpoint.x + positionOffset.x - parseInt(iconStyles.youarehere.offset.x.substr(0, iconStyles.youarehere.offset.x.length - 2)));
-				startImg.setAttribute("y", startpoint.y + positionOffset.y - parseInt(iconStyles.youarehere.offset.y.substr(0, iconStyles.youarehere.offset.y.length - 2)));
-				
-				endImg.setAttribute("xlink:href", iconStyles.destination.url);
-				endImg.setAttribute("x", endpoint.x + positionOffset.x - parseInt(iconStyles.youarehere.offset.x.substr(0, iconStyles.youarehere.offset.x.length - 2)));
-				endImg.setAttribute("y", endpoint.y + positionOffset.y - parseInt(iconStyles.youarehere.offset.y.substr(0, iconStyles.youarehere.offset.y.length - 2)));
-
-
-				// newSVG.appendChild(startImg);
-				// newSVG.appendChild(endImg);
-
-			}
-			newSVG.appendChild(startImg);
-			newSVG.appendChild(endImg);
+        // };
 
 
 
-			returnValue.push($('<?xml version="1.0" encoding="utf-8" ?>' + newSVG.outerHTML));
+      var newSVG = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
+
+      newSVG.innerHTML = svgHtml;
+      newSVG.setAttributeNS("http://www.w3.org/2000/svg","version" , "1.1");
+      newSVG.setAttributeNS("http://www.w3.org/2000/svg", "x" , "0");
+      newSVG.setAttributeNS("http://www.w3.org/2000/svg", "y" , "0");
+      newSVG.setAttribute("xmlns" , "http://www.w3.org/2000/svg");
+      newSVG.setAttribute("xmlns:xlink" , "http://www.w3.org/1999/xlink");
+      newSVG.setAttribute("xml:space" , "preserve");
+
+      var newGroup = document.createElementNS("http://www.w3.org/2000/svg", 'g');
+      newGroup.id = "pathLayer-" + currFloor.id;
+
+      var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+      newElement.setAttribute("d",pathData[i].svgPath);
+      newElement.style.stroke = pStyle.pathColor?pStyle.pathColor:"#000";
+      newElement.style.strokeWidth = pStyle.pathWidth?pStyle.pathWidth:"5px";
+      newElement.style["stroke-linejoin"] = "round";
+      newElement.style["stroke-linecap"] = "round";
+      var lt = newElement.getTotalLength();
+      newElement.style["stroke-dasharray"] = lt;
+      newElement.style["stroke-dashoffset"] = "0px";
+
+      newElement.style.fill = "none";
+
+      newGroup.appendChild(newElement);
+
+        newSVG.appendChild(newGroup);
+
+      var bounds = d3.select(newElement).node().getBBox();
+      var bounds2 = this.getBoundsOfPath(pathData[i].originalPoints);
+
+      if(!opWidth)opWidth = 300;
+      if(!opHeight)opHeight = 300;
+
+      var wG = bounds2.width < opWidth?opWidth:bounds2.width;
+      var hG = bounds2.height < bounds2.height?opHeight:bounds2.height;
+
+      newSVG.setAttributeNS("http://www.w3.org/2000/svg", "viewbox", (bounds2.x - 75) + " " + (bounds2.y - 75)+ " " + (wG + 150)   + " " + (hG + 150));
+      newSVG.setAttributeNS("http://www.w3.org/2000/svg", "enable-background", "new " + (bounds2.x - 75) + " " + (bounds2.y - 75)+ " " + (wG + 150)   + " " + (hG + 150));
+
+      newSVG.setAttribute("width", opWidth);
+      newSVG.setAttribute("height" , opHeight);
+      newSVG.style.background = this.styles.mapStyles.mapConfig.container.background;
 
 
-    	}
+      var iconStyles = this.styles.mapStyles.iconStyles;
+
+      var startImg = document.createElementNS("http://www.w3.org/2000/svg", 'image');
+      startImg.setAttribute("width", iconStyles.youarehere.width);
+      startImg.setAttribute("height", iconStyles.youarehere.height);
+      startImg.setAttribute("style", "transform-origin:50% 50%;transform:rotate(" + JMap.storage.deviceDetails.heading+ "deg)");
+
+      var endImg = document.createElementNS("http://www.w3.org/2000/svg", 'image');
+      endImg.setAttribute("width", iconStyles.destination.width);
+      endImg.setAttribute("height", iconStyles.destination.height);
+      var startpoint = pathData[i].points[0];
+      var endpoint = pathData[i].points[pathData[i].points.length - 1];
+
+      var positionOffset = this.styles.mapStyles.mapConfig.positionOffset;
 
 
 
-    	return {svgs:returnValue, textDirections:AllData.textDirections};
+      if(pathData.length > 1){
+
+        switch(i){
+          case 0:
+
+            startImg.setAttribute("xlink:href", iconStyles.youarehere.url);
+            startImg.setAttribute("x", startpoint.x + positionOffset.x - parseInt(iconStyles.youarehere.offset.x.substr(0, iconStyles.youarehere.offset.x.length - 2)));
+            startImg.setAttribute("y", startpoint.y + positionOffset.y - parseInt(iconStyles.youarehere.offset.y.substr(0, iconStyles.youarehere.offset.y.length - 2)));
+
+            //mover
+            endImg.setAttribute("xlink:href", JMap.serverUrl +  pathData[0].mover.imagePath);
+            endImg.setAttribute("x", endpoint.x + positionOffset.x - parseInt(iconStyles.movers.offset.x.substr(0, iconStyles.movers.offset.x.length - 2)));
+            endImg.setAttribute("y", endpoint.y + positionOffset.y - parseInt(iconStyles.movers.offset.y.substr(0, iconStyles.movers.offset.y.length - 2)));
+
+            break;
+          case 1:
+
+
+
+            //mover
+            startImg.setAttribute("xlink:href", JMap.serverUrl + pathData[0].mover.imagePath);
+            startImg.setAttribute("x", startpoint.x + positionOffset.x - parseInt(iconStyles.movers.offset.x.substr(0, iconStyles.movers.offset.x.length - 2)));
+            startImg.setAttribute("y", startpoint.y + positionOffset.y - parseInt(iconStyles.movers.offset.y.substr(0, iconStyles.movers.offset.y.length - 2)));
+
+            endImg.setAttribute("xlink:href", iconStyles.destination.url);
+            endImg.setAttribute("x", endpoint.x + positionOffset.x - parseInt(iconStyles.youarehere.offset.x.substr(0, iconStyles.youarehere.offset.x.length - 2)));
+            endImg.setAttribute("y", endpoint.y + positionOffset.y - parseInt(iconStyles.youarehere.offset.y.substr(0, iconStyles.youarehere.offset.y.length - 2)));
+            break;
+        }
+
+      }else{
+
+
+        startImg.setAttribute("xlink:href", iconStyles.youarehere.url);
+        startImg.setAttribute("x", startpoint.x + positionOffset.x - parseInt(iconStyles.youarehere.offset.x.substr(0, iconStyles.youarehere.offset.x.length - 2)));
+        startImg.setAttribute("y", startpoint.y + positionOffset.y - parseInt(iconStyles.youarehere.offset.y.substr(0, iconStyles.youarehere.offset.y.length - 2)));
+
+        endImg.setAttribute("xlink:href", iconStyles.destination.url);
+        endImg.setAttribute("x", endpoint.x + positionOffset.x - parseInt(iconStyles.youarehere.offset.x.substr(0, iconStyles.youarehere.offset.x.length - 2)));
+        endImg.setAttribute("y", endpoint.y + positionOffset.y - parseInt(iconStyles.youarehere.offset.y.substr(0, iconStyles.youarehere.offset.y.length - 2)));
+
+
+        // newSVG.appendChild(startImg);
+        // newSVG.appendChild(endImg);
+
+      }
+      newSVG.appendChild(startImg);
+      newSVG.appendChild(endImg);
+
+
+
+      returnValue.push($('<?xml version="1.0" encoding="utf-8" ?>' + newSVG.outerHTML));
+
+
+      }
+
+
+
+      return {svgs:returnValue, textDirections:AllData.textDirections};
 
 
     };
 
 
-	Building.prototype.getBoundsOfPath = function(points){
-		var positionOffset = this.styles.mapStyles.mapConfig.positionOffset;
+  Building.prototype.getBoundsOfPath = function(points){
+    var positionOffset = this.styles.mapStyles.mapConfig.positionOffset;
 
-		var w = 0;
-		var h = 0;
-		var x = points[0].x;
-		var y = points[0].y;
-		for (var i = 0; i < points.length; i++) {
-			if(points[i].x > w)w=points[i].x;
-			if(points[i].y > h)h=points[i].y;
-			if(points[i].x < x)x=points[i].x;
-			if(points[i].y < y)y=points[i].y;
-		};
-		return {x:x+ positionOffset.x, y:y + positionOffset.y, width:w-x, height:h-y};
-	};
+    var w = 0;
+    var h = 0;
+    var x = points[0].x;
+    var y = points[0].y;
+    for (var i = 0; i < points.length; i++) {
+      if(points[i].x > w)w=points[i].x;
+      if(points[i].y > h)h=points[i].y;
+      if(points[i].x < x)x=points[i].x;
+      if(points[i].y < y)y=points[i].y;
+    };
+    return {x:x+ positionOffset.x, y:y + positionOffset.y, width:w-x, height:h-y};
+  };
 
 
 
@@ -2305,8 +2305,8 @@ var __extends = this.__extends || function (d, b) {
 
     var PathProcessor = (function () {
         function PathProcessor(offset) {
-        	if(offset)this.offset = offset;
-        	else this.offset = {x:0, y:0};
+          if(offset)this.offset = offset;
+          else this.offset = {x:0, y:0};
 
         }
 
@@ -2423,7 +2423,7 @@ var __extends = this.__extends || function (d, b) {
 
                     theta = Math.atan2(dx, dy);
                     theta *= 180/Math.PI;
-                    
+
                     var length = this.determineLineLength(prePoint.x, prePoint.y, curPoint.x, curPoint.y);
 
                     if(theta < 0) {
@@ -2440,14 +2440,14 @@ var __extends = this.__extends || function (d, b) {
                     /********************* Getting landmark info *********************/
 
                     var tdH = this.writeCurrentHeading(currentHeading, length, curPoint, theta, currentSegment, mapId);
-                    
+
                     var nearPoint;
                     if(tdH.direction === "left" || tdH.direction === "right" || tdH.direction === "backward") {
                         nearPoint = JMap.storage.maps.building.floors[mapId].getDestinationsNearCoor(prePoint.x, prePoint.y, tolerance);
                         if(nearPoint.length > 0){
                             for(var c = 0; c < nearPoint.length; c++){
                                 var wp = JMap.storage.maps.model.getWPByIdAndMapid(nearPoint[c].id, mapId);
-                                
+
                                 if(wp.jids){
                                     var d = JMap.getDestinationByClientId(wp.jids[0]);
                                     if(d){
@@ -2604,12 +2604,12 @@ var __extends = this.__extends || function (d, b) {
             this.landmarks.className =  "landmarks";
             this.landmarks.setAttribute("data-show-at-zoom", "0");
             this.landmarks.setAttribute("data-allow-drag", "true");
-            
-            
+
+
             this.mapImage = null;
             this.floorDestinations = [];
             // this.floorDestinations = null;
-            
+
             this.overlay = document.createElement("DIV");
             this.overlay.id = "map-floor-overlayview-" + id;
 
@@ -2683,7 +2683,7 @@ var __extends = this.__extends || function (d, b) {
                 _this.mapContainer.style.height = this.height;
                 _this.applyPanAndZoom(true);
                 _this.loadLegends();
-	            TweenLite.set(_this.mapView,{alpha:0});
+              TweenLite.set(_this.mapView,{alpha:0});
 
             };
             this.mapView.src = JMap.serverUrl + url;
@@ -2691,31 +2691,31 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Floor.prototype.waitUntil = function(condition, response, interval){
-        	interval = interval || 250;
-        	var intervalReference = setInterval(function(){
-        		var conditionReponse = condition();
-        		// console.log("checking - > ", conditionReponse);
-        		if(condition() !== false){
-        			response();
-        			clearInterval(intervalReference);
-        		}
-        	}, interval);
+          interval = interval || 250;
+          var intervalReference = setInterval(function(){
+            var conditionReponse = condition();
+            // console.log("checking - > ", conditionReponse);
+            if(condition() !== false){
+              response();
+              clearInterval(intervalReference);
+            }
+          }, interval);
         };
 
 
         Floor.prototype.loadSVG = function (svgXml) {
-        	this.svgXml = svgXml;
-            // var n;          
+          this.svgXml = svgXml;
+            // var n;
             this.waitUntil($.proxy(function(){
-            	if($(this.mapView).smoothZoom("getZoomData") === undefined)return false;
-            	else return true;
+              if($(this.mapView).smoothZoom("getZoomData") === undefined)return false;
+              else return true;
             }, this), $.proxy(this.setSVG, this), 500);
         };
 
 
 
         Floor.prototype.setSVG = function(){
-        	var _this = this;
+          var _this = this;
             var svg = '<div class="item mark svgLayer" id="svg-' + _this.id + '" data-position="0,0" data-show-at-zoom="0" data-allow-drag="false" data-allow-scale="true"></div>';
             var pathSVG = '<div class="item mark svgLayer" id="graphicCont-' + _this.id + '" data-position="0,0" data-show-at-zoom="0" data-allow-drag="false" data-allow-scale="true"></div>';
             // var pathGraphicContainer = "<svg id='graphic-" + _this.id + "'></svg>";
@@ -2725,168 +2725,168 @@ var __extends = this.__extends || function (d, b) {
                 $( '#svg-' + _this.id ).html(_this.svgXml);
                 $("#graphicCont-" + _this.id).html("<svg id='graphic-" + _this.id + "'></svg>");
                 $("#graphicCont-" + _this.id).css("pointer-events", "none");
-				setTimeout(function(){
+        setTimeout(function(){
                     // console.log("LOADED");
                     $('#svg-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
                     $('#svg-' + _this.id + ' > svg').css('shape-rendering', "geometricPrecision");
                     $( '#svg-' + _this.id ).show().css('opacity',1);
-		            $('#svg-' + _this.id).css("background", _this.styles.mapStyles.mapConfig.container.background);
-		            $(_this.view).css("background", _this.styles.mapStyles.mapConfig.container.background);
+                $('#svg-' + _this.id).css("background", _this.styles.mapStyles.mapConfig.container.background);
+                $(_this.view).css("background", _this.styles.mapStyles.mapConfig.container.background);
 
 
                     $( '#graphicCont-' + _this.id ).show().css('opacity',1);
                     $('#graphicCont-' + _this.id + ' > svg').attr('width', $(_this.mapView).width() + 'px').attr('height', $(_this.mapView).height() + 'px');
                     // _this.addDragHandler(_this);
-					setTimeout($.proxy(_this.styleSVG, _this), 10);
-					setTimeout($.proxy(_this.assignMapLabels, _this), 20);
-				}, 10);
-			}, 10);
+          setTimeout($.proxy(_this.styleSVG, _this), 10);
+          setTimeout($.proxy(_this.assignMapLabels, _this), 20);
+        }, 10);
+      }, 10);
         };
 
 
         Floor.prototype.styleSVG = function(){
-			// console.log("FIRING FLOOR READY", this);
-			this.updateZoomLayers($(this.mapView).smoothZoom('getZoomData'));
-			JMap.fire("floorLoaded");
-			this.styleRef = {};
-			this.polyRef = {};
-			var _this = this;
+      // console.log("FIRING FLOOR READY", this);
+      this.updateZoomLayers($(this.mapView).smoothZoom('getZoomData'));
+      JMap.fire("floorLoaded");
+      this.styleRef = {};
+      this.polyRef = {};
+      var _this = this;
 
-			var dragThreshold = 10;
+      var dragThreshold = 10;
 
-			this.prepareLabels();
-			this.startCoord ={};
-
-
-			//-----------------------
-			for (var i = 0; i < this.styles.mapStyles.mapLayers.length; i++) {
-				var currentStyle = this.styles.mapStyles.mapLayers[i];
-				var $group = $('#svg-' + this.id).find("#" + currentStyle.name).find("*");
-				// var $group = $('#svg-' + this.id ).find("." + currentStyle.class);//.find("*");
-				currentStyle.group = $group;
-
-				if(currentStyle.addLabel == true){
-					this.setStoreLabels(currentStyle);
-				}
+      this.prepareLabels();
+      this.startCoord ={};
 
 
-				for(var j = 0; j < $group.length; j++){
-					var p = $group[j];
-					if(currentStyle.colorFill)$(p).css("fill", currentStyle.colorFill);
-					if(currentStyle.strokeColor)$(p).css("stroke", currentStyle.strokeColor);
-					if(currentStyle.strokeWidth)$(p).css("stroke-width", currentStyle.strokeWidth);
-					if(!currentStyle.clickable)$(p).css("pointer-events", "none");
-					$(p).addClass(currentStyle.name);
+      //-----------------------
+      for (var i = 0; i < this.styles.mapStyles.mapLayers.length; i++) {
+        var currentStyle = this.styles.mapStyles.mapLayers[i];
+        var $group = $('#svg-' + this.id).find("#" + currentStyle.name).find("*");
+        // var $group = $('#svg-' + this.id ).find("." + currentStyle.class);//.find("*");
+        currentStyle.group = $group;
+
+        if(currentStyle.addLabel == true){
+          this.setStoreLabels(currentStyle);
+        }
 
 
-
-					if(currentStyle.clickable == true){
-						var isDragging = false;
-
-						// var clickPoly = new JMap.ui.FastButton(p, onTouchEndPoly);
-
-						// p.addEventListener("touchstart", function(e){
-						$(p).on("touchstart", function(e){
-							console.log("Start", e);
-						// function onTouchStartPoly(){
-							// _this.startCoord.startX = e.touches[0].clientX;
-							// _this.startCoord.startY = e.touches[0].clientY;
-
-							_this.startCoord.startX = e.originalEvent.changedTouches[0].clientX;
-							_this.startCoord.startY = e.originalEvent.changedTouches[0].clientY;
-							var lbl = undefined;
-							var prnt = $(this);
-							while(lbl == undefined) {
-								prnt = prnt.parent();
-								lbl = prnt.attr("id");
-								if(prnt.prop("tagName") == "DIV") break;
-							}
-							$(this).css("fill", _this.styleRef[lbl].highLightColor);
+        for(var j = 0; j < $group.length; j++){
+          var p = $group[j];
+          if(currentStyle.colorFill)$(p).css("fill", currentStyle.colorFill);
+          if(currentStyle.strokeColor)$(p).css("stroke", currentStyle.strokeColor);
+          if(currentStyle.strokeWidth)$(p).css("stroke-width", currentStyle.strokeWidth);
+          if(!currentStyle.clickable)$(p).css("pointer-events", "none");
+          $(p).addClass(currentStyle.name);
 
 
 
-							// var _polyThis = this;
+          if(currentStyle.clickable == true){
+            var isDragging = false;
 
-						});
+            // var clickPoly = new JMap.ui.FastButton(p, onTouchEndPoly);
 
-					
-						$(p).on("touchend", function(){
-							$(window).off("touchdrag");
-							lbl = undefined;
-							var prnt = $(this);
-							while(lbl == undefined) {
-								prnt = prnt.parent();
-								lbl = prnt.attr("id");
-								if(prnt.prop("tagName") == "DIV") break;
-							}
-							$(this).css("fill", _this.styleRef[lbl].colorFill);
+            // p.addEventListener("touchstart", function(e){
+            $(p).on("touchstart", function(e){
+              console.log("Start", e);
+            // function onTouchStartPoly(){
+              // _this.startCoord.startX = e.touches[0].clientX;
+              // _this.startCoord.startY = e.touches[0].clientY;
 
-						});
-
-							// $(window).on("touchmove", function(evt){
-							// 	console.log(evt);
-							// 	_polyThis.removeEventListener("touchend", onTouchEnd);
-							// 	$(window).off("touchmove");
-							// });
-
-						p.addEventListener("touchend", onTouchEndPoly);
-
-						function onTouchEndPoly(evt){
-							console.log(evt);
-
-							console.log(_this.startCoord,  evt.changedTouches[0].clientX - _this.startCoord.startX , evt.changedTouches[0].clientY - _this.startCoord.startY );
-							if(evt.changedTouches[0].clientX - _this.startCoord.startX > (dragThreshold) || evt.changedTouches[0].clientY - _this.startCoord.startY > (dragThreshold) || evt.changedTouches[0].clientX - _this.startCoord.startX < -(dragThreshold) || evt.changedTouches[0].clientY - _this.startCoord.startY < -(dragThreshold)){
-								return;
-							}
-						// $(p).on("click", function(evt){
-							if(this.tagName == "g")return;
-							var d = _this.getDestinationWithinBounds(this, evt);
-							// console.log("fixed");
-							if(!d)return;
-							JMap.fire("SHOW_DESTINATION", [d]);
-							_this.showCard(d);
-						};
+              _this.startCoord.startX = e.originalEvent.changedTouches[0].clientX;
+              _this.startCoord.startY = e.originalEvent.changedTouches[0].clientY;
+              var lbl = undefined;
+              var prnt = $(this);
+              while(lbl == undefined) {
+                prnt = prnt.parent();
+                lbl = prnt.attr("id");
+                if(prnt.prop("tagName") == "DIV") break;
+              }
+              $(this).css("fill", _this.styleRef[lbl].highLightColor);
 
 
-					}
-	            }
-				this.styles.mapStyles.mapLayers[i] = currentStyle;
-				this.styleRef[currentStyle.name] = currentStyle;
-			};
 
-			this.svgHtml = $('#svg-' + _this.id).find("svg").html();
+              // var _polyThis = this;
+
+            });
+
+
+            $(p).on("touchend", function(){
+              $(window).off("touchdrag");
+              lbl = undefined;
+              var prnt = $(this);
+              while(lbl == undefined) {
+                prnt = prnt.parent();
+                lbl = prnt.attr("id");
+                if(prnt.prop("tagName") == "DIV") break;
+              }
+              $(this).css("fill", _this.styleRef[lbl].colorFill);
+
+            });
+
+              // $(window).on("touchmove", function(evt){
+              //  console.log(evt);
+              //  _polyThis.removeEventListener("touchend", onTouchEnd);
+              //  $(window).off("touchmove");
+              // });
+
+            p.addEventListener("touchend", onTouchEndPoly);
+
+            function onTouchEndPoly(evt){
+              console.log(evt);
+
+              console.log(_this.startCoord,  evt.changedTouches[0].clientX - _this.startCoord.startX , evt.changedTouches[0].clientY - _this.startCoord.startY );
+              if(evt.changedTouches[0].clientX - _this.startCoord.startX > (dragThreshold) || evt.changedTouches[0].clientY - _this.startCoord.startY > (dragThreshold) || evt.changedTouches[0].clientX - _this.startCoord.startX < -(dragThreshold) || evt.changedTouches[0].clientY - _this.startCoord.startY < -(dragThreshold)){
+                return;
+              }
+            // $(p).on("click", function(evt){
+              if(this.tagName == "g")return;
+              var d = _this.getDestinationWithinBounds(this, evt);
+              // console.log("fixed");
+              if(!d)return;
+              JMap.fire("SHOW_DESTINATION", [d]);
+              _this.showCard(d);
+            };
+
+
+          }
+              }
+        this.styles.mapStyles.mapLayers[i] = currentStyle;
+        this.styleRef[currentStyle.name] = currentStyle;
+      };
+
+      this.svgHtml = $('#svg-' + _this.id).find("svg").html();
 
         };
 
 
         Floor.prototype.prepareLabels = function(){
-        	this.destinations = JMap.getDestinationsByFloorId(this.id);
-        	this.excludeLayers = [];
+          this.destinations = JMap.getDestinationsByFloorId(this.id);
+          this.excludeLayers = [];
         };
 
         Floor.prototype.getDestinationWithinBounds = function(poly){
-        	var scOffSet = this.scaleOffset;
-        	for (var i = 0; i < this.destinations.length; i++) {
-        		var wps = this.destinations[i].wps;
-        		for (var j = 0; j < wps.length; j++) {
-        			var wp = wps[j];
-	        		
-	        		// var wp = JMap.storage.maps.model.getWPByJid(this.destinations[i].clientId);
-	        		if(!wp)continue;
+          var scOffSet = this.scaleOffset;
+          for (var i = 0; i < this.destinations.length; i++) {
+            var wps = this.destinations[i].wps;
+            for (var j = 0; j < wps.length; j++) {
+              var wp = wps[j];
 
-	        		var zd = this.getZoomData();
-	        		var cwp = {
-	        			x:(zd.ratio * ((wp.x + this.positionOffset.x) - Number(zd.normX))), 
-	        			y:(zd.ratio * ((wp.y + this.positionOffset.y) - Number(zd.normY)))
-	        		};
-	        		if(cwp.x < 0 || cwp.y < 0)continue;
+              // var wp = JMap.storage.maps.model.getWPByJid(this.destinations[i].clientId);
+              if(!wp)continue;
 
-	        		var cpoly = document.elementFromPoint(cwp.x, cwp.y);
-	    //     		var pd = d3.select(poly);
-					// var bounds = pd.node().getBBox();
-	        		if(poly === cpoly)return this.destinations[i];
-        		};
-        	}
+              var zd = this.getZoomData();
+              var cwp = {
+                x:(zd.ratio * ((wp.x + this.positionOffset.x) - Number(zd.normX))),
+                y:(zd.ratio * ((wp.y + this.positionOffset.y) - Number(zd.normY)))
+              };
+              if(cwp.x < 0 || cwp.y < 0)continue;
+
+              var cpoly = document.elementFromPoint(cwp.x, cwp.y);
+      //        var pd = d3.select(poly);
+          // var bounds = pd.node().getBBox();
+              if(poly === cpoly)return this.destinations[i];
+            };
+          }
         };
 
 
@@ -2894,244 +2894,244 @@ var __extends = this.__extends || function (d, b) {
 
 
         Floor.prototype.assignMapLabels = function(){
-        	var labels = this.styles.mapStyles.mapLabels;
-			// console.log(labels);
-			var sl = [];
-			for (var i = 0; i < labels.length; i++) {
-				if(labels[i].mapSequence && labels[i].mapSequence != this.sequence)continue;
-				sl.push(this.createMapLabel(labels[i]));
-			};
-			$(this.mapView).smoothZoom("addLandmark", sl);
+          var labels = this.styles.mapStyles.mapLabels;
+      // console.log(labels);
+      var sl = [];
+      for (var i = 0; i < labels.length; i++) {
+        if(labels[i].mapSequence && labels[i].mapSequence != this.sequence)continue;
+        sl.push(this.createMapLabel(labels[i]));
+      };
+      $(this.mapView).smoothZoom("addLandmark", sl);
         };
 
-		// Floor.
+    // Floor.
 
 
 
         // Floor.prototype.getCenterOfBounds = function(bounds){
-        // 	var scOffSet = 860/1920;
-        // 	bounds = {x:bounds.x*scOffSet,y:bounds.y*scOffSet,width:bounds.width*scOffSet,height:bounds.height*scOffSet};
-        // 	return {x: bounds.x + (bounds.width/2) ,y:bounds.y + (bounds.height / 2)}
+        //  var scOffSet = 860/1920;
+        //  bounds = {x:bounds.x*scOffSet,y:bounds.y*scOffSet,width:bounds.width*scOffSet,height:bounds.height*scOffSet};
+        //  return {x: bounds.x + (bounds.width/2) ,y:bounds.y + (bounds.height / 2)}
         // };
 
         // Floor.prototype.checkStoreBounds = function(){
-        // 	var bnds = this.styles.mapStyles.storeLabelBounds[this.sequence];
+        //  var bnds = this.styles.mapStyles.storeLabelBounds[this.sequence];
         //     if(bnds){
-        //     	$.get(bnds, null, $.proxy(this.setCustomBounds, this));
+        //      $.get(bnds, null, $.proxy(this.setCustomBounds, this));
         //     }else{
-        //     	this.setStoreLabels();
+        //      this.setStoreLabels();
         //     }
         // };
 
         Floor.prototype.setCustomBounds = function(data){
-        	this.customBounds = data;
-        	this.setStoreLabels();
+          this.customBounds = data;
+          this.setStoreLabels();
         };
 
         Floor.prototype.getBoundsOfPoly = function(poly){
-			var bounds = {};
-        	switch(poly.tagName){
-        		case "rect":
-	        		bounds.x = Number(poly.getAttribute("x"));
-	        		bounds.width = Number(poly.getAttribute("width"));
-	        		bounds.y = Number(poly.getAttribute("y"));
-	        		bounds.height = Number(poly.getAttribute("height"));
-        			break;
-        		case "polygon":
-        			var polyPoints = poly.getAttribute("points").split(" ");
-					for (var i = 0; i < polyPoints.length - 1; i++) {
-						var pt = polyPoints[i].split(",");	
-						if(!bounds.x || Number(pt[0]) < bounds.x)bounds.x = Number(pt[0]);
-						if(!bounds.xMax || Number(pt[0]) > bounds.xMax)bounds.xMax = Number(pt[0]);
-						if(!bounds.y || Number(pt[1]) < bounds.y)bounds.y = Number(pt[1]);
-						if(!bounds.yMax || Number(pt[1]) > bounds.yMax)bounds.yMax = Number(pt[1]);
-					};
-					bounds.width = bounds.xMax - bounds.x;
-					bounds.height = bounds.yMax - bounds.y;
+      var bounds = {};
+          switch(poly.tagName){
+            case "rect":
+              bounds.x = Number(poly.getAttribute("x"));
+              bounds.width = Number(poly.getAttribute("width"));
+              bounds.y = Number(poly.getAttribute("y"));
+              bounds.height = Number(poly.getAttribute("height"));
+              break;
+            case "polygon":
+              var polyPoints = poly.getAttribute("points").split(" ");
+          for (var i = 0; i < polyPoints.length - 1; i++) {
+            var pt = polyPoints[i].split(",");
+            if(!bounds.x || Number(pt[0]) < bounds.x)bounds.x = Number(pt[0]);
+            if(!bounds.xMax || Number(pt[0]) > bounds.xMax)bounds.xMax = Number(pt[0]);
+            if(!bounds.y || Number(pt[1]) < bounds.y)bounds.y = Number(pt[1]);
+            if(!bounds.yMax || Number(pt[1]) > bounds.yMax)bounds.yMax = Number(pt[1]);
+          };
+          bounds.width = bounds.xMax - bounds.x;
+          bounds.height = bounds.yMax - bounds.y;
 
-					//added formula 
-					bounds.center = this.getCenterOfBounds(bounds);
-					polyPoints.pop();
-					for(i = 0; i < polyPoints.length; i++){
-						pt = polyPoints[i].split(",");
-						polyPoints[i] = {x:Number(pt[0]), y: Number(pt[1])};
-						if(bounds.center.x > polyPoints[i].x)polyPoints[i].xW = 1;
-						else polyPoints[i].xW = -1;
-						if(bounds.center.y > polyPoints[i].y)polyPoints[i].yW = 1;
-						else polyPoints[i].yW = -1;
-					}
-					bounds.segments = polyPoints;
+          //added formula
+          bounds.center = this.getCenterOfBounds(bounds);
+          polyPoints.pop();
+          for(i = 0; i < polyPoints.length; i++){
+            pt = polyPoints[i].split(",");
+            polyPoints[i] = {x:Number(pt[0]), y: Number(pt[1])};
+            if(bounds.center.x > polyPoints[i].x)polyPoints[i].xW = 1;
+            else polyPoints[i].xW = -1;
+            if(bounds.center.y > polyPoints[i].y)polyPoints[i].yW = 1;
+            else polyPoints[i].yW = -1;
+          }
+          bounds.segments = polyPoints;
 
 
-					break;
-				case "path":
-					bounds = d3.select(poly).node().getBBox();
-					break;
-				}
-				return bounds;
+          break;
+        case "path":
+          bounds = d3.select(poly).node().getBBox();
+          break;
+        }
+        return bounds;
         };
 
         Floor.prototype.isPointInBounds = function(point, bounds, extensiveCheck){
-        	if(bounds.segments && extensiveCheck == true){
-        		//this is where the fun happens
-        		var successCount = 0;
-        		for(var i = 0; i < bounds.segments.length; i++){
-        			var xW, yW;
-        			if(point.x <= bounds.segments[i].x)xW = 1;
-        			else xW = -1;
-        			if(point.y <= bounds.segments[i].y)yW = 1;
-        			else yW = -1;
+          if(bounds.segments && extensiveCheck == true){
+            //this is where the fun happens
+            var successCount = 0;
+            for(var i = 0; i < bounds.segments.length; i++){
+              var xW, yW;
+              if(point.x <= bounds.segments[i].x)xW = 1;
+              else xW = -1;
+              if(point.y <= bounds.segments[i].y)yW = 1;
+              else yW = -1;
 
-        			if(xW === bounds.xW && yW === bounds.yW)successCount++;
-        		}
+              if(xW === bounds.xW && yW === bounds.yW)successCount++;
+            }
 
-        		//RULE
-        		var limit = bounds.segments.length >= 6?bounds.segments.length-1:bounds.segments.length;
-        		if(successCount >= bounds.segments.length)return true;
-        		else return false;
+            //RULE
+            var limit = bounds.segments.length >= 6?bounds.segments.length-1:bounds.segments.length;
+            if(successCount >= bounds.segments.length)return true;
+            else return false;
 
 
-        	}else{
-	        	if(point.x > bounds.x && point.x < (bounds.x + bounds.width) && point.y > bounds.y && point.y < (bounds.y + bounds.height))return true;
-				return false;
-        	}
+          }else{
+            if(point.x > bounds.x && point.x < (bounds.x + bounds.width) && point.y > bounds.y && point.y < (bounds.y + bounds.height))return true;
+        return false;
+          }
         };
 
         Floor.prototype.getCenterOfBounds = function(bounds){
-        	return {x: bounds.x + (bounds.width/2) ,y:bounds.y + (bounds.height / 2)}
+          return {x: bounds.x + (bounds.width/2) ,y:bounds.y + (bounds.height / 2)}
         };
 
-        	
+
         Floor.prototype.setStoreLabels = function(groupPar){
 
 
-        	for (var i = 0; i < this.destinations.length; i++) if(this.destinations[i].polygons === undefined)this.destinations[i].polygons = [];
+          for (var i = 0; i < this.destinations.length; i++) if(this.destinations[i].polygons === undefined)this.destinations[i].polygons = [];
 
-        	//All polygons that have boundaries containing the custom bounds' origin point
-        	for(var k = 0; k < groupPar.group.length; k++){
-        		var g = groupPar.group[k];
-        		if(g.tagName == "g" /*|| g.tagName == "path"*/)continue;
-        		var bounds = this.getBoundsOfPoly(g);
-        		for (i = 0; i < this.destinations.length; i++) {
-        			for(var j = 0; j < this.destinations[i].wps.length; j++){	
-        				if(this.destinations[i].wps[j].mapid == this.id){
-		        			if(this.isPointInBounds({x:this.destinations[i].wps[j].x + this.positionOffset.x, y:this.destinations[i].wps[j].y + this.positionOffset.y}, bounds, this.styles.mapStyles.secondCheck.indexOf(this.destinations[i].clientId)!=-1) == true){
-				    			this.destinations[i].polygons.push(g);
-		        			}
-        				}
-        			}
-        		};
-        	};
+          //All polygons that have boundaries containing the custom bounds' origin point
+          for(var k = 0; k < groupPar.group.length; k++){
+            var g = groupPar.group[k];
+            if(g.tagName == "g" /*|| g.tagName == "path"*/)continue;
+            var bounds = this.getBoundsOfPoly(g);
+            for (i = 0; i < this.destinations.length; i++) {
+              for(var j = 0; j < this.destinations[i].wps.length; j++){
+                if(this.destinations[i].wps[j].mapid == this.id){
+                  if(this.isPointInBounds({x:this.destinations[i].wps[j].x + this.positionOffset.x, y:this.destinations[i].wps[j].y + this.positionOffset.y}, bounds, this.styles.mapStyles.secondCheck.indexOf(this.destinations[i].clientId)!=-1) == true){
+                  this.destinations[i].polygons.push(g);
+                  }
+                }
+              }
+            };
+          };
 
             function getDistance(p1, p2) {return Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2));};
 
-        	for (i = 0; i < this.destinations.length; i++) {
-    			if(this.destinations[i].polygons.length > 1){
-    				var currentClosest = this.destinations[i].polygons[0];
-    				for (k = 1; k < this.destinations[i].polygons.length; k++) {
-        				for(var j = 0; j < this.destinations[i].wps; j++){	
-	    					if(getDistance(this.destinations[i].polygons[k], this.destinations[i].wps[j]) < getDistance(currentClosest, this.destinations[i].wps[j])){
-	    						currentClosest = this.destinations[i].polygons[k];
-	    					}
-	    				} 
-    				};
-    				this.destinations[i].centerPolygon = currentClosest;
-    			}else{
-    				this.destinations[i].centerPolygon = this.destinations[i].polygons[0];
-    			}
-    		};
+          for (i = 0; i < this.destinations.length; i++) {
+          if(this.destinations[i].polygons.length > 1){
+            var currentClosest = this.destinations[i].polygons[0];
+            for (k = 1; k < this.destinations[i].polygons.length; k++) {
+                for(var j = 0; j < this.destinations[i].wps; j++){
+                if(getDistance(this.destinations[i].polygons[k], this.destinations[i].wps[j]) < getDistance(currentClosest, this.destinations[i].wps[j])){
+                  currentClosest = this.destinations[i].polygons[k];
+                }
+              }
+            };
+            this.destinations[i].centerPolygon = currentClosest;
+          }else{
+            this.destinations[i].centerPolygon = this.destinations[i].polygons[0];
+          }
+        };
 
 
-        	var c = 0;
+          var c = 0;
 
-			var newGroup = document.createElementNS("http://www.w3.org/2000/svg", 'g'),
-				labelLayerName = groupPar.name +  "-labels-" + this.id;
-				
-				newGroup.id = labelLayerName;
-        		// this.excludeLayers.push(newGroup.id);
+      var newGroup = document.createElementNS("http://www.w3.org/2000/svg", 'g'),
+        labelLayerName = groupPar.name +  "-labels-" + this.id;
 
-
-			var d3Group = d3.select(newGroup);
-			
-			var svg = document.getElementById("L" + (this.sequence + 1).toString());
-
-			var pixelWidthThreshold = 7;
-
-			var parentChildBoundaryReference = [];
-
-			var lblStyles = groupPar.label;
-			// lblStyles.fill = "#000";
-			// lblStyles["font-size"] = groupPar.sponsorship == 75?"12px":"9px";
-
-        	for(i = 0; i < this.destinations.length; i ++){
-    			if(!this.destinations[i].centerPolygon)continue;
-    			if(this.styles.mapStyles.hideLabels.indexOf(this.destinations[i].clientId) > -1)continue;
-
-				var textF;
-				var destName = this.destinations[i].name.split("&amp;").join("&").split("&eacute;").join("é");
-
-				var bd = this.getBoundsOfPoly(this.destinations[i].centerPolygon);
-				if(!bd.x)continue;
-				var center = this.getCenterOfBounds(bd);
+        newGroup.id = labelLayerName;
+            // this.excludeLayers.push(newGroup.id);
 
 
-				textF = d3Group.append("text").attr("x",center.x).attr("y",center.y+ 3).attr("width",bd.width).attr("height",bd.height)
+      var d3Group = d3.select(newGroup);
 
-				for(var str in lblStyles){
-					textF.attr(str,lblStyles[str]);
-				}
+      var svg = document.getElementById("L" + (this.sequence + 1).toString());
 
-				textF.attr("text-anchor","middle").text(destName);
+      var pixelWidthThreshold = 7;
 
-				var tbd = textF.node().getBBox();
-					// console.log("BOOM");
-				bd.textNode = textF;
+      var parentChildBoundaryReference = [];
 
-				parentChildBoundaryReference.push(bd);
-				c++;
+      var lblStyles = groupPar.label;
+      // lblStyles.fill = "#000";
+      // lblStyles["font-size"] = groupPar.sponsorship == 75?"12px":"9px";
 
-				var par = $(this.destinations[i].centerPolygon).parent();
-				var parId = par.attr("id");
-				if(parId == undefined){
-					parId = par.parent().attr("id");
-				}
+          for(i = 0; i < this.destinations.length; i ++){
+          if(!this.destinations[i].centerPolygon)continue;
+          if(this.styles.mapStyles.hideLabels.indexOf(this.destinations[i].clientId) > -1)continue;
 
-    			if(parId != groupPar.name){
-    				console.log(destName + " doesn't belong in " + groupPar.name, parId);
-    				textF.remove();
-    			}
-        	}
+        var textF;
+        var destName = this.destinations[i].name.split("&amp;").join("&").split("&eacute;").join("é");
 
-        	
-			// newGroup.appendChild(txtElem);
-			svg.appendChild(newGroup);
-			// $(newGroup).css("pointer-events", "none");
+        var bd = this.getBoundsOfPoly(this.destinations[i].centerPolygon);
+        if(!bd.x)continue;
+        var center = this.getCenterOfBounds(bd);
 
 
-			for (var ch = 0; ch < parentChildBoundaryReference.length; ch++){
-				// console.log(parentChildBoundaryReference[ch].width,  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength());
-				if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
-					parentChildBoundaryReference[ch].textNode.attr("font-size", "7px");
-					if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
-						parentChildBoundaryReference[ch].textNode.attr("font-size", "5px");
-						if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
-							parentChildBoundaryReference[ch].textNode.attr("font-size", "3px").attr("class", "tinyLabel");
-							// parentChildBoundaryReference[ch].textNode.attr("fill-opacity", 0);
-							// parentChildBoundaryReference[ch].textNode.attr("style", "display:none");
-							// parentChildBoundaryReference[ch].textNode.attr("fill", "#f00");
-						}else{
-							//add to small
-							parentChildBoundaryReference[ch].textNode.attr("class", "smallLabel");
-						}
-					}else{
-						//add to medium
-						parentChildBoundaryReference[ch].textNode.attr("class", "mediumLabel");
-					}
-				}else{
-					//add to large
-					parentChildBoundaryReference[ch].textNode.attr("class", "largeLabel");
-				}
-			}
+        textF = d3Group.append("text").attr("x",center.x).attr("y",center.y+ 3).attr("width",bd.width).attr("height",bd.height)
+
+        for(var str in lblStyles){
+          textF.attr(str,lblStyles[str]);
+        }
+
+        textF.attr("text-anchor","middle").text(destName);
+
+        var tbd = textF.node().getBBox();
+          // console.log("BOOM");
+        bd.textNode = textF;
+
+        parentChildBoundaryReference.push(bd);
+        c++;
+
+        var par = $(this.destinations[i].centerPolygon).parent();
+        var parId = par.attr("id");
+        if(parId == undefined){
+          parId = par.parent().attr("id");
+        }
+
+          if(parId != groupPar.name){
+            console.log(destName + " doesn't belong in " + groupPar.name, parId);
+            textF.remove();
+          }
+          }
+
+
+      // newGroup.appendChild(txtElem);
+      svg.appendChild(newGroup);
+      // $(newGroup).css("pointer-events", "none");
+
+
+      for (var ch = 0; ch < parentChildBoundaryReference.length; ch++){
+        // console.log(parentChildBoundaryReference[ch].width,  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength());
+        if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
+          parentChildBoundaryReference[ch].textNode.attr("font-size", "7px");
+          if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
+            parentChildBoundaryReference[ch].textNode.attr("font-size", "5px");
+            if(parentChildBoundaryReference[ch].width <  parentChildBoundaryReference[ch].textNode.node().getComputedTextLength() + 5){
+              parentChildBoundaryReference[ch].textNode.attr("font-size", "3px").attr("class", "tinyLabel");
+              // parentChildBoundaryReference[ch].textNode.attr("fill-opacity", 0);
+              // parentChildBoundaryReference[ch].textNode.attr("style", "display:none");
+              // parentChildBoundaryReference[ch].textNode.attr("fill", "#f00");
+            }else{
+              //add to small
+              parentChildBoundaryReference[ch].textNode.attr("class", "smallLabel");
+            }
+          }else{
+            //add to medium
+            parentChildBoundaryReference[ch].textNode.attr("class", "mediumLabel");
+          }
+        }else{
+          //add to large
+          parentChildBoundaryReference[ch].textNode.attr("class", "largeLabel");
+        }
+      }
            //TO DO make this PER sponsorship or per size
 
 
@@ -3139,24 +3139,24 @@ var __extends = this.__extends || function (d, b) {
 
         //Not being used
         Floor.prototype.getLPosWithinBounds = function(poly){
-        	var scOffSet = this.scaleOffset;
-        	for (var i = 0; i < this.destinations.length; i++) {
-        		var wp = this.destinations[i].wp;
-        		if(!wp)continue;
+          var scOffSet = this.scaleOffset;
+          for (var i = 0; i < this.destinations.length; i++) {
+            var wp = this.destinations[i].wp;
+            if(!wp)continue;
 
-        		var pd = d3.select(poly);
-				var bounds = pd.node().getBBox();
+            var pd = d3.select(poly);
+        var bounds = pd.node().getBBox();
 
-        		var cwp = {
-        			x:(wp.x + this.positionOffset.x), 
-        			y:(wp.y + this.positionOffset.y)
-        		};
+            var cwp = {
+              x:(wp.x + this.positionOffset.x),
+              y:(wp.y + this.positionOffset.y)
+            };
 
-        		if(cwp.x > bounds.x && cwp.x < (bounds.x + bounds.width) && cwp.y > bounds.y && cwp.y < (bounds.y + bounds.height)){
-        			return this.destinations[i];
-        		}
+            if(cwp.x > bounds.x && cwp.x < (bounds.x + bounds.width) && cwp.y > bounds.y && cwp.y < (bounds.y + bounds.height)){
+              return this.destinations[i];
+            }
 
-        	}
+          }
         };
 
 
@@ -3181,8 +3181,8 @@ var __extends = this.__extends || function (d, b) {
             // console.log(config);
 
             if(config){
-	            $(this.mapView).width(config.mapSize.width);
-	            $(this.mapView).height(config.mapSize.height);
+              $(this.mapView).width(config.mapSize.width);
+              $(this.mapView).height(config.mapSize.height);
             }
 
 
@@ -3226,23 +3226,23 @@ var __extends = this.__extends || function (d, b) {
                 }
             });
         };
-        
+
 
         Floor.prototype.rebootSmoothZoom = function(){
             $(this.mapView).smoothZoom('Reset');
         }
-        
+
         Floor.prototype.updateZoomLayers = function(zoomData){
             //TODO - Zoom Layers
             if(!zoomData)return;
             var currentScale = zoomData.ratio *100;
             for (var i = 0; i < this.styles.mapStyles.mapLayers.length; i++) {
-            	if(this.styles.mapStyles.mapLayers[i].zoomLevel == 0)continue;
-            	var zoomAlpha = 1;
-            	if(this.styles.mapStyles.mapLayers[i].zoomLevel < currentScale)zoomAlpha = 1;
-            	else zoomAlpha = 0;
-            	var $group = $('#svg-' + this.id ).find("#" + this.styles.mapStyles.mapLayers[i].name).find("*");
-        		TweenLite.to($group, 0.3, {"fill-opacity":zoomAlpha, "stroke-opacity":zoomAlpha});
+              if(this.styles.mapStyles.mapLayers[i].zoomLevel == 0)continue;
+              var zoomAlpha = 1;
+              if(this.styles.mapStyles.mapLayers[i].zoomLevel < currentScale)zoomAlpha = 1;
+              else zoomAlpha = 0;
+              var $group = $('#svg-' + this.id ).find("#" + this.styles.mapStyles.mapLayers[i].name).find("*");
+            TweenLite.to($group, 0.3, {"fill-opacity":zoomAlpha, "stroke-opacity":zoomAlpha});
             }
 
             if(currentScale >= 100)$(".largeLabel").show();
@@ -3257,11 +3257,11 @@ var __extends = this.__extends || function (d, b) {
 
             setTimeout(function(){
 
-		        //Force render for chrome
-		        var jmap = document.getElementsByTagName("jmap")[0];
-		        var p = jmap.parentElement;
-		        p.removeChild(jmap);
-		        p.appendChild(jmap)
+            //Force render for chrome
+            var jmap = document.getElementsByTagName("jmap")[0];
+            var p = jmap.parentElement;
+            p.removeChild(jmap);
+            p.appendChild(jmap)
 
             }, 100);
         };
@@ -3308,7 +3308,7 @@ var __extends = this.__extends || function (d, b) {
 
         Floor.prototype.resetFloor = function(){
             $(this.mapView).smoothZoom('Reset');
-        	this.removeCard();
+          this.removeCard();
             this.clearPath();
             this.hasPath = false;
         };
@@ -3375,7 +3375,7 @@ var __extends = this.__extends || function (d, b) {
             var nearPoints = this.getDestinationsNearCoor(p.x, p.y, this.clickTolerance);
 
             var nearLocations = [];
-            
+
             for(var i = 0; i < nearPoints.length; i++) {
 
 
@@ -3401,55 +3401,55 @@ var __extends = this.__extends || function (d, b) {
             this.clearPath();
 
              var _this = this,
-            	delayTime = 0.05,
-            	pStyle = this.styles.mapStyles.pathStyles;
+              delayTime = 0.05,
+              pStyle = this.styles.mapStyles.pathStyles;
 
             this.currentPath = floorPath;
             this.hasPath = true;
-            
+
             //Reset Map View
             switch(pStyle.pathType){
-            	case "line":
-	            	var svg = document.getElementById('graphic-' + this.id);
-					var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
-					newElement.setAttribute("d",floorPath.svgPath);
-					newElement.style.stroke = pStyle.pathColor?pStyle.pathColor:"#000";
-					newElement.style.strokeWidth = pStyle.pathWidth?pStyle.pathWidth:"5px";
-					newElement.style["stroke-linejoin"] = "round";
-					newElement.style["stroke-linecap"] = "round";
-					var lt = newElement.getTotalLength();
-					newElement.style["stroke-dasharray"] = lt;
-					newElement.style["stroke-dashoffset"] = lt;
+              case "line":
+                var svg = document.getElementById('graphic-' + this.id);
+          var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+          newElement.setAttribute("d",floorPath.svgPath);
+          newElement.style.stroke = pStyle.pathColor?pStyle.pathColor:"#000";
+          newElement.style.strokeWidth = pStyle.pathWidth?pStyle.pathWidth:"5px";
+          newElement.style["stroke-linejoin"] = "round";
+          newElement.style["stroke-linecap"] = "round";
+          var lt = newElement.getTotalLength();
+          newElement.style["stroke-dasharray"] = lt;
+          newElement.style["stroke-dashoffset"] = lt;
 
-					newElement.style.fill = "none";
-					svg.appendChild(newElement);
-		    		
-
+          newElement.style.fill = "none";
+          svg.appendChild(newElement);
 
 
-		    		TweenLite.to(newElement.style, pStyle.duration, {strokeDashoffset:0 , ease: Circ.easeOut, onComplete:function(){
-		                if(JMap.storage.maps.building.pathComplete !== undefined)JMap.storage.maps.building.pathComplete();
-		    		}});
 
-		            break;
-            	case "dots":
-            		var arToShow = [];
-		            function fFinal(){
-		                if(JMap.storage.maps.building.pathComplete !== undefined)JMap.storage.maps.building.pathComplete();
-		            }
 
-		            function stepAnimate(stepObj, i){
-		                $(_this.mapView).smoothZoom("addLandmark", [stepObj]);
-		                _this.pathView.push("point" + i);
-		                if(i === floorPath.steps.length - 2)fFinal();
-		            }
+            TweenLite.to(newElement.style, pStyle.duration, {strokeDashoffset:0 , ease: Circ.easeOut, onComplete:function(){
+                    if(JMap.storage.maps.building.pathComplete !== undefined)JMap.storage.maps.building.pathComplete();
+            }});
 
-		            for(var i = 3, len = floorPath.steps.length - 2; i < len; i++){
-		                var p = floorPath.steps[i];
-		                var s = this.getGraphicStep(p, i === 0? undefined: floorPath.steps[i-1], i);
-		                this.stepTimeouts.push(setTimeout(stepAnimate, (delayTime * i) * 1000, s, i));
-		            }
-	            	break;
+                break;
+              case "dots":
+                var arToShow = [];
+                function fFinal(){
+                    if(JMap.storage.maps.building.pathComplete !== undefined)JMap.storage.maps.building.pathComplete();
+                }
+
+                function stepAnimate(stepObj, i){
+                    $(_this.mapView).smoothZoom("addLandmark", [stepObj]);
+                    _this.pathView.push("point" + i);
+                    if(i === floorPath.steps.length - 2)fFinal();
+                }
+
+                for(var i = 3, len = floorPath.steps.length - 2; i < len; i++){
+                    var p = floorPath.steps[i];
+                    var s = this.getGraphicStep(p, i === 0? undefined: floorPath.steps[i-1], i);
+                    this.stepTimeouts.push(setTimeout(stepAnimate, (delayTime * i) * 1000, s, i));
+                }
+                break;
             }
             return floorPath.steps.length * delayTime;
         };
@@ -3474,20 +3474,20 @@ var __extends = this.__extends || function (d, b) {
         /******************************************************************/
 
         Floor.prototype.clearCustomPopup = function(){
-        	$(this.mapView).smoothZoom("removeLandmark", ["mapPopUp-" + this.id]);
+          $(this.mapView).smoothZoom("removeLandmark", ["mapPopUp-" + this.id]);
         };
 
-		Floor.prototype.showPopUpCustom = function(html, wp, str){
-			this.clearCustomPopup();
+    Floor.prototype.showPopUpCustom = function(html, wp, str){
+      this.clearCustomPopup();
 
-			var html = this.createPopUp({html:html, x:wp.x, y:wp.y});
-			$(this.mapView).smoothZoom("addLandmark", [html]);
+      var html = this.createPopUp({html:html, x:wp.x, y:wp.y});
+      $(this.mapView).smoothZoom("addLandmark", [html]);
 
-		};
+    };
 
         Floor.prototype.showBubble = function (bubbleText) {//Shows bubble at the last point of the path
-        	// console.log(this.styles);
-        	// console.log(this.styles.mapStyles.iconStyles);
+          // console.log(this.styles);
+          // console.log(this.styles.mapStyles.iconStyles);
             var bubbleImgUrl = this.styles.mapStyles.iconStyles.destination?this.styles.mapStyles.iconStyles.destination.url:(JMap.getLabelById("searchDestination").filePath);
             var lastP = this.currentPath.points[this.currentPath.points.length - 1];
             var b = "<div id='bubbleLeft' class='item mark destination' data-show-at-zoom='0' data-position='" + ((lastP.x + this.positionOffset.x) * this.scaleOffset) + "," + ((lastP.y + this.positionOffset.y) * this.scaleOffset) + "' data-allow-scale='false' data-allow-drag='false'><img src='" + bubbleImgUrl + "' /></div>";
@@ -3508,49 +3508,49 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Floor.prototype.removeCard = function (_destination) {
-        	$("#card").off("click");
-        	$("#card").off("touchstart");
-        	$("#card").off("touchend");
-        	$(this.mapView).smoothZoom("removeLandmark", ["card"]);
+          $("#card").off("click");
+          $("#card").off("touchstart");
+          $("#card").off("touchend");
+          $(this.mapView).smoothZoom("removeLandmark", ["card"]);
         };
 
         Floor.prototype.showCard = function (_destination) {
-        	this.removeCard();
-        	if(!_destination){
-        		console.log("NO DESTINATION WAS FOUND HERE");
-        		return;
-        	}
-        	var wp = _destination.wp;
+          this.removeCard();
+          if(!_destination){
+            console.log("NO DESTINATION WAS FOUND HERE");
+            return;
+          }
+          var wp = _destination.wp;
             var b = "<div id='card' class='item mark card' jibe-data='" + _destination.clientId+ "' data-show-at-zoom='0' data-position='" + ((wp.x  + this.positionOffset.x)* this.scaleOffset) + "," + ((wp.y  + this.positionOffset.y)* this.scaleOffset) + "' data-allow-scale='false' data-allow-drag='false'>";
             var card = this.styles.mapStyles.popupCard;
             if(card){
-            	var str = card.html;
-            	b += str.split("{{imgurl}}").join("").split("{{name}}").join(_destination.name).split("{{description}}").join(_destination.description);
+              var str = card.html;
+              b += str.split("{{imgurl}}").join("").split("{{name}}").join(_destination.name).split("{{description}}").join(_destination.description);
             }else{
-            	return;
-        		b += "<div>" + _destination.name + "</div>";
+              return;
+            b += "<div>" + _destination.name + "</div>";
             }
-        	b+= "</div>";
+          b+= "</div>";
 
             $(this.mapView).smoothZoom("addLandmark", [b]);
 
-            
+
             var _this = this;
 
 
-			$("#card").on("touchstart", function(){
-				$(this).find(".popup-container").css("background", "#ccc");
+      $("#card").on("touchstart", function(){
+        $(this).find(".popup-container").css("background", "#ccc");
             });
 
 
-			$("#card").on("touchend", function(){
-				$(this).find(".popup-container").css("background", "");
+      $("#card").on("touchend", function(){
+        $(this).find(".popup-container").css("background", "");
             });
 
             $("#card").on("click", function(){
-            	console.log($(this).attr("jibe-data"));
-            	JMap.fire("StoreCardClick", [JMap.getDestinationByClientId($(this).attr("jibe-data"))]);
-            	_this.removeCard();
+              console.log($(this).attr("jibe-data"));
+              JMap.fire("StoreCardClick", [JMap.getDestinationByClientId($(this).attr("jibe-data"))]);
+              _this.removeCard();
             });
         };
 
@@ -3572,11 +3572,11 @@ var __extends = this.__extends || function (d, b) {
         /******************************************************************/
 
         /*Init legends*/
-        
+
         Floor.prototype.loadLegends = function () {
             var _this = this;
 
-            
+
             JMap.getLegendsByFloor(_this.id,
                 function (res) {
                     var i, n;
@@ -3625,7 +3625,7 @@ var __extends = this.__extends || function (d, b) {
         Floor.prototype.showLegendsById = function(id){
             var ar = this.getLegendsById(id);
             if(ar.ids.length === 0)return;
-            
+
             $(this.mapView).smoothZoom("addLandmark", ar.elements);
         };
 
@@ -3649,7 +3649,7 @@ var __extends = this.__extends || function (d, b) {
             cont += "<img src='" + /*JMap.serverUrl +*/ legendItemData.url + "' width='50' height='50'></div>";// width='100' height='100'
             return cont;
         };
-        
+
         Floor.prototype.createLegendLabel = function(legendItemData){
             var cont = "<div id='" + legendItemData.id.toString() + legendItemData.x.toString() + legendItemData.y.toString() + "' name='" + legendItemData.id.toString() + "' class='item mark legends labelsOn-" + that.id + " "+ legendItemData.iconClassName + "' data-show-at-zoom='" + legendItemData.zl + "' data-allow-scale='true' data-position='"+  ((legendItemData.x) * this.scaleOffset) + "," + ((legendItemData.y) * this.scaleOffset) + "'>";
             cont += "<div>" + legendItemData.label + "</div></div>";// width='100' height='100'
@@ -3657,7 +3657,7 @@ var __extends = this.__extends || function (d, b) {
         };
 
         Floor.prototype.createStoreLabel = function(legendItemData){
-            
+
             var cont = "<div id='" + legendItemData.id.toString() + legendItemData.wp.x.toString() + legendItemData.wp.y.toString() + "' name='" + legendItemData.id.toString() + "' class='item mark legends labelsOn-" + that.id + " "+ legendItemData.iconClassName + "' data-show-at-zoom='" + legendItemData.zl + "' data-allow-scale='true' data-position='"+  ((legendItemData.wp.x) * this.scaleOffset) + "," + ((legendItemData.wp.y) * this.scaleOffset) + "'>";
             cont += "<div>" + legendItemData.label + "</div></div>";// width='100' height='100'
             return cont;
@@ -3706,7 +3706,7 @@ var __extends = this.__extends || function (d, b) {
                     legendChildren[i2].className = "legendItem";
 
                     TweenLite.to(legendChildren[i2], 0, {alpha:op});
-                    TweenLite.killTweensOf(legendChildren[i2], true);                   
+                    TweenLite.killTweensOf(legendChildren[i2], true);
                 }
 
             }
@@ -3788,12 +3788,12 @@ var __extends = this.__extends || function (d, b) {
 
                 var newX = (((targetX / map_width) * map_width) * this.currentScale) - (mapSizeDiffWidth / 2);
                 var newY = (((targetY / map_height) * map_height) * this.currentScale) - (mapSizeDiffHeight / 2);
-                
+
                 el.setAttribute("data-calcx", newX);
                 el.setAttribute("data-calcy", newY);
 
                 TweenLite.to(el, 0, {x:newX, y:newY});
-                
+
                 // TweenLite.fromTo(el, animateTime, {alpha:0, delay:0.1}, {alpha:1});
 
             } else {
@@ -3819,13 +3819,13 @@ var BuildingModelGrid = (function () {
         /**
          * This class parses all the waypoints and corresponding map meta data from the CMS
          * @class BuildingModelGrid
-         * @constructor 
+         * @constructor
          */
         function BuildingModelGrid(options) {
-        	this.options = options;
+          this.options = options;
             this.WPS = {};
         }
-        
+
         /**
          * Gets the waypoint that this specific device is assigned to.
          * @method getYah
@@ -3846,7 +3846,7 @@ var BuildingModelGrid = (function () {
 
             return null;
         };
-        
+
         /**
          * Get a waypoint by it's id and the Map's Id that it belongs to.
          * @method getWPByIdAndMapid
@@ -3883,7 +3883,7 @@ var BuildingModelGrid = (function () {
             return null;
         };
 
-        
+
 
         /**
          * Finds the points involved in the most efficient point from one waypoint to another.
@@ -3891,11 +3891,11 @@ var BuildingModelGrid = (function () {
          * @method findWay
          * @param {Waypoint object} wpfrom The starting waypoint.
          * @param {Waypoint object} wpto The end waypoint.
-         * @param {Boolean} accessible Specifies whether to use accessible routes or not. Defualts to false. 
+         * @param {Boolean} accessible Specifies whether to use accessible routes or not. Defualts to false.
          * @return Array of Objects. The length on the Array reflects the number of floors involved. Each Object has it's own array of points for it's part in the route.
          */
         BuildingModelGrid.prototype.findWay = function (wpfrom, wpto, elevator) {
-			if(!wpfrom || !wpto) return [];
+      if(!wpfrom || !wpto) return [];
             // console.log("FINDING WAY");
             this._mover = [];
             var ar = [];
@@ -3927,7 +3927,7 @@ var BuildingModelGrid = (function () {
          *
          * @method getMoverType
          * @param {MappedMover Object} mover The mapped mover, typically one that's involved in the current route.
-         * @return MoverType Object. 
+         * @return MoverType Object.
          */
         BuildingModelGrid.prototype.getMoverType = function (mover) {
             for(var i =0, len = this.mover_types.length; i < len; i++){
@@ -3995,11 +3995,11 @@ var BuildingModelGrid = (function () {
                 }
             }
 
-            return currentMultiplier;         
-        } 
+            return currentMultiplier;
+        }
 
         BuildingModelGrid.prototype.getMoverClosest = function (wpFrom, wpTo, elevator) {
-        	var map1 = wpFrom.mapid;
+          var map1 = wpFrom.mapid;
             var map2 = wpTo.mapid;
             var mover;
             var length = -1;
@@ -4044,7 +4044,7 @@ var BuildingModelGrid = (function () {
             return mover;
         };
 
-        
+
         /**
          * Gets a waypoint using a Desination's Client ID.
          * @method getWPByJid
@@ -4064,18 +4064,18 @@ var BuildingModelGrid = (function () {
         };
 
         BuildingModelGrid.prototype.getWPsByJid = function(jid){
-        	var returnArray = [];
-        	for (var i = 0; i < this.waypoints.length; i++) {
-        		var wp = this.waypoints[i]
+          var returnArray = [];
+          for (var i = 0; i < this.waypoints.length; i++) {
+            var wp = this.waypoints[i]
 
-        		if (!wp.jids)
+            if (!wp.jids)
                     continue;
 
                 if (wp.jids.indexOf(jid) != -1)
                     returnArray.push(wp);
-        	};
+          };
 
-        	return returnArray;
+          return returnArray;
 
 
         };
@@ -4130,7 +4130,7 @@ var BuildingModelGrid = (function () {
 
         BuildingModelGrid.prototype.getFloorBySequence = function (seq) {
             for (var i = 0, n = this.arFloors.length; i < n; i++) {
-            	// console.log(this.arFloors[i]);
+              // console.log(this.arFloors[i]);
                 if (this.arFloors[i].floorSequence == seq)
                     return this.arFloors[i];
             }
@@ -4138,19 +4138,19 @@ var BuildingModelGrid = (function () {
         };
 
         BuildingModelGrid.prototype.setOffset = function(posOffset){
-        	for (var i = 0; i < this.waypoints.length; i++) {
-        		var wp = this.waypoints[i];
-        		wp.x = wp.x + posOffset.x;
-        		wp.y = wp.y + posOffset.y;
-        		this.waypoints[i] = wp;
-        	}
+          for (var i = 0; i < this.waypoints.length; i++) {
+            var wp = this.waypoints[i];
+            wp.x = wp.x + posOffset.x;
+            wp.y = wp.y + posOffset.y;
+            this.waypoints[i] = wp;
+          }
 
-        	// for (var i = 0; i < this.waypoints.length; i++) {
-        	// 	var wp = this.waypoints[i];
-        	// 	wp.x = wp.x + posOffset.x;
-        	// 	wp.y = wp.y + posOffset.y;
-        	// 	this.waypoints[i] = wp;
-        	// }
+          // for (var i = 0; i < this.waypoints.length; i++) {
+          //  var wp = this.waypoints[i];
+          //  wp.x = wp.x + posOffset.x;
+          //  wp.y = wp.y + posOffset.y;
+          //  this.waypoints[i] = wp;
+          // }
         };
 
         BuildingModelGrid.prototype.onData = function (res) {
@@ -4164,11 +4164,11 @@ var BuildingModelGrid = (function () {
 
 
          //    for (var i = 0; i < this.waypoints.length; i++) {
-        	// 	var wp = this.waypoints[i];
-        	// 	wp.x = wp.x + 1486;
-        	// 	wp.y = wp.y + 1194;
-        	// 	this.waypoints[i] = wp;
-        	// }
+          //  var wp = this.waypoints[i];
+          //  wp.x = wp.x + 1486;
+          //  wp.y = wp.y + 1194;
+          //  this.waypoints[i] = wp;
+          // }
 
             this.parseData();
             this.parseGrid();
@@ -4277,7 +4277,7 @@ var BuildingModelGrid = (function () {
 
     var NodeP = (function (_super) {
         __extends(NodeP, _super);
-        
+
         function NodeP(id, x, y) {
             if (typeof x === "undefined") { x = 0; }
             if (typeof y === "undefined") { y = 0; }
@@ -4285,7 +4285,7 @@ var BuildingModelGrid = (function () {
             this.id = id;
             this._neighbors = [];
         }
-        
+
         NodeP.prototype.cloneNode = function () {
             var node = new NodeP(this.id, this.x, this.y);
             node.parseNeighbors(this._neighbors.join(","));
@@ -4299,32 +4299,32 @@ var BuildingModelGrid = (function () {
             }
         };
 
-        
+
         NodeP.prototype.addNeighbor = function (id) {
             if (!this.containsNeighbor(id) && id != "")
                 this._neighbors.push(id);
         };
-        
+
         NodeP.prototype.containsNeighbor = function (id) {
             return this._neighbors.indexOf(id) > -1;
         };
-        
+
         NodeP.prototype.getNeighbor = function (index) {
             if (index >= 0 && index < this._neighbors.length)
                 return this._neighbors[index];
             return null;
         };
-        
+
         NodeP.prototype.numNeighbors = function () {
             return this._neighbors.length;
         };
-        
+
         NodeP.prototype.expandNamespace = function (key) {
-        
+
             this.id += key;
             for (var j in this._neighbors)this._neighbors[j] += key;
         };
-        
+
         NodeP.prototype.toString = function () {
             return "[Node] id:" + this.id + ", x:" + this.x + ", y:" + this.y + ", neighbors:(" + this._neighbors + ")";
         };
@@ -4346,33 +4346,33 @@ var BuildingModelGrid = (function () {
             this.nodes = null;
         };
 
-        
+
         Path.prototype.clone = function () {
             return new Path(this.length, this.bestCase, this._path.slice(0));
         };
 
-        
+
         Path.prototype.hasLength = function () {
             return this.length + this.bestCase >= 0;
         };
-        
+
         Path.prototype.lastElement = function () {
             return this._path.slice(-1)[0];
         };
-        
+
         Path.prototype.containsNode = function (id) {
             return this._path.indexOf(id) > -1;
         };
-        
+
         Path.prototype.addNode = function (id) {
             if (!this.containsNode(id))
                 this._path.push(id);
         };
-        
+
         Path.prototype.getMyPath = function () {
             return this._path;
         };
-        
+
         Path.prototype.toString = function () {
             return "[Path] length:" + this.length + ", nodes:(" + this._path + ")";
         };
@@ -4380,11 +4380,11 @@ var BuildingModelGrid = (function () {
     })();
 
     var Grid = (function () {
-        
+
         function Grid() {
             this._nodes = {};
         }
-        
+
         Grid.prototype.parseJson = function (data) {
             for (var i = 0, n = data.length; i < n; i++) {
                 var node = new NodeP(data[i].id, data[i].x, data[i].y);
@@ -4455,7 +4455,7 @@ else
 
             return $best;
         };
-        
+
         Grid.prototype.getPathFromTo = function (from, sto) {
             var ar = [];
             var nodes = this._nodes;
@@ -4493,7 +4493,7 @@ else
             if(nodeArr.length > 1) {
                 nodeArr.sort(function(a, b) {
                     return _this.getDistance(centerX, centerY, a.x, a.y) - _this.getDistance(centerX, centerY, b.x, b.y);
-                });            
+                });
             }
             return nodeArr;
         };
@@ -4511,93 +4511,93 @@ else
 })(JMap || (JMap = {}));
 
 /*
-	Smooth Zoom Pan - jQuery Image Viewer
- 	Copyright (c) 2011-14 Ramesh Kumar
-	http://codecanyon.net/user/VF
-	
-	Version:	1.7.0
-	RELEASE:	09 SEP 2011
-	UPDATE:		27 May 2014
-	
-	Built using:
-	jQuery 		version: 1.7.0+		http://jquery.com/
-	Modernizr 	version: 2.8.2		http://www.modernizr.com/
-	MouseWheel	version: 3.1.11		http://brandon.aaron.sh
-	
+  Smooth Zoom Pan - jQuery Image Viewer
+  Copyright (c) 2011-14 Ramesh Kumar
+  http://codecanyon.net/user/VF
+
+  Version:  1.7.0
+  RELEASE:  09 SEP 2011
+  UPDATE:   27 May 2014
+
+  Built using:
+  jQuery    version: 1.7.0+   http://jquery.com/
+  Modernizr   version: 2.8.2    http://www.modernizr.com/
+  MouseWheel  version: 3.1.11   http://brandon.aaron.sh
+
 */
 
 (function ($, window, document) {
-	
-	/*****************************************************************************
-		Default settings:
-		For detailed description of individual parameters, see the help document
-	******************************************************************************/
-	var defaults = {
-		
-		width: '',									//Width of the view area [480, '480px', '100%']
-		height: '',									//Height of the view area [480, '480px', '100%']
 
-		initial_ZOOM: '',							//Initial zoom level to start with (in percentage) [100]
-		initial_POSITION: '',						//Initial location to be focused in pixel value [150,150 or 150 150]
+  /*****************************************************************************
+    Default settings:
+    For detailed description of individual parameters, see the help document
+  ******************************************************************************/
+  var defaults = {
 
-		animation_SMOOTHNESS: 5.5,					//Ease or smoothness of all movements [Any number from 0]				
-		animation_SPEED_ZOOM: 5.5,					//Speed of zoom movements [Any number from 0] 
-		animation_SPEED_PAN: 5.5,					//Speed of pan movements [Any number from 0] 
+    width: '',                  //Width of the view area [480, '480px', '100%']
+    height: '',                 //Height of the view area [480, '480px', '100%']
 
-		zoom_MAX: 800,								//Maximum limit for zooming (in percentage)
-		zoom_MIN: '',								//Minimum limit for zooming (in percentage)
-		zoom_SINGLE_STEP: false,					//To reach maximum and minimum zoom levels in single click 
-		zoom_OUT_TO_FIT: true,						//To allow image to be zoomed out with whitespace on sides
-		zoom_BUTTONS_SHOW: true,					//To enable/disable the + and - buttons
+    initial_ZOOM: '',             //Initial zoom level to start with (in percentage) [100]
+    initial_POSITION: '',           //Initial location to be focused in pixel value [150,150 or 150 150]
 
-		pan_BUTTONS_SHOW: true,						//To enable/disable the arrow and reset buttons
-		pan_LIMIT_BOUNDARY: true,					//To allow/restrict moving the image beyond boundaries
-		pan_REVERSE: false,
-		
-		reset_ALIGN_TO: 'center center', 			//Image can be aligned to desired position on reset. Example: 'Top Left'
-		reset_TO_ZOOM_MIN: true,					//How it should behave if zoom_MIN value set and while clicking reset button, 
+    animation_SMOOTHNESS: 5.5,          //Ease or smoothness of all movements [Any number from 0]
+    animation_SPEED_ZOOM: 5.5,          //Speed of zoom movements [Any number from 0]
+    animation_SPEED_PAN: 5.5,         //Speed of pan movements [Any number from 0]
 
-		button_SIZE: 18,							//Button width and height (in pixels)
-		button_SIZE_TOUCH_DEVICE: 30,				//Button width and height (in pixels) on touch devices
-		button_COLOR: '#FFFFFF',					//Button color in hexadecimal
-		button_BG_COLOR: '#000000',					//Button set's background color in hexadecimal
-		button_BG_TRANSPARENCY: 55,					//Background transparency (in percentage)
-		button_AUTO_HIDE: false,					//To hide the button set when mouse moved outside the view area
-		button_AUTO_HIDE_DELAY: 1,					//Auto hide delay time in seconds
-		button_ALIGN: 'bottom right',				//Button set can be aligned to any side or center
-		button_MARGIN: 10,							//Space between button set and view port's edge
-		button_ROUND_CORNERS: true,					//To enable disable roundness of button corner
-		
-		touch_DRAG: true,							//Enable/disable the dragability of image (touch)
-		mouse_DRAG: true,							//Enable/disable the dragability of image (mouse)
-		mouse_WHEEL: true,							//Enable/disable mousewheel zoom
-		mouse_WHEEL_CURSOR_POS: true,				//Enable/disable position sensitive mousewheel zoom
-		mouse_DOUBLE_CLICK: true,					//Enable/disable zoom action with double click
+    zoom_MAX: 800,                //Maximum limit for zooming (in percentage)
+    zoom_MIN: '',               //Minimum limit for zooming (in percentage)
+    zoom_SINGLE_STEP: false,          //To reach maximum and minimum zoom levels in single click
+    zoom_OUT_TO_FIT: true,            //To allow image to be zoomed out with whitespace on sides
+    zoom_BUTTONS_SHOW: true,          //To enable/disable the + and - buttons
 
-		background_COLOR: '#FFFFFF',				//Background colour of image container
-		border_SIZE: 1,								//Border size of view area
-		border_COLOR: '#000000',					//Border color of view area
-		border_TRANSPARENCY: 10,					//Border transparency of view area
-		
-		image_url: '',								//Set url or image to be zoomed
-		image_original_width: '',					//Original width of main image
-		image_original_height: '',					//Original height of main image
-		container: '',								//Set container element of image (id of container)
-		
-		on_IMAGE_LOAD: '',							//To Call external function immediatly after image loaded
-		on_ZOOM_PAN_UPDATE: '',						//To Call external function for each zoom, pan animation frame
-		on_ZOOM_PAN_COMPLETE: '',					//To Call external function whenever zoom, pan animation completes
-		on_LANDMARK_STATE_CHANGE: '',				//To Call external function whenever the zoom leval crosses global "data-show-at-zoom" value
-		
-		use_3D_Transform: true,						//To enable / disable Hardware acceleration on webkit browsers
-		
-		responsive: false,							//To enable / disable Responsive / fluid layout
-		responsive_maintain_ratio: true,			//To maintain view area width/height ratio or not
-		max_WIDTH: '',								//Maximum allowed width of view area (helpful when 'width' parameter set with % and need limit)
-		max_HEIGHT: ''								//Maximum allowed height of view area (helpful when 'height' parameter set with % and need limit)
-	};
+    pan_BUTTONS_SHOW: true,           //To enable/disable the arrow and reset buttons
+    pan_LIMIT_BOUNDARY: true,         //To allow/restrict moving the image beyond boundaries
+    pan_REVERSE: false,
 
-	var props = $.event.props || [];
+    reset_ALIGN_TO: 'center center',      //Image can be aligned to desired position on reset. Example: 'Top Left'
+    reset_TO_ZOOM_MIN: true,          //How it should behave if zoom_MIN value set and while clicking reset button,
+
+    button_SIZE: 18,              //Button width and height (in pixels)
+    button_SIZE_TOUCH_DEVICE: 30,       //Button width and height (in pixels) on touch devices
+    button_COLOR: '#FFFFFF',          //Button color in hexadecimal
+    button_BG_COLOR: '#000000',         //Button set's background color in hexadecimal
+    button_BG_TRANSPARENCY: 55,         //Background transparency (in percentage)
+    button_AUTO_HIDE: false,          //To hide the button set when mouse moved outside the view area
+    button_AUTO_HIDE_DELAY: 1,          //Auto hide delay time in seconds
+    button_ALIGN: 'bottom right',       //Button set can be aligned to any side or center
+    button_MARGIN: 10,              //Space between button set and view port's edge
+    button_ROUND_CORNERS: true,         //To enable disable roundness of button corner
+
+    touch_DRAG: true,             //Enable/disable the dragability of image (touch)
+    mouse_DRAG: true,             //Enable/disable the dragability of image (mouse)
+    mouse_WHEEL: true,              //Enable/disable mousewheel zoom
+    mouse_WHEEL_CURSOR_POS: true,       //Enable/disable position sensitive mousewheel zoom
+    mouse_DOUBLE_CLICK: true,         //Enable/disable zoom action with double click
+
+    background_COLOR: '#FFFFFF',        //Background colour of image container
+    border_SIZE: 1,               //Border size of view area
+    border_COLOR: '#000000',          //Border color of view area
+    border_TRANSPARENCY: 10,          //Border transparency of view area
+
+    image_url: '',                //Set url or image to be zoomed
+    image_original_width: '',         //Original width of main image
+    image_original_height: '',          //Original height of main image
+    container: '',                //Set container element of image (id of container)
+
+    on_IMAGE_LOAD: '',              //To Call external function immediatly after image loaded
+    on_ZOOM_PAN_UPDATE: '',           //To Call external function for each zoom, pan animation frame
+    on_ZOOM_PAN_COMPLETE: '',         //To Call external function whenever zoom, pan animation completes
+    on_LANDMARK_STATE_CHANGE: '',       //To Call external function whenever the zoom leval crosses global "data-show-at-zoom" value
+
+    use_3D_Transform: true,           //To enable / disable Hardware acceleration on webkit browsers
+
+    responsive: false,              //To enable / disable Responsive / fluid layout
+    responsive_maintain_ratio: true,      //To maintain view area width/height ratio or not
+    max_WIDTH: '',                //Maximum allowed width of view area (helpful when 'width' parameter set with % and need limit)
+    max_HEIGHT: ''                //Maximum allowed height of view area (helpful when 'height' parameter set with % and need limit)
+  };
+
+  var props = $.event.props || [];
     props.push("touches");
     props.push("scale");
     props.push("rotation");
@@ -4605,2458 +4605,2458 @@ else
 
 
 
-	function Zoomer($elem, params) {
-		
-		var self = this,		
-		op = $.extend({}, defaults, params);
-		this.$elem = $elem;	
-		this.hasTouch = this.checkTouchSupport ();
-
-		/**********************************************************
-		Option values verified and formated if needed
-		**********************************************************/
-		this.sW = op.width;
-		this.sH = op.height;
-
-		this.init_zoom = op.initial_ZOOM / 100;
-		this.init_pos = op.initial_POSITION.replace(/,/g, ' ').replace(/\s{2,}/g, ' ').split(' ');
-
-		this.zoom_max = op.zoom_MAX / 100;
-		this.zoom_min = op.zoom_MIN / 100;
-		
-		this.zoom_single = checkBoolean (op.zoom_SINGLE_STEP);
-		this.zoom_fit = checkBoolean (op.zoom_OUT_TO_FIT);		
-		this.zoom_speed = 1 + (((op.animation_SPEED === 0 || op.animation_SPEED? op.animation_SPEED : op.animation_SPEED_ZOOM) + 1) / 20);
-		this.zoom_show = checkBoolean (op.zoom_BUTTONS_SHOW);
-
-		this.pan_speed_o = (op.animation_SPEED === 0 || op.animation_SPEED ? op.animation_SPEED : op.animation_SPEED_PAN);
-		this.pan_show = checkBoolean (op.pan_BUTTONS_SHOW);
-		this.pan_limit = checkBoolean (op.pan_LIMIT_BOUNDARY);	
-		this.pan_rev = checkBoolean (op.pan_REVERSE);		
-		
-		this.reset_align = op.reset_ALIGN_TO.toLowerCase().split(' ');	
-		this.reset_to_zmin = checkBoolean(op.reset_TO_ZOOM_MIN);
-		
-		this.bu_size = parseInt((this.hasTouch? op.button_SIZE_TOUCH_DEVICE : op.button_SIZE)/2)*2;
-		this.bu_color = op.button_COLOR;
-		this.bu_bg = op.button_BG_COLOR;
-		this.bu_bg_alpha = op.button_BG_TRANSPARENCY / 100;
-		this.bu_icon = op.button_ICON_IMAGE;
-		this.bu_auto = checkBoolean (op.button_AUTO_HIDE);
-
-		this.bu_delay = op.button_AUTO_HIDE_DELAY * 1000;
-		this.bu_align = op.button_ALIGN.toLowerCase().split(' ');
-		this.bu_margin = op.button_MARGIN;
-		this.bu_round = checkBoolean (op.button_ROUND_CORNERS);
-
-		this.touch_drag = checkBoolean (op.touch_DRAG);
-		this.mouse_drag = checkBoolean (op.mouse_DRAG);
-		this.mouse_wheel = checkBoolean (op.mouse_WHEEL);
-		this.mouse_wheel_cur = checkBoolean (op.mouse_WHEEL_CURSOR_POS);
-		this.mouse_dbl_click = checkBoolean (op.mouse_DOUBLE_CLICK);
-
-		this.ani_smooth =  Math.max(1, (op.animation_SMOOTHNESS+1)/1.45);
-		
-		this.bg_color = op.background_COLOR;
-		this.bord_size = op.border_SIZE;
-		this.bord_color = op.border_COLOR;
-		this.bord_alpha = op.border_TRANSPARENCY / 100;
-
-		this.container = op.container;
-		this.image_url = op.image_url;
-		this.image_width = op.image_original_width;
-		this.image_height = op.image_original_height;
-		
-		this.responsive = checkBoolean (op.responsive);
-		this.maintain_ratio = checkBoolean (op.responsive_maintain_ratio);
-		this.w_max = op.max_WIDTH;
-		this.h_max = op.max_HEIGHT;
-		
-		this.onLOAD = op.on_IMAGE_LOAD;
-		this.onUPDATE = op.on_ZOOM_PAN_UPDATE;
-		this.onZOOM_PAN = op.on_ZOOM_PAN_COMPLETE;
-		this.onLANDMARK = op.on_LANDMARK_STATE_CHANGE;
-
-		/***********************************************************
-		Variables for inner operation.	
-		x, y, width, height and scale value of image
-		***********************************************************/
-		this._x;
-		this._y;
-		this._w;
-		this._h;
-		this._sc = 0;		
-		
-		this.rA = 1;
-		this.rF = 1;
-		this.rR = 1;
-		this.iW = 0;
-		this.iH = 0;
-		this.tX = 0;
-		this.tY = 0;
-		this.oX = 0;
-		this.oY = 0;
-		this.fX = 0;
-		this.fY = 0;
-		this.dX = 0;
-		this.dY = 0;
-		this.cX = 0;
-		this.cY = 0;
-
-		this.transOffX = 0;
-		this.transOffY = 0;
-		this.focusOffX = 0;
-		this.focusOffY = 0;
-		this.offX = 0;
-		this.offY = 0;
-		
-		/***********************************************************
-		Flags that convey current states and events 
-		***********************************************************/
-		this._playing = false;
-		this._dragging = false;
-		this._onfocus = false;
-		this._moveCursor = false;
-		this._wheel = false;
-		this._recent = 'zoomOut';
-		this._pinching = false;
-		this._landmark = false;
-		this._rA;
-		this._centx;
-		this._centy;
-		this._onButton = false;
-		this._onHitArea = false;		
-		this.cFlag = {
-			_zi: false,
-			_zo: false,
-			_ml: false,
-			_mr: false,
-			_mu: false,
-			_md: false,
-			_rs: false,
-			_nd: false
-		};
-		
-		/***********************************************************
-		Elements and arrays that references elements
-		***********************************************************/
-		this.$holder;
-		this.$hitArea;
-		this.$controls;
-		this.$loc_cont;		
-		this.map_coordinates = [];
-		this.locations = [];
-		this.buttons = [];
-		this.border = [];
-		
-		/***********************************************************
-		miscellaneous
-		***********************************************************/
-		this.buttons_total = 7;
-		this.cButtId = 0;
-		this.pan_speed;
-		this.auto_timer;
-		this.ani_timer;
-		this.ani_end;
-		this.focusSpeed = this.reduction = .5;
-		this.orig_style;		
-		this.mapAreas;
-		this.icons;		
-		this.show_at_zoom;		
-		this.assetsLoaded = false;	
-		this.zStep = 0;	
-		this.sRed = 300;
-		this.use3D = op.use_3D_Transform && supportsTrans3D;
-		
-		// Set events to support pointer / touch / mouse 			
-		if (navigator.pointerEnabled || navigator.msPointerEnabled) {			
-			//Pointer				
-			if (navigator.pointerEnabled) {
-				this.pointerDown = 'pointerdown';
-				this.pointerUp = 'pointerup';
-				this.pointerMove = 'pointermove';
-				
-			} else if (navigator.msPointerEnabled) {
-				this.pointerDown = 'MSPointerDown';
-				this.pointerUp = 'MSPointerUp';
-				this.pointerMove = 'MSPointerMove';
-				
-			}
-			this.event_down = this.pointerDown+ '.sz';
-			this.event_up 	= this.pointerUp+ '.sz';
-			this.event_move = this.pointerMove+ '.sz';
-			
-			this.supportsPointer = true;	
-			this.pointers = [];	
-		
-		} else if (this.hasTouch){	
-			//Touch	only	
-			this.event_down = 'touchstart'+ '.sz';
-			this.event_up 	= 'touchend'+ '.sz';
-			this.event_move = 'touchmove'+ '.sz';
-		
-		} else {
-			//Mouse only
-			this.event_down = 'mousedown'+ '.sz';
-			this.event_up 	= 'mouseup'+ '.sz';
-			this.event_move = 'mousemove'+ '.sz';
-		}
-	
-		//Case 1: Image specificed (possibly) through img tag:
-		if (this.image_url == '') {
-			this.$image = $elem;
-			this.id = this.$image.attr('id');
-		
-		//Case 2: Image url specificed through parameter:
-		} else {
-			var img = new Image();
-			if (this.image_width) {
-				img.width = this.image_width;
-			}
-			if (this.image_height) {
-				img.height = this.image_height;
-			}
-			img.src = this.image_url;			
-			this.$image = $(img).appendTo($elem);
-		}		
-		
-		
-		//Prepare container div (Basically the element that masks image with overflow hidden)
-		this.setContainer();	
-		
-		//Get button icon image's url
-		var testOb;
-		if (!this.bu_icon) {
-			var regx=/url\(["']?([^'")]+)['"]?\)/;
-			testOb = $('<div class="smooth_zoom_icons"></div>');
-			this.$holder.append(testOb);
-			this.bu_icon = testOb.css("background-image").replace(regx,'$1');
-			if (this.bu_icon == 'none') {
-				this.bu_icon = 'http://jibestream2.cloudapp.net:8082/cms/components/label/23987_1_262_yah.png';
-			}
-			testOb.remove();
-		}		
-		
-		//Firefox feature checkup
-		if (this.$image.css('-moz-transform') && prop_transform) {
-			testOb = $('<div style="-moz-transform: translate(1px, 1px)"></div>');
-			this.$holder.append(testOb);
-			this.fixMoz = testOb.position().left === 1 ? false : true;
-			testOb.remove();	
-		} else {
-			this.fixMoz = false;
-		}		
-		
-		//Preload icons and main image.	
-		this.$image.hide();	
-		this.imgList = [
-			{loaded: false, src: this.bu_icon || 'http://jibestream2.cloudapp.net:8082/cms/components/label/23987_1_262_yah.png'}, //Icon image
-			{loaded: false, src: this.image_url == ''? this.$image.attr('src') : this.image_url} // Main image
-		];
-		
-		// //console.log("From smooth zoom", this.imgList);
-		$.each(this.imgList, function (i){
-			var _img = new Image();
-			$(_img).bind('load', {id:i, self: self}, self.loadComplete).bind('error', {id:i, self: self}, self.loadComplete); //Allow initiation even if image is not there :(
-			if(self.imgList[i].src !== undefined)_img.src = self.imgList[i].src;
-			else $(_img).trigger('error');
-		});
-		
-	}
-
-	Zoomer.prototype = {
-		
-		/*Preload the icon and main image
-		*********************************************************************************************************************/
-		loadComplete: function (e) {
-			var self = e.data.self,
-				complete = true;
-			
-			self.imgList[e.data.id].loaded = true;
-			for (var j=0; j<self.imgList.length; j++){
-				if (!self.imgList[j].loaded) {
-					complete = false;
-				}
-			}
-			if (complete) {
-				self.assetsLoaded = true;				
-				if (self.onLOAD !== '') {
-					self.onLOAD ();
-				}
-										
-				//Assets loaded, initiate plugin
-				self.init();
-			}
-		},	
-		
-		
-		/*Make sure the device has touch screen support
-		*********************************************************************************************************************/
-		checkTouchSupport: function (){
-			var touch = 'ontouchstart' in window || 'createTouch' in document;					
-			if (navigator.pointerEnabled) {
-				touch =  Boolean(touch || navigator.maxTouchPoints);
-			} else if (navigator.msPointerEnabled) {
-				touch = Boolean(touch || navigator.msMaxTouchPoints);
-			}		
-			return touch;
-		},
-
-		
-		/*Initiate after assets loaded
-		***********************************************************************************************************************/
-		init: function () {
-			var self = this,
-				$image = self.$image,
-				sW = self.sW,
-				sH = self.sH,
-				container = self.container,	
-				cBW, cBH, pan_show = self.pan_show,
-				zoom_show = self.zoom_show,
-				$controls = self.$controls,
-				buttons = self.buttons,
-				cFlag = self.cFlag,
-				bu_align = self.bu_align,
-				bu_margin = self.bu_margin,
-				$holder = self.$holder;
-
-
-			//For phonegap/cordova
-			// if(sW === 0 || sH === 0){
-			// 	sW = self.sW;
-			// 	sH = self.sH;
-			// }
-			// alert("-----> " + sW + "  " +  sH);
-
-
-			//Store the default image properties so that it can be reverted back when plugin needs to be destroyed
-			self.orig_style = self.getStyle();
-
-			//IE 6 Image tool bar disabled
-			$image.attr('galleryimg', 'no');
-			
-			if (!navigator.userAgent.toLowerCase().match(/(iphone|ipod|ipad)/)) {
-				$image.removeAttr('width');
-				$image.removeAttr('height');
-			}		
-
-			//In case parent element's display property set to 'none', we need to first set them 'block', measure the width and height and then set them back to 'none'
-			var temp = $image,
-			dispArray = [];
-
-			for (var i = 0; i<5; i++) {				
-				if (temp && temp[0] && temp[0].tagName !== 'body' && temp[0].tagName !== 'HTML'){
-					if(temp.hasClass("map-floor-container-base") === true){
-						temp.width('100%');
-						temp.height('100%');
-					} 
-					if (temp.css('display') == 'none') {
-						temp.css('display', 'block');
-						dispArray.push(temp);		
-						
-					}
-					// alert("Checking size - > "+ temp.attr("id") + "  " + temp.width() + "  " + temp.height());
-					temp = temp.parent();
-				} else {
-					break;
-				}
-			}	
-
-			self.iW = $image.width();
-			self.iH = $image.height();
-			// alert("Setting parent - > " + sW + "  " +  sH + "  " +  self.iW + "  " +  self.iH + "  " +  self.zoom_fit);
-
-			
-			for (var i = 0; i< dispArray.length; i++) {
-				dispArray[i].css('display', 'none');
-			}
-
-			//Initially the image needs to be resized to fit container. To do so, first measure the scaledown ratio	
-			self.rF = self.rR = self.checkRatio(sW, sH, self.iW, self.iH, self.zoom_fit);
-
-			//If NO Minimum zoom value set
-			if (self.zoom_min == 0 || self.init_zoom != 0) {			
-				if (self.init_zoom != '') {
-					self.rA = self._sc = self.init_zoom;
-				} else {
-					self.rA = self._sc = self.rF;
-				}	
-				if (self.zoom_min != 0) {
-					self.rF = self.zoom_min;
-					if (self.reset_to_zmin) {
-						self.rR = self.zoom_min											
-					}
-				}
-				
-			//If Minimum zoom value set
-			} else {				
-				if (self.rF < self.zoom_min) {
-					self.rF = self.zoom_min;
-					if (self.reset_to_zmin) {
-						self.rR = self.zoom_min											
-					}
-					self.rA = self._sc = self.zoom_min;				
-				} else {
-					self.rA = self._sc = self.rR;
-				}				
-			}
-
-			//Width and Height to be applied to the image
-			self._w = self._sc * self.iW;
-			self._h = self._sc * self.iH;
-
-			// alert(self._w + "  " + self._h);
-
-
-
-			//Resize the image and position it centered inside the wrapper
-			if (self.init_pos == '') {
-				self._x = self.tX = (sW - self._w) / 2;
-				self._y = self.tY = (sH - self._h) / 2;
-			} else {
-				self._x = self.tX = (sW / 2) - parseInt(self.init_pos[0]) * self._sc;
-				self._y = self.tY = (sH / 2) - parseInt(self.init_pos[1]) * self._sc;
-				self.oX = (self.tX - ((sW - self._w) / 2)) / (self._w / sW);
-				self.oY = (self.tY - ((sH - self._h) / 2)) / (self._h / sH);
-			}
-
-			if ((!self.pan_limit || self._moveCursor || self.init_zoom != self.rF) && self.mouse_drag) {				
-				 $image.css('cursor', 'move');
-				 self.$hitArea.css('cursor', 'move');
-			}
-			
-			
-			if (prop_transform) {	
-				self.$image.css(prop_origin, '0 0');
-			}
-			if (self.use3D) {
-				$image.css({				
-					'-webkit-backface-visibility': 'hidden',
-					'-webkit-perspective': 1000
-				});
-			}	
-			
-			//Start displaying the image		
-			$image.css({
-					position: 'absolute',
-					'z-index': 2,
-					left: '0px',
-					top: '0px',
-					'-webkit-box-shadow': '1px 1px rgba(0,0,0,0)'
-				})
-				.hide()
-				.fadeIn(500, function () {
-					$holder.css('background-image', 'none');					
-				});
-			
-			//Create Control buttons and events				
-			var self = self,
-				bs = self.bu_size,
-				iSize = 50,
-				sDiff = 2,
-				bSpace = 3,
-				mSize = Math.ceil(self.bu_size / 4),
-				iconOff = bs < 16 ? 50 : 0,
-				bsDiff = bs - sDiff;
-
-			//Show all buttons		
-			if (pan_show) {
-				if (zoom_show) {
-					cBW = parseInt(bs + (bs * .85) + (bsDiff * 3) + (bSpace * 2) + (mSize * 2));
-				} else {
-					cBW = parseInt((bsDiff * 3) + (bSpace * 2) + (mSize * 2));
-				}
-				cBH = parseInt((bsDiff * 3) + (bSpace * 2) + (mSize * 2));
-
-				//Show zoom buttons only		
-			} else {
-				if (zoom_show) {
-					cBW = parseInt(bs + mSize * 2);
-					cBH = parseInt(bs * 2 + mSize * 3);
-					cBW = parseInt(cBW / 2) * 2;
-					cBH = parseInt(cBH / 2) * 2;
-				} else {
-					cBW = 0;
-					cBH = 0;
-				}
-			}
-
-			var pOff = (iSize - bs) / 2,
-				resetCenterX = cBW - ((bs - (pan_show ? sDiff : 0)) * 2) - mSize - bSpace,
-				resetCenterY = (cBH / 2) - ((bs - (pan_show ? sDiff : 0)) / 2);
-
-			var hProp, vProp, hVal, vVal;
-			//Align button set as per settings
-			if (bu_align[0] == 'top') {
-				vProp = 'top';
-				vVal = bu_margin;
-			} else if (bu_align[0] == 'center') {
-				vProp = 'top';
-				vVal = parseInt((sH - cBH) / 2);
-			} else {
-				vProp = 'bottom';
-				vVal = bu_margin;
-			}
-			if (bu_align[1] == 'right') {
-				hProp = 'right';
-				hVal = bu_margin;
-			} else if (bu_align[1] == 'center') {
-				hProp = 'right';
-				hVal = parseInt((sW - cBW) / 2);
-			} else {
-				hProp = 'left';
-				hVal = bu_margin;
-			}
-
-			//Buttons Container		
-			$controls = $(
-				'<div style="position: absolute; ' + hProp + ':' + hVal + 'px; ' + vProp + ': ' + vVal + 'px; width: ' + cBW + 'px; height: ' + cBH + 'px; z-index: 20;" class="noSel">\
-					<div class="noSel controlsBg" style="position: relative; width: 100%; height: 100%; z-index: 1;">\
-					</div>\
-				</div>'
-			);
-			
-			$holder.append($controls);
-			var $controlsBg = $controls.find('.controlsBg');
-			
-			//Make the corners rounded
-			if (self.bu_round) {
-				if (prop_radius) {					
-					$controlsBg
-						.css(prop_radius, (iconOff > 0 ? 4 : 5) + 'px')
-						.css('background-color', self.bu_bg);
-				} else {				
-					self.roundBG(
-						$controlsBg,
-						'cBg',
-						cBW,
-						cBH,
-						iconOff > 0 ? 4 : 5,
-						375,
-						self.bu_bg,
-						self.bu_icon,
-						1, 
-						iconOff ? 50 : 0
-					);
-				}
-			} else {
-				$controlsBg.css('background-color', self.bu_bg);
-			}
-			
-			$controlsBg.css('opacity', self.bu_bg_alpha);
-			
-			//Generating Button properties	(7 buttons)			
-			buttons[0] = {
-				_var: '_zi',
-				l: mSize,
-				t: pan_show ? (cBH - (bs * 2) - (bSpace * 2) + 2) / 2 : mSize,
-				w: bs,
-				h: bs,
-				bx: -pOff,
-				by: -pOff - iconOff
-			};
-
-			buttons[1] = {
-				_var: '_zo',
-				l: mSize,
-				t: pan_show ? ((cBH - (bs * 2) - (bSpace * 2) + 2) / 2) + bs + (bSpace * 2) - 2 : cBH - bs - mSize,
-				w: bs,
-				h: bs,
-				bx: -iSize - pOff,
-				by: -pOff - iconOff
-			};
-
-			buttons[2] = {
-				_var: self.pan_rev? '_ml' : '_mr',
-				l: resetCenterX - bsDiff - bSpace,
-				t: resetCenterY,
-				w: bsDiff,
-				h: bsDiff,
-				bx: -(sDiff / 2) - iSize * 2 - pOff,
-				by: -(sDiff / 2) - pOff - iconOff
-			};
-
-			buttons[3] = {
-				_var: self.pan_rev? '_mr' : '_ml',
-				l: resetCenterX + bsDiff + bSpace,
-				t: resetCenterY,
-				w: bsDiff,
-				h: bsDiff,
-				bx: -(sDiff / 2) - iSize * 3 - pOff,
-				by: -(sDiff / 2) - pOff - iconOff
-			};
-
-			buttons[4] = {
-				_var: self.pan_rev? '_md' : '_mu',
-				l: resetCenterX,
-				t: resetCenterY + bsDiff + bSpace,
-				w: bsDiff,
-				h: bsDiff,
-				bx: -(sDiff / 2) - iSize * 4 - pOff,
-				by: -(sDiff / 2) - pOff - iconOff
-			};
-
-			buttons[5] = {
-				_var: self.pan_rev? '_mu' : '_md',
-				l: resetCenterX,
-				t: resetCenterY - bsDiff - bSpace,
-				w: bsDiff,
-				h: bsDiff,
-				bx: -(sDiff / 2) - iSize * 5 - pOff,
-				by: -(sDiff / 2) - pOff - iconOff
-			};
-
-			buttons[6] = {
-				_var: '_rs',
-				l: resetCenterX,
-				t: resetCenterY,
-				w: bsDiff,
-				h: bsDiff,
-				bx: -(sDiff / 2) - iSize * 6 - pOff,
-				by: -(sDiff / 2) - pOff - iconOff
-			};
-
-			for (var i = 0; i < 7; i++) {
-				buttons[i].$ob = $(
-						'<div style="position: absolute; display: ' + (i < 2 ? zoom_show ? 'block' : 'none' : pan_show ? 'block' : 'none') + '; left: ' + (buttons[i].l - 1) + 'px; top: ' + (buttons[i].t - 1) + 'px; width: ' + (buttons[i].w + 2) + 'px; height: ' + (buttons[i].h + 2) + 'px; z-index:' + (i + 1) + ';" class="noSel">\
-						</div>'
-					)
-				.css('opacity', .7)
-				.bind('mouseover.sz mouseout.sz '+self.event_down, {
-					id: i
-					
-				}, function (e) {
-					self._onfocus = false;
-					var $this = $(this);
-					
-					//Button over 
-					if (e.type == 'mouseover') {
-						if ($this.css('opacity') > .5){
-							 $this.css('opacity', 1);
-						}
-					
-					//Button out 
-					} else if (e.type == 'mouseout') {
-						if ($this.css('opacity') > .5) {
-							$this.css('opacity', .7);
-						}
-					
-					//Button press/down
-					} else if (e.type == 'mousedown' || e.type == 'touchstart' || e.type == self.pointerDown) {
-						self.cButtId = e.data.id;
-						self._onButton = true;
-						self._wheel = false;	
-						
-						//If NOT already down..
-						if ($this.css('opacity') > .5) {
-							$this.css('opacity', 1);
-							$holder.find('#' + buttons[self.cButtId]._var + 'norm').hide();
-							$holder.find('#' + buttons[self.cButtId]._var + 'over').show();
-							
-							//CASE 1: If zoomIn pressed and single step zoom enabled
-							if (self.cButtId <= 1 && self.zoom_single){								
-								if (!cFlag[buttons[self.cButtId]._var]) {									
-									self.sRed = 300;
-									cFlag[buttons[self.cButtId]._var] = true;
-								}
-								
-							//CASE 2: If any button except RESET pressed
-							} else if (self.cButtId <6) {
-								cFlag[buttons[self.cButtId]._var] = true;
-								
-							//CASE 3: RESET pressed							
-							} else {
-								cFlag._rs = true;
-								self.rA = self.rR;							
-								if (self.reset_align[0] == 'top') {
-									self.fY = (self.sH/2)*(self.rA/2);
-								} else if (self.reset_align[0] == 'bottom') {
-									self.fY = -(self.sH/2)*(self.rA/2);
-								} else {
-									self.fY = 0;
-								}							
-								if (self.reset_align[1] == 'left') {
-									self.fX = (self.sW/2)*(self.rA/2);
-								} else if (self.reset_align[1] == 'right') {
-									self.fX = -(self.sW/2)*(self.rA/2);
-								} else {
-									self.fX = 0;
-								}							
-							}
-							
-							self.focusOffX = self.focusOffY = 0;
-							self.changeOffset(true, true);
-							if(!self._playing) {
-								self.Animate();
-							}
-						}
-						e.preventDefault();
-						e.stopPropagation();						
-					}
-				});
-
-				//Make 2 BGs for Button Normal and Over state
-				//Button BG normal
-				var tpm = $(
-					'<div id="' + buttons[i]._var + 'norm" style="position: absolute; left: 1px; top: 1px; width: ' + buttons[i].w + 'px; height: ' + buttons[i].h + 'px; '+(prop_radius || !self.bu_round ? 'background:'+self.bu_color : '')+'">\
-					</div>'
-				);
-
-				//Button BG hover
-				var tpmo = $(
-					'<div id="' + buttons[i]._var + 'over" style="position: absolute; left: 0px; top: 0px; width: ' + (buttons[i].w + 2) + 'px; height: ' + (buttons[i].h + 2) + 'px; display: none; '+(prop_radius || !self.bu_round ? 'background:'+self.bu_color : '')+'">\
-					</div>'
-				);
-
-				//Add the button icons
-				var cont = $(
-					'<div id="' + buttons[i]._var + '_icon" style="position: absolute; left: 1px; top: 1px; width: ' + buttons[i].w + 'px; height: ' + buttons[i].h + 'px; background: transparent url(' + self.bu_icon + ') ' + buttons[i].bx + 'px ' + buttons[i].by + 'px no-repeat;" >\
-					</div>'
-				);
-				
-				buttons[i].$ob.append(tpm, tpmo, cont);
-				$controls.append(buttons[i].$ob);
-
-				//Apply corner radius
-				if (self.bu_round) {
-					if (prop_radius) {						
-						tpm.css(prop_radius , '2px');				
-						tpmo.css(prop_radius , '2px');						
-					} else {
-						self.roundBG(
-							tpm,
-							buttons[i]._var + "norm",
-							buttons[i].w,
-							buttons[i].h,
-							2,
-							425,
-							self.bu_color,
-							self.bu_icon,
-							i + 1,
-							iconOff ? 50 : 0
-						);
-						self.roundBG(
-							tpmo,
-							buttons[i]._var + "over",
-							buttons[i].w + 2,
-							buttons[i].h + 2,
-							2,
-							425,
-							self.bu_color,
-							self.bu_icon,
-							i + 1,
-							iconOff ? 50 : 0
-						);
-					}
-				}
-			}
-
-			//Add Events for mouse drag / touch swipe action
-			$(document).bind(self.event_up + self.id, {self: self}, self.mouseUp);
-			
-			if ((self.mouse_drag && !self.hasTouch) || (self.touch_drag && self.hasTouch)) {						
-				self.$holder.bind(self.event_down, {self: self}, self.mouseDown);
-				if (self.hasTouch) {
-					$(document).bind(self.event_move + self.id, {self: self}, self.mouseDrag);
-				}				
-			}		
-
-			//Add Double click / Double tap zoom
-			if (self.mouse_dbl_click) {
-				var dClickedX,
-					dClickedY,
-					dbl_click_dir = 1;
-					
-				self.$holder.bind('dblclick.sz', function (e) {					
-					self.focusOffX = e.pageX - $holder.offset().left - (self.sW / 2);
-					self.focusOffY = e.pageY - $holder.offset().top - (self.sH / 2);
-					self.changeOffset(true, true);
-					self._wheel = false;
-					
-					if (self.rA < self.zoom_max && dbl_click_dir == -1 && dClickedX != self.focusOffX && dClickedY != self.focusOffY) {
-						dbl_click_dir = 1;
-					}
-					
-					dClickedX = self.focusOffX;
-					dClickedY = self.focusOffY;
-
-					if (self.rA >= self.zoom_max && dbl_click_dir == 1) {
-						dbl_click_dir = -1;
-					}					
-					if (self.rA <= self.rF && dbl_click_dir == -1) {
-						dbl_click_dir = 1;
-					}
-					if (dbl_click_dir > 0) {
-						self.rA *= 2;
-						self.rA = self.rA > self.zoom_max ?  self.zoom_max : self.rA;
-						cFlag._zi = true;
-						clearTimeout(self.ani_timer);
-						self._playing = true;
-						self.Animate();
-						cFlag._zi = false;
-
-					} else {
-						self.rA /= 2;
-						self.rA =  self.rA < self.rF ? self.rF : self.rA;
-						cFlag._zo = true;
-						clearTimeout(self.ani_timer);
-						self._playing = true;
-						self.Animate();
-						cFlag._zo = false;
-					}
-					e.preventDefault();		
-					e.stopPropagation();								
-				});
-			}
-
-			//Add mouse wheel event if enabled
-			if (self.mouse_wheel) {
-				 $holder.bind('mousewheel.sz', {self: this}, self.mouseWheel);
-			}
-
-			//Auto Hide the control buttons if enabled
-			if (self.bu_auto) {
-				$holder.bind('mouseleave.sz', {self: this}, self.autoHide);
-			}
-
-			//Prevent Controls Bg from start dragging image
-			$controls.bind(self.event_down, function (e) {
-				e.preventDefault();
-				e.stopPropagation();				
-			});
-
-			//Prevent Controls Bg from double click zoom
-			if (self.mouse_dbl_click) {
-				$controls.bind('dblclick.sz', function (e) {
-					e.preventDefault();
-					e.stopPropagation();					
-				});
-			}
-
-			//Prevent text selection for smoother dragging and button focus
-			$('.noSel').each(function () {
-				this.onselectstart = function () {
-					return false;
-				};
-			});
-
-			self.$holder = $holder;
-			self.$controls = $controls;
-			self.sW = sW;
-			self.sH = sH;
-			self.cBW = cBW;
-			self.cBH = cBH;
-
-			// alert(self.sW + "  " + self.sH);
-
-			//Apply initial transformation
-			self.Animate();
-		},
-		
-		
-		/*Prepare the container (holder) element and get landmarks if available
-		***********************************************************************************************************************/
-		setContainer: function () {			
-			var self = this,
-				$image = self.$image,
-				bord_size = self.bord_size,
-				border = self.border,
-				$holder = self.$holder;
-
-			//Wrap a container for image or get the container if specified through options:
-			if (self.container == '' && self.image_url == '') {
-				$holder = self.$image.wrap(
-					'<div class="noSel smooth_zoom_preloader">\
-					</div>'
-				).parent();
-				
-			} else {
-				if (self.image_url == ''){
-					$holder = $('#'+self.container);
-				} else {
-					$holder = self.$elem;
-				}
-				$holder.addClass('noSel smooth_zoom_preloader');
-				self.locations = [];
-				self.$loc_cont = $holder.find('.landmarks');
-				if (self.$loc_cont[0]) {
-					var locs = self.$loc_cont.children('.item');
-					self.loc_clone = self.$loc_cont.clone();
-					self.show_at_zoom = parseInt(self.$loc_cont.data('show-at-zoom'),10) / 100;
-					self.allow_scale = checkBoolean(self.$loc_cont.data('allow-scale'));
-					self.allow_drag = checkBoolean(self.$loc_cont.data('allow-drag'));					
-					locs.each(function () {	
-						self.setLocation($(this));			
-					});
-				}
-			}
-						
-			$holder.css({
-				'position': 'relative',
-				'overflow': 'hidden',
-				'text-align': 'left',
-				'-moz-user-select': 'none',
-				'-khtml-user-select': 'none',
-				'-webkit-user-select': 'none',
-				'user-select': 'none',					
-				'-webkit-touch-callout': 'none',
-				'-ms-touch-action': 'none',
-				'-webkit-tap-highlight-color': 'rgba(255, 255, 255, 0)', 
-				'background-color': self.bg_color,
-				'background-position': 'center center',
-				'background-repeat': 'no-repeat'				
-			})
-
-			self.$hitArea = $('<div style="position: absolute; z-index: 1; top: 0px; left: 0px; width: 100%; height: 100%;" ></div>').appendTo($holder);
-			
-			self.getContainerSize(self.sW, self.sH, $holder, self.w_max, self.h_max);	
-								
-			if (self.responsive) {
-				$(window).bind("orientationchange.sz" + self.id+" resize.sz" + self.id, {self: self}, self.resize);
-			}
-			var sW = self.sW;
-			var sH = self.sH;	
-
-			//Add Image container properties			
-			$holder.css({
-				'width': sW,
-				'height': sH
-			});
-
-			//Add border if needed
-			if (bord_size > 0) {
-				border[0] = $('<div style="position: absolute;	width: ' + bord_size + 'px; height: ' + sH + 'px;	top: 0px; left: 0px; z-index: 3; background-color: ' + self.bord_color + ';"></div>').css('opacity', self.bord_alpha);
-				border[1] = $('<div style="position: absolute;	width: ' + bord_size + 'px; height: ' + sH + 'px;	top: 0px; left: ' + (sW - bord_size) + 'px; z-index: 4; background-color: ' + self.bord_color + ';"></div>').css('opacity', self.bord_alpha);
-				border[2] = $('<div style="position: absolute;	width: ' + (sW - (bord_size * 2)) + 'px; height: ' + bord_size + 'px; top: 0px; left: ' + bord_size + 'px; z-index: 5; background-color: ' + self.bord_color + '; line-height: 1px;"></div>').css('opacity', self.bord_alpha);
-				border[3] = $('<div style="position: absolute;	width: ' + (sW - (bord_size * 2)) + 'px; height: ' + bord_size + 'px; top: ' + (sH - bord_size) + 'px; left: ' + bord_size + 'px; z-index: 6; background-color: ' + self.bord_color + '; line-height: 1px;"></div>').css('opacity', self.bord_alpha);
-				$holder.append(border[0], border[1], border[2], border[3]);
-			}
-
-			//Get Image maps if exists
-			if ($image.attr('usemap') != undefined) {
-				self.mapAreas = $("map[name='" + ($image.attr('usemap').split('#').join('')) + "']").children('area');
-				self.mapAreas.each(function (i) {					
-					var area = $(this);
-					area.css('cursor', 'pointer');
-					if (self.mouse_drag) {
-						area.bind(self.event_down, {self: self}, self.mouseDown);
-					}
-					if (self.mouse_wheel) {
-						area.bind('mousewheel.sz', {self: self}, self.mouseWheel);
-					}
-					self.map_coordinates.push(area.attr('coords').split(','));
-				});
-			}	
-			
-			self.$holder = $holder;
-			self.sW = sW;
-			self.sH = sH;
-		},
-		
-		getContainerSize: function (sW, sH, $holder, w_max, h_max){
-			if (sW === '' || sW === 0) {				
-				if (this.image_url == '') {					
-					sW = Math.max($holder.parent().width(), 100);
-				} else {									
-					sW = Math.max($holder.width(), 100);
-				}				
-				
-			} else if (!isNaN(sW) || String(sW).indexOf('px') > -1) {
-				sW = this.oW = parseInt(sW);
-				if (this.responsive) {
-					sW = Math.min($holder.parent().width(), sW);
-				}
-			} else if (String(sW).indexOf('%') > -1) {
-				sW = $holder.parent().width() * (sW.split('%')[0] / 100);			
-			} else {
-				sW = 100;
-			}
-			if (w_max !== 0 && w_max !== '') {
-				sW = Math.min(sW, w_max);
-			}
-			if (sH === '' || sH === 0) {
-				if (this.image_url == '') {				
-					sH = Math.max($holder.parent().height(), 100);
-				} else {					
-					sH = Math.max($holder.height(), 100);
-				}				
-			} else if (!isNaN(sH) || String(sH).indexOf('px') > -1) {
-				sH = this.oH = parseInt(sH);
-		
-			} else if (String(sH).indexOf('%') > -1) {
-				sH = $holder.parent().height() * (sH.split('%')[0] / 100);				
-			} else {
-				sH = 100;
-			}
-			if (h_max !== 0 && h_max !== '') {
-				sH = Math.min(sH, h_max);
-			}
-
-			if (this.oW && sW !== this.oW) {				
-				if (this.oH && this.maintain_ratio) {				
-					sH = sW/(this.oW/this.oH);
-				}
-			}			
-			
-			this.sW = sW;
-			this.sH = sH;
-		},
-		
-		
-		/*Each landmark / location / lable initiated here
-		***********************************************************************************************************************/
-		setLocation: function (lc){
-			var self = this,
-				ob = lc,
-				w2, h2, pos, sc, rotation;
-			
-			if (prop_origin) {
-				ob.css(prop_origin, '0 0');
-			}
-			
-			ob.css({
-				'display': 'block',
-				'z-index': 2					
-			})				
-			if (self.use3D) {
-				ob.css({			
-					'-webkit-backface-visibility': 'hidden',
-					'-webkit-perspective': 1000
-				});
-			}
-					
-			w2 = ob.outerWidth() / 2;
-			h2 = ob.outerHeight() / 2;
-			pos = ob.data('position').split(',');	
-			rotation = ob.data('rotation');
-			sc = ob.data('allow-scale');
-			if (sc == undefined) {
-				sc = self.allow_scale;				
-			} else {
-				sc = checkBoolean(sc);
-			}
-			
-			if (ob.hasClass('mark')) {
-				var imgw = ob.find('img').css('vertical-align', 'bottom').width();
-				$(ob.children()[0]).css({
-					'width':ob.width,
-					'position': 'absolute',
-					'left': (-ob.width()/2),
-					'bottom': parseInt(ob.css('padding-bottom'))*2
-				});	
-				var txt = ob.find('.text');					
-				self.locations.push({
-					ob: ob,
-					x: parseInt(pos[0]),
-					y: parseInt(pos[1]),
-					rot: rotation,
-					w2: w2,
-					h2: h2,
-					w2pad: w2+(txt[0] ? parseInt(txt.css('padding-left')) : 0),
-					vis: false,
-					lab: false,
-					lpx: '0',
-					lpy: '0',
-					showAt: isNaN(ob.data('show-at-zoom'))? self.show_at_zoom : parseInt(ob.data('show-at-zoom'),10) / 100,
-					scale: sc
-				});				
-				
-			} else if (ob.hasClass('lable')){
-				var bg = ob.data('bg-color'),
-					opacity = ob.data('bg-opacity'),						
-					cont = $(ob.eq(0).children()[0])
-							.css({
-							'position': 'absolute',
-							'z-index': 2,
-							left: -w2, 
-							top: -h2
-						});		
-							
-				self.locations.push({
-					ob: ob,
-					x: parseInt(pos[0]),
-					y: parseInt(pos[1]),
-					w2: w2,
-					h2: h2,
-					w2pad: w2,
-					vis: false,
-					lab: true,
-					lpx: '0',
-					lpy: '0',
-					showAt: isNaN(ob.data('show-at-zoom'))? self.show_at_zoom : parseInt(ob.data('show-at-zoom'),10) / 100,
-					scale: sc
-				});
-
-				if (bg !=="") {
-					if (!bg) {
-						bg = "#000000";
-						opacity = .7;
-					}							
-					var bgob = $('<div style="position: absolute; left: ' + (-w2)+'px; top: ' + (-h2)+'px; width: ' + ((w2-parseInt(cont.css('padding-left'))) * 2) + 'px; height:' + ((h2-parseInt(cont.css('padding-top'))) * 2) + 'px; background-color: ' + bg + ';"></div>').appendTo(ob);
-					if (opacity) {
-						bgob.css('opacity', opacity);
-					}
-				}
-			}
-			ob.hide();
-			if(prop_transform) {
-				ob.css('opacity', 0);
-			}	
-			if (!self.allow_drag) {
-				ob.bind(self.event_down, function (e) {				
-					//e.preventDefault();
-					e.stopPropagation();					
-				})				
-			}
-		},
-
-		/*Storing the original style of image (needed only when destroying)
-		***********************************************************************************************************************/
-		getStyle: function () {
-			var el = this.$image;
-			return {
-				prop_origin: [prop_origin, prop_origin !== false && prop_origin !== undefined ? el.css(prop_origin) : null],
-				prop_transform: [prop_transform, prop_transform !== false && prop_transform !== undefined ? el.css(prop_transform) : null],
-				'position': ['position', el.css('position')],
-				'z-index': ['z-index', el.css('z-index')],
-				'cursor': ['cursor', el.css('cursor')],
-				'left': ['left', el.css('left')],
-				'top': ['top', el.css('top')],
-				'width': ['width', el.css('width')],
-				'height': ['height', el.css('height')]
-			};
-		},
-
-		/*Find the scale ratios
-		***********************************************************************************************************************/
-		checkRatio: function (sW, sH, iW, iH, zoom_fit) {
-			var rF;
-			if (iW == sW && iH == sH) {
-				rF = 1;				
-			} else if (iW < sW && iH < sH) {
-				rF = sW / iW;				
-				if (zoom_fit) {
-					if (rF * iH > sH) {
-						rF = sH / iH;
-					}
-				} else {
-					if (rF * iH < sH) {
-						rF = sH / iH;
-					}
-					if (sW / iW !== sH / iH && this.mouse_drag) {
-						this._moveCursor = true;
-						this.$image.css('cursor', 'move');
-						this.$hitArea.css('cursor', 'move');
-					}
-				}
-			} else {
-				
-				rF = sW / iW;
-				if (zoom_fit) {
-					if (rF * iH > sH) {
-						rF = sH / iH;
-					}
-					if (rF< this.init_zoom && this.mouse_drag) {
-						this._moveCursor = true;
-						this.$image.css('cursor', 'move');
-						this.$hitArea.css('cursor', 'move');
-					}
-				} else {
-					if (rF * iH < sH) {
-						rF = sH / iH;
-					}
-					if (sW / iW !== sH / iH && this.mouse_drag) {
-						this._moveCursor = true;
-						this.$image.css('cursor', 'move');
-						this.$hitArea.css('cursor', 'move');
-					}
-				}
-			}
-			return rF;
-		},
-		
-		
-		/*Returns distance between 2 points (used for touch gesture)
-		***********************************************************************************************************************/
-		getDistance: function (x1,y1,x2,y2) {
-			return Math.sqrt(Math.abs(((x2-x1)*(x2-x1)) + ((y2-y1)*(y2-y1))));
-		},
-		
-
-		/*Image Events for Dragging and Mouse Wheel
-		***********************************************************************************************************************/
-		mouseDown: function (e) {
-
-			// console.log("MouseDown EVENT -- >", e);
-
-			var self = e.data.self,	
-			te = e.originalEvent,
-			touches, fingers, pointerMouse;	
-			self._onfocus = self._dragging = false;
-			
-			if (self.cFlag._nd) {				
-				self._onHitArea = true;		
-				self.samePointRelease = false;				
-				if (self.fixMoz) {
-					self.correctTransValue();	
-				}
-				if (e.type == self.pointerDown){						
-					pointerMouse = (te.MSPOINTER_TYPE_MOUSE && te.pointerType === te.MSPOINTER_TYPE_MOUSE) || te.pointerType == 'mouse';
-					self.pointers.push({pageX: te.pageX, pageY:te.pageY, id: te.pointerId});
-					fingers = self.pointers.length;
-					touches = self.pointers;
-				}				
-				if (e.type == 'mousedown' || pointerMouse){	
-					self.stX = te.pageX || e.pageX;
-					self.stY = te.pageY || e.pageY;		
-					self.offX = self.stX - self.$holder.offset().left - self.$image.position().left;
-					self.offY = self.stY - self.$holder.offset().top - self.$image.position().top;					
-					$(document).bind(self.event_move + self.id, {self: self}, self.mouseDrag);
-					
-				} else {	
-					if (e.type == 'touchstart')	{
-						fingers = te.targetTouches.length;
-						touches = te.touches;
-					}
-					if (fingers > 1) {
-						self._pinching = true;	
-						self._rA = self.rA;				
-						self.dStart = self.getDistance(touches[0].pageX, touches[0].pageY, touches[1].pageX, touches[1].pageY);						
-					} else {						
-						self.offX = touches[fingers-1].pageX - self.$holder.offset().left - self.$image.position().left;
-						self.offY = touches[fingers-1].pageY - self.$holder.offset().top - self.$image.position().top;
-						self.setDraggedPos(touches[fingers-1].pageX - self.$holder.offset().left - self.offX, touches[fingers-1].pageY - self.$holder.offset().top - self.offY, self._sc);
-						self._recent = 'drag';
-						self._dragging = true;					
-					}							
-				}
-				
-			}
-			if (e.type == 'mousedown'  || e.type == self.pointerDown) {
-				e.preventDefault();
-			}		
-		},		
-		
-		
-		/*Mouse Drag / Touch swipe operations handled here
-		***********************************************************************************************************************/
-		mouseDrag: function (e) {
-			var self = e.data.self,
-			te = e.originalEvent,
-			touches, fingers;
-			
-			//Mouse
-			if (e.type == 'mousemove') {
-				self.setDraggedPos(e.pageX - self.$holder.offset().left - self.offX, e.pageY - self.$holder.offset().top - self.offY, self._sc);				
-				self._recent = 'drag';
-				self._dragging = true;
-				if(!self._playing) {
-					self.Animate();
-				}
-				return false;
-			
-			//Touch and pointer		
-			} else {
-				if (self._dragging || self._pinching) {	
-					e.preventDefault();								
-				}				
-				if (self._onHitArea) {
-					
-					//Pointer				
-					if (e.type == self.pointerMove){						
-						for (var j=0; j<self.pointers.length; j++){
-							if (te.pointerId == self.pointers[j].id) {						
-								self.pointers[j].pageX = te.pageX;
-								self.pointers[j].pageY = te.pageY;
-							}
-						}	
-						touches = self.pointers;
-						fingers = self.pointers.length;	
-						
-					//Touch		
-					} else {					
-						touches = te.touches;	
-						fingers = touches.length;					
-					}	
-					
-					//Multi finger movement / pinch zoom			
-					if (fingers > 1) {
-						if (!self._pinching) {
-							self._pinching = true;
-							self._rA = self.rA;								
-							self.dStart = self.getDistance(touches[0].pageX, touches[0].pageY, touches[1].pageX, touches[1].pageY);									
-						}						
-						self._centx = (touches[0].pageX + touches[1].pageX) / 2;
-						self._centy = (touches[0].pageY + touches[1].pageY) / 2;
-						self.focusOffX = self._centx - self.$holder.offset().left - (self.sW / 2);
-						self.focusOffY = self._centy - self.$holder.offset().top - (self.sH / 2);
-						self.changeOffset(true, true);
-						self._wheel = true;
-						self._dragging = false;						
-						if (self.zoom_single){													
-							self.sRed = 300;																				
-						} else {
-							self.dEnd = self.getDistance(touches[0].pageX, touches[0].pageY, touches[1].pageX, touches[1].pageY);						
-							self.rA = self._rA * (self.dEnd/self.dStart);
-							self.rA = self.rA > self.zoom_max ? self.zoom_max : self.rA;
-							self.rA = self.rA < self.rF ? self.rF : self.rA;
-						}
-						if (self._sc < self.rA) {
-							self.cFlag._zo = false;
-							self.cFlag._zi = true;
-						} else {
-							self.cFlag._zi = false;
-							self.cFlag._zo = true;
-						}
-						if (!self._playing) {
-							self.Animate();
-						}
-						
-					//Single finer / pointer Drag
-					} else {							
-						self.setDraggedPos(touches[0].pageX - self.$holder.offset().left - self.offX, touches[0].pageY - self.$holder.offset().top - self.offY, self._sc);
-						self._recent = 'drag';
-						self._dragging = true;
-						if(!self._playing) {
-							self.Animate();
-						}
-						return false;
-					}
-				}
-				
-			}
-		},
-		
-		
-		/*Global Mouse Up / Touch End
-		***********************************************************************************************************************/
-		mouseUp: function (e) {
-			var self = e.data.self;
-			self.pointers = [];
-			//If one of the buttons released
-			if (self._onButton) {
-				self.$holder.find('#' + self.buttons[self.cButtId]._var + 'norm').show();
-				self.$holder.find('#' + self.buttons[self.cButtId]._var + 'over').hide();
-				if (self.cButtId !== 6) {
-					self.cFlag[self.buttons[self.cButtId]._var] = false;
-				}
-				if (e.type == 'touchend' && self.buttons[self.cButtId].$ob.css('opacity') > .5){
-					self.buttons[self.cButtId].$ob.css('opacity', .7);
-				}
-				self._onButton = false;
-				e.stopPropagation();
-				return false;
-				
-			//If the mouse drag or touch swipe completed
-			} else if (self._onHitArea) {
-				if (!self.hasTouch){					
-					$(document).unbind(self.event_move + self.id);
-				}
-				if (self.mouse_drag || self.touch_drag) {
-					
-					//Mouse					
-					if (e.type == 'mouseup') {										
-						if (self.stX ==  e.pageX && self.stY == e.pageY) {
-							self.samePointRelease = true;
-						}				
-						self._recent = 'drag';
-						self._dragging = false;
-						if(!self._playing) {
-							self.Animate();
-						}
-						
-					//Touch & Pointers
-					} else {
-						e.preventDefault();
-						self._dragging = false;
-						if (self._pinching) {
-							self._pinching = false;
-							self._wheel = false;
-							self.cFlag._nd = true;
-							self.cFlag._zi = false;
-							self.cFlag._zo = false;
-						} else {
-							self._recent = 'drag';
-							if(!self._playing) {
-								self.Animate();
-							}
-						}			
-					}
-					self._onHitArea = false;
-				}
-			}
-		},
-		
-		
-		/*Mouse wheel zoom in-out
-		***********************************************************************************************************************/
-		mouseWheel: function (e, delta) {
-			var self = e.data.self;
-			self._onfocus = self._dragging = false;
-			if (self.mouse_wheel_cur) {
-				self.focusOffX = e.pageX - self.$holder.offset().left - (self.sW / 2);
-				self.focusOffY = e.pageY - self.$holder.offset().top - (self.sH / 2);
-				self.changeOffset(true, true);
-			}
-			
-			self._dragging = false;
-			if (delta > 0) {
-				if (self.rA != self.zoom_max) {
-					if (self.zoom_single){													
-						if(!self._wheel) {
-							self.sRed = 300;	
-						}
-					} else {				
-						self.rA *= delta < 1 ? 1 + (.3 * delta) : 1.3;
-						self.rA = self.rA > self.zoom_max ? self.zoom_max : self.rA;						
-					}
-					self._wheel = true;
-					self.cFlag._zi = true;
-					clearTimeout(self.ani_timer);
-					self._playing = true;
-					self.Animate();
-					self.cFlag._zi = false;
-				}
-			} else {
-				if (self.rA != self.rF) {
-					if (self.zoom_single){													
-						if(!self._wheel) {
-							self.sRed = 300;
-						}
-					} else {	
-						self.rA /= delta > -1 ? 1 + (.3 * -delta) : 1.3;
-						self.rA = self.rA < self.rF ? self.rF : self.rA;
-					}
-					self._wheel = true;
-					self.cFlag._zo = true;
-					clearTimeout(self.ani_timer);
-					self._playing = true;
-					self.Animate();
-					self.cFlag._zo = false;
-				}
-			}
-			return false;
-		},
-		
-
-		/*Control buttons Auto hide
-		***********************************************************************************************************************/
-		autoHide: function (e) {
-			var self = e.data.self;
-
-			clearTimeout(self.auto_timer);
-			self.auto_timer = setTimeout(function () {
-				self.$controls.fadeOut(600);
-			}, self.bu_delay);
-
-			self.$holder.bind('mouseenter.sz', function (e) {
-				clearTimeout(self.auto_timer);
-				self.$controls.fadeIn(300);
-			});
-		},
-		
-
-		/*Mozilla works differently than others when getting translated positions. So this correction needed
-		***********************************************************************************************************************/
-		correctTransValue: function () {
-			var v = this.$image.css('-moz-transform').toString().replace(')', '').split(',');
-			this.transOffX = parseInt(v[4]);
-			this.transOffY = parseInt(v[5]);
-		},
-
-
-		/*Make sure the dragged position obeying limits
-		***********************************************************************************************************************/
-		setDraggedPos: function (xp, yp, s) {
-			var self = this;
-			
-			if (xp !== '') {
-				self.dX = xp + self.transOffX;
-				if (self.pan_limit) {
-					self.dX = self.dX + (s * self.iW) < self.sW ? self.sW - (s * self.iW) : self.dX;
-					self.dX = self.dX > 0 ? 0 : self.dX;
-					if ((s * self.iW) < self.sW) {
-						self.dX = (self.sW - (s * self.iW)) / 2;
-					}
-				} else {
-					self.dX = self.dX + (s * self.iW) < self.sW / 2 ? (self.sW / 2) - (s * self.iW) : self.dX;
-					self.dX = self.dX > self.sW / 2 ? self.sW / 2 : self.dX;
-				}
-			}
-			if (yp !== '') {
-				self.dY = yp + self.transOffY;
-				if (self.pan_limit) {
-					self.dY = self.dY + (s * self.iH) < self.sH ? self.sH - (s * self.iH) : self.dY;
-					self.dY = self.dY > 0 ? 0 : self.dY;
-					if ((s * self.iH) < self.sH) {
-						self.dY = (self.sH - (s * self.iH)) / 2;
-					}
-				} else {
-					self.dY = self.dY + (s * self.iH) < self.sH / 2 ? (self.sH / 2) - (s * self.iH) : self.dY;
-					self.dY = self.dY > self.sH / 2 ? self.sH / 2 : self.dY;
-				}
-			}
-		},
-
-		/*Called to animate image transformation whenever the navigation events occur
-		***********************************************************************************************************************/
-		Animate: function () {
-
-			var self = this;
-			var pixTol = .5;
-
-			self.cFlag._nd = true;
-			self.ani_end = false;
-			
-			//Zoom In
-			if (self.cFlag._zi) {
-				if (!self._wheel && !self.zoom_single) {
-					self.rA *= self.zoom_speed;
-				}
-				if (self.rA > self.zoom_max) {
-					self.rA = self.zoom_max;
-				}
-				self.cFlag._nd = false;
-				self.cFlag._rs = false;
-				self._recent = 'zoomIn';
-				self._onfocus = self._dragging = false;
-			}
-
-			//Zoom Out
-			if (self.cFlag._zo) {
-				if (!self._wheel && !self.zoom_single) {
-					self.rA /= self.zoom_speed;
-				}
-				if (self.zoom_min !=0 ) {
-					if (self.rA < self.zoom_min) {
-						self.rA = self.zoom_min;
-					}					
-				} else {					
-					if (self.rA < self.rF) {
-						self.rA = self.rF;
-					}
-				}
-				
-				self.cFlag._nd = false;
-				self.cFlag._rs = false;
-				self._recent = 'zoomOut';
-				self._onfocus = self._dragging = false;
-			}
-			
-			//Zoom In or Out - Single Step
-			if (self.zoom_single && !self.cFlag._rs) {
-				if (self._recent == 'zoomIn'){
-					self.sRed +=(10-self.sRed)/6;
-					self.rA += (self.zoom_max - self.rA)/(((1/(self.pan_speed_o+1))*self.sRed)+1);
-
-				} else if (self._recent == 'zoomOut'){
-					self.sRed +=(3-self.sRed)/3;
-					self.rA += (self.rF - self.rA)/(((1/self.pan_speed_o+1)*self.sRed)+1);
-				}
-			}
-			
-			//Pan speed needs to adjust according to application dimension and zoom level
-			self.pan_speed = (Math.max(1, 1+((self.sW + self.sH) / 500))+ (self.pan_speed_o * self.pan_speed_o / 4)) / Math.max(1, self.rA/2);
-
-			//Move Left
-			if (self.cFlag._ml) {
-				self.oX -= self.pan_speed;
-				self.cFlag._nd = false;
-				self.cFlag._rs = false;
-				self._recent = 'left';
-				self._onfocus = self._dragging = false;
-			}
-
-			//Move Right
-			if (self.cFlag._mr) {
-				self.oX += self.pan_speed;
-				self.cFlag._nd = false;
-				self.cFlag._rs = false;
-				self._recent = 'right';
-				self._onfocus = self._dragging = false;
-			}
-
-			//Move Up
-			if (self.cFlag._mu) {
-				self.oY -= self.pan_speed;
-				self.cFlag._nd = false;
-				self.cFlag._rs = false;
-				self._recent = 'up';
-				self._onfocus = self._dragging = false;
-			}
-
-			//Move Down
-			if (self.cFlag._md) {
-				self.oY += self.pan_speed;
-				self.cFlag._nd = false;
-				self.cFlag._rs = false;
-				self._recent = 'down';
-				self._onfocus = self._dragging = false;
-			}
-
-			//Reset
-			if (self.cFlag._rs) {				
-				self.oX += (self.fX - self.oX) / 8;
-				self.oY += (self.fY - self.oY) / 8;				
-				self.cFlag._nd = false;
-				self._recent = 'reset';
-				self._onfocus = self._dragging = false;
-			}
-
-			//Find scale value, width and height
-			//Case 1: Single Step Zoom
-			if (self.zoom_single && (self._recent !== 'reset')) {
-				if (self._onfocus){
-					self._sc += (self.rA - self._sc) / self.reduction;
-				} else {
-					self._sc = self.rA;
-				}
-			
-			//Case 2: Normal Zoom
-			} else {
-				self._sc += (self.rA - self._sc) / (self.ani_smooth/(self._onfocus? self.reduction : 1));
-			}
-			
-			self._w = self._sc * self.iW;
-			self._h = self._sc * self.iH;
-
-			//Dragging
-			if (self._dragging) {
-				self.tX = self.dX;
-				self.tY = self.dY;
-				self.changeOffset(true, true);
-			}
-
-			//Check if Zoom In completed
-			if (self._recent == "zoomIn") {
-				if (self._w > (self.rA * self.iW) - pixTol && !self.zoom_single) {
-					if (self.cFlag._nd) {
-						self.ani_end = true;
-					}
-					self._sc = self.rA;					
-				} else if (self._w > (self.zoom_max * self.iW) - pixTol && self.zoom_single) {
-					if (self.cFlag._nd) {
-						self.ani_end = true;
-					}
-					self._sc = self.rA = self.zoom_max;					
-				}
-				if (self.ani_end){
-					self._w = self._sc * self.iW;
-					self._h = self._sc * self.iH;
-				}
-
-			//Check if Zoom Out completed
-			} else if (self._recent == "zoomOut") {
-				if (self._w < (self.rA * self.iW) + pixTol  && !self.zoom_single) {
-					if (self.cFlag._nd) {
-						self.ani_end = true;
-					}
-					self._sc = self.rA;					
-				} else if (self._w < (self.rF * self.iW) + pixTol  && self.zoom_single) {
-					if (self.cFlag._nd) {
-						self.ani_end = true;
-					}
-					self._sc = self.rA = self.rF;					
-				}
-				if (self.ani_end){
-					self._w = self._sc * self.iW;
-					self._h = self._sc * self.iH;
-				}
-			}
-
-			//Move image according to boundary limits
-			self.limitX = (((self._w - self.sW) / (self._w / self.sW)) / 2);
-			self.limitY = (((self._h - self.sH) / (self._h / self.sH)) / 2);
-
-			if (!self._dragging) {
-				if (self.pan_limit) {
-					if (self.oX < -self.limitX - self.focusOffX) {
-						self.oX = -self.limitX - self.focusOffX;
-					}
-					if (self.oX > self.limitX - self.focusOffX) {
-						self.oX = self.limitX - self.focusOffX;
-					}
-					if (self._w < self.sW) {
-						self.tX = (self.sW - self._w) / 2;
-						self.changeOffset(true, false);
-					}
-					if (self.oY < -self.limitY - self.focusOffY) {
-						self.oY = -self.limitY - self.focusOffY;
-					}
-					if (self.oY > self.limitY - self.focusOffY) {
-						self.oY = self.limitY - self.focusOffY;
-					}
-					if (self._h < self.sH) {
-						self.tY = (self.sH - self._h) / 2;
-						self.changeOffset(false, true);
-					}
-				} else {
-					if (self.oX < -self.limitX - (self.focusOffX / self._w * self.sW) - ((self.sW / 2) / (self._w / self.sW))) {
-						self.oX = -self.limitX - (self.focusOffX / self._w * self.sW) - ((self.sW / 2) / (self._w / self.sW));
-					}
-
-					if (self.oX > self.limitX - (self.focusOffX / self._w * self.sW) + ((self.sW / 2) / (self._w / self.sW))) {
-						self.oX = self.limitX - (self.focusOffX / self._w * self.sW) + ((self.sW / 2) / (self._w / self.sW));
-					}
-
-					if (self.oY < -self.limitY - (self.focusOffY / self._h * self.sH) - (self.sH / (self._h / self.sH * 2))) {
-						self.oY = -self.limitY - (self.focusOffY / self._h * self.sH) - (self.sH / (self._h / self.sH * 2));
-					}
-
-					if (self.oY > self.limitY - (self.focusOffY / self._h * self.sH) + (self.sH / (self._h / self.sH * 2))) {
-						self.oY = self.limitY - (self.focusOffY / self._h * self.sH) + (self.sH / (self._h / self.sH * 2));
-					}
-				}
-			}
-			if (!self._dragging && self._recent != "drag") {
-				self.tX = ((self.sW - self._w) / 2) + self.focusOffX + (self.oX * (self._w / self.sW));
-				self.tY = ((self.sH - self._h) / 2) + self.focusOffY + (self.oY * (self._h / self.sH));							
-				if (self.ani_smooth === 1) {
-					self.cFlag._nd = true;
-					self.ani_end = true;
-				}
-			}
-			if (self._recent == "zoomIn" || self._recent == "zoomOut" || self.cFlag._rs) {				
-				self._x = self.tX;
-				self._y = self.tY;
-			} else {
-				self._x += (self.tX - self._x) / (self.ani_smooth/(self._onfocus? self.reduction : 1));
-				self._y += (self.tY - self._y) / (self.ani_smooth/(self._onfocus? self.reduction : 1));				
-			}
-			
-			//Check if Left movement completed
-			if (self._recent == "left") {
-				if (self._x < self.tX + pixTol || self.ani_smooth === 1) {
-					self.cFlag._nd ? self.ani_end = true : "";
-					self._recent = '';
-					self._x = self.tX;
-				}
-
-			//Check if Right  movement completed
-			} else if (self._recent == "right") {
-				if (self._x > self.tX - pixTol || self.ani_smooth === 1) {
-					self.cFlag._nd ? self.ani_end = true : "";
-					self._recent = '';
-					self._x = self.tX;
-				}
-
-				//Check if Up movement completed
-			} else if (self._recent == "up") {
-				if (self._y < self.tY + pixTol || self.ani_smooth === 1) {
-					self.cFlag._nd ? self.ani_end = true : "";
-					self._recent = '';
-					self._y = self.tY;
-				}
-
-				//Check if Down movement completed
-			} else if (self._recent == "down") {
-				if (self._y > self.tY - pixTol || self.ani_smooth === 1) {
-					self.cFlag._nd ? self.ani_end = true : "";
-					self._recent = '';
-					self._y = self.tY;
-				}
-
-				//Check if Dragging completed
-			} else if (self._recent == "drag") {
-				if (self._x + pixTol >= self.tX && self._x - pixTol <= self.tX && self._y + pixTol >= self.tY && self._y - pixTol <= self.tY || self.ani_smooth === 1) {
-					if (self._onfocus) {
-						self._dragging = false;
-					}
-					self.cFlag._nd ? self.ani_end = true : "";
-					self._recent = '';
-					self._x = self.tX;
-					self._y = self.tY;
-				}
-			}
-
-			//Check if Reset completed
-			if (self.cFlag._rs && self._w + pixTol >= (self.rA * self.iW) && self._w - pixTol <= (self.rA * self.iW) && self.oX <= self.fX+pixTol && self.oX >= self.fX-pixTol && self.oY <= self.fY+pixTol && self.oY >= self.fY-pixTol) {
-				self.ani_end = true;
-				self._recent = '';
-				self.cFlag._rs = false;
-				self.cFlag._nd = true;
-				self._x = self.tX;
-				self._y = self.tY;
-				self._sc = self.rA;
-				self._w = self._sc * self.iW;
-				self._h = self._sc * self.iH;
-			}
-
-			//When the image fits exactly to container size, disable the pan, zoom out and reset buttons
-			if (self.rA == self.rF && self.iW*self.rA <= self.sW && self.iH*self.rA <= self.sH) {
-				if (self.buttons[1].$ob.css('opacity') > .5) {
-					if (self.rA >= self.rF && (self.init_zoom == '' || self.rA <self.init_zoom) && (self.zoom_min == '' || self.rA <self.zoom_min)) {
-						if (self.pan_limit && self._moveCursor && !self._moveCursor) {
-							self.$image.css('cursor', 'default');
-							self.$hitArea.css('cursor', 'default');
-						}
-						for (var bEn = 1; bEn < (self.pan_limit && !self._moveCursor ? self.buttons_total : 2); bEn++) {
-							self.buttons[bEn].$ob.css({
-								'opacity': .4
-							});
-							self._wheel = false;
-							self.$holder.find('#' + self.buttons[bEn]._var + 'norm').show();
-							self.$holder.find('#' + self.buttons[bEn]._var + 'over').hide();
-						}
-					}
-				}
-
-			} else {
-				if (self.buttons[1].$ob.css('opacity') < .5) {
-					if (self._moveCursor && self.mouse_drag) {
-						self.$image.css('cursor', 'move');
-						self.$hitArea.css('cursor', 'move');
-					}
-					for (var bEn = 1; bEn < self.buttons_total; bEn++) {
-						self.buttons[bEn].$ob.css('opacity', .7);
-					}
-				}
-			}
-
-			//When the image reaches max zoom, disable the zoom button
-			if (self.rA == self.zoom_max) {
-				if (self.buttons[0].$ob.css('opacity') > .5) {
-					self.buttons[0].$ob.css('opacity', .4);
-					self._wheel = false;
-					self.$holder.find('#' + self.buttons[0]._var + 'norm').show();
-					self.$holder.find('#' + self.buttons[0]._var + 'over').hide();
-				}
-
-			} else {
-				if (self.buttons[0].$ob.css('opacity') < .5) {
-					self.buttons[0].$ob.css('opacity', .7);
-				}
-			}
-			
-			//Apply Scale and position to the image:
-			if (prop_transform) {
-				self.$image.css(prop_transform, 'translate(' + self._x.toFixed(14) + 'px,' + self._y.toFixed(14) + 'px) scale(' + self._sc + ')');
-				// //console.log("Setting image with prop_transform");
-			} else {
-				self.$image.css({
-					left: self._x,
-					top: self._y,
-					width: self._w,
-					height: self._h
-				});
-				// //console.log("Setting image with -> " + self._w + " " + self._h);
-			}
-
-			if (self.$loc_cont) {
-				self.updateLocations(self._x, self._y, self._sc, self.locations);
-			}
-
-			//In case image Maps used, update them
-			if (!prop_transform && self.map_coordinates.length > 0) {
-				 self.updateMap();
-			}	
-			//If the animation completed, stop running; else continue	
-			if (self.ani_end && !self._dragging && self._recent != "drag") {				
-				self._playing = false;				
-				self._recent = '';
-				self.cX = (-self._x + (self.sW / 2)) / self.rA;
-				self.cY = (-self._y + (self.sH / 2)) / self.rA;
-				if (self.onUPDATE) {
-					self.onUPDATE (self.getZoomData(), false);
-				}
-				if (self.onZOOM_PAN) {
-					self.onZOOM_PAN (self.getZoomData());
-				}
-				clearTimeout(self.ani_timer);
-			} else {				
-				self._playing = true;
-				if (self.onUPDATE) {
-					self.onUPDATE (self.getZoomData(), true);
-				}
-				self.ani_timer = setTimeout(function () {
-					self.Animate();
-				}, 28);
-			}
-		},
-		
-		
-		/*Relocate the landmarks according to main image's position
-		***********************************************************************************************************************/
-		updateLocations: function (_x, _y, _sc, loc) {	
-			// console.log("SMOOTH ZOOM THIS");
-			// console.log(this);
-			if (this.onLANDMARK !== ''){
-				if (_sc >= this.show_at_zoom) {
-					if (!this._landmark) {
-						this._landmark = true
-						this.onLANDMARK (true);	
-					}
-				} else {
-					if (this._landmark) {
-						this._landmark = false;
-						this.onLANDMARK (false);
-					}
-				}
-			}
-								
-			for (var p = 0; p < loc.length; p++) {
-				// console.log("-->", loc[p]);
-				var wScaled,
-					hScaled,
-					lpx = (loc[p].x * _sc) + _x,
-					lpy = (loc[p].y * _sc) + _y;
-					
-				if (_sc >= loc[p].showAt) {	
-					if (loc[p].scale && prop_transform){
-						wScaled = loc[p].w2pad*this._sc;
-						hScaled = loc[p].h2*this._sc;
-					} else {
-						wScaled = loc[p].w2pad;
-						hScaled = loc[p].h2;
-					}
-
-					if(loc[p].ob.hasClass("svgLayer") !== true){
-					//	console.log(loc[p]);
-						//don't hide svg Layer when scrolling origin point out of view
-						if (lpx > -wScaled && lpx < this.sW + wScaled && ((lpy > -hScaled && lpy < this.sH + hScaled && loc[p].lab) || (lpy > 0 && lpy < this.sH + (hScaled*2) && !loc[p].lab))) {
-							if (!loc[p].vis) {
-								loc[p].vis = true;							
-								if(prop_transform) {											
-									loc[p].ob.stop()
-										.css('display', 'block')
-										.animate({
-											opacity: 1
-										}, 300);
-								} else {
-									loc[p].ob.show();
-								}
-							}
-						} else {
-							if (loc[p].vis) {
-								loc[p].vis = false;
-								if(prop_transform) {
-									loc[p].ob.stop()
-										.animate({
-											opacity: 0
-										}, 200, function() {
-											$(this).hide();
-										});
-								} else {
-									loc[p].ob.hide();								
-								}
-							}
-						}			
-					}
-				} else {	
-					if(loc[p].ob.hasClass("svgLayer") === true)loc[p].vis = true;							
-					if (loc[p].vis) {	
-						loc[p].vis = false;
-						if(prop_transform) {
-							loc[p].ob.stop()
-								.animate({
-									opacity: 0
-								}, 200, function() {
-									$(this).hide();
-								});
-						} else {
-							loc[p].ob.hide();								
-						}
-					}	
-				}
-				if (lpx !== loc[p].lpx || lpy !== loc[p].lpy && loc[p].vis) {					
-					if (prop_transform) {
-						//loc[p].ob.css(prop_transform, 'translate(' + lpx.toFixed(14) + 'px,' + lpy.toFixed(14) + 'px)' + (loc[p].scale? ' scale(' + this._sc + ')':''));
-						loc[p].ob.css(prop_transform, 'translate(' + lpx.toFixed(14) + 'px,' + lpy.toFixed(14) + 'px)' + (loc[p].scale? ' scale(' + this._sc + ')':'')  + (loc[p].rot?' rotate('+loc[p].rot.toString()+ 'deg)':''));
-					} else {						
-						loc[p].ob.css({
-							left: lpx,
-							top: lpy						
-						});
-					}
-				}
-				loc[p].lpx = lpx;
-				loc[p].lpy = lpy;
-			}
-		},
-		
-
-		/*If the broswer doesn't supports css border radius, we need to go with old school png image for rounded corner
-		***********************************************************************************************************************/
-		roundBG: function (el, _name, _w, _h, _r, _p, _c, _i, _z, _yoff) {
-			var w = 50 / 2;
-			
-			el.append($(
-				'<div class="bgi' + _name + '" style="background-position:' + (-(_p - _r)) + 'px ' + (-(w - _r) - _yoff) + 'px"></div>\
-				<div class="bgh' + _name + '"></div>\
-				<div class="bgi' + _name + '" style="background-position:' + (-_p) + 'px ' + (-(w - _r) - _yoff) + 'px; left:' + (_w - _r) + 'px"></div>\
-				<div class="bgi' + _name + '" style="background-position:' + (-(_p - _r)) + 'px ' + (-w - _yoff) + 'px; top:' + (_h - _r) + 'px"></div>\
-				<div class="bgh' + _name + '" style = "top:' + (_h - _r) + 'px; left:' + _r + 'px"></div>\
-				<div class="bgi' + _name + '" style="background-position:' + (-_p) + 'px ' + (-w - _yoff) + 'px; top:' + (_h - _r) + 'px; left:' + (_w - _r) + 'px"></div>\
-				<div class="bgc' + _name + '"></div>'	
-			));
-			$('.bgi' + _name).css({
-				position: 'absolute',
-				width: _r,
-				height: _r,
-				'background-image': 'url(' + _i + ')',
-				'background-repeat': 'no-repeat',
-				'-ms-filter': 'progid:DXImageTransform.Microsoft.gradient(startColorstr=#00FFFFFF,endColorstr=#00FFFFFF)',
-				'filter': 'progid:DXImageTransform.Microsoft.gradient(startColorstr=#00FFFFFF,endColorstr=#00FFFFFF)',
-				'zoom': 1
-			});
-			$('.bgh' + _name).css({
-				position: 'absolute',
-				width: _w - _r * 2,
-				height: _r,
-				'background-color': _c,
-				left: _r
-			});
-			$('.bgc' + _name).css({
-				position: 'absolute',
-				width: _w,
-				height: _h - _r * 2,
-				'background-color': _c,
-				top: _r,
-				left: 0
-			});
-		},
-		
-		
-		/*To calibrate position offset when navigation events supposed to be overlapped 
-		***********************************************************************************************************************/
-		changeOffset: function (x, y) {
-			if (x) this.oX = (this.tX - ((this.sW - this._w) / 2) - this.focusOffX) / (this._w / this.sW);
-			if (y) this.oY = (this.tY - ((this.sH - this._h) / 2) - this.focusOffY) / (this._h / this.sH);
-		},
-		
-
-		/*Transform Image Maps (hot spots) if any
-		***********************************************************************************************************************/
-		updateMap: function () {
-			var self = this,
-				mapId = 0;
-				
-			self.mapAreas.each(function () {
-				var new_vals = [];
-				for (var i = 0; i < self.map_coordinates[mapId].length; i++) {
-					new_vals[i] = self.map_coordinates[mapId][i] * self._sc;
-				}
-				new_vals = new_vals.join(",");
-				$(this).attr('coords', new_vals);
-				mapId++;
-			});
-		},
-		
-
-		/*To stop the timer loops immediatly
-		***********************************************************************************************************************/
-		haltAnimation: function () {
-			clearTimeout(this.ani_timer);
-			this._playing = false;
-			this._recent = '';
-		},
-
-
-		/*Method to Remove the plugin instance
-		***********************************************************************************************************************/
-		destroy: function () {
-			var self = this;
-			
-			if (self.assetsLoaded) {
-				self.haltAnimation();
-				for (prop in self.orig_style) {
-					if (self.orig_style[prop][0] !== false && self.orig_style[prop][0] !== undefined) {
-						if (self.orig_style[prop][0] === 'width' || self.orig_style[prop][0] === 'height') {
-							if (parseInt(self.orig_style[prop][1]) !== 0) {
-								self.$image.css(self.orig_style[prop][0], self.orig_style[prop][1]);
-							}
-						} else {
-							self.$image.css(self.orig_style[prop][0], self.orig_style[prop][1]);
-						}
-					}
-				}
-				clearTimeout(self.auto_timer);
-				$(document).unbind('.sz' + self.id);
-				$(window).unbind('.sz' + self.id);
-				self.$holder.unbind('.sz');
-				self.$controls = undefined;
-			} else {
-				self.$image.show();
-			}		
-				
-			if (self.container =='') {
-				if (self.image_url == '') {
-					self.$image.insertBefore(self.$holder);
-					if (self.$holder !== undefined) {
-						self.$holder.remove();
-					}
-				} else {
-					self.$elem.empty();
-					if (self.$loc_cont[0]) {
-						self.$elem.append(self.loc_clone);
-					}
-				}
-			} else {
-				self.$image.insertBefore(self.$holder);	
-				self.$holder.empty();								
-				self.$image.wrap(self.$holder);
-				if (self.$loc_cont[0]) {
-					self.$holder.append(self.loc_clone);
-				}
-			}
-			self.$elem.removeData('smoothZoom');
-			self.$holder = undefined;
-			self.Buttons = undefined;
-			self.op = undefined;
-			self.$image = undefined;
-		},
-	
-	
-		/*Method to change focus point and level
-		***********************************************************************************************************************/
-		focusTo: function (params) {
-			var self = this;
-			
-			if (self.assetsLoaded) {			
-				if (params.zoom === undefined || params.zoom === '' || params.zoom == 0) {
-					params.zoom = self.rA;
-				} else {
-					params.zoom /= 100;
-				}
-				self._onfocus = true;
-				if (params.zoom > self.rA && self.rA != self.zoom_max) {
-					self.rA = params.zoom;
-					self.rA = self.rA > self.zoom_max ? self.zoom_max : self.rA;
-				} else if (params.zoom < self.rA && self.rA != self.rF) {
-					self.rA = params.zoom;
-					self.rA = self.rA < self.rF ? self.rF : self.rA;
-				}
-				self.transOffX = self.transOffY = 0;
-				self.setDraggedPos(params.x === undefined || params.x === '' ? "" : (-params.x * self.rA) + (self.sW / 2), params.y === undefined || params.y === '' ? "" : (-params.y * self.rA) + (self.sH / 2), self.rA);
-				self.reduction =  params.speed? params.speed/10 : self.focusSpeed;
-				self._recent = 'drag';
-				self._dragging = true;
-				if(!self._playing) {
-					self.Animate();
-				}
-			}
-		},		
-
-		zoomIn: function (params) {
-			this.buttons[0].$ob.trigger(this.event_down, {
-				id: 0
-			});
-		},
-
-		zoomOut: function (params) {
-			this.buttons[1].$ob.trigger(this.event_down, {
-				id: 1
-			});
-		},
-
-		moveRight: function (params) {
-			this.buttons[2].$ob.trigger(this.event_down, {
-				id: 2
-			});
-		},
-
-		moveLeft: function (params) {
-			this.buttons[3].$ob.trigger(this.event_down, {
-				id: 3
-			});
-		},
-
-		moveUp: function (params) {
-			this.buttons[4].$ob.trigger(this.event_down, {
-				id: 4
-			});
-		},
-
-		moveDown: function (params) {
-			this.buttons[5].$ob.trigger(this.event_down, {
-				id: 5
-			});
-		},
-
-		Reset: function (params) {
-			this.buttons[6].$ob.trigger(this.event_down, {
-				id: 6
-			});
-		},				
-
-		getZoomData: function (params) {
-			if(this._x === undefined)return;
-
-			return {
-				//x offset (without scale ratio multiplied)
-				normX: (-this._x / this.rA).toFixed(14),				
-				
-				//y offset (without scale ratio multiplied)
-				normY: (-this._y / this.rA).toFixed(14),
-				
-				//Original image Width
-				normWidth: this.iW,
-				
-				//Original image height
-				normHeight: this.iH,
-				
-				//x offset (with scale ratio multiplied)
-				scaledX: -this._x.toFixed(14),
-				
-				//y offset (with scale ratio multiplied)
-				scaledY: -this._y.toFixed(14),
-				
-				//Scaled image width
-				scaledWidth: this._w,
-				
-				//Scaled image height
-				scaledHeight: this._h,
-							
-				//The X location on image which is currently on center of canvas 
-				centerX: (-this._x.toFixed(14) + (this.sW / 2)) / this.rA,
-				
-				//The Y location on image which is currently on center of canvas 
-				centerY: (-this._y.toFixed(14) + (this.sH / 2)) / this.rA,
-				
-				//Scale ratio
-				ratio: this.rA 
-			};
-		},
-		
-		addLandmark: function (loc) {
-			if (this.$loc_cont) {				
-				var total = loc.length;
-				
-				for (var i=0; i<total; i++) {
-					var $loc = $(loc[i]);
-					this.$loc_cont.append($loc);
-					this.setLocation($loc);						
-				}	
-							
-				if (total>0) {
-					this.updateLocations(this._x, this._y, this._sc, this.locations);	
-				}
-			}
-		},
-		
-		attachLandmark: function (loc) {
-			if (this.$loc_cont){				
-				var total = loc.length;				
-				for (var i=0; i<total; i++) {					
-					this.setLocation( loc[i] instanceof jQuery ? loc[i] : $('#'+loc[i]));		
-				}
-				if (total>0) {
-					this.updateLocations(this._x, this._y, this._sc, this.locations);
-				}
-			}			
-		},
-		
-		removeLandmark: function (loc) {
-			if (this.$loc_cont){				
-				if (loc){			
-					var total = loc.length;					
-					for (var i=0; i<total; i++) {
-						for (var j=0; j<this.locations.length; j++) {
-							if ((loc[i] instanceof jQuery && this.locations[j].ob[0] == loc[i][0]) || (!(loc[i] instanceof jQuery) && this.locations[j].ob.attr('id') == loc[i])) {							
-								this.locations[j].ob.remove ();
-								this.locations.splice(j,1);
-								j--;						
-							} 
-						}
-					}
-				} else {
-					if (this.locations.length > 0) {
-						this.locations[this.locations.length-1].ob.remove ();
-						this.locations.pop();
-					}
-				}
-				if (total>0) {
-					this.updateLocations(this._x, this._y, this._sc, this.locations);
-				}
-			}			
-		},
-		
-		refreshAllLandmarks: function () {
-			var self = this;
-			var locs = self.$loc_cont.children('.item');
-			self.show_at_zoom = parseInt(self.$loc_cont.data('show-at-zoom'),10) / 100;
-			self.allow_scale = checkBoolean(self.$loc_cont.data('allow-scale'));
-			self.allow_drag = checkBoolean(self.$loc_cont.data('allow-drag'));
-				
-			//Step 1: Remove records for which the elements no longer exist
-			for (var i=0; i<self.locations.length; i++) {					
-				var exists = false;					
-				locs.each(function () {
-					if (self.locations[i].ob[0] == $(this)[0]) {
-						exists = true;	
-					}
-				});					
-				if (!exists) {
-					self.locations.splice(i,1);
-					i--;
-				}
-			}	
-			
-			//Step 2: Add new elements to record
-			locs.each(function () {
-				var exists = false;		
-				for (var i=0; i<self.locations.length; i++) {					
-					if (self.locations[i].ob[0] == $(this)[0]) {
-						exists = true;	
-						break;
-					}
-				}
-				if (!exists) {
-					self.setLocation($(this));	
-				}
-	
-			});					
-			this.updateLocations(this._x, this._y, this._sc, this.locations);
-		},
-		
-		
-		/*On windows resize, adjust some defaults
-		***********************************************************************************************************************/
-		resize: function (e) {	
-			var self;
-			
-			if (e.data) {	
-				e.preventDefault();			
-				self = e.data.self;			
-				var pw = self.$holder.parent().width();	
-				var ph = self.$holder.parent().height();	
-										
-				if (self.oW) {
-					pw = Math.min(pw, self.oW);												
-				}				
-				self.sW = pw;
-				
-				if (self.oH) {
-					if (self.oW && self.maintain_ratio) {
-						self.sH = pw/(self.oW/self.oH);			
-					}					
-				} else {
-					self.sH = ph;
-				}
-						
-				
-			}  else {
-				self = this;
-				if (e.width) {
-					self.sW = e.width;
-				}
-				if (e.height) {
-					self.sH = e.height;
-				}
-				if (e.max_WIDTH) {
-					self.w_max = e.max_WIDTH;
-				}
-				if (e.max_HEIGHT) {
-					self.h_max = e.max_HEIGHT;
-				}
-			}			
-			if (self.w_max !== 0 && self.w_max !== '') {
-				self.sW = Math.min(self.sW, self.w_max);
-			}
-			if (self.h_max !== 0 && self.h_max !== '') {
-				self.sH = Math.min(self.sH, self.h_max);
-			}
-			self.$holder.css({
-				'width': self.sW,
-				'height': self.sH
-			});
-			if (self.bord_size > 0) {
-				self.border[0].height(self.sH);
-				self.border[1].css({
-					height: self.sH,
-					left: self.sW - self.bord_size
-				});
-				self.border[2].width(self.sW - (self.bord_size * 2));
-				self.border[3].css({
-					width: self.sW - (self.bord_size * 2),
-					top: self.sH - self.bord_size
-				});
-			}			
-			if (self.bu_align[1] == 'center') {
-				self.$controls.css('left', parseInt((self.sW - self.cBW) / 2));
-			}
-			if (self.bu_align[0] == 'center') {
-				self.$controls.css('top', parseInt((self.sH - self.cBH) / 2));
-			}
-			self.rF = self.rR = self.checkRatio(self.sW, self.sH, self.iW, self.iH, self.zoom_fit);
-			if (self.zoom_min == 0) {				
-				if (self.rA< self.rF){
-					self.rA = self.rF;
-				}
-			}
-			
-			self.focusTo({
-				x: self.cX,
-				y: self.cY,
-				zoom:'',
-				speed: 10
-			});			
-		}
-	}
-
-
-	$.fn.smoothZoom = function (params) {		
-		var self = this;		
-		var l = self.length;
-		
-		//For single or more than one plugin instance
-		for (var i = 0; i<l; i++) {
-			var $elem = $(self[i]);
-			var instance = $elem.data('smoothZoom');
-			
-			// Case 1: Initiate the plugin if not already have an instance
-			if (!instance) {
-		
-				if (typeof params === 'object' || !params) {
-					$elem.data('smoothZoom', new Zoomer($elem, params));				
-				}
-			
-			// Case 2: If the instance already available - Check for method call
-			} else {	
-
-				// getZoomData - Returns {sourceX, sourceY, sourceWidth, sourceHeight, distX, distY, distWidth, distHeight, centerX, centerY, ratio}				
-				if (params == "getZoomData") {				
-					return instance[params].apply(instance, Array.prototype.slice.call(arguments, 1));
-					
-				// destroy | focusTo | zoomIn | zoomOut | moveRight| moveLeft | moveUp | moveDown | Reset | addLandmark | removeLandmark | attachLandmark | refreshAllLandmarks
-				} else if (instance[params]) {
-					instance[params].apply(instance, Array.prototype.slice.call(arguments, 1));
-				}
-			}					
-		}	
-		
-		//return for chainability for possible cases
-		if (params !== "getZoomData") {
-			return this;
-		}
-	};
-	
-	function checkBoolean (_var) {
-		if (_var === true) {
-			return true;
-		} else if (_var) {
-			_var = _var.toLowerCase();
-			if (_var == 'yes' || _var == 'true') {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	
-		//...................................................................................................................
-	//Using Modernizr to check browser capabilities and property names prefixed
-			
-	/* Modernizr 2.8.2 (Custom Build) | MIT & BSD
-	 * Build: http://modernizr.com/download/#-borderradius-csstransforms-csstransforms3d-prefixed-teststyles-testprop-testallprops-prefixes-domprefixes
-	 */
-	window.Modernizr=function(a,b,c){function y(a){i.cssText=a}function z(a,b){return y(l.join(a+";")+(b||""))}function A(a,b){return typeof a===b}function B(a,b){return!!~(""+a).indexOf(b)}function C(a,b){for(var d in a){var e=a[d];if(!B(e,"-")&&i[e]!==c)return b=="pfx"?e:!0}return!1}function D(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:A(f,"function")?f.bind(d||b):f}return!1}function E(a,b,c){var d=a.charAt(0).toUpperCase()+a.slice(1),e=(a+" "+n.join(d+" ")+d).split(" ");return A(b,"string")||A(b,"undefined")?C(e,b):(e=(a+" "+o.join(d+" ")+d).split(" "),D(e,b,c))}var d="2.8.2",e={},f=b.documentElement,g="modernizr",h=b.createElement(g),i=h.style,j,k={}.toString,l=" -webkit- -moz- -o- -ms- ".split(" "),m="Webkit Moz O ms",n=m.split(" "),o=m.toLowerCase().split(" "),p={},q={},r={},s=[],t=s.slice,u,v=function(a,c,d,e){var h,i,j,k,l=b.createElement("div"),m=b.body,n=m||b.createElement("body");if(parseInt(d,10))while(d--)j=b.createElement("div"),j.id=e?e[d]:g+(d+1),l.appendChild(j);return h=["&#173;",'<style id="s',g,'">',a,"</style>"].join(""),l.id=g,(m?l:n).innerHTML+=h,n.appendChild(l),m||(n.style.background="",n.style.overflow="hidden",k=f.style.overflow,f.style.overflow="hidden",f.appendChild(n)),i=c(l,a),m?l.parentNode.removeChild(l):(n.parentNode.removeChild(n),f.style.overflow=k),!!i},w={}.hasOwnProperty,x;!A(w,"undefined")&&!A(w.call,"undefined")?x=function(a,b){return w.call(a,b)}:x=function(a,b){return b in a&&A(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=this;if(typeof c!="function")throw new TypeError;var d=t.call(arguments,1),e=function(){if(this instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(t.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(t.call(arguments)))};return e}),p.borderradius=function(){return E("borderRadius")},p.csstransforms=function(){return!!E("transform")},p.csstransforms3d=function(){var a=!!E("perspective");return a&&"webkitPerspective"in f.style&&v("@media (transform-3d),(-webkit-transform-3d){#modernizr{left:9px;position:absolute;height:3px;}}",function(b,c){a=b.offsetLeft===9&&b.offsetHeight===3}),a};for(var F in p)x(p,F)&&(u=F.toLowerCase(),e[u]=p[F](),s.push((e[u]?"":"no-")+u));return e.addTest=function(a,b){if(typeof a=="object")for(var d in a)x(a,d)&&e.addTest(d,a[d]);else{a=a.toLowerCase();if(e[a]!==c)return e;b=typeof b=="function"?b():b,typeof enableClasses!="undefined"&&enableClasses&&(f.className+=" "+(b?"":"no-")+a),e[a]=b}return e},y(""),h=j=null,e._version=d,e._prefixes=l,e._domPrefixes=o,e._cssomPrefixes=n,e.testProp=function(a){return C([a])},e.testAllProps=E,e.testStyles=v,e.prefixed=function(a,b,c){return b?E(a,b,c):E(a,"pfx")},e}(this,document);
-	
-	var prop_transform = Modernizr.prefixed('transform');
-	var prop_origin = Modernizr.prefixed('transformOrigin');
-	var prop_radius = Modernizr.prefixed('borderRadius');
-	var supportsTrans3D = Modernizr.csstransforms3d;
-	
+  function Zoomer($elem, params) {
+
+    var self = this,
+    op = $.extend({}, defaults, params);
+    this.$elem = $elem;
+    this.hasTouch = this.checkTouchSupport ();
+
+    /**********************************************************
+    Option values verified and formated if needed
+    **********************************************************/
+    this.sW = op.width;
+    this.sH = op.height;
+
+    this.init_zoom = op.initial_ZOOM / 100;
+    this.init_pos = op.initial_POSITION.replace(/,/g, ' ').replace(/\s{2,}/g, ' ').split(' ');
+
+    this.zoom_max = op.zoom_MAX / 100;
+    this.zoom_min = op.zoom_MIN / 100;
+
+    this.zoom_single = checkBoolean (op.zoom_SINGLE_STEP);
+    this.zoom_fit = checkBoolean (op.zoom_OUT_TO_FIT);
+    this.zoom_speed = 1 + (((op.animation_SPEED === 0 || op.animation_SPEED? op.animation_SPEED : op.animation_SPEED_ZOOM) + 1) / 20);
+    this.zoom_show = checkBoolean (op.zoom_BUTTONS_SHOW);
+
+    this.pan_speed_o = (op.animation_SPEED === 0 || op.animation_SPEED ? op.animation_SPEED : op.animation_SPEED_PAN);
+    this.pan_show = checkBoolean (op.pan_BUTTONS_SHOW);
+    this.pan_limit = checkBoolean (op.pan_LIMIT_BOUNDARY);
+    this.pan_rev = checkBoolean (op.pan_REVERSE);
+
+    this.reset_align = op.reset_ALIGN_TO.toLowerCase().split(' ');
+    this.reset_to_zmin = checkBoolean(op.reset_TO_ZOOM_MIN);
+
+    this.bu_size = parseInt((this.hasTouch? op.button_SIZE_TOUCH_DEVICE : op.button_SIZE)/2)*2;
+    this.bu_color = op.button_COLOR;
+    this.bu_bg = op.button_BG_COLOR;
+    this.bu_bg_alpha = op.button_BG_TRANSPARENCY / 100;
+    this.bu_icon = op.button_ICON_IMAGE;
+    this.bu_auto = checkBoolean (op.button_AUTO_HIDE);
+
+    this.bu_delay = op.button_AUTO_HIDE_DELAY * 1000;
+    this.bu_align = op.button_ALIGN.toLowerCase().split(' ');
+    this.bu_margin = op.button_MARGIN;
+    this.bu_round = checkBoolean (op.button_ROUND_CORNERS);
+
+    this.touch_drag = checkBoolean (op.touch_DRAG);
+    this.mouse_drag = checkBoolean (op.mouse_DRAG);
+    this.mouse_wheel = checkBoolean (op.mouse_WHEEL);
+    this.mouse_wheel_cur = checkBoolean (op.mouse_WHEEL_CURSOR_POS);
+    this.mouse_dbl_click = checkBoolean (op.mouse_DOUBLE_CLICK);
+
+    this.ani_smooth =  Math.max(1, (op.animation_SMOOTHNESS+1)/1.45);
+
+    this.bg_color = op.background_COLOR;
+    this.bord_size = op.border_SIZE;
+    this.bord_color = op.border_COLOR;
+    this.bord_alpha = op.border_TRANSPARENCY / 100;
+
+    this.container = op.container;
+    this.image_url = op.image_url;
+    this.image_width = op.image_original_width;
+    this.image_height = op.image_original_height;
+
+    this.responsive = checkBoolean (op.responsive);
+    this.maintain_ratio = checkBoolean (op.responsive_maintain_ratio);
+    this.w_max = op.max_WIDTH;
+    this.h_max = op.max_HEIGHT;
+
+    this.onLOAD = op.on_IMAGE_LOAD;
+    this.onUPDATE = op.on_ZOOM_PAN_UPDATE;
+    this.onZOOM_PAN = op.on_ZOOM_PAN_COMPLETE;
+    this.onLANDMARK = op.on_LANDMARK_STATE_CHANGE;
+
+    /***********************************************************
+    Variables for inner operation.
+    x, y, width, height and scale value of image
+    ***********************************************************/
+    this._x;
+    this._y;
+    this._w;
+    this._h;
+    this._sc = 0;
+
+    this.rA = 1;
+    this.rF = 1;
+    this.rR = 1;
+    this.iW = 0;
+    this.iH = 0;
+    this.tX = 0;
+    this.tY = 0;
+    this.oX = 0;
+    this.oY = 0;
+    this.fX = 0;
+    this.fY = 0;
+    this.dX = 0;
+    this.dY = 0;
+    this.cX = 0;
+    this.cY = 0;
+
+    this.transOffX = 0;
+    this.transOffY = 0;
+    this.focusOffX = 0;
+    this.focusOffY = 0;
+    this.offX = 0;
+    this.offY = 0;
+
+    /***********************************************************
+    Flags that convey current states and events
+    ***********************************************************/
+    this._playing = false;
+    this._dragging = false;
+    this._onfocus = false;
+    this._moveCursor = false;
+    this._wheel = false;
+    this._recent = 'zoomOut';
+    this._pinching = false;
+    this._landmark = false;
+    this._rA;
+    this._centx;
+    this._centy;
+    this._onButton = false;
+    this._onHitArea = false;
+    this.cFlag = {
+      _zi: false,
+      _zo: false,
+      _ml: false,
+      _mr: false,
+      _mu: false,
+      _md: false,
+      _rs: false,
+      _nd: false
+    };
+
+    /***********************************************************
+    Elements and arrays that references elements
+    ***********************************************************/
+    this.$holder;
+    this.$hitArea;
+    this.$controls;
+    this.$loc_cont;
+    this.map_coordinates = [];
+    this.locations = [];
+    this.buttons = [];
+    this.border = [];
+
+    /***********************************************************
+    miscellaneous
+    ***********************************************************/
+    this.buttons_total = 7;
+    this.cButtId = 0;
+    this.pan_speed;
+    this.auto_timer;
+    this.ani_timer;
+    this.ani_end;
+    this.focusSpeed = this.reduction = .5;
+    this.orig_style;
+    this.mapAreas;
+    this.icons;
+    this.show_at_zoom;
+    this.assetsLoaded = false;
+    this.zStep = 0;
+    this.sRed = 300;
+    this.use3D = op.use_3D_Transform && supportsTrans3D;
+
+    // Set events to support pointer / touch / mouse
+    if (navigator.pointerEnabled || navigator.msPointerEnabled) {
+      //Pointer
+      if (navigator.pointerEnabled) {
+        this.pointerDown = 'pointerdown';
+        this.pointerUp = 'pointerup';
+        this.pointerMove = 'pointermove';
+
+      } else if (navigator.msPointerEnabled) {
+        this.pointerDown = 'MSPointerDown';
+        this.pointerUp = 'MSPointerUp';
+        this.pointerMove = 'MSPointerMove';
+
+      }
+      this.event_down = this.pointerDown+ '.sz';
+      this.event_up   = this.pointerUp+ '.sz';
+      this.event_move = this.pointerMove+ '.sz';
+
+      this.supportsPointer = true;
+      this.pointers = [];
+
+    } else if (this.hasTouch){
+      //Touch only
+      this.event_down = 'touchstart'+ '.sz';
+      this.event_up   = 'touchend'+ '.sz';
+      this.event_move = 'touchmove'+ '.sz';
+
+    } else {
+      //Mouse only
+      this.event_down = 'mousedown'+ '.sz';
+      this.event_up   = 'mouseup'+ '.sz';
+      this.event_move = 'mousemove'+ '.sz';
+    }
+
+    //Case 1: Image specificed (possibly) through img tag:
+    if (this.image_url == '') {
+      this.$image = $elem;
+      this.id = this.$image.attr('id');
+
+    //Case 2: Image url specificed through parameter:
+    } else {
+      var img = new Image();
+      if (this.image_width) {
+        img.width = this.image_width;
+      }
+      if (this.image_height) {
+        img.height = this.image_height;
+      }
+      img.src = this.image_url;
+      this.$image = $(img).appendTo($elem);
+    }
+
+
+    //Prepare container div (Basically the element that masks image with overflow hidden)
+    this.setContainer();
+
+    //Get button icon image's url
+    var testOb;
+    if (!this.bu_icon) {
+      var regx=/url\(["']?([^'")]+)['"]?\)/;
+      testOb = $('<div class="smooth_zoom_icons"></div>');
+      this.$holder.append(testOb);
+      this.bu_icon = testOb.css("background-image").replace(regx,'$1');
+      if (this.bu_icon == 'none') {
+        this.bu_icon = 'http://jibestream2.cloudapp.net:8082/cms/components/label/23987_1_262_yah.png';
+      }
+      testOb.remove();
+    }
+
+    //Firefox feature checkup
+    if (this.$image.css('-moz-transform') && prop_transform) {
+      testOb = $('<div style="-moz-transform: translate(1px, 1px)"></div>');
+      this.$holder.append(testOb);
+      this.fixMoz = testOb.position().left === 1 ? false : true;
+      testOb.remove();
+    } else {
+      this.fixMoz = false;
+    }
+
+    //Preload icons and main image.
+    this.$image.hide();
+    this.imgList = [
+      {loaded: false, src: this.bu_icon || 'http://jibestream2.cloudapp.net:8082/cms/components/label/23987_1_262_yah.png'}, //Icon image
+      {loaded: false, src: this.image_url == ''? this.$image.attr('src') : this.image_url} // Main image
+    ];
+
+    // //console.log("From smooth zoom", this.imgList);
+    $.each(this.imgList, function (i){
+      var _img = new Image();
+      $(_img).bind('load', {id:i, self: self}, self.loadComplete).bind('error', {id:i, self: self}, self.loadComplete); //Allow initiation even if image is not there :(
+      if(self.imgList[i].src !== undefined)_img.src = self.imgList[i].src;
+      else $(_img).trigger('error');
+    });
+
+  }
+
+  Zoomer.prototype = {
+
+    /*Preload the icon and main image
+    *********************************************************************************************************************/
+    loadComplete: function (e) {
+      var self = e.data.self,
+        complete = true;
+
+      self.imgList[e.data.id].loaded = true;
+      for (var j=0; j<self.imgList.length; j++){
+        if (!self.imgList[j].loaded) {
+          complete = false;
+        }
+      }
+      if (complete) {
+        self.assetsLoaded = true;
+        if (self.onLOAD !== '') {
+          self.onLOAD ();
+        }
+
+        //Assets loaded, initiate plugin
+        self.init();
+      }
+    },
+
+
+    /*Make sure the device has touch screen support
+    *********************************************************************************************************************/
+    checkTouchSupport: function (){
+      var touch = 'ontouchstart' in window || 'createTouch' in document;
+      if (navigator.pointerEnabled) {
+        touch =  Boolean(touch || navigator.maxTouchPoints);
+      } else if (navigator.msPointerEnabled) {
+        touch = Boolean(touch || navigator.msMaxTouchPoints);
+      }
+      return touch;
+    },
+
+
+    /*Initiate after assets loaded
+    ***********************************************************************************************************************/
+    init: function () {
+      var self = this,
+        $image = self.$image,
+        sW = self.sW,
+        sH = self.sH,
+        container = self.container,
+        cBW, cBH, pan_show = self.pan_show,
+        zoom_show = self.zoom_show,
+        $controls = self.$controls,
+        buttons = self.buttons,
+        cFlag = self.cFlag,
+        bu_align = self.bu_align,
+        bu_margin = self.bu_margin,
+        $holder = self.$holder;
+
+
+      //For phonegap/cordova
+      // if(sW === 0 || sH === 0){
+      //  sW = self.sW;
+      //  sH = self.sH;
+      // }
+      // alert("-----> " + sW + "  " +  sH);
+
+
+      //Store the default image properties so that it can be reverted back when plugin needs to be destroyed
+      self.orig_style = self.getStyle();
+
+      //IE 6 Image tool bar disabled
+      $image.attr('galleryimg', 'no');
+
+      if (!navigator.userAgent.toLowerCase().match(/(iphone|ipod|ipad)/)) {
+        $image.removeAttr('width');
+        $image.removeAttr('height');
+      }
+
+      //In case parent element's display property set to 'none', we need to first set them 'block', measure the width and height and then set them back to 'none'
+      var temp = $image,
+      dispArray = [];
+
+      for (var i = 0; i<5; i++) {
+        if (temp && temp[0] && temp[0].tagName !== 'body' && temp[0].tagName !== 'HTML'){
+          if(temp.hasClass("map-floor-container-base") === true){
+            temp.width('100%');
+            temp.height('100%');
+          }
+          if (temp.css('display') == 'none') {
+            temp.css('display', 'block');
+            dispArray.push(temp);
+
+          }
+          // alert("Checking size - > "+ temp.attr("id") + "  " + temp.width() + "  " + temp.height());
+          temp = temp.parent();
+        } else {
+          break;
+        }
+      }
+
+      self.iW = $image.width();
+      self.iH = $image.height();
+      // alert("Setting parent - > " + sW + "  " +  sH + "  " +  self.iW + "  " +  self.iH + "  " +  self.zoom_fit);
+
+
+      for (var i = 0; i< dispArray.length; i++) {
+        dispArray[i].css('display', 'none');
+      }
+
+      //Initially the image needs to be resized to fit container. To do so, first measure the scaledown ratio
+      self.rF = self.rR = self.checkRatio(sW, sH, self.iW, self.iH, self.zoom_fit);
+
+      //If NO Minimum zoom value set
+      if (self.zoom_min == 0 || self.init_zoom != 0) {
+        if (self.init_zoom != '') {
+          self.rA = self._sc = self.init_zoom;
+        } else {
+          self.rA = self._sc = self.rF;
+        }
+        if (self.zoom_min != 0) {
+          self.rF = self.zoom_min;
+          if (self.reset_to_zmin) {
+            self.rR = self.zoom_min
+          }
+        }
+
+      //If Minimum zoom value set
+      } else {
+        if (self.rF < self.zoom_min) {
+          self.rF = self.zoom_min;
+          if (self.reset_to_zmin) {
+            self.rR = self.zoom_min
+          }
+          self.rA = self._sc = self.zoom_min;
+        } else {
+          self.rA = self._sc = self.rR;
+        }
+      }
+
+      //Width and Height to be applied to the image
+      self._w = self._sc * self.iW;
+      self._h = self._sc * self.iH;
+
+      // alert(self._w + "  " + self._h);
+
+
+
+      //Resize the image and position it centered inside the wrapper
+      if (self.init_pos == '') {
+        self._x = self.tX = (sW - self._w) / 2;
+        self._y = self.tY = (sH - self._h) / 2;
+      } else {
+        self._x = self.tX = (sW / 2) - parseInt(self.init_pos[0]) * self._sc;
+        self._y = self.tY = (sH / 2) - parseInt(self.init_pos[1]) * self._sc;
+        self.oX = (self.tX - ((sW - self._w) / 2)) / (self._w / sW);
+        self.oY = (self.tY - ((sH - self._h) / 2)) / (self._h / sH);
+      }
+
+      if ((!self.pan_limit || self._moveCursor || self.init_zoom != self.rF) && self.mouse_drag) {
+         $image.css('cursor', 'move');
+         self.$hitArea.css('cursor', 'move');
+      }
+
+
+      if (prop_transform) {
+        self.$image.css(prop_origin, '0 0');
+      }
+      if (self.use3D) {
+        $image.css({
+          '-webkit-backface-visibility': 'hidden',
+          '-webkit-perspective': 1000
+        });
+      }
+
+      //Start displaying the image
+      $image.css({
+          position: 'absolute',
+          'z-index': 2,
+          left: '0px',
+          top: '0px',
+          '-webkit-box-shadow': '1px 1px rgba(0,0,0,0)'
+        })
+        .hide()
+        .fadeIn(500, function () {
+          $holder.css('background-image', 'none');
+        });
+
+      //Create Control buttons and events
+      var self = self,
+        bs = self.bu_size,
+        iSize = 50,
+        sDiff = 2,
+        bSpace = 3,
+        mSize = Math.ceil(self.bu_size / 4),
+        iconOff = bs < 16 ? 50 : 0,
+        bsDiff = bs - sDiff;
+
+      //Show all buttons
+      if (pan_show) {
+        if (zoom_show) {
+          cBW = parseInt(bs + (bs * .85) + (bsDiff * 3) + (bSpace * 2) + (mSize * 2));
+        } else {
+          cBW = parseInt((bsDiff * 3) + (bSpace * 2) + (mSize * 2));
+        }
+        cBH = parseInt((bsDiff * 3) + (bSpace * 2) + (mSize * 2));
+
+        //Show zoom buttons only
+      } else {
+        if (zoom_show) {
+          cBW = parseInt(bs + mSize * 2);
+          cBH = parseInt(bs * 2 + mSize * 3);
+          cBW = parseInt(cBW / 2) * 2;
+          cBH = parseInt(cBH / 2) * 2;
+        } else {
+          cBW = 0;
+          cBH = 0;
+        }
+      }
+
+      var pOff = (iSize - bs) / 2,
+        resetCenterX = cBW - ((bs - (pan_show ? sDiff : 0)) * 2) - mSize - bSpace,
+        resetCenterY = (cBH / 2) - ((bs - (pan_show ? sDiff : 0)) / 2);
+
+      var hProp, vProp, hVal, vVal;
+      //Align button set as per settings
+      if (bu_align[0] == 'top') {
+        vProp = 'top';
+        vVal = bu_margin;
+      } else if (bu_align[0] == 'center') {
+        vProp = 'top';
+        vVal = parseInt((sH - cBH) / 2);
+      } else {
+        vProp = 'bottom';
+        vVal = bu_margin;
+      }
+      if (bu_align[1] == 'right') {
+        hProp = 'right';
+        hVal = bu_margin;
+      } else if (bu_align[1] == 'center') {
+        hProp = 'right';
+        hVal = parseInt((sW - cBW) / 2);
+      } else {
+        hProp = 'left';
+        hVal = bu_margin;
+      }
+
+      //Buttons Container
+      $controls = $(
+        '<div style="position: absolute; ' + hProp + ':' + hVal + 'px; ' + vProp + ': ' + vVal + 'px; width: ' + cBW + 'px; height: ' + cBH + 'px; z-index: 20;" class="noSel">\
+          <div class="noSel controlsBg" style="position: relative; width: 100%; height: 100%; z-index: 1;">\
+          </div>\
+        </div>'
+      );
+
+      $holder.append($controls);
+      var $controlsBg = $controls.find('.controlsBg');
+
+      //Make the corners rounded
+      if (self.bu_round) {
+        if (prop_radius) {
+          $controlsBg
+            .css(prop_radius, (iconOff > 0 ? 4 : 5) + 'px')
+            .css('background-color', self.bu_bg);
+        } else {
+          self.roundBG(
+            $controlsBg,
+            'cBg',
+            cBW,
+            cBH,
+            iconOff > 0 ? 4 : 5,
+            375,
+            self.bu_bg,
+            self.bu_icon,
+            1,
+            iconOff ? 50 : 0
+          );
+        }
+      } else {
+        $controlsBg.css('background-color', self.bu_bg);
+      }
+
+      $controlsBg.css('opacity', self.bu_bg_alpha);
+
+      //Generating Button properties  (7 buttons)
+      buttons[0] = {
+        _var: '_zi',
+        l: mSize,
+        t: pan_show ? (cBH - (bs * 2) - (bSpace * 2) + 2) / 2 : mSize,
+        w: bs,
+        h: bs,
+        bx: -pOff,
+        by: -pOff - iconOff
+      };
+
+      buttons[1] = {
+        _var: '_zo',
+        l: mSize,
+        t: pan_show ? ((cBH - (bs * 2) - (bSpace * 2) + 2) / 2) + bs + (bSpace * 2) - 2 : cBH - bs - mSize,
+        w: bs,
+        h: bs,
+        bx: -iSize - pOff,
+        by: -pOff - iconOff
+      };
+
+      buttons[2] = {
+        _var: self.pan_rev? '_ml' : '_mr',
+        l: resetCenterX - bsDiff - bSpace,
+        t: resetCenterY,
+        w: bsDiff,
+        h: bsDiff,
+        bx: -(sDiff / 2) - iSize * 2 - pOff,
+        by: -(sDiff / 2) - pOff - iconOff
+      };
+
+      buttons[3] = {
+        _var: self.pan_rev? '_mr' : '_ml',
+        l: resetCenterX + bsDiff + bSpace,
+        t: resetCenterY,
+        w: bsDiff,
+        h: bsDiff,
+        bx: -(sDiff / 2) - iSize * 3 - pOff,
+        by: -(sDiff / 2) - pOff - iconOff
+      };
+
+      buttons[4] = {
+        _var: self.pan_rev? '_md' : '_mu',
+        l: resetCenterX,
+        t: resetCenterY + bsDiff + bSpace,
+        w: bsDiff,
+        h: bsDiff,
+        bx: -(sDiff / 2) - iSize * 4 - pOff,
+        by: -(sDiff / 2) - pOff - iconOff
+      };
+
+      buttons[5] = {
+        _var: self.pan_rev? '_mu' : '_md',
+        l: resetCenterX,
+        t: resetCenterY - bsDiff - bSpace,
+        w: bsDiff,
+        h: bsDiff,
+        bx: -(sDiff / 2) - iSize * 5 - pOff,
+        by: -(sDiff / 2) - pOff - iconOff
+      };
+
+      buttons[6] = {
+        _var: '_rs',
+        l: resetCenterX,
+        t: resetCenterY,
+        w: bsDiff,
+        h: bsDiff,
+        bx: -(sDiff / 2) - iSize * 6 - pOff,
+        by: -(sDiff / 2) - pOff - iconOff
+      };
+
+      for (var i = 0; i < 7; i++) {
+        buttons[i].$ob = $(
+            '<div style="position: absolute; display: ' + (i < 2 ? zoom_show ? 'block' : 'none' : pan_show ? 'block' : 'none') + '; left: ' + (buttons[i].l - 1) + 'px; top: ' + (buttons[i].t - 1) + 'px; width: ' + (buttons[i].w + 2) + 'px; height: ' + (buttons[i].h + 2) + 'px; z-index:' + (i + 1) + ';" class="noSel">\
+            </div>'
+          )
+        .css('opacity', .7)
+        .bind('mouseover.sz mouseout.sz '+self.event_down, {
+          id: i
+
+        }, function (e) {
+          self._onfocus = false;
+          var $this = $(this);
+
+          //Button over
+          if (e.type == 'mouseover') {
+            if ($this.css('opacity') > .5){
+               $this.css('opacity', 1);
+            }
+
+          //Button out
+          } else if (e.type == 'mouseout') {
+            if ($this.css('opacity') > .5) {
+              $this.css('opacity', .7);
+            }
+
+          //Button press/down
+          } else if (e.type == 'mousedown' || e.type == 'touchstart' || e.type == self.pointerDown) {
+            self.cButtId = e.data.id;
+            self._onButton = true;
+            self._wheel = false;
+
+            //If NOT already down..
+            if ($this.css('opacity') > .5) {
+              $this.css('opacity', 1);
+              $holder.find('#' + buttons[self.cButtId]._var + 'norm').hide();
+              $holder.find('#' + buttons[self.cButtId]._var + 'over').show();
+
+              //CASE 1: If zoomIn pressed and single step zoom enabled
+              if (self.cButtId <= 1 && self.zoom_single){
+                if (!cFlag[buttons[self.cButtId]._var]) {
+                  self.sRed = 300;
+                  cFlag[buttons[self.cButtId]._var] = true;
+                }
+
+              //CASE 2: If any button except RESET pressed
+              } else if (self.cButtId <6) {
+                cFlag[buttons[self.cButtId]._var] = true;
+
+              //CASE 3: RESET pressed
+              } else {
+                cFlag._rs = true;
+                self.rA = self.rR;
+                if (self.reset_align[0] == 'top') {
+                  self.fY = (self.sH/2)*(self.rA/2);
+                } else if (self.reset_align[0] == 'bottom') {
+                  self.fY = -(self.sH/2)*(self.rA/2);
+                } else {
+                  self.fY = 0;
+                }
+                if (self.reset_align[1] == 'left') {
+                  self.fX = (self.sW/2)*(self.rA/2);
+                } else if (self.reset_align[1] == 'right') {
+                  self.fX = -(self.sW/2)*(self.rA/2);
+                } else {
+                  self.fX = 0;
+                }
+              }
+
+              self.focusOffX = self.focusOffY = 0;
+              self.changeOffset(true, true);
+              if(!self._playing) {
+                self.Animate();
+              }
+            }
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        });
+
+        //Make 2 BGs for Button Normal and Over state
+        //Button BG normal
+        var tpm = $(
+          '<div id="' + buttons[i]._var + 'norm" style="position: absolute; left: 1px; top: 1px; width: ' + buttons[i].w + 'px; height: ' + buttons[i].h + 'px; '+(prop_radius || !self.bu_round ? 'background:'+self.bu_color : '')+'">\
+          </div>'
+        );
+
+        //Button BG hover
+        var tpmo = $(
+          '<div id="' + buttons[i]._var + 'over" style="position: absolute; left: 0px; top: 0px; width: ' + (buttons[i].w + 2) + 'px; height: ' + (buttons[i].h + 2) + 'px; display: none; '+(prop_radius || !self.bu_round ? 'background:'+self.bu_color : '')+'">\
+          </div>'
+        );
+
+        //Add the button icons
+        var cont = $(
+          '<div id="' + buttons[i]._var + '_icon" style="position: absolute; left: 1px; top: 1px; width: ' + buttons[i].w + 'px; height: ' + buttons[i].h + 'px; background: transparent url(' + self.bu_icon + ') ' + buttons[i].bx + 'px ' + buttons[i].by + 'px no-repeat;" >\
+          </div>'
+        );
+
+        buttons[i].$ob.append(tpm, tpmo, cont);
+        $controls.append(buttons[i].$ob);
+
+        //Apply corner radius
+        if (self.bu_round) {
+          if (prop_radius) {
+            tpm.css(prop_radius , '2px');
+            tpmo.css(prop_radius , '2px');
+          } else {
+            self.roundBG(
+              tpm,
+              buttons[i]._var + "norm",
+              buttons[i].w,
+              buttons[i].h,
+              2,
+              425,
+              self.bu_color,
+              self.bu_icon,
+              i + 1,
+              iconOff ? 50 : 0
+            );
+            self.roundBG(
+              tpmo,
+              buttons[i]._var + "over",
+              buttons[i].w + 2,
+              buttons[i].h + 2,
+              2,
+              425,
+              self.bu_color,
+              self.bu_icon,
+              i + 1,
+              iconOff ? 50 : 0
+            );
+          }
+        }
+      }
+
+      //Add Events for mouse drag / touch swipe action
+      $(document).bind(self.event_up + self.id, {self: self}, self.mouseUp);
+
+      if ((self.mouse_drag && !self.hasTouch) || (self.touch_drag && self.hasTouch)) {
+        self.$holder.bind(self.event_down, {self: self}, self.mouseDown);
+        if (self.hasTouch) {
+          $(document).bind(self.event_move + self.id, {self: self}, self.mouseDrag);
+        }
+      }
+
+      //Add Double click / Double tap zoom
+      if (self.mouse_dbl_click) {
+        var dClickedX,
+          dClickedY,
+          dbl_click_dir = 1;
+
+        self.$holder.bind('dblclick.sz', function (e) {
+          self.focusOffX = e.pageX - $holder.offset().left - (self.sW / 2);
+          self.focusOffY = e.pageY - $holder.offset().top - (self.sH / 2);
+          self.changeOffset(true, true);
+          self._wheel = false;
+
+          if (self.rA < self.zoom_max && dbl_click_dir == -1 && dClickedX != self.focusOffX && dClickedY != self.focusOffY) {
+            dbl_click_dir = 1;
+          }
+
+          dClickedX = self.focusOffX;
+          dClickedY = self.focusOffY;
+
+          if (self.rA >= self.zoom_max && dbl_click_dir == 1) {
+            dbl_click_dir = -1;
+          }
+          if (self.rA <= self.rF && dbl_click_dir == -1) {
+            dbl_click_dir = 1;
+          }
+          if (dbl_click_dir > 0) {
+            self.rA *= 2;
+            self.rA = self.rA > self.zoom_max ?  self.zoom_max : self.rA;
+            cFlag._zi = true;
+            clearTimeout(self.ani_timer);
+            self._playing = true;
+            self.Animate();
+            cFlag._zi = false;
+
+          } else {
+            self.rA /= 2;
+            self.rA =  self.rA < self.rF ? self.rF : self.rA;
+            cFlag._zo = true;
+            clearTimeout(self.ani_timer);
+            self._playing = true;
+            self.Animate();
+            cFlag._zo = false;
+          }
+          e.preventDefault();
+          e.stopPropagation();
+        });
+      }
+
+      //Add mouse wheel event if enabled
+      if (self.mouse_wheel) {
+         $holder.bind('mousewheel.sz', {self: this}, self.mouseWheel);
+      }
+
+      //Auto Hide the control buttons if enabled
+      if (self.bu_auto) {
+        $holder.bind('mouseleave.sz', {self: this}, self.autoHide);
+      }
+
+      //Prevent Controls Bg from start dragging image
+      $controls.bind(self.event_down, function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
+      //Prevent Controls Bg from double click zoom
+      if (self.mouse_dbl_click) {
+        $controls.bind('dblclick.sz', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        });
+      }
+
+      //Prevent text selection for smoother dragging and button focus
+      $('.noSel').each(function () {
+        this.onselectstart = function () {
+          return false;
+        };
+      });
+
+      self.$holder = $holder;
+      self.$controls = $controls;
+      self.sW = sW;
+      self.sH = sH;
+      self.cBW = cBW;
+      self.cBH = cBH;
+
+      // alert(self.sW + "  " + self.sH);
+
+      //Apply initial transformation
+      self.Animate();
+    },
+
+
+    /*Prepare the container (holder) element and get landmarks if available
+    ***********************************************************************************************************************/
+    setContainer: function () {
+      var self = this,
+        $image = self.$image,
+        bord_size = self.bord_size,
+        border = self.border,
+        $holder = self.$holder;
+
+      //Wrap a container for image or get the container if specified through options:
+      if (self.container == '' && self.image_url == '') {
+        $holder = self.$image.wrap(
+          '<div class="noSel smooth_zoom_preloader">\
+          </div>'
+        ).parent();
+
+      } else {
+        if (self.image_url == ''){
+          $holder = $('#'+self.container);
+        } else {
+          $holder = self.$elem;
+        }
+        $holder.addClass('noSel smooth_zoom_preloader');
+        self.locations = [];
+        self.$loc_cont = $holder.find('.landmarks');
+        if (self.$loc_cont[0]) {
+          var locs = self.$loc_cont.children('.item');
+          self.loc_clone = self.$loc_cont.clone();
+          self.show_at_zoom = parseInt(self.$loc_cont.data('show-at-zoom'),10) / 100;
+          self.allow_scale = checkBoolean(self.$loc_cont.data('allow-scale'));
+          self.allow_drag = checkBoolean(self.$loc_cont.data('allow-drag'));
+          locs.each(function () {
+            self.setLocation($(this));
+          });
+        }
+      }
+
+      $holder.css({
+        'position': 'relative',
+        'overflow': 'hidden',
+        'text-align': 'left',
+        '-moz-user-select': 'none',
+        '-khtml-user-select': 'none',
+        '-webkit-user-select': 'none',
+        'user-select': 'none',
+        '-webkit-touch-callout': 'none',
+        '-ms-touch-action': 'none',
+        '-webkit-tap-highlight-color': 'rgba(255, 255, 255, 0)',
+        'background-color': self.bg_color,
+        'background-position': 'center center',
+        'background-repeat': 'no-repeat'
+      })
+
+      self.$hitArea = $('<div style="position: absolute; z-index: 1; top: 0px; left: 0px; width: 100%; height: 100%;" ></div>').appendTo($holder);
+
+      self.getContainerSize(self.sW, self.sH, $holder, self.w_max, self.h_max);
+
+      if (self.responsive) {
+        $(window).bind("orientationchange.sz" + self.id+" resize.sz" + self.id, {self: self}, self.resize);
+      }
+      var sW = self.sW;
+      var sH = self.sH;
+
+      //Add Image container properties
+      $holder.css({
+        'width': sW,
+        'height': sH
+      });
+
+      //Add border if needed
+      if (bord_size > 0) {
+        border[0] = $('<div style="position: absolute;  width: ' + bord_size + 'px; height: ' + sH + 'px; top: 0px; left: 0px; z-index: 3; background-color: ' + self.bord_color + ';"></div>').css('opacity', self.bord_alpha);
+        border[1] = $('<div style="position: absolute;  width: ' + bord_size + 'px; height: ' + sH + 'px; top: 0px; left: ' + (sW - bord_size) + 'px; z-index: 4; background-color: ' + self.bord_color + ';"></div>').css('opacity', self.bord_alpha);
+        border[2] = $('<div style="position: absolute;  width: ' + (sW - (bord_size * 2)) + 'px; height: ' + bord_size + 'px; top: 0px; left: ' + bord_size + 'px; z-index: 5; background-color: ' + self.bord_color + '; line-height: 1px;"></div>').css('opacity', self.bord_alpha);
+        border[3] = $('<div style="position: absolute;  width: ' + (sW - (bord_size * 2)) + 'px; height: ' + bord_size + 'px; top: ' + (sH - bord_size) + 'px; left: ' + bord_size + 'px; z-index: 6; background-color: ' + self.bord_color + '; line-height: 1px;"></div>').css('opacity', self.bord_alpha);
+        $holder.append(border[0], border[1], border[2], border[3]);
+      }
+
+      //Get Image maps if exists
+      if ($image.attr('usemap') != undefined) {
+        self.mapAreas = $("map[name='" + ($image.attr('usemap').split('#').join('')) + "']").children('area');
+        self.mapAreas.each(function (i) {
+          var area = $(this);
+          area.css('cursor', 'pointer');
+          if (self.mouse_drag) {
+            area.bind(self.event_down, {self: self}, self.mouseDown);
+          }
+          if (self.mouse_wheel) {
+            area.bind('mousewheel.sz', {self: self}, self.mouseWheel);
+          }
+          self.map_coordinates.push(area.attr('coords').split(','));
+        });
+      }
+
+      self.$holder = $holder;
+      self.sW = sW;
+      self.sH = sH;
+    },
+
+    getContainerSize: function (sW, sH, $holder, w_max, h_max){
+      if (sW === '' || sW === 0) {
+        if (this.image_url == '') {
+          sW = Math.max($holder.parent().width(), 100);
+        } else {
+          sW = Math.max($holder.width(), 100);
+        }
+
+      } else if (!isNaN(sW) || String(sW).indexOf('px') > -1) {
+        sW = this.oW = parseInt(sW);
+        if (this.responsive) {
+          sW = Math.min($holder.parent().width(), sW);
+        }
+      } else if (String(sW).indexOf('%') > -1) {
+        sW = $holder.parent().width() * (sW.split('%')[0] / 100);
+      } else {
+        sW = 100;
+      }
+      if (w_max !== 0 && w_max !== '') {
+        sW = Math.min(sW, w_max);
+      }
+      if (sH === '' || sH === 0) {
+        if (this.image_url == '') {
+          sH = Math.max($holder.parent().height(), 100);
+        } else {
+          sH = Math.max($holder.height(), 100);
+        }
+      } else if (!isNaN(sH) || String(sH).indexOf('px') > -1) {
+        sH = this.oH = parseInt(sH);
+
+      } else if (String(sH).indexOf('%') > -1) {
+        sH = $holder.parent().height() * (sH.split('%')[0] / 100);
+      } else {
+        sH = 100;
+      }
+      if (h_max !== 0 && h_max !== '') {
+        sH = Math.min(sH, h_max);
+      }
+
+      if (this.oW && sW !== this.oW) {
+        if (this.oH && this.maintain_ratio) {
+          sH = sW/(this.oW/this.oH);
+        }
+      }
+
+      this.sW = sW;
+      this.sH = sH;
+    },
+
+
+    /*Each landmark / location / lable initiated here
+    ***********************************************************************************************************************/
+    setLocation: function (lc){
+      var self = this,
+        ob = lc,
+        w2, h2, pos, sc, rotation;
+
+      if (prop_origin) {
+        ob.css(prop_origin, '0 0');
+      }
+
+      ob.css({
+        'display': 'block',
+        'z-index': 2
+      })
+      if (self.use3D) {
+        ob.css({
+          '-webkit-backface-visibility': 'hidden',
+          '-webkit-perspective': 1000
+        });
+      }
+
+      w2 = ob.outerWidth() / 2;
+      h2 = ob.outerHeight() / 2;
+      pos = ob.data('position').split(',');
+      rotation = ob.data('rotation');
+      sc = ob.data('allow-scale');
+      if (sc == undefined) {
+        sc = self.allow_scale;
+      } else {
+        sc = checkBoolean(sc);
+      }
+
+      if (ob.hasClass('mark')) {
+        var imgw = ob.find('img').css('vertical-align', 'bottom').width();
+        $(ob.children()[0]).css({
+          'width':ob.width,
+          'position': 'absolute',
+          'left': (-ob.width()/2),
+          'bottom': parseInt(ob.css('padding-bottom'))*2
+        });
+        var txt = ob.find('.text');
+        self.locations.push({
+          ob: ob,
+          x: parseInt(pos[0]),
+          y: parseInt(pos[1]),
+          rot: rotation,
+          w2: w2,
+          h2: h2,
+          w2pad: w2+(txt[0] ? parseInt(txt.css('padding-left')) : 0),
+          vis: false,
+          lab: false,
+          lpx: '0',
+          lpy: '0',
+          showAt: isNaN(ob.data('show-at-zoom'))? self.show_at_zoom : parseInt(ob.data('show-at-zoom'),10) / 100,
+          scale: sc
+        });
+
+      } else if (ob.hasClass('lable')){
+        var bg = ob.data('bg-color'),
+          opacity = ob.data('bg-opacity'),
+          cont = $(ob.eq(0).children()[0])
+              .css({
+              'position': 'absolute',
+              'z-index': 2,
+              left: -w2,
+              top: -h2
+            });
+
+        self.locations.push({
+          ob: ob,
+          x: parseInt(pos[0]),
+          y: parseInt(pos[1]),
+          w2: w2,
+          h2: h2,
+          w2pad: w2,
+          vis: false,
+          lab: true,
+          lpx: '0',
+          lpy: '0',
+          showAt: isNaN(ob.data('show-at-zoom'))? self.show_at_zoom : parseInt(ob.data('show-at-zoom'),10) / 100,
+          scale: sc
+        });
+
+        if (bg !=="") {
+          if (!bg) {
+            bg = "#000000";
+            opacity = .7;
+          }
+          var bgob = $('<div style="position: absolute; left: ' + (-w2)+'px; top: ' + (-h2)+'px; width: ' + ((w2-parseInt(cont.css('padding-left'))) * 2) + 'px; height:' + ((h2-parseInt(cont.css('padding-top'))) * 2) + 'px; background-color: ' + bg + ';"></div>').appendTo(ob);
+          if (opacity) {
+            bgob.css('opacity', opacity);
+          }
+        }
+      }
+      ob.hide();
+      if(prop_transform) {
+        ob.css('opacity', 0);
+      }
+      if (!self.allow_drag) {
+        ob.bind(self.event_down, function (e) {
+          //e.preventDefault();
+          e.stopPropagation();
+        })
+      }
+    },
+
+    /*Storing the original style of image (needed only when destroying)
+    ***********************************************************************************************************************/
+    getStyle: function () {
+      var el = this.$image;
+      return {
+        prop_origin: [prop_origin, prop_origin !== false && prop_origin !== undefined ? el.css(prop_origin) : null],
+        prop_transform: [prop_transform, prop_transform !== false && prop_transform !== undefined ? el.css(prop_transform) : null],
+        'position': ['position', el.css('position')],
+        'z-index': ['z-index', el.css('z-index')],
+        'cursor': ['cursor', el.css('cursor')],
+        'left': ['left', el.css('left')],
+        'top': ['top', el.css('top')],
+        'width': ['width', el.css('width')],
+        'height': ['height', el.css('height')]
+      };
+    },
+
+    /*Find the scale ratios
+    ***********************************************************************************************************************/
+    checkRatio: function (sW, sH, iW, iH, zoom_fit) {
+      var rF;
+      if (iW == sW && iH == sH) {
+        rF = 1;
+      } else if (iW < sW && iH < sH) {
+        rF = sW / iW;
+        if (zoom_fit) {
+          if (rF * iH > sH) {
+            rF = sH / iH;
+          }
+        } else {
+          if (rF * iH < sH) {
+            rF = sH / iH;
+          }
+          if (sW / iW !== sH / iH && this.mouse_drag) {
+            this._moveCursor = true;
+            this.$image.css('cursor', 'move');
+            this.$hitArea.css('cursor', 'move');
+          }
+        }
+      } else {
+
+        rF = sW / iW;
+        if (zoom_fit) {
+          if (rF * iH > sH) {
+            rF = sH / iH;
+          }
+          if (rF< this.init_zoom && this.mouse_drag) {
+            this._moveCursor = true;
+            this.$image.css('cursor', 'move');
+            this.$hitArea.css('cursor', 'move');
+          }
+        } else {
+          if (rF * iH < sH) {
+            rF = sH / iH;
+          }
+          if (sW / iW !== sH / iH && this.mouse_drag) {
+            this._moveCursor = true;
+            this.$image.css('cursor', 'move');
+            this.$hitArea.css('cursor', 'move');
+          }
+        }
+      }
+      return rF;
+    },
+
+
+    /*Returns distance between 2 points (used for touch gesture)
+    ***********************************************************************************************************************/
+    getDistance: function (x1,y1,x2,y2) {
+      return Math.sqrt(Math.abs(((x2-x1)*(x2-x1)) + ((y2-y1)*(y2-y1))));
+    },
+
+
+    /*Image Events for Dragging and Mouse Wheel
+    ***********************************************************************************************************************/
+    mouseDown: function (e) {
+
+      // console.log("MouseDown EVENT -- >", e);
+
+      var self = e.data.self,
+      te = e.originalEvent,
+      touches, fingers, pointerMouse;
+      self._onfocus = self._dragging = false;
+
+      if (self.cFlag._nd) {
+        self._onHitArea = true;
+        self.samePointRelease = false;
+        if (self.fixMoz) {
+          self.correctTransValue();
+        }
+        if (e.type == self.pointerDown){
+          pointerMouse = (te.MSPOINTER_TYPE_MOUSE && te.pointerType === te.MSPOINTER_TYPE_MOUSE) || te.pointerType == 'mouse';
+          self.pointers.push({pageX: te.pageX, pageY:te.pageY, id: te.pointerId});
+          fingers = self.pointers.length;
+          touches = self.pointers;
+        }
+        if (e.type == 'mousedown' || pointerMouse){
+          self.stX = te.pageX || e.pageX;
+          self.stY = te.pageY || e.pageY;
+          self.offX = self.stX - self.$holder.offset().left - self.$image.position().left;
+          self.offY = self.stY - self.$holder.offset().top - self.$image.position().top;
+          $(document).bind(self.event_move + self.id, {self: self}, self.mouseDrag);
+
+        } else {
+          if (e.type == 'touchstart') {
+            fingers = te.targetTouches.length;
+            touches = te.touches;
+          }
+          if (fingers > 1) {
+            self._pinching = true;
+            self._rA = self.rA;
+            self.dStart = self.getDistance(touches[0].pageX, touches[0].pageY, touches[1].pageX, touches[1].pageY);
+          } else {
+            self.offX = touches[fingers-1].pageX - self.$holder.offset().left - self.$image.position().left;
+            self.offY = touches[fingers-1].pageY - self.$holder.offset().top - self.$image.position().top;
+            self.setDraggedPos(touches[fingers-1].pageX - self.$holder.offset().left - self.offX, touches[fingers-1].pageY - self.$holder.offset().top - self.offY, self._sc);
+            self._recent = 'drag';
+            self._dragging = true;
+          }
+        }
+
+      }
+      if (e.type == 'mousedown'  || e.type == self.pointerDown) {
+        e.preventDefault();
+      }
+    },
+
+
+    /*Mouse Drag / Touch swipe operations handled here
+    ***********************************************************************************************************************/
+    mouseDrag: function (e) {
+      var self = e.data.self,
+      te = e.originalEvent,
+      touches, fingers;
+
+      //Mouse
+      if (e.type == 'mousemove') {
+        self.setDraggedPos(e.pageX - self.$holder.offset().left - self.offX, e.pageY - self.$holder.offset().top - self.offY, self._sc);
+        self._recent = 'drag';
+        self._dragging = true;
+        if(!self._playing) {
+          self.Animate();
+        }
+        return false;
+
+      //Touch and pointer
+      } else {
+        if (self._dragging || self._pinching) {
+          e.preventDefault();
+        }
+        if (self._onHitArea) {
+
+          //Pointer
+          if (e.type == self.pointerMove){
+            for (var j=0; j<self.pointers.length; j++){
+              if (te.pointerId == self.pointers[j].id) {
+                self.pointers[j].pageX = te.pageX;
+                self.pointers[j].pageY = te.pageY;
+              }
+            }
+            touches = self.pointers;
+            fingers = self.pointers.length;
+
+          //Touch
+          } else {
+            touches = te.touches;
+            fingers = touches.length;
+          }
+
+          //Multi finger movement / pinch zoom
+          if (fingers > 1) {
+            if (!self._pinching) {
+              self._pinching = true;
+              self._rA = self.rA;
+              self.dStart = self.getDistance(touches[0].pageX, touches[0].pageY, touches[1].pageX, touches[1].pageY);
+            }
+            self._centx = (touches[0].pageX + touches[1].pageX) / 2;
+            self._centy = (touches[0].pageY + touches[1].pageY) / 2;
+            self.focusOffX = self._centx - self.$holder.offset().left - (self.sW / 2);
+            self.focusOffY = self._centy - self.$holder.offset().top - (self.sH / 2);
+            self.changeOffset(true, true);
+            self._wheel = true;
+            self._dragging = false;
+            if (self.zoom_single){
+              self.sRed = 300;
+            } else {
+              self.dEnd = self.getDistance(touches[0].pageX, touches[0].pageY, touches[1].pageX, touches[1].pageY);
+              self.rA = self._rA * (self.dEnd/self.dStart);
+              self.rA = self.rA > self.zoom_max ? self.zoom_max : self.rA;
+              self.rA = self.rA < self.rF ? self.rF : self.rA;
+            }
+            if (self._sc < self.rA) {
+              self.cFlag._zo = false;
+              self.cFlag._zi = true;
+            } else {
+              self.cFlag._zi = false;
+              self.cFlag._zo = true;
+            }
+            if (!self._playing) {
+              self.Animate();
+            }
+
+          //Single finer / pointer Drag
+          } else {
+            self.setDraggedPos(touches[0].pageX - self.$holder.offset().left - self.offX, touches[0].pageY - self.$holder.offset().top - self.offY, self._sc);
+            self._recent = 'drag';
+            self._dragging = true;
+            if(!self._playing) {
+              self.Animate();
+            }
+            return false;
+          }
+        }
+
+      }
+    },
+
+
+    /*Global Mouse Up / Touch End
+    ***********************************************************************************************************************/
+    mouseUp: function (e) {
+      var self = e.data.self;
+      self.pointers = [];
+      //If one of the buttons released
+      if (self._onButton) {
+        self.$holder.find('#' + self.buttons[self.cButtId]._var + 'norm').show();
+        self.$holder.find('#' + self.buttons[self.cButtId]._var + 'over').hide();
+        if (self.cButtId !== 6) {
+          self.cFlag[self.buttons[self.cButtId]._var] = false;
+        }
+        if (e.type == 'touchend' && self.buttons[self.cButtId].$ob.css('opacity') > .5){
+          self.buttons[self.cButtId].$ob.css('opacity', .7);
+        }
+        self._onButton = false;
+        e.stopPropagation();
+        return false;
+
+      //If the mouse drag or touch swipe completed
+      } else if (self._onHitArea) {
+        if (!self.hasTouch){
+          $(document).unbind(self.event_move + self.id);
+        }
+        if (self.mouse_drag || self.touch_drag) {
+
+          //Mouse
+          if (e.type == 'mouseup') {
+            if (self.stX ==  e.pageX && self.stY == e.pageY) {
+              self.samePointRelease = true;
+            }
+            self._recent = 'drag';
+            self._dragging = false;
+            if(!self._playing) {
+              self.Animate();
+            }
+
+          //Touch & Pointers
+          } else {
+            e.preventDefault();
+            self._dragging = false;
+            if (self._pinching) {
+              self._pinching = false;
+              self._wheel = false;
+              self.cFlag._nd = true;
+              self.cFlag._zi = false;
+              self.cFlag._zo = false;
+            } else {
+              self._recent = 'drag';
+              if(!self._playing) {
+                self.Animate();
+              }
+            }
+          }
+          self._onHitArea = false;
+        }
+      }
+    },
+
+
+    /*Mouse wheel zoom in-out
+    ***********************************************************************************************************************/
+    mouseWheel: function (e, delta) {
+      var self = e.data.self;
+      self._onfocus = self._dragging = false;
+      if (self.mouse_wheel_cur) {
+        self.focusOffX = e.pageX - self.$holder.offset().left - (self.sW / 2);
+        self.focusOffY = e.pageY - self.$holder.offset().top - (self.sH / 2);
+        self.changeOffset(true, true);
+      }
+
+      self._dragging = false;
+      if (delta > 0) {
+        if (self.rA != self.zoom_max) {
+          if (self.zoom_single){
+            if(!self._wheel) {
+              self.sRed = 300;
+            }
+          } else {
+            self.rA *= delta < 1 ? 1 + (.3 * delta) : 1.3;
+            self.rA = self.rA > self.zoom_max ? self.zoom_max : self.rA;
+          }
+          self._wheel = true;
+          self.cFlag._zi = true;
+          clearTimeout(self.ani_timer);
+          self._playing = true;
+          self.Animate();
+          self.cFlag._zi = false;
+        }
+      } else {
+        if (self.rA != self.rF) {
+          if (self.zoom_single){
+            if(!self._wheel) {
+              self.sRed = 300;
+            }
+          } else {
+            self.rA /= delta > -1 ? 1 + (.3 * -delta) : 1.3;
+            self.rA = self.rA < self.rF ? self.rF : self.rA;
+          }
+          self._wheel = true;
+          self.cFlag._zo = true;
+          clearTimeout(self.ani_timer);
+          self._playing = true;
+          self.Animate();
+          self.cFlag._zo = false;
+        }
+      }
+      return false;
+    },
+
+
+    /*Control buttons Auto hide
+    ***********************************************************************************************************************/
+    autoHide: function (e) {
+      var self = e.data.self;
+
+      clearTimeout(self.auto_timer);
+      self.auto_timer = setTimeout(function () {
+        self.$controls.fadeOut(600);
+      }, self.bu_delay);
+
+      self.$holder.bind('mouseenter.sz', function (e) {
+        clearTimeout(self.auto_timer);
+        self.$controls.fadeIn(300);
+      });
+    },
+
+
+    /*Mozilla works differently than others when getting translated positions. So this correction needed
+    ***********************************************************************************************************************/
+    correctTransValue: function () {
+      var v = this.$image.css('-moz-transform').toString().replace(')', '').split(',');
+      this.transOffX = parseInt(v[4]);
+      this.transOffY = parseInt(v[5]);
+    },
+
+
+    /*Make sure the dragged position obeying limits
+    ***********************************************************************************************************************/
+    setDraggedPos: function (xp, yp, s) {
+      var self = this;
+
+      if (xp !== '') {
+        self.dX = xp + self.transOffX;
+        if (self.pan_limit) {
+          self.dX = self.dX + (s * self.iW) < self.sW ? self.sW - (s * self.iW) : self.dX;
+          self.dX = self.dX > 0 ? 0 : self.dX;
+          if ((s * self.iW) < self.sW) {
+            self.dX = (self.sW - (s * self.iW)) / 2;
+          }
+        } else {
+          self.dX = self.dX + (s * self.iW) < self.sW / 2 ? (self.sW / 2) - (s * self.iW) : self.dX;
+          self.dX = self.dX > self.sW / 2 ? self.sW / 2 : self.dX;
+        }
+      }
+      if (yp !== '') {
+        self.dY = yp + self.transOffY;
+        if (self.pan_limit) {
+          self.dY = self.dY + (s * self.iH) < self.sH ? self.sH - (s * self.iH) : self.dY;
+          self.dY = self.dY > 0 ? 0 : self.dY;
+          if ((s * self.iH) < self.sH) {
+            self.dY = (self.sH - (s * self.iH)) / 2;
+          }
+        } else {
+          self.dY = self.dY + (s * self.iH) < self.sH / 2 ? (self.sH / 2) - (s * self.iH) : self.dY;
+          self.dY = self.dY > self.sH / 2 ? self.sH / 2 : self.dY;
+        }
+      }
+    },
+
+    /*Called to animate image transformation whenever the navigation events occur
+    ***********************************************************************************************************************/
+    Animate: function () {
+
+      var self = this;
+      var pixTol = .5;
+
+      self.cFlag._nd = true;
+      self.ani_end = false;
+
+      //Zoom In
+      if (self.cFlag._zi) {
+        if (!self._wheel && !self.zoom_single) {
+          self.rA *= self.zoom_speed;
+        }
+        if (self.rA > self.zoom_max) {
+          self.rA = self.zoom_max;
+        }
+        self.cFlag._nd = false;
+        self.cFlag._rs = false;
+        self._recent = 'zoomIn';
+        self._onfocus = self._dragging = false;
+      }
+
+      //Zoom Out
+      if (self.cFlag._zo) {
+        if (!self._wheel && !self.zoom_single) {
+          self.rA /= self.zoom_speed;
+        }
+        if (self.zoom_min !=0 ) {
+          if (self.rA < self.zoom_min) {
+            self.rA = self.zoom_min;
+          }
+        } else {
+          if (self.rA < self.rF) {
+            self.rA = self.rF;
+          }
+        }
+
+        self.cFlag._nd = false;
+        self.cFlag._rs = false;
+        self._recent = 'zoomOut';
+        self._onfocus = self._dragging = false;
+      }
+
+      //Zoom In or Out - Single Step
+      if (self.zoom_single && !self.cFlag._rs) {
+        if (self._recent == 'zoomIn'){
+          self.sRed +=(10-self.sRed)/6;
+          self.rA += (self.zoom_max - self.rA)/(((1/(self.pan_speed_o+1))*self.sRed)+1);
+
+        } else if (self._recent == 'zoomOut'){
+          self.sRed +=(3-self.sRed)/3;
+          self.rA += (self.rF - self.rA)/(((1/self.pan_speed_o+1)*self.sRed)+1);
+        }
+      }
+
+      //Pan speed needs to adjust according to application dimension and zoom level
+      self.pan_speed = (Math.max(1, 1+((self.sW + self.sH) / 500))+ (self.pan_speed_o * self.pan_speed_o / 4)) / Math.max(1, self.rA/2);
+
+      //Move Left
+      if (self.cFlag._ml) {
+        self.oX -= self.pan_speed;
+        self.cFlag._nd = false;
+        self.cFlag._rs = false;
+        self._recent = 'left';
+        self._onfocus = self._dragging = false;
+      }
+
+      //Move Right
+      if (self.cFlag._mr) {
+        self.oX += self.pan_speed;
+        self.cFlag._nd = false;
+        self.cFlag._rs = false;
+        self._recent = 'right';
+        self._onfocus = self._dragging = false;
+      }
+
+      //Move Up
+      if (self.cFlag._mu) {
+        self.oY -= self.pan_speed;
+        self.cFlag._nd = false;
+        self.cFlag._rs = false;
+        self._recent = 'up';
+        self._onfocus = self._dragging = false;
+      }
+
+      //Move Down
+      if (self.cFlag._md) {
+        self.oY += self.pan_speed;
+        self.cFlag._nd = false;
+        self.cFlag._rs = false;
+        self._recent = 'down';
+        self._onfocus = self._dragging = false;
+      }
+
+      //Reset
+      if (self.cFlag._rs) {
+        self.oX += (self.fX - self.oX) / 8;
+        self.oY += (self.fY - self.oY) / 8;
+        self.cFlag._nd = false;
+        self._recent = 'reset';
+        self._onfocus = self._dragging = false;
+      }
+
+      //Find scale value, width and height
+      //Case 1: Single Step Zoom
+      if (self.zoom_single && (self._recent !== 'reset')) {
+        if (self._onfocus){
+          self._sc += (self.rA - self._sc) / self.reduction;
+        } else {
+          self._sc = self.rA;
+        }
+
+      //Case 2: Normal Zoom
+      } else {
+        self._sc += (self.rA - self._sc) / (self.ani_smooth/(self._onfocus? self.reduction : 1));
+      }
+
+      self._w = self._sc * self.iW;
+      self._h = self._sc * self.iH;
+
+      //Dragging
+      if (self._dragging) {
+        self.tX = self.dX;
+        self.tY = self.dY;
+        self.changeOffset(true, true);
+      }
+
+      //Check if Zoom In completed
+      if (self._recent == "zoomIn") {
+        if (self._w > (self.rA * self.iW) - pixTol && !self.zoom_single) {
+          if (self.cFlag._nd) {
+            self.ani_end = true;
+          }
+          self._sc = self.rA;
+        } else if (self._w > (self.zoom_max * self.iW) - pixTol && self.zoom_single) {
+          if (self.cFlag._nd) {
+            self.ani_end = true;
+          }
+          self._sc = self.rA = self.zoom_max;
+        }
+        if (self.ani_end){
+          self._w = self._sc * self.iW;
+          self._h = self._sc * self.iH;
+        }
+
+      //Check if Zoom Out completed
+      } else if (self._recent == "zoomOut") {
+        if (self._w < (self.rA * self.iW) + pixTol  && !self.zoom_single) {
+          if (self.cFlag._nd) {
+            self.ani_end = true;
+          }
+          self._sc = self.rA;
+        } else if (self._w < (self.rF * self.iW) + pixTol  && self.zoom_single) {
+          if (self.cFlag._nd) {
+            self.ani_end = true;
+          }
+          self._sc = self.rA = self.rF;
+        }
+        if (self.ani_end){
+          self._w = self._sc * self.iW;
+          self._h = self._sc * self.iH;
+        }
+      }
+
+      //Move image according to boundary limits
+      self.limitX = (((self._w - self.sW) / (self._w / self.sW)) / 2);
+      self.limitY = (((self._h - self.sH) / (self._h / self.sH)) / 2);
+
+      if (!self._dragging) {
+        if (self.pan_limit) {
+          if (self.oX < -self.limitX - self.focusOffX) {
+            self.oX = -self.limitX - self.focusOffX;
+          }
+          if (self.oX > self.limitX - self.focusOffX) {
+            self.oX = self.limitX - self.focusOffX;
+          }
+          if (self._w < self.sW) {
+            self.tX = (self.sW - self._w) / 2;
+            self.changeOffset(true, false);
+          }
+          if (self.oY < -self.limitY - self.focusOffY) {
+            self.oY = -self.limitY - self.focusOffY;
+          }
+          if (self.oY > self.limitY - self.focusOffY) {
+            self.oY = self.limitY - self.focusOffY;
+          }
+          if (self._h < self.sH) {
+            self.tY = (self.sH - self._h) / 2;
+            self.changeOffset(false, true);
+          }
+        } else {
+          if (self.oX < -self.limitX - (self.focusOffX / self._w * self.sW) - ((self.sW / 2) / (self._w / self.sW))) {
+            self.oX = -self.limitX - (self.focusOffX / self._w * self.sW) - ((self.sW / 2) / (self._w / self.sW));
+          }
+
+          if (self.oX > self.limitX - (self.focusOffX / self._w * self.sW) + ((self.sW / 2) / (self._w / self.sW))) {
+            self.oX = self.limitX - (self.focusOffX / self._w * self.sW) + ((self.sW / 2) / (self._w / self.sW));
+          }
+
+          if (self.oY < -self.limitY - (self.focusOffY / self._h * self.sH) - (self.sH / (self._h / self.sH * 2))) {
+            self.oY = -self.limitY - (self.focusOffY / self._h * self.sH) - (self.sH / (self._h / self.sH * 2));
+          }
+
+          if (self.oY > self.limitY - (self.focusOffY / self._h * self.sH) + (self.sH / (self._h / self.sH * 2))) {
+            self.oY = self.limitY - (self.focusOffY / self._h * self.sH) + (self.sH / (self._h / self.sH * 2));
+          }
+        }
+      }
+      if (!self._dragging && self._recent != "drag") {
+        self.tX = ((self.sW - self._w) / 2) + self.focusOffX + (self.oX * (self._w / self.sW));
+        self.tY = ((self.sH - self._h) / 2) + self.focusOffY + (self.oY * (self._h / self.sH));
+        if (self.ani_smooth === 1) {
+          self.cFlag._nd = true;
+          self.ani_end = true;
+        }
+      }
+      if (self._recent == "zoomIn" || self._recent == "zoomOut" || self.cFlag._rs) {
+        self._x = self.tX;
+        self._y = self.tY;
+      } else {
+        self._x += (self.tX - self._x) / (self.ani_smooth/(self._onfocus? self.reduction : 1));
+        self._y += (self.tY - self._y) / (self.ani_smooth/(self._onfocus? self.reduction : 1));
+      }
+
+      //Check if Left movement completed
+      if (self._recent == "left") {
+        if (self._x < self.tX + pixTol || self.ani_smooth === 1) {
+          self.cFlag._nd ? self.ani_end = true : "";
+          self._recent = '';
+          self._x = self.tX;
+        }
+
+      //Check if Right  movement completed
+      } else if (self._recent == "right") {
+        if (self._x > self.tX - pixTol || self.ani_smooth === 1) {
+          self.cFlag._nd ? self.ani_end = true : "";
+          self._recent = '';
+          self._x = self.tX;
+        }
+
+        //Check if Up movement completed
+      } else if (self._recent == "up") {
+        if (self._y < self.tY + pixTol || self.ani_smooth === 1) {
+          self.cFlag._nd ? self.ani_end = true : "";
+          self._recent = '';
+          self._y = self.tY;
+        }
+
+        //Check if Down movement completed
+      } else if (self._recent == "down") {
+        if (self._y > self.tY - pixTol || self.ani_smooth === 1) {
+          self.cFlag._nd ? self.ani_end = true : "";
+          self._recent = '';
+          self._y = self.tY;
+        }
+
+        //Check if Dragging completed
+      } else if (self._recent == "drag") {
+        if (self._x + pixTol >= self.tX && self._x - pixTol <= self.tX && self._y + pixTol >= self.tY && self._y - pixTol <= self.tY || self.ani_smooth === 1) {
+          if (self._onfocus) {
+            self._dragging = false;
+          }
+          self.cFlag._nd ? self.ani_end = true : "";
+          self._recent = '';
+          self._x = self.tX;
+          self._y = self.tY;
+        }
+      }
+
+      //Check if Reset completed
+      if (self.cFlag._rs && self._w + pixTol >= (self.rA * self.iW) && self._w - pixTol <= (self.rA * self.iW) && self.oX <= self.fX+pixTol && self.oX >= self.fX-pixTol && self.oY <= self.fY+pixTol && self.oY >= self.fY-pixTol) {
+        self.ani_end = true;
+        self._recent = '';
+        self.cFlag._rs = false;
+        self.cFlag._nd = true;
+        self._x = self.tX;
+        self._y = self.tY;
+        self._sc = self.rA;
+        self._w = self._sc * self.iW;
+        self._h = self._sc * self.iH;
+      }
+
+      //When the image fits exactly to container size, disable the pan, zoom out and reset buttons
+      if (self.rA == self.rF && self.iW*self.rA <= self.sW && self.iH*self.rA <= self.sH) {
+        if (self.buttons[1].$ob.css('opacity') > .5) {
+          if (self.rA >= self.rF && (self.init_zoom == '' || self.rA <self.init_zoom) && (self.zoom_min == '' || self.rA <self.zoom_min)) {
+            if (self.pan_limit && self._moveCursor && !self._moveCursor) {
+              self.$image.css('cursor', 'default');
+              self.$hitArea.css('cursor', 'default');
+            }
+            for (var bEn = 1; bEn < (self.pan_limit && !self._moveCursor ? self.buttons_total : 2); bEn++) {
+              self.buttons[bEn].$ob.css({
+                'opacity': .4
+              });
+              self._wheel = false;
+              self.$holder.find('#' + self.buttons[bEn]._var + 'norm').show();
+              self.$holder.find('#' + self.buttons[bEn]._var + 'over').hide();
+            }
+          }
+        }
+
+      } else {
+        if (self.buttons[1].$ob.css('opacity') < .5) {
+          if (self._moveCursor && self.mouse_drag) {
+            self.$image.css('cursor', 'move');
+            self.$hitArea.css('cursor', 'move');
+          }
+          for (var bEn = 1; bEn < self.buttons_total; bEn++) {
+            self.buttons[bEn].$ob.css('opacity', .7);
+          }
+        }
+      }
+
+      //When the image reaches max zoom, disable the zoom button
+      if (self.rA == self.zoom_max) {
+        if (self.buttons[0].$ob.css('opacity') > .5) {
+          self.buttons[0].$ob.css('opacity', .4);
+          self._wheel = false;
+          self.$holder.find('#' + self.buttons[0]._var + 'norm').show();
+          self.$holder.find('#' + self.buttons[0]._var + 'over').hide();
+        }
+
+      } else {
+        if (self.buttons[0].$ob.css('opacity') < .5) {
+          self.buttons[0].$ob.css('opacity', .7);
+        }
+      }
+
+      //Apply Scale and position to the image:
+      if (prop_transform) {
+        self.$image.css(prop_transform, 'translate(' + self._x.toFixed(14) + 'px,' + self._y.toFixed(14) + 'px) scale(' + self._sc + ')');
+        // //console.log("Setting image with prop_transform");
+      } else {
+        self.$image.css({
+          left: self._x,
+          top: self._y,
+          width: self._w,
+          height: self._h
+        });
+        // //console.log("Setting image with -> " + self._w + " " + self._h);
+      }
+
+      if (self.$loc_cont) {
+        self.updateLocations(self._x, self._y, self._sc, self.locations);
+      }
+
+      //In case image Maps used, update them
+      if (!prop_transform && self.map_coordinates.length > 0) {
+         self.updateMap();
+      }
+      //If the animation completed, stop running; else continue
+      if (self.ani_end && !self._dragging && self._recent != "drag") {
+        self._playing = false;
+        self._recent = '';
+        self.cX = (-self._x + (self.sW / 2)) / self.rA;
+        self.cY = (-self._y + (self.sH / 2)) / self.rA;
+        if (self.onUPDATE) {
+          self.onUPDATE (self.getZoomData(), false);
+        }
+        if (self.onZOOM_PAN) {
+          self.onZOOM_PAN (self.getZoomData());
+        }
+        clearTimeout(self.ani_timer);
+      } else {
+        self._playing = true;
+        if (self.onUPDATE) {
+          self.onUPDATE (self.getZoomData(), true);
+        }
+        self.ani_timer = setTimeout(function () {
+          self.Animate();
+        }, 28);
+      }
+    },
+
+
+    /*Relocate the landmarks according to main image's position
+    ***********************************************************************************************************************/
+    updateLocations: function (_x, _y, _sc, loc) {
+      // console.log("SMOOTH ZOOM THIS");
+      // console.log(this);
+      if (this.onLANDMARK !== ''){
+        if (_sc >= this.show_at_zoom) {
+          if (!this._landmark) {
+            this._landmark = true
+            this.onLANDMARK (true);
+          }
+        } else {
+          if (this._landmark) {
+            this._landmark = false;
+            this.onLANDMARK (false);
+          }
+        }
+      }
+
+      for (var p = 0; p < loc.length; p++) {
+        // console.log("-->", loc[p]);
+        var wScaled,
+          hScaled,
+          lpx = (loc[p].x * _sc) + _x,
+          lpy = (loc[p].y * _sc) + _y;
+
+        if (_sc >= loc[p].showAt) {
+          if (loc[p].scale && prop_transform){
+            wScaled = loc[p].w2pad*this._sc;
+            hScaled = loc[p].h2*this._sc;
+          } else {
+            wScaled = loc[p].w2pad;
+            hScaled = loc[p].h2;
+          }
+
+          if(loc[p].ob.hasClass("svgLayer") !== true){
+          //  console.log(loc[p]);
+            //don't hide svg Layer when scrolling origin point out of view
+            if (lpx > -wScaled && lpx < this.sW + wScaled && ((lpy > -hScaled && lpy < this.sH + hScaled && loc[p].lab) || (lpy > 0 && lpy < this.sH + (hScaled*2) && !loc[p].lab))) {
+              if (!loc[p].vis) {
+                loc[p].vis = true;
+                if(prop_transform) {
+                  loc[p].ob.stop()
+                    .css('display', 'block')
+                    .animate({
+                      opacity: 1
+                    }, 300);
+                } else {
+                  loc[p].ob.show();
+                }
+              }
+            } else {
+              if (loc[p].vis) {
+                loc[p].vis = false;
+                if(prop_transform) {
+                  loc[p].ob.stop()
+                    .animate({
+                      opacity: 0
+                    }, 200, function() {
+                      $(this).hide();
+                    });
+                } else {
+                  loc[p].ob.hide();
+                }
+              }
+            }
+          }
+        } else {
+          if(loc[p].ob.hasClass("svgLayer") === true)loc[p].vis = true;
+          if (loc[p].vis) {
+            loc[p].vis = false;
+            if(prop_transform) {
+              loc[p].ob.stop()
+                .animate({
+                  opacity: 0
+                }, 200, function() {
+                  $(this).hide();
+                });
+            } else {
+              loc[p].ob.hide();
+            }
+          }
+        }
+        if (lpx !== loc[p].lpx || lpy !== loc[p].lpy && loc[p].vis) {
+          if (prop_transform) {
+            //loc[p].ob.css(prop_transform, 'translate(' + lpx.toFixed(14) + 'px,' + lpy.toFixed(14) + 'px)' + (loc[p].scale? ' scale(' + this._sc + ')':''));
+            loc[p].ob.css(prop_transform, 'translate(' + lpx.toFixed(14) + 'px,' + lpy.toFixed(14) + 'px)' + (loc[p].scale? ' scale(' + this._sc + ')':'')  + (loc[p].rot?' rotate('+loc[p].rot.toString()+ 'deg)':''));
+          } else {
+            loc[p].ob.css({
+              left: lpx,
+              top: lpy
+            });
+          }
+        }
+        loc[p].lpx = lpx;
+        loc[p].lpy = lpy;
+      }
+    },
+
+
+    /*If the broswer doesn't supports css border radius, we need to go with old school png image for rounded corner
+    ***********************************************************************************************************************/
+    roundBG: function (el, _name, _w, _h, _r, _p, _c, _i, _z, _yoff) {
+      var w = 50 / 2;
+
+      el.append($(
+        '<div class="bgi' + _name + '" style="background-position:' + (-(_p - _r)) + 'px ' + (-(w - _r) - _yoff) + 'px"></div>\
+        <div class="bgh' + _name + '"></div>\
+        <div class="bgi' + _name + '" style="background-position:' + (-_p) + 'px ' + (-(w - _r) - _yoff) + 'px; left:' + (_w - _r) + 'px"></div>\
+        <div class="bgi' + _name + '" style="background-position:' + (-(_p - _r)) + 'px ' + (-w - _yoff) + 'px; top:' + (_h - _r) + 'px"></div>\
+        <div class="bgh' + _name + '" style = "top:' + (_h - _r) + 'px; left:' + _r + 'px"></div>\
+        <div class="bgi' + _name + '" style="background-position:' + (-_p) + 'px ' + (-w - _yoff) + 'px; top:' + (_h - _r) + 'px; left:' + (_w - _r) + 'px"></div>\
+        <div class="bgc' + _name + '"></div>'
+      ));
+      $('.bgi' + _name).css({
+        position: 'absolute',
+        width: _r,
+        height: _r,
+        'background-image': 'url(' + _i + ')',
+        'background-repeat': 'no-repeat',
+        '-ms-filter': 'progid:DXImageTransform.Microsoft.gradient(startColorstr=#00FFFFFF,endColorstr=#00FFFFFF)',
+        'filter': 'progid:DXImageTransform.Microsoft.gradient(startColorstr=#00FFFFFF,endColorstr=#00FFFFFF)',
+        'zoom': 1
+      });
+      $('.bgh' + _name).css({
+        position: 'absolute',
+        width: _w - _r * 2,
+        height: _r,
+        'background-color': _c,
+        left: _r
+      });
+      $('.bgc' + _name).css({
+        position: 'absolute',
+        width: _w,
+        height: _h - _r * 2,
+        'background-color': _c,
+        top: _r,
+        left: 0
+      });
+    },
+
+
+    /*To calibrate position offset when navigation events supposed to be overlapped
+    ***********************************************************************************************************************/
+    changeOffset: function (x, y) {
+      if (x) this.oX = (this.tX - ((this.sW - this._w) / 2) - this.focusOffX) / (this._w / this.sW);
+      if (y) this.oY = (this.tY - ((this.sH - this._h) / 2) - this.focusOffY) / (this._h / this.sH);
+    },
+
+
+    /*Transform Image Maps (hot spots) if any
+    ***********************************************************************************************************************/
+    updateMap: function () {
+      var self = this,
+        mapId = 0;
+
+      self.mapAreas.each(function () {
+        var new_vals = [];
+        for (var i = 0; i < self.map_coordinates[mapId].length; i++) {
+          new_vals[i] = self.map_coordinates[mapId][i] * self._sc;
+        }
+        new_vals = new_vals.join(",");
+        $(this).attr('coords', new_vals);
+        mapId++;
+      });
+    },
+
+
+    /*To stop the timer loops immediatly
+    ***********************************************************************************************************************/
+    haltAnimation: function () {
+      clearTimeout(this.ani_timer);
+      this._playing = false;
+      this._recent = '';
+    },
+
+
+    /*Method to Remove the plugin instance
+    ***********************************************************************************************************************/
+    destroy: function () {
+      var self = this;
+
+      if (self.assetsLoaded) {
+        self.haltAnimation();
+        for (prop in self.orig_style) {
+          if (self.orig_style[prop][0] !== false && self.orig_style[prop][0] !== undefined) {
+            if (self.orig_style[prop][0] === 'width' || self.orig_style[prop][0] === 'height') {
+              if (parseInt(self.orig_style[prop][1]) !== 0) {
+                self.$image.css(self.orig_style[prop][0], self.orig_style[prop][1]);
+              }
+            } else {
+              self.$image.css(self.orig_style[prop][0], self.orig_style[prop][1]);
+            }
+          }
+        }
+        clearTimeout(self.auto_timer);
+        $(document).unbind('.sz' + self.id);
+        $(window).unbind('.sz' + self.id);
+        self.$holder.unbind('.sz');
+        self.$controls = undefined;
+      } else {
+        self.$image.show();
+      }
+
+      if (self.container =='') {
+        if (self.image_url == '') {
+          self.$image.insertBefore(self.$holder);
+          if (self.$holder !== undefined) {
+            self.$holder.remove();
+          }
+        } else {
+          self.$elem.empty();
+          if (self.$loc_cont[0]) {
+            self.$elem.append(self.loc_clone);
+          }
+        }
+      } else {
+        self.$image.insertBefore(self.$holder);
+        self.$holder.empty();
+        self.$image.wrap(self.$holder);
+        if (self.$loc_cont[0]) {
+          self.$holder.append(self.loc_clone);
+        }
+      }
+      self.$elem.removeData('smoothZoom');
+      self.$holder = undefined;
+      self.Buttons = undefined;
+      self.op = undefined;
+      self.$image = undefined;
+    },
+
+
+    /*Method to change focus point and level
+    ***********************************************************************************************************************/
+    focusTo: function (params) {
+      var self = this;
+
+      if (self.assetsLoaded) {
+        if (params.zoom === undefined || params.zoom === '' || params.zoom == 0) {
+          params.zoom = self.rA;
+        } else {
+          params.zoom /= 100;
+        }
+        self._onfocus = true;
+        if (params.zoom > self.rA && self.rA != self.zoom_max) {
+          self.rA = params.zoom;
+          self.rA = self.rA > self.zoom_max ? self.zoom_max : self.rA;
+        } else if (params.zoom < self.rA && self.rA != self.rF) {
+          self.rA = params.zoom;
+          self.rA = self.rA < self.rF ? self.rF : self.rA;
+        }
+        self.transOffX = self.transOffY = 0;
+        self.setDraggedPos(params.x === undefined || params.x === '' ? "" : (-params.x * self.rA) + (self.sW / 2), params.y === undefined || params.y === '' ? "" : (-params.y * self.rA) + (self.sH / 2), self.rA);
+        self.reduction =  params.speed? params.speed/10 : self.focusSpeed;
+        self._recent = 'drag';
+        self._dragging = true;
+        if(!self._playing) {
+          self.Animate();
+        }
+      }
+    },
+
+    zoomIn: function (params) {
+      this.buttons[0].$ob.trigger(this.event_down, {
+        id: 0
+      });
+    },
+
+    zoomOut: function (params) {
+      this.buttons[1].$ob.trigger(this.event_down, {
+        id: 1
+      });
+    },
+
+    moveRight: function (params) {
+      this.buttons[2].$ob.trigger(this.event_down, {
+        id: 2
+      });
+    },
+
+    moveLeft: function (params) {
+      this.buttons[3].$ob.trigger(this.event_down, {
+        id: 3
+      });
+    },
+
+    moveUp: function (params) {
+      this.buttons[4].$ob.trigger(this.event_down, {
+        id: 4
+      });
+    },
+
+    moveDown: function (params) {
+      this.buttons[5].$ob.trigger(this.event_down, {
+        id: 5
+      });
+    },
+
+    Reset: function (params) {
+      this.buttons[6].$ob.trigger(this.event_down, {
+        id: 6
+      });
+    },
+
+    getZoomData: function (params) {
+      if(this._x === undefined)return;
+
+      return {
+        //x offset (without scale ratio multiplied)
+        normX: (-this._x / this.rA).toFixed(14),
+
+        //y offset (without scale ratio multiplied)
+        normY: (-this._y / this.rA).toFixed(14),
+
+        //Original image Width
+        normWidth: this.iW,
+
+        //Original image height
+        normHeight: this.iH,
+
+        //x offset (with scale ratio multiplied)
+        scaledX: -this._x.toFixed(14),
+
+        //y offset (with scale ratio multiplied)
+        scaledY: -this._y.toFixed(14),
+
+        //Scaled image width
+        scaledWidth: this._w,
+
+        //Scaled image height
+        scaledHeight: this._h,
+
+        //The X location on image which is currently on center of canvas
+        centerX: (-this._x.toFixed(14) + (this.sW / 2)) / this.rA,
+
+        //The Y location on image which is currently on center of canvas
+        centerY: (-this._y.toFixed(14) + (this.sH / 2)) / this.rA,
+
+        //Scale ratio
+        ratio: this.rA
+      };
+    },
+
+    addLandmark: function (loc) {
+      if (this.$loc_cont) {
+        var total = loc.length;
+
+        for (var i=0; i<total; i++) {
+          var $loc = $(loc[i]);
+          this.$loc_cont.append($loc);
+          this.setLocation($loc);
+        }
+
+        if (total>0) {
+          this.updateLocations(this._x, this._y, this._sc, this.locations);
+        }
+      }
+    },
+
+    attachLandmark: function (loc) {
+      if (this.$loc_cont){
+        var total = loc.length;
+        for (var i=0; i<total; i++) {
+          this.setLocation( loc[i] instanceof jQuery ? loc[i] : $('#'+loc[i]));
+        }
+        if (total>0) {
+          this.updateLocations(this._x, this._y, this._sc, this.locations);
+        }
+      }
+    },
+
+    removeLandmark: function (loc) {
+      if (this.$loc_cont){
+        if (loc){
+          var total = loc.length;
+          for (var i=0; i<total; i++) {
+            for (var j=0; j<this.locations.length; j++) {
+              if ((loc[i] instanceof jQuery && this.locations[j].ob[0] == loc[i][0]) || (!(loc[i] instanceof jQuery) && this.locations[j].ob.attr('id') == loc[i])) {
+                this.locations[j].ob.remove ();
+                this.locations.splice(j,1);
+                j--;
+              }
+            }
+          }
+        } else {
+          if (this.locations.length > 0) {
+            this.locations[this.locations.length-1].ob.remove ();
+            this.locations.pop();
+          }
+        }
+        if (total>0) {
+          this.updateLocations(this._x, this._y, this._sc, this.locations);
+        }
+      }
+    },
+
+    refreshAllLandmarks: function () {
+      var self = this;
+      var locs = self.$loc_cont.children('.item');
+      self.show_at_zoom = parseInt(self.$loc_cont.data('show-at-zoom'),10) / 100;
+      self.allow_scale = checkBoolean(self.$loc_cont.data('allow-scale'));
+      self.allow_drag = checkBoolean(self.$loc_cont.data('allow-drag'));
+
+      //Step 1: Remove records for which the elements no longer exist
+      for (var i=0; i<self.locations.length; i++) {
+        var exists = false;
+        locs.each(function () {
+          if (self.locations[i].ob[0] == $(this)[0]) {
+            exists = true;
+          }
+        });
+        if (!exists) {
+          self.locations.splice(i,1);
+          i--;
+        }
+      }
+
+      //Step 2: Add new elements to record
+      locs.each(function () {
+        var exists = false;
+        for (var i=0; i<self.locations.length; i++) {
+          if (self.locations[i].ob[0] == $(this)[0]) {
+            exists = true;
+            break;
+          }
+        }
+        if (!exists) {
+          self.setLocation($(this));
+        }
+
+      });
+      this.updateLocations(this._x, this._y, this._sc, this.locations);
+    },
+
+
+    /*On windows resize, adjust some defaults
+    ***********************************************************************************************************************/
+    resize: function (e) {
+      var self;
+
+      if (e.data) {
+        e.preventDefault();
+        self = e.data.self;
+        var pw = self.$holder.parent().width();
+        var ph = self.$holder.parent().height();
+
+        if (self.oW) {
+          pw = Math.min(pw, self.oW);
+        }
+        self.sW = pw;
+
+        if (self.oH) {
+          if (self.oW && self.maintain_ratio) {
+            self.sH = pw/(self.oW/self.oH);
+          }
+        } else {
+          self.sH = ph;
+        }
+
+
+      }  else {
+        self = this;
+        if (e.width) {
+          self.sW = e.width;
+        }
+        if (e.height) {
+          self.sH = e.height;
+        }
+        if (e.max_WIDTH) {
+          self.w_max = e.max_WIDTH;
+        }
+        if (e.max_HEIGHT) {
+          self.h_max = e.max_HEIGHT;
+        }
+      }
+      if (self.w_max !== 0 && self.w_max !== '') {
+        self.sW = Math.min(self.sW, self.w_max);
+      }
+      if (self.h_max !== 0 && self.h_max !== '') {
+        self.sH = Math.min(self.sH, self.h_max);
+      }
+      self.$holder.css({
+        'width': self.sW,
+        'height': self.sH
+      });
+      if (self.bord_size > 0) {
+        self.border[0].height(self.sH);
+        self.border[1].css({
+          height: self.sH,
+          left: self.sW - self.bord_size
+        });
+        self.border[2].width(self.sW - (self.bord_size * 2));
+        self.border[3].css({
+          width: self.sW - (self.bord_size * 2),
+          top: self.sH - self.bord_size
+        });
+      }
+      if (self.bu_align[1] == 'center') {
+        self.$controls.css('left', parseInt((self.sW - self.cBW) / 2));
+      }
+      if (self.bu_align[0] == 'center') {
+        self.$controls.css('top', parseInt((self.sH - self.cBH) / 2));
+      }
+      self.rF = self.rR = self.checkRatio(self.sW, self.sH, self.iW, self.iH, self.zoom_fit);
+      if (self.zoom_min == 0) {
+        if (self.rA< self.rF){
+          self.rA = self.rF;
+        }
+      }
+
+      self.focusTo({
+        x: self.cX,
+        y: self.cY,
+        zoom:'',
+        speed: 10
+      });
+    }
+  }
+
+
+  $.fn.smoothZoom = function (params) {
+    var self = this;
+    var l = self.length;
+
+    //For single or more than one plugin instance
+    for (var i = 0; i<l; i++) {
+      var $elem = $(self[i]);
+      var instance = $elem.data('smoothZoom');
+
+      // Case 1: Initiate the plugin if not already have an instance
+      if (!instance) {
+
+        if (typeof params === 'object' || !params) {
+          $elem.data('smoothZoom', new Zoomer($elem, params));
+        }
+
+      // Case 2: If the instance already available - Check for method call
+      } else {
+
+        // getZoomData - Returns {sourceX, sourceY, sourceWidth, sourceHeight, distX, distY, distWidth, distHeight, centerX, centerY, ratio}
+        if (params == "getZoomData") {
+          return instance[params].apply(instance, Array.prototype.slice.call(arguments, 1));
+
+        // destroy | focusTo | zoomIn | zoomOut | moveRight| moveLeft | moveUp | moveDown | Reset | addLandmark | removeLandmark | attachLandmark | refreshAllLandmarks
+        } else if (instance[params]) {
+          instance[params].apply(instance, Array.prototype.slice.call(arguments, 1));
+        }
+      }
+    }
+
+    //return for chainability for possible cases
+    if (params !== "getZoomData") {
+      return this;
+    }
+  };
+
+  function checkBoolean (_var) {
+    if (_var === true) {
+      return true;
+    } else if (_var) {
+      _var = _var.toLowerCase();
+      if (_var == 'yes' || _var == 'true') {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+    //...................................................................................................................
+  //Using Modernizr to check browser capabilities and property names prefixed
+
+  /* Modernizr 2.8.2 (Custom Build) | MIT & BSD
+   * Build: http://modernizr.com/download/#-borderradius-csstransforms-csstransforms3d-prefixed-teststyles-testprop-testallprops-prefixes-domprefixes
+   */
+  window.Modernizr=function(a,b,c){function y(a){i.cssText=a}function z(a,b){return y(l.join(a+";")+(b||""))}function A(a,b){return typeof a===b}function B(a,b){return!!~(""+a).indexOf(b)}function C(a,b){for(var d in a){var e=a[d];if(!B(e,"-")&&i[e]!==c)return b=="pfx"?e:!0}return!1}function D(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:A(f,"function")?f.bind(d||b):f}return!1}function E(a,b,c){var d=a.charAt(0).toUpperCase()+a.slice(1),e=(a+" "+n.join(d+" ")+d).split(" ");return A(b,"string")||A(b,"undefined")?C(e,b):(e=(a+" "+o.join(d+" ")+d).split(" "),D(e,b,c))}var d="2.8.2",e={},f=b.documentElement,g="modernizr",h=b.createElement(g),i=h.style,j,k={}.toString,l=" -webkit- -moz- -o- -ms- ".split(" "),m="Webkit Moz O ms",n=m.split(" "),o=m.toLowerCase().split(" "),p={},q={},r={},s=[],t=s.slice,u,v=function(a,c,d,e){var h,i,j,k,l=b.createElement("div"),m=b.body,n=m||b.createElement("body");if(parseInt(d,10))while(d--)j=b.createElement("div"),j.id=e?e[d]:g+(d+1),l.appendChild(j);return h=["&#173;",'<style id="s',g,'">',a,"</style>"].join(""),l.id=g,(m?l:n).innerHTML+=h,n.appendChild(l),m||(n.style.background="",n.style.overflow="hidden",k=f.style.overflow,f.style.overflow="hidden",f.appendChild(n)),i=c(l,a),m?l.parentNode.removeChild(l):(n.parentNode.removeChild(n),f.style.overflow=k),!!i},w={}.hasOwnProperty,x;!A(w,"undefined")&&!A(w.call,"undefined")?x=function(a,b){return w.call(a,b)}:x=function(a,b){return b in a&&A(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=this;if(typeof c!="function")throw new TypeError;var d=t.call(arguments,1),e=function(){if(this instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(t.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(t.call(arguments)))};return e}),p.borderradius=function(){return E("borderRadius")},p.csstransforms=function(){return!!E("transform")},p.csstransforms3d=function(){var a=!!E("perspective");return a&&"webkitPerspective"in f.style&&v("@media (transform-3d),(-webkit-transform-3d){#modernizr{left:9px;position:absolute;height:3px;}}",function(b,c){a=b.offsetLeft===9&&b.offsetHeight===3}),a};for(var F in p)x(p,F)&&(u=F.toLowerCase(),e[u]=p[F](),s.push((e[u]?"":"no-")+u));return e.addTest=function(a,b){if(typeof a=="object")for(var d in a)x(a,d)&&e.addTest(d,a[d]);else{a=a.toLowerCase();if(e[a]!==c)return e;b=typeof b=="function"?b():b,typeof enableClasses!="undefined"&&enableClasses&&(f.className+=" "+(b?"":"no-")+a),e[a]=b}return e},y(""),h=j=null,e._version=d,e._prefixes=l,e._domPrefixes=o,e._cssomPrefixes=n,e.testProp=function(a){return C([a])},e.testAllProps=E,e.testStyles=v,e.prefixed=function(a,b,c){return b?E(a,b,c):E(a,"pfx")},e}(this,document);
+
+  var prop_transform = Modernizr.prefixed('transform');
+  var prop_origin = Modernizr.prefixed('transformOrigin');
+  var prop_radius = Modernizr.prefixed('borderRadius');
+  var supportsTrans3D = Modernizr.csstransforms3d;
+
 })(jQuery, window, document);
 
 //End - smoothZoom
