@@ -79,14 +79,6 @@ gulp.task('app-js', function () {
     .pipe(gulp.dest('./app/public/assets'));
 });
 
-gulp.task('background-js', function () {
-  return gulp.src('app/background.js')
-    .pipe(plumber())
-    .pipe(browserify({
-      transform: [stringify('.html')]
-    }))
-    .pipe(gulp.dest('./app/public'));
-});
 
 var makeRelease = function (rtype) {
   var v,
@@ -155,7 +147,7 @@ gulp.task('default', function () {
   console.log('See gulpfile.js for more\n\n');
 })
 
-gulp.task('build', ['clean', 'sass', 'lint', 'app-js', 'background-js', 'images']);
+gulp.task('build', ['clean', 'sass', 'lint', 'app-js', 'images']);
 
 gulp.task('watch', function () {
   livereload.listen();
@@ -165,10 +157,8 @@ gulp.task('watch', function () {
   watch(paths.images, function () {
     gulp.start('images');
   });
-  watch(['app/app.js', 'app/modules/**/*.js', 'app/modules/**/*.html'], function () {
-    console.log('do the js');
-    gulp.start('build');
-    // gulp.start(['lint', 'app-js', 'background-js']);
+  gulp.watch(['app/app.js', 'app/modules/**/*.js', 'app/modules/**/*.html'], function () {
+    gulp.start(['lint', 'app-js']);
   });
   watch('app/public/**', function () {
     livereload.changed();

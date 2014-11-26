@@ -115,7 +115,7 @@ app.config(function ($urlRouterProvider, $locationProvider) {
 
 app.run(function ($state, Preloader, $q, KioskService) {
 
-  if(window.innerHeight > window.innerWidth) {
+  if (window.innerHeight > window.innerWidth) {
     window.isLargescreen = true;
     window.initialView = 'largescreen';
   } else {
@@ -132,7 +132,6 @@ app.run(function ($state, Preloader, $q, KioskService) {
   });
 
 });
-
 
 // Setup & Bootstrap
 // ----------------------------------------------------------------------
