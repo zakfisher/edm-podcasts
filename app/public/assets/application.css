@@ -266,3 +266,18 @@ g.active .key-background {
       top: 5px;
       border-bottom: 5px solid white;
       border-top: 5px solid transparent; }
+
+.largescreen-weather {
+  color: white;
+  text-align: right; }
+  .largescreen-weather h1, .largescreen-weather h2, .largescreen-weather h3 {
+    font-family: 'Flama', 'helvetica neue', 'helvetica', 'arial', 'sans';
+    margin: 0; }
+  .largescreen-weather h1 {
+    font-weight: 500;
+    margin-bottom: -10px; }
+  .largescreen-weather h2 {
+    font-weight: 600; }
+  .largescreen-weather h3 {
+    font-size: 40px;
+    font-weight: 500; }

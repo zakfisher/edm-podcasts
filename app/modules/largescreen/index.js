@@ -49,11 +49,11 @@ module.exports = angular.module('Largescreen', [])
 
   $scope.options = {
     myScrollView: {
+      direction: 0,
       paginated: true,
       speedLimit: 100,
       drag: 0,
-      margin: 50,
-      direction: 0,
+      margin: 50
     }
   };
 

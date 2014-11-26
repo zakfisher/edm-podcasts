@@ -25,6 +25,7 @@ var app = angular.module('wfWayfinding', [
   require('./modules/map').name,
   require('./modules/largescreen').name,
   require('./modules/largescreen-sidebar').name,
+  require('./modules/largescreen-weather').name,
   require('./modules/dining').name,
   require('./modules/search').name,
   require('./modules/shopping').name,
@@ -32,9 +33,14 @@ var app = angular.module('wfWayfinding', [
   require('./modules/events').name,
   require('./modules/directory').name,
   require('./modules/jibestream-map').name,
+
+  // Custom Services
   require('./modules/category-service').name,
+  require('./modules/centre-service').name,
+  require('./modules/weather-service').name,
   require('./modules/kiosk-service').name,
   require('./modules/store-service').name,
+
   require('./modules/preloader').name,
   require('./modules/svg-keyboard').name,
   require('./modules/card-stream').name,
