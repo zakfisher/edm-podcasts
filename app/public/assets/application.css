@@ -268,7 +268,8 @@ g.active .key-background {
     font-size: 28px;
     letter-spacing: 1px;
     line-height: 45px;
-    margin: 0; }
+    margin: 0;
+    text-align: center; }
   .sidebar-menu-btn .caret {
     height: 0;
     width: 0;
