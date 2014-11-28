@@ -232,9 +232,6 @@ g.active .key-background {
   .large-directory-column p {
     font-family: 'Flama', 'helvetica neue', 'helvetica', 'arial', 'sans'; }
 
-.sidebar-overlay {
-  display: none; }
-
 .sidebar-menu-bg, .sidebar-menu-content, .sidebar-menu-btn {
   z-index: 10; }
 

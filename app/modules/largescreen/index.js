@@ -134,7 +134,6 @@ module.exports = angular.module('Largescreen', [])
     link: {
       post: function ($scope) {
         $scope.directory.scrollView = $famous.find('#largeDirectoryScrollView')[0].renderNode;
-        console.log('zzzz', $scope.directory.scrollView);
       }
     }
   };

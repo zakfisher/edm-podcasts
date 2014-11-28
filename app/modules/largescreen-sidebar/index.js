@@ -1,16 +1,42 @@
 module.exports = angular.module('LargescreenSidebar', [])
 
-.service('LargescreenSidebar', function ($famous, $famousPipe, $state, $stateParams, $rootScope, CategoryService) {
+.service('LargescreenSidebar', function ($famous, $famousPipe, $state, $stateParams, $rootScope, CategoryService, LargescreenDirectory) {
   var sidebar = {};
 
+  /////// CONTROL METHODS ////////
+
   sidebar.open = function() {
-    // sidebar.scrollview.view.goToPage(0);
     sidebar.active = true;
+    sidebar.scrollview.view.goToPage(0);
+    $('.sidebar-overlay').show();
   };
 
   sidebar.close = function() {
-    sidebar.scrollview.view.goToPage(1);
     sidebar.active = false;
+    sidebar.scrollview.view.goToPage(1);
+    $('.sidebar-overlay').hide();
+  };
+
+  sidebar.toggle = function() {
+    var page = sidebar.scrollview.view.getCurrentIndex();
+    switch (page) {
+      case 0: // Open
+      sidebar.close();
+      break;
+      case 1: // Closed
+      sidebar.open();
+      break;
+    }
+  };
+
+  sidebar.goToCategory = function(code) {
+    LargescreenDirectory.goToCategory(code);
+    sidebar.close();
+  };
+
+  sidebar.selectFloor = function(level) {
+    LargescreenDirectory.selectFloor(level);
+    sidebar.close();
   };
 
   // sidebar.goToSearch = function() {
@@ -18,6 +44,7 @@ module.exports = angular.module('LargescreenSidebar', [])
   //   sidebar.hide();
   // };
 
+  /////// INIT METHODS ////////
   sidebar.render = function() {
     var ScrollSync = $famous['famous/inputs/ScrollSync'];
     var EventHandler = $famous['famous/core/EventHandler'];
@@ -90,69 +117,38 @@ module.exports = angular.module('LargescreenSidebar', [])
       var scrollView = $famous.find('#largeSidebarScrollView')[0].renderNode;
       var eventHandler = sidebar.scrollview.eventHandler;
       var scrollSync = sidebar.scrollview.scrollSync;
-      var pipes = [eventHandler, scrollView, scrollSync];
       sidebar.scrollview.view = scrollView;
+
+      scrollSync.on("update", function() {
+        sidebar.active = (scrollView.getAbsolutePosition() < 150);
+        if (sidebar.active) $('.sidebar-overlay').show();
+        else $('.sidebar-overlay').hide();
+      });
 
       var menuBg      = $famous.find('#largeSidebarScrollView .sidebar-menu-bg')[0].renderNode;
       var menuContent = $famous.find('#largeSidebarScrollView .sidebar-menu-content')[0].renderNode;
       var menuBtn     = $famous.find('#largeSidebarScrollView .sidebar-menu-btn')[0].renderNode;
+
+      var pipes = [eventHandler, scrollView, scrollSync];
       var targets = [menuBg, menuContent, menuBtn];
-
       $famousPipe.pipesToTargets(pipes, targets);
-
-      scrollSync.on("update", function() {
-        sidebar.active = (scrollView.getAbsolutePosition() < 150);
-      });
   };
 
   return sidebar;
 })
 
-.directive('largescreenSidebar', function ($famous) {
+.directive('largescreenSidebar', function ($timeout) {
   return {
     restrict: 'E',
     template: require('./largescreen-sidebar.html'),
-    controller: function ($scope, $famous, LargescreenSidebar) {
+    controller: function ($scope, LargescreenSidebar) {
       $scope.sidebar = LargescreenSidebar;
       $scope.sidebar.render();
     },
     link: {
       post: function ($scope) {
         $scope.sidebar.setPipes();
-        $scope.sidebar.close();
-        
-
-        // // Category Filter Listener
-        // $(document).on('click', 'ul.sidebar-category-list li', function(e) {
-        //   var code = $(e.currentTarget).attr('data-code');
-        //   LargescreenDirectory.goToCategory(code);
-        //   sidebar.close();
-        //   $('div.caret').addClass('up');
-        //   $('.sidebar-overlay').hide();
-        // });
-
-        // // Floor Filter Listener
-        // $(document).on('click', 'ul.sidebar-floor-list li', function(e) {
-        //   var level = $(e.currentTarget).attr('data-level');
-        //   LargescreenDirectory.selectFloor(level);
-        //   sidebar.close();
-        //   $('div.caret').addClass('up');
-        //   $('.sidebar-overlay').hide();
-        // });
-
-        // // Menu Button Display Toggle Listener
-        // $(document).on('click', '.sidebar-menu-btn', function(e) {
-        //   if (sidebar.active) {
-        //     sidebar.close();
-        //     $('.sidebar-overlay').hide();
-        //     $('div.caret').addClass('up');
-        //   }
-        //   else {
-        //     sidebar.open();
-        //     $('.sidebar-overlay').show();
-        //     $('div.caret').removeClass('up');
-        //   }
-        // });
+        $timeout($scope.sidebar.close, 0);
 
         // // Overlay Close Menu Listener
         // $(document).on('click', '.sidebar-overlay', function(e) {
@@ -160,9 +156,7 @@ module.exports = angular.module('LargescreenSidebar', [])
         //     $('div.caret').addClass('up');
         //     $('.sidebar-overlay').hide();
         // });
-          
 
-          // $scope.sidebar.close();
       }
     },
   };

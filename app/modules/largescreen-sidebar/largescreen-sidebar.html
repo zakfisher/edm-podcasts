@@ -1,5 +1,6 @@
 <fa-modifier fa-translate="sidebar.overlay.postion">
-	<fa-surface class="sidebar-overlay">
+	<fa-surface class="sidebar-overlay"
+		fa-click="sidebar.close()">
 	</fa-surface>
 </fa-modifier>
 
@@ -24,12 +25,12 @@
 						<em>Select a category</em>
 						<ul class="sidebar-category-list">
 							<li ng-repeat="category in sidebar.categories" 
-								data-code="{{category.code}}">{{category.name}}</li>
+								ng-click="sidebar.goToCategory(category.code)">{{category.name}}</li>
 						</ul>
 						<em>Select a floor</em>
 						<ul class="sidebar-floor-list">
 							<li ng-repeat="floor in sidebar.floors" 
-								data-level="{{floor.level}}">Floor {{floor.level}}</li>
+								ng-click="sidebar.selectFloor(floor.level)">Floor {{floor.level}}</li>
 						</ul>
 					</fa-surface>
 				</fa-modifier>
@@ -43,7 +44,8 @@
 				fa-origin="sidebar.menuBtn.origin",
 				fa-size="sidebar.menuBtn.size"
 				fa-rotate-z="sidebar.menuBtn.rotateZ">
-				<fa-surface class="sidebar-menu-btn">
+				<fa-surface class="sidebar-menu-btn"
+					fa-click="sidebar.toggle()">
 					<div class="caret" ng-class="{up:!sidebar.active}"></div>
 					<p>menu</p>
 				</fa-surface>
