@@ -1,31 +1,96 @@
-<fa-modifier>
-  <fa-header-footer-layout fa-options="{direction: 1, headerSize: 150, footerSize: 370}">
-
+<fa-modifier
+  fa-size="options.size"
+  fa-translate="options.translate">
+  <fa-header-footer-layout 
+    fa-options="options.layout">
+    
+    <!-- Query -->
     <fa-view>
-      <fa-modifier fa-translate="[0,0,-1]">
-        <fa-surface fa-background-color="'black'"></fa-surface>
+
+      <!-- Background -->
+      <fa-modifier 
+        fa-translate="options.query.background.translate">
+        <fa-surface class="search-query-background"
+          ng-class="{largescreen:window.isLargescreen}"
+          fa-background-color="options.query.background.bgColor">
+        </fa-surface>
       </fa-modifier>
-      <fa-modifier fa-size="[undefined, 100]">
-      <fa-surface>
-        <h1 class="txt-center searchBox" ng-bind="string + '|'" style="color: #fff">
-      </h1>
-      </fa-surface>
+
+      <!-- Text -->
+      <fa-modifier 
+        fa-size="options.query.text.size" 
+        fa-translate="options.query.text.translate">
+        <fa-surface class="search-query-text"
+          ng-class="{largescreen:isLargescreen}">
+          <h1 class="searchBox" 
+            ng-show="!isLargescreen"
+            ng-bind="string + '|'" 
+            style="color: #fff"></h1>
+          <h1 class="searchBox" 
+            ng-show="isLargescreen"
+            ng-bind="string" 
+            style="color: #fff"></h1>
+        </fa-surface>
       </fa-modifier>
+
+      <!-- Placeholder -->
+      <fa-modifier 
+        fa-size="options.query.text.size" 
+        fa-translate="options.query.text.translate">
+        <fa-surface class="search-query-placeholder">
+          <h2 ng-show="isLargescreen && string.length == 0">{{options.query.placeholder.text}}</h2>
+        </fa-surface>
+      </fa-modifier>
+
     </fa-view>
 
-    <!-- Results -->
     <fa-view>
-      <fa-surface fa-background-color="'black'">
-        <h2 ng-show="results.length > 0">Stores</h2>
-        <h2 ng-repeat="result in results" class="txt-center" style="color: #fff" ng-bind-html="result.name" ng-click="handleResultClick(result)"></h2>
-      </fa-surface>
+
+      <!-- Results (large screen) -->
+      <fa-modifier
+        ng-show="isLargescreen"
+        fa-size="options.results.grid.size"
+        fa-translate="options.results.grid.translate">
+
+        <fa-grid-layout 
+          fa-options="options.results.grid.options">
+            <fa-surface class="search-results largescreen"
+              ng-repeat="column in results">
+              <h2 ng-repeat="result in column" 
+                style="color: #fff" 
+                ng-bind-html="result.name" 
+                ng-click="handleResultClick(result)"></h2>
+          </fa-surface>
+        </fa-grid-layout>
+        
+      </fa-modifier>
+
+      <!-- Results (small screen) -->
+      <fa-modifier ng-show="!isLargescreen">
+        <fa-surface class="search-results"
+          fa-background-color="options.results.bgColor">
+          <h2 ng-show="results.length > 0">Stores</h2>
+          <h2 ng-repeat="result in results" 
+            style="color: #fff" 
+            ng-bind-html="result.name" 
+            ng-click="handleResultClick(result)"></h2>
+        </fa-surface>
+      </fa-modifier>
+
     </fa-view>
 
     <!-- Keyboard -->
     <fa-view>
-      <fa-surface fa-background-color="'black'"></fa-surface>
-      <fa-modifier fa-size="[1055, 370]" fa-origin="[.5,0]" fa-align="[.5, 0]" fa-translate="[0,0,1]">
-        <fa-surface>
+      <fa-surface fa-background-color="options.keyboard.bgColor">
+      </fa-surface>
+      <fa-modifier 
+        fa-align="options.keyboard.align" 
+        fa-origin="options.keyboard.origin" 
+        fa-size="options.keyboard.size" 
+        fa-translate="options.keyboard.translate">
+        <fa-surface class="search-keyboard"
+          ng-class="{largescreen:window.isLargescreen}"
+          fa-background-color="options.keyboard.bgColor">
           <keyboard model="string"></keyboard>
         </fa-surface>
       </fa-modifier>

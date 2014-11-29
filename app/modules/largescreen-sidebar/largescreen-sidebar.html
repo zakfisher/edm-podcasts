@@ -1,4 +1,5 @@
-<fa-modifier fa-translate="sidebar.overlay.postion">
+<fa-modifier 
+	fa-translate="sidebar.overlay.translate">
 	<fa-surface class="sidebar-overlay"
 		fa-click="sidebar.close()">
 	</fa-surface>
@@ -10,40 +11,126 @@
 	<fa-scroll-view id="largeSidebarScrollView"
 		fa-options="sidebar.scrollview.options">
 
-		<!-- Menu Content -->
+		<!-- Menu View -->
 		<fa-view fa-index="0">
+
+			<!-- Menu Wrapper -->
 			<fa-modifier 
-				fa-size="sidebar.menuBg.size" 
-				fa-translate="sidebar.menuBg.translate">
+				fa-size="sidebar.background.size" 
+				fa-translate="sidebar.background.translate">
+
+				<!-- Menu Bg -->
 				<fa-surface class="sidebar-menu-bg">
 				</fa-surface>
+
+				<!-- Menu Content -->
 				<fa-modifier 
-					fa-align="sidebar.menuContent.align"
-					fa-origin="sidebar.menuContent.origin"
-					fa-size="sidebar.menuContent.size">
-					<fa-surface class="sidebar-menu-content">
-						<em>Select a category</em>
-						<ul class="sidebar-category-list">
-							<li ng-repeat="category in sidebar.categories" 
-								ng-click="sidebar.goToCategory(category.code)">{{category.name}}</li>
-						</ul>
-						<em>Select a floor</em>
-						<ul class="sidebar-floor-list">
-							<li ng-repeat="floor in sidebar.floors" 
-								ng-click="sidebar.selectFloor(floor.level)">Floor {{floor.level}}</li>
-						</ul>
-					</fa-surface>
+					fa-size="sidebar.content.size"
+					fa-translate="sidebar.content.translate">
+
+					<!-- Title -->
+					<fa-modifier
+						fa-size="sidebar.content.title.size"
+						fa-translate="sidebar.content.title.translate">
+						<fa-surface class="sidebar-menu-title">
+							<h1>{{sidebar.content.title.text}}</h1>
+						</fa-surface>
+					</fa-modifier>
+
+					<!-- Tap Icon -->
+					<fa-modifier
+						fa-size="sidebar.content.tapIcon.size" 
+						fa-translate="sidebar.content.tapIcon.translate">
+						<fa-image-surface 
+							fa-image-url="tap-icon.jpg"
+							class="sidebar-menu-tap-icon">
+						</fa-image-surface>
+					</fa-modifier>
+
+					<!-- Categories Header -->
+					<fa-modifier
+						fa-size="sidebar.content.categories.header.size"
+						fa-translate="sidebar.content.categories.header.translate">
+						<fa-surface class="sidebar-menu-category-header">
+							<em>{{sidebar.content.categories.header.text}}</em>
+						</fa-surface>
+					</fa-modifier>
+
+					<!-- Categories Grid -->
+					<fa-modifier
+						fa-size="sidebar.content.categories.grid.size"
+						fa-translate="sidebar.content.categories.grid.translate">
+						<fa-grid-layout 
+							fa-options="sidebar.content.categories.grid.options">
+					    	<fa-surface class="sidebar-menu-category-grid"
+					    		ng-repeat="grid in sidebar.content.categories.grid.grids">
+					    		<ul>
+									<li ng-repeat="category in grid" 
+										ng-click="sidebar.goToCategory(category.code)">{{category.name}}</li>
+								</ul>
+					    	</fa-surface>
+					    </fa-grid-layout>
+				    </fa-modifier>
+
+				    <!-- Floors Header -->
+					<fa-modifier
+						fa-size="sidebar.content.floors.header.size"
+						fa-translate="sidebar.content.floors.header.translate">
+						<fa-surface class="sidebar-menu-floor-header">
+							<em>{{sidebar.content.floors.header.text}}</em>
+						</fa-surface>
+					</fa-modifier>
+
+					<!-- Floors Grid -->
+					<fa-modifier
+						fa-size="sidebar.content.floors.grid.size"
+						fa-translate="sidebar.content.floors.grid.translate">
+						<fa-grid-layout 
+							fa-options="sidebar.content.floors.grid.options">
+					    	<fa-surface class="sidebar-menu-floor-grid"
+					    		ng-repeat="grid in sidebar.content.floors.grid.grids">
+					    		<ul>
+									<li ng-repeat="floor in grid" 
+										ng-click="sidebar.selectFloor(floor.level)">Floor {{floor.level}}</li>
+								</ul>
+					    	</fa-surface>
+					    </fa-grid-layout>
+				    </fa-modifier>
+
+				    <!-- Divider -->
+				    <fa-modifier
+				    	fa-size="sidebar.content.divider.size"
+				    	fa-translate="sidebar.content.divider.translate">
+				    	<fa-surface class="sidebar-menu-divider"
+				    		fa-background-color="sidebar.content.divider.bgColor">
+				    	</fa-surface>
+				    </fa-modifier>
+
+				    <!-- Search Icon -->
+					<fa-modifier
+						fa-size="sidebar.content.searchIcon.size" 
+						fa-translate="sidebar.content.searchIcon.translate">
+						<fa-image-surface 
+							fa-image-url="search-icon.jpg"
+							class="sidebar-menu-search-icon">
+						</fa-image-surface>
+					</fa-modifier>
+
+					<!-- Search -->
+					<largescreen-sidebar-search></largescreen-sidebar-search>
+					
 				</fa-modifier>
+
 			</fa-modifier>
 		</fa-view>
 
-		<!-- Menu Button -->
+		<!-- Button View -->
 		<fa-view fa-index="1">
 			<fa-modifier
-				fa-align="sidebar.menuBtn.align"
-				fa-origin="sidebar.menuBtn.origin",
-				fa-size="sidebar.menuBtn.size"
-				fa-rotate-z="sidebar.menuBtn.rotateZ">
+				fa-align="sidebar.button.align"
+				fa-origin="sidebar.button.origin",
+				fa-size="sidebar.button.size"
+				fa-rotate-z="sidebar.button.rotateZ">
 				<fa-surface class="sidebar-menu-btn"
 					fa-click="sidebar.toggle()">
 					<div class="caret" ng-class="{up:!sidebar.active}"></div>

@@ -1,6 +1,6 @@
 // Generic + Base Styles
 // ----------------------------------------------------------------------
-
+$red: #c7242e;
 
 
 body {
@@ -223,6 +223,7 @@ g.active {
   margin: 30px auto;
   padding: 20px 1em;
   line-height: 1;
+  text-align: center;
 }
 
 
@@ -360,36 +361,9 @@ g.active {
 
 // Large Screen Sidebar
 // ----------------------------------------------------------------------
-
 .sidebar-menu-bg,
-.sidebar-menu-content,
 .sidebar-menu-btn {
   z-index: 10;
-}
-
-.sidebar-menu-bg {
-  background: #231f20;
-}
-
-.sidebar-menu-content {
-  letter-spacing: 1px;
-
-  em {
-    font-family: 'Flama', 'helvetica neue', 'helvetica', 'arial', 'sans';
-    font-size: 18px;
-    line-height: 24px;
-  }
-
-  ul {
-    list-style-type: none;
-    padding: 0;
-
-    li {
-      color: #cdcdcd;
-      font-size: 26px;
-      line-height: 46px;
-    }
-  }
 }
 
 .sidebar-menu-btn {
@@ -425,6 +399,105 @@ g.active {
       top: 5px;
       border-bottom: 5px solid white;
       border-top: 5px solid transparent;
+    }
+  }
+}
+
+.search-query-background,
+.search-query-text,
+.search-query-placeholder,
+.search-results,
+.sidebar-menu-title,
+.sidebar-menu-tap-icon,
+.sidebar-menu-category-header,
+.sidebar-menu-category-grid,
+.sidebar-menu-floor-header,
+.sidebar-menu-floor-grid,
+.sidebar-menu-divider,
+.sidebar-menu-search-icon,
+.sidebar-menu-search {
+  z-index: 11;
+  letter-spacing: 1px;
+}
+
+.sidebar-menu-bg {
+  background: #231f20;
+}
+
+.sidebar-menu-title {
+  h1 {
+    color: $red;
+    font-size: 100px;
+    line-height: 100px;
+    text-transform: uppercase;
+    font-weight: 100;
+    margin: 0;
+    width: 0;
+  }
+}
+
+.sidebar-menu-category-header,
+.sidebar-menu-floor-header {
+  em {
+    font-family: 'Flama', 'helvetica neue', 'helvetica', 'arial', 'sans';
+    font-size: 18px;
+    line-height: 24px;
+  }
+}
+
+.sidebar-menu-category-grid,
+.sidebar-menu-floor-grid {
+  ul {
+    list-style-type: none;
+    padding: 0;
+
+    li {
+      color: #cdcdcd;
+      font-size: 26px;
+      line-height: 46px;
+    }
+  }
+}
+
+.search-query-background {}
+
+.search-query-text {
+  &.largescreen {
+    h1.searchBox {
+      text-align: left;
+      padding: 0;
+      margin: 0;
+      width: auto;
+      font-size: 40px;
+      height: 50px;
+    }
+  }
+}
+
+.search-query-placeholder {
+  h2 {
+    font-size: 30px;
+    font-size: 36px;
+    font-weight: 500;
+    margin: 0;
+    color: #cdcdcd;
+    height: 50px;
+    text-transform: uppercase;
+  }
+  &.largescreen {
+
+  }
+}
+
+.search-results {
+  h2 {
+    text-align: center;
+  }
+  &.largescreen {
+    overflow: hidden;
+    h2 {
+      margin-right: 20px;
+      text-align: left;
     }
   }
 }

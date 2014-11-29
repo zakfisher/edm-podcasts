@@ -119,6 +119,7 @@ app.run(function ($state, Preloader, $q, KioskService) {
     window.isLargescreen = true;
     window.initialView = 'largescreen';
   } else {
+    window.isLargescreen = false;
     window.initialView = 'kioskmap';
   };
 
@@ -143,6 +144,20 @@ $(document.body).on('mousewheel', function (e) {
 
 angular.bootstrap(document, ['wfWayfinding']);
 
+// Disable Right Click
+function disableRightClick() {
+  document.oncontextmenu=RightMouseDown;
+  document.onmousedown = mouseDown; 
+
+  function mouseDown(e) {
+      if (e.which==3) { //righClick
+        e.preventDefault();
+      }
+  }
+  function RightMouseDown() { return false; }
+}
+
+// disableRightClick();
 
 
 // Chrome app setup
