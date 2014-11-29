@@ -3097,7 +3097,7 @@ var __extends = this.__extends || function (d, b) {
         }
 
           if(parId != groupPar.name){
-            console.log(destName + " doesn't belong in " + groupPar.name, parId);
+            // console.log(destName + " doesn't belong in " + groupPar.name, parId);
             textF.remove();
           }
           }

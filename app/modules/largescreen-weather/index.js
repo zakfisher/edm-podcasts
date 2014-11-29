@@ -12,7 +12,7 @@ module.exports = angular.module('LargescreenWeather', [])
         alignment: [1, 0],
         origin: [1, 0],
         size: [400, 200],
-        translation: [-50, 50, 0],
+        translation: [-20, 20, 0],
         currentTemp: currentTemp,
         summary: summary
       };

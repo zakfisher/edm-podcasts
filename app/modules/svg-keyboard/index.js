@@ -43,13 +43,14 @@ module.exports = angular.module('keyboard', [])
         // $scope.keyFire($attrs.keyboardkey);
         $scope.$apply();
       });
-      $element[0].addEventListener('touchstart', function (e) {
-
+      $element[0].addEventListener('mousedown', function (e) {
+      // $element[0].addEventListener('touchstart', function (e) {
         $scope.keyFire($attrs.keyboardkey);
         $element.attr('class', 'active');
         $scope.$apply();
       });
-      $element[0].addEventListener('touchend', function () {
+      $element[0].addEventListener('mouseup', function () {
+      // $element[0].addEventListener('touchend', function () {
         $element.attr('class', '');
         $scope.$apply();
       });

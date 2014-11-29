@@ -1,199 +1,207 @@
 module.exports = angular.module('LargescreenSidebar', [])
 
-.service('LargescreenSidebar', function ($famous, $state, $stateParams, $rootScope, CategoryService, LargescreenDirectory) {
+.service('LargescreenSidebar', function ($famous, $famousPipe, $state, $stateParams, $rootScope, CategoryService, LargescreenDirectory) {
   var sidebar = {};
 
-  sidebar.getContentHeight = function () {
-    var categoryCount = sidebar.categories.length;
-    var floorCount = sidebar.floors.length;
-    var contentHeight = 0;
-    var listCount = 2;
-    var listTitleHeight = 25;
-    var listItemHeight = 46;
-    var listMarginHeight = 32;
-    // Add List Title
-    contentHeight += (listCount * listTitleHeight);
-    // Add List Margins
-    contentHeight += (listCount * listMarginHeight);
-    // Add Category List Items
-    contentHeight += (categoryCount * listItemHeight);
-    // Add Floor List Items
-    contentHeight += (floorCount * listItemHeight);
-    return contentHeight;
-  };
-
-  sidebar.show = function () {
-    sidebar.scrollview.goToPage(0);
+  /////// CONTROL METHODS ////////
+  sidebar.open = function() {
     sidebar.active = true;
+    sidebar.scrollview.view.goToPage(0);
+    $('.sidebar-overlay').show();
   };
 
-  sidebar.hide = function () {
-    sidebar.scrollview.goToPage(1);
+  sidebar.close = function() {
     sidebar.active = false;
+    sidebar.scrollview.view.goToPage(1);
+    $('.sidebar-overlay').hide();
   };
 
-  sidebar.render = function () {
-    var Engine = $famous['famous/core/Engine'];
-    var Modifier = $famous['famous/core/Modifier'];
-    var View = $famous['famous/core/View'];
-    var Surface = $famous['famous/core/Surface'];
-    var Transform = $famous['famous/core/Transform'];
+  sidebar.toggle = function() {
+    var page = sidebar.scrollview.view.getCurrentIndex();
+    switch (page) {
+      case 0: // Open
+      sidebar.close();
+      break;
+      case 1: // Closed
+      sidebar.open();
+      break;
+    }
+  };
+
+  sidebar.goToCategory = function(code) {
+    LargescreenDirectory.goToCategory(code);
+    sidebar.close();
+  };
+
+  sidebar.selectFloor = function(level) {
+    LargescreenDirectory.selectFloor(level);
+    sidebar.close();
+  };
+
+  sidebar.arrayToGrid = function(array, numOfColumns) {
+    var count = array.length;
+    var grid1 = array.splice(0, count/numOfColumns + 1), 
+        grid2 = array.splice(0, count/numOfColumns + 1), 
+        grid3 = array;
+    return [grid1, grid2, grid3];
+  };
+
+  /////// INIT METHODS ////////
+  sidebar.render = function() {
     var ScrollSync = $famous['famous/inputs/ScrollSync'];
-    var Scrollview = $famous['famous/views/Scrollview'];
-
-    sidebar.categories = CategoryService.getCategories();
-
-    // API call to Jibestream for floor count (from Phiroze)
-    // sidebar.floors = JMap.getMaps(function(data) {
-    //   console.log('map', data);
-    // });
-
-    sidebar.floors = [
-      {
-        level: 2
+    var EventHandler = $famous['famous/core/EventHandler'];
+    var categories = CategoryService.getCategories();
+    var columnCount = 3;
+    var floors = (function() {
+      /* 
+        API call to Jibestream for floor count (from Phiroze)
+        JMap.getMaps(function(floorArray) {
+          console.log('map', floorArray);
+        }); 
+      */
+      return [
+        { level: 2 },
+        { level: 1 }
+      ];
+    })();
+    angular.extend(sidebar, {
+      size: [309, undefined],
+      translate: [0, 0, 0],
+      overlay: {
+        translate: [274, 0, 0]
       },
-      {
-        level: 1
-      }
-    ];
-
-    sidebar.size = [309, undefined];
-    sidebar.position = [0, 0, 0];
-
-    // Create Scrollview
-    var scrollSync = new ScrollSync();
-    sidebar.scrollview = new Scrollview({
-      clipSize: 282,
-      paginated: true,
-      speedLimit: 100,
-      drag: 0,
-      direction: 0,
-      friction: 0,
-      pageStopSpeed: 1
-    });
-
-    // Create Menu Content View
-    var menuView = new View();
-    var menuModifier = new Modifier();
-    var menuBgSurface = new Surface();
-    var menuContentModifier = new Modifier();
-    var menuContentSurface = new Surface();
-    menuModifier
-      .setSize([374, undefined])
-      .setTransform(Transform.translate(-100, 0, 0));
-    menuBgSurface
-      .addClass('sidebar-menu-bg')
-      .pipe(scrollSync)
-      .pipe(sidebar.scrollview);
-    menuContentModifier
-      .setAlign([0.62, 0.5])
-      .setOrigin([0.5, 0.5])
-      .setSize([184, sidebar.getContentHeight()]);
-    menuContentSurface
-      .addClass('sidebar-menu-content')
-      .pipe(scrollSync)
-      .pipe(sidebar.scrollview);
-    var menuContentNode = menuView.add(menuModifier);
-    menuContentNode.add(menuBgSurface);
-    menuContentNode.add(menuContentModifier).add(menuContentSurface);
-
-    // Add Menu Content
-    var content = '';
-
-    // Categories
-    content += '<em>Select a category</em>';
-    content += '<ul class="sidebar-category-list">';
-    sidebar.categories.forEach(function (category) {
-      content += '<li data-code="' + category.code + '">' + category.name + '</li>';
-    });
-    content += '</ul>';
-
-    // Floors
-    content += '<em>Select a floor</em>';
-    content += '<ul class="sidebar-floor-list">';
-    sidebar.floors.forEach(function (floor) {
-      content += '<li data-level="' + floor.level + '">Floor ' + floor.level + '</li>';
-    });
-    content += '</ul>';
-
-    // Append Markup
-    menuContentSurface.setContent(content);
-
-    // Create Menu Button View
-    var menuBtnView = new View();
-    var menuBtnModifier = new Modifier();
-    var menuBtnSurface = new Surface();
-    menuBtnModifier
-      .setAlign([-0.06, 0.5])
-      .setOrigin([0.5, 0])
-      .setSize([160, 45])
-      .setTransform(Transform.rotateZ(Math.PI / 2));
-    menuBtnSurface
-      .addClass('sidebar-menu-btn')
-      .addClass('txt-center')
-      .pipe(scrollSync)
-      .pipe(sidebar.scrollview);
-    menuBtnView.add(menuBtnModifier).add(menuBtnSurface);
-
-    // Add Menu Button Content
-    var btnContent = '';
-    btnContent += '<div class="caret up"></div>';
-    btnContent += '<p>menu</p>';
-    menuBtnSurface.setContent(btnContent);
-
-    // Render
-    sidebar.scrollview.sequenceFrom([menuView, menuBtnView]);
-    var context = Engine.createContext();
-    context.add(sidebar.scrollview);
-
-    // Scroll Event Listeners
-    scrollSync.on("update", function () {
-      sidebar.active = (sidebar.scrollview.getAbsolutePosition() < 150);
-      if (sidebar.active) {
-        $('div.caret').removeClass('up');
-        $('.sidebar-overlay').show();
-      } else {
-        $('div.caret').addClass('up');
-        $('.sidebar-overlay').hide();
+      scrollview: {
+        eventHandler: new EventHandler(),
+        scrollSync: new ScrollSync(),
+        options : {
+          clipSize: 282,
+          paginated: true,
+          speedLimit: 100,
+          drag: 0,
+          direction: 0,
+          friction: 0,
+          pageStopSpeed: 1
+        }
+      },
+      background: {
+        size:      [830, undefined],
+        translate: [-100, 0, 0],
+      },
+      content: {
+        size:      [640, undefined],
+        translate: [160, 200, 0],
+        title: {
+          text:      'Store Directory',
+          size:      [undefined, 240],
+          translate: [0, 0, 0]
+        },
+        tapIcon: {
+          size:      [0.6*79, 0.6*103],
+          translate: [-50, 250, 0]
+        },
+        categories: {
+          header: {
+            text:      'Select a Category',
+            size:      [undefined, 30],
+            translate: [0, 270, 0]
+          },
+          grid: {
+            size:      [undefined, 400],
+            translate: [0, 290, 0],
+            options: {
+              dimensions: [columnCount, 1], // columns, rows
+            },
+            grids: sidebar.arrayToGrid(categories, columnCount)
+          }
+        },
+        floors: {
+          header: {
+            text:      'Select a Floor',
+            size:      [undefined, 30],
+            translate: [0, 710, 0]
+          },
+          grid: {
+            size:      [undefined, 100],
+            translate: [0, 730, 0],
+            options: {
+              dimensions: [columnCount, 1], // columns, rows
+            },
+            grids: sidebar.arrayToGrid(floors, columnCount)
+          }
+        },
+        divider: {
+          bgColor:   "#2a2a2a",
+          size:      [undefined, 2],
+          translate: [0, 820, 0]
+        },
+        searchIcon: {
+          size:      [0.6*117, 0.6*116],
+          translate: [0, 850, 0]
+        }
+      },
+      button: {
+        align:   [-0.2, 0.5],
+        origin:  [0.5, 0],
+        size:    [160, 45],
+        rotateZ: Math.PI / 2
       }
     });
+  };
 
-    // Category Filter Listener
-    $(document).on('click', 'ul.sidebar-category-list li', function (e) {
-      var code = $(e.currentTarget).attr('data-code');
-      LargescreenDirectory.goToCategory(code);
-      sidebar.hide();
-      $('div.caret').addClass('up');
-    });
+  sidebar.pipeEvents = function() {
+      var eventHandler = sidebar.scrollview.eventHandler;
+      var scrollSync = sidebar.scrollview.scrollSync;
+      var scrollView = $famous.find('#largeSidebarScrollView')[0].renderNode;
+      sidebar.scrollview.view = scrollView;
 
-    // Floor Filter Listener
-    var selectedFloor = false;
-    $(document).on('click', 'ul.sidebar-floor-list li', function (e) {
-        var level = $(e.currentTarget).attr('data-level');
-        LargescreenDirectory.selectFloor(level);
-      // if (!selectedFloor) {
-      //   selectedFloor = true;
-      // } else {
-      //   selectedFloor = false;
-      //   LargescreenDirectory.selectFloor(selectedFloor);
-      // }
-      sidebar.hide();
-      $rootScope.$apply();
-    });
+      scrollSync.on("update", function() {
+        sidebar.active = (scrollView.getAbsolutePosition() < 150);
+        if (sidebar.active) $('.sidebar-overlay').show();
+        else $('.sidebar-overlay').hide();
+      });
 
+      var background     = $famous.find('#largeSidebarScrollView .sidebar-menu-bg')[0].renderNode;
+      var button         = $famous.find('#largeSidebarScrollView .sidebar-menu-btn')[0].renderNode;
+      var title          = $famous.find('#largeSidebarScrollView .sidebar-menu-title')[0].renderNode;
+      var tapIcon        = $famous.find('#largeSidebarScrollView .sidebar-menu-tap-icon')[0].renderNode;
+      var categoryHeader = $famous.find('#largeSidebarScrollView .sidebar-menu-category-header')[0].renderNode;
+      var floorHeader    = $famous.find('#largeSidebarScrollView .sidebar-menu-floor-header')[0].renderNode;
+      var divider        = $famous.find('#largeSidebarScrollView .sidebar-menu-divider')[0].renderNode;
+      var searchIcon     = $famous.find('#largeSidebarScrollView .sidebar-menu-search-icon')[0].renderNode;
+
+      var pipes = [
+        eventHandler, 
+        scrollView, 
+        scrollSync
+      ];
+      var targets = [
+        background, 
+        button, 
+        title, 
+        tapIcon, 
+        categoryHeader, 
+        floorHeader, 
+        searchIcon
+      ];
+      $famousPipe.pipesToTargets(pipes, targets);
   };
 
   return sidebar;
 })
 
-.directive('largescreenSidebar', function () {
+.directive('largescreenSidebar', function ($timeout) {
   return {
     restrict: 'E',
     template: require('./largescreen-sidebar.html'),
-    controller: function ($scope, $famous, LargescreenSidebar) {
+    controller: function ($scope, LargescreenSidebar) {
       $scope.sidebar = LargescreenSidebar;
       $scope.sidebar.render();
-      $scope.sidebar.hide();
-    }
+    },
+    link: {
+      post: function ($scope) {
+        $scope.sidebar.pipeEvents();
+        $timeout($scope.sidebar.open, 0);
+      }
+    },
   };
 });
