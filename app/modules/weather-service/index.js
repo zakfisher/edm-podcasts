@@ -1,18 +1,17 @@
 module.exports = angular.module('WeatherService', [])
 
 // Preload weather on boot
-.run(function (WeatherService, $timeout) {
+.run(function (WeatherService) {
   WeatherService.cache();
-  $timeout(WeatherService.cache, 5000);
 })
 
 .service('WeatherService', function ($http, Preloader) {
   var self = {};
 
-  self.cache = function() {
+  self.cache = function(next) {
     var weatherTask = Preloader.createTask('Get Weather');
     $http({
-      cache: true,
+      cache: false,
       method: "GET",
       url: "http://api.openweathermap.org/data/2.5/weather?lat=38.990622&lon=-76.544522"
       // url: "/cache-data/weather.json"
@@ -22,6 +21,7 @@ module.exports = angular.module('WeatherService', [])
     }).success(function (r) {
       self.setWeather(r);
       weatherTask.resolve();
+      if (typeof next === 'function') next();
     });
   };
 
