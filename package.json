@@ -6,7 +6,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/westfield/wayfinding_kiosk.git"
-  }
+  },
   "scripts": {
     "start": "node app/server/index.js",
     "postinstall": "gulp build"
