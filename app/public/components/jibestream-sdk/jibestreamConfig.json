@@ -31,9 +31,9 @@
         "highLightColor": "#fff",
         "clickable": true,
         "addLabel": true,
-        "sponsorship":75,
-        "label":{
-         "font-size": "15px",
+        "sponsorship": 75,
+        "label": {
+          "font-size": "15px",
           "font-weight": "bold",
           "color": "#000"
         }
@@ -56,8 +56,8 @@
         "clickable": true,
         "highLightColor": "#fff",
         "addLabel": true,
-        "sponsorship":50,
-        "label":{
+        "sponsorship": 50,
+        "label": {
           "font-size": "10px",
           "color": "#000"
         }
@@ -70,10 +70,10 @@
         "colorFill": "#dddabf",
         "strokeColor": "#fff",
         "strokeWidth": "2px",
-         "clickable": true,
+        "clickable": true,
         "addLabel": true,
-        "sponsorship":75,
-        "label":{
+        "sponsorship": 75,
+        "label": {
           "font-size": "8px",
           "color": "#000"
         }
@@ -149,8 +149,8 @@
         "highLightColor": "#fff",
         "clickable": true,
         "addLabel": true,
-        "sponsorship":75,
-        "label":{
+        "sponsorship": 75,
+        "label": {
           "font-size": "15px",
           "font-weight": "bold",
           "color": "#000"
@@ -163,7 +163,7 @@
         "colorFill": "#000",
         "highLightColor": "",
         "clickable": false
-        
+
    },
       {
         "name": "Units_1_",
@@ -176,8 +176,8 @@
 
         "clickable": true,
         "addLabel": true,
-        "sponsorship":50,
-        "label":{
+        "sponsorship": 50,
+        "label": {
           "font-size": "10px",
           "color": "#000"
         }
@@ -260,8 +260,8 @@
     "iconStyles": {
       "youarehere": {
         "url": "/components/jibestream-sdk/images/BlueDot.png",
-        "width": "34px",
-        "height": "34px",
+        "width": "61px",
+        "height": "61px",
         "heading": 90,
         "offset": {
           "x": "17px",
@@ -312,47 +312,47 @@
       "highway": {
         "font-size": "50px",
         "color": "#fff",
-        "white-space":"nowrap",
-        "font-weight":"bolder"
+        "white-space": "nowrap",
+        "font-weight": "bolder"
       },
       "major-street": {
         "font-size": "40px",
         "color": "#000",
-        "white-space":"nowrap"
+        "white-space": "nowrap"
       }
     },
 
-    "mapLabels":[
-    	{
-    		"text":"Nimitz Fwy",
-    		"x":1860,
-    		"y":1125,
-    		"rotation":0,
-    		"class":"highway"
-    	},
-    	{
-    		"text":"Stevens Creek Blvd",
-    		"x":2470,
-    		"y":2025,
-    		"rotation":90,
-    		"class":"major-street"
-    	},
-    	{
-    		"text":"Forest Ave",
-    		"x":1477,
-    		"y":2060,
-    		"rotation":90,
-    		"class":"major-street"
-    	},
-    	{
-    		"text":"Winchester Blvd",
-    		"x":1860,
-    		"y":3181,
-    		"rotation":0,
-    		"class":"major-street"
-    	}
+    "mapLabels": [
+      {
+        "text": "Nimitz Fwy",
+        "x": 1860,
+        "y": 1125,
+        "rotation": 0,
+        "class": "highway"
+     },
+      {
+        "text": "Stevens Creek Blvd",
+        "x": 2470,
+        "y": 2025,
+        "rotation": 90,
+        "class": "major-street"
+     },
+      {
+        "text": "Forest Ave",
+        "x": 1477,
+        "y": 2060,
+        "rotation": 90,
+        "class": "major-street"
+     },
+      {
+        "text": "Winchester Blvd",
+        "x": 1860,
+        "y": 3181,
+        "rotation": 0,
+        "class": "major-street"
+     }
     ],
-    "secondCheck":[
+    "secondCheck": [
       "7735",
       "7589",
       "54581",
@@ -386,7 +386,7 @@
       "28734",
       "40000"
     ],
-    "hideLabels":[
+    "hideLabels": [
       "7762",
       "7738",
       "7661",
