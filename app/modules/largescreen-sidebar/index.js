@@ -1,19 +1,21 @@
 module.exports = angular.module('LargescreenSidebar', [])
 
-.service('LargescreenSidebar', function ($famous, $famousPipe, $state, $stateParams, $rootScope, CategoryService, LargescreenDirectory) {
+.service('LargescreenSidebar', function ($famous, $famousPipe, $state, $stateParams, $rootScope, $timeout, CategoryService, LargescreenDirectory) {
   var sidebar = {};
 
   /////// CONTROL METHODS ////////
   sidebar.open = function() {
-    sidebar.active = true;
     sidebar.scrollview.view.goToPage(0);
-    $('.sidebar-overlay').show();
+    $timeout(function() {
+      sidebar.active = true;
+    }, 300);
   };
 
   sidebar.close = function() {
-    sidebar.active = false;
     sidebar.scrollview.view.goToPage(1);
-    $('.sidebar-overlay').hide();
+    $timeout(function() {
+      sidebar.active = false;
+    }, 300);
   };
 
   sidebar.toggle = function() {
@@ -68,7 +70,7 @@ module.exports = angular.module('LargescreenSidebar', [])
       size: [309, undefined],
       translate: [0, 0, 0],
       overlay: {
-        translate: [274, 0, 0]
+        translate: [730, 0, 0]
       },
       scrollview: {
         eventHandler: new EventHandler(),
@@ -154,10 +156,17 @@ module.exports = angular.module('LargescreenSidebar', [])
       var scrollView = $famous.find('#largeSidebarScrollView')[0].renderNode;
       sidebar.scrollview.view = scrollView;
 
-      scrollSync.on("update", function() {
+// scrollSync events not firing?
+
+      scrollSync.on('update', function() {
+        console.log('scrollsync update');
+      });
+
+      scrollSync.on("end", function() {
         sidebar.active = (scrollView.getAbsolutePosition() < 150);
-        if (sidebar.active) $('.sidebar-overlay').show();
-        else $('.sidebar-overlay').hide();
+        console.log('scrollsync end', sidebar.active);
+        if (sidebar.active) sidebar.open();
+        else sidebar.close();
       });
 
       var background     = $famous.find('#largeSidebarScrollView .sidebar-menu-bg')[0].renderNode;
@@ -200,6 +209,7 @@ module.exports = angular.module('LargescreenSidebar', [])
     link: {
       post: function ($scope) {
         $scope.sidebar.pipeEvents();
+        $scope.sidebar.active = true;
         $timeout($scope.sidebar.open, 0);
       }
     },

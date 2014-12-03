@@ -94,11 +94,22 @@ module.exports = angular.module('Search', [])
           translate: [0, 0, -1]
         },
         text: {
-          size: [undefined, 100]
+          size: [undefined, 100],
+          translate: [0, 0, 0]
+        },
+        placeholder: {
+          text: 'Search for a store'
         }
       },
       results: {
-        bgColor: 'black'
+        bgColor: 'black',
+        grid: {
+          size:      [undefined, 500],
+          translate: [0, 0, 0],
+          options: {
+            dimensions: [3, 1], // columns, rows
+          }
+        }
       },
       keyboard: {
         bgColor:   'black',

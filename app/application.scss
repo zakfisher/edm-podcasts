@@ -361,6 +361,10 @@ g.active {
 
 // Large Screen Sidebar
 // ----------------------------------------------------------------------
+.sidebar-overlay {
+  background: yellow;
+}
+
 .sidebar-menu-bg,
 .sidebar-menu-btn {
   z-index: 10;

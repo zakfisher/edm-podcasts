@@ -46,12 +46,23 @@
 
     <fa-view>
 
+      <!-- Results (small screen) -->
+      <fa-modifier ng-if="!isLargescreen">
+        <fa-surface class="search-results"
+          fa-background-color="options.results.bgColor">
+          <h2 ng-show="results.length > 0">Stores</h2>
+          <h2 ng-repeat="result in results" 
+            style="color: #fff" 
+            ng-bind-html="result.name" 
+            ng-click="handleResultClick(result)"></h2>
+        </fa-surface>
+      </fa-modifier>
+
       <!-- Results (large screen) -->
       <fa-modifier
-        ng-show="isLargescreen"
+        ng-if="isLargescreen"
         fa-size="options.results.grid.size"
         fa-translate="options.results.grid.translate">
-
         <fa-grid-layout 
           fa-options="options.results.grid.options">
             <fa-surface class="search-results largescreen"
@@ -62,19 +73,6 @@
                 ng-click="handleResultClick(result)"></h2>
           </fa-surface>
         </fa-grid-layout>
-        
-      </fa-modifier>
-
-      <!-- Results (small screen) -->
-      <fa-modifier ng-show="!isLargescreen">
-        <fa-surface class="search-results"
-          fa-background-color="options.results.bgColor">
-          <h2 ng-show="results.length > 0">Stores</h2>
-          <h2 ng-repeat="result in results" 
-            style="color: #fff" 
-            ng-bind-html="result.name" 
-            ng-click="handleResultClick(result)"></h2>
-        </fa-surface>
       </fa-modifier>
 
     </fa-view>
