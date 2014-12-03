@@ -1,21 +1,29 @@
 module.exports = angular.module('LargescreenWeather', [])
 
-.directive('largescreenWeather', function (WeatherService) {
+.directive('largescreenWeather', function (WeatherService, $interval) {
   return {
     restrict: 'E',
     template: require('./largescreen-weather.html'),
     controller: function($scope) {
-      console.log(WeatherService.getWeather());
-      var currentTemp = WeatherService.getCurrentTemp();
-      var summary = WeatherService.getSummary();
       $scope.weather = {
         alignment: [1, 0],
         origin: [1, 0],
         size: [400, 200],
-        translation: [-20, 20, 0],
-        currentTemp: currentTemp,
-        summary: summary
+        translation: [-20, 20, 0]
       };
+      function displayWeather() {
+        var currentTemp = WeatherService.getCurrentTemp();
+        var summary = WeatherService.getSummary();
+        angular.extend($scope.weather, {
+          currentTemp: currentTemp,
+          summary: summary
+        });
+      }
+      displayWeather();
+      $interval(function() {
+        WeatherService.cache();
+        displayWeather();
+      }, 5000);
     }
   };
 })

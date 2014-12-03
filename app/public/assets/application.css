@@ -330,7 +330,8 @@ g.active .key-background {
     font-weight: 500;
     margin-bottom: -10px; }
   .largescreen-weather h2 {
-    font-weight: 600; }
+    font-weight: 600;
+    text-transform: capitalize; }
   .largescreen-weather h3 {
     font-size: 40px;
     font-weight: 500; }

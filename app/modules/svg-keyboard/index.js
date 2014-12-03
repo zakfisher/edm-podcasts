@@ -39,18 +39,19 @@ module.exports = angular.module('keyboard', [])
   return {
     restrict: 'A',
     controller: function ($element, $attrs, $scope) {
-      $element.on('click', function () {
+      // $element.on('click', function () {
         // $scope.keyFire($attrs.keyboardkey);
-        $scope.$apply();
-      });
-      $element[0].addEventListener('mousedown', function (e) {
-      // $element[0].addEventListener('touchstart', function (e) {
+        // $scope.$apply();
+      // });
+      // $element[0].addEventListener('mousedown', function (e) {
+      $element[0].addEventListener('touchstart', function (e) {
         $scope.keyFire($attrs.keyboardkey);
         $element.attr('class', 'active');
         $scope.$apply();
       });
-      $element[0].addEventListener('mouseup', function () {
-      // $element[0].addEventListener('touchend', function () {
+
+      // $element[0].addEventListener('mouseup', function () {
+      $element[0].addEventListener('touchend', function () {
         $element.attr('class', '');
         $scope.$apply();
       });
