@@ -38,5 +38,16 @@ module.exports = angular.module('CategoryService', [])
     }
   };
 
+  self.getCategoryByCode = function (code) {
+    var categoryModel = false;
+    self.categories.forEach(function(category, i) {
+      if (category.code == code) {
+        categoryModel = category;
+        return;
+      }
+    });
+    return categoryModel;
+  };
+
   return self;
 });

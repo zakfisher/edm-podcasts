@@ -1,9 +1,11 @@
-<fa-modifier 
-	fa-translate="sidebar.overlay.translate">
-	<fa-surface class="sidebar-overlay"
-		fa-click="sidebar.close()">
-	</fa-surface>
-</fa-modifier>
+<fa-view ng-if="sidebar.active">
+	<fa-modifier 
+		fa-translate="sidebar.overlay.translate">
+		<fa-surface class="sidebar-overlay"
+			fa-click="sidebar.close()">
+		</fa-surface>
+	</fa-modifier>
+</fa-view>
 
 <fa-modifier 
 	fa-size="sidebar.size" 

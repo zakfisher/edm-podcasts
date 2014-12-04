@@ -1,36 +1,206 @@
 <fa-view>
   <fa-image-surface fa-image-url="bigBG.jpg"></fa-image-surface>
-  <fa-header-footer-layout fa-options="{direction: 1, headerSize: 270, footerSize: 155}">
+  <fa-header-footer-layout 
+    fa-options="layout.options">
 
     <fa-view></fa-view>
 
     <fa-view>
-      <fa-modifier fa-translate="[pageInset,0,0]" fa-size="scrollViewSize">
-      <largescreen-directory>
-      <fa-scroll-view fa-pipe-from="myEventHandler" fa-options="options.myScrollView" id="largeDirectoryScrollView">
-        <fa-modifier fa-size="[pageWidth, undefined]" ng-repeat="page in directory.pages">
-          <fa-modifier fa-size="[(pageWidth - pageGutter), undefined]">
-            <fa-view>
-              <fa-surface fa-background-color="'rgba(255,255,255,0.7)'" fa-pipe-to="myEventHandler" class="large-directory-card">
-              <img src="/cardHeader.png" width="100%" />
-                <div class="large-directory-card-main">
-                  <ul class="large-directory-column" ng-repeat="column in page.columns track by $index">
-                    <li ng-repeat="item in column track by $index" ng-class="{highlighted: (directory.selectedFloor == item.level && item.level !== undefined)}">
-                      <h2 ng-if="item.category">{{item.name}}</h2>
-                      <p ng-if="!item.category" ng-click="handleItemClick(item)" class="store-listing">
-                        <span class="name">{{item.name}}</span>
-                        <span class="floor-name">{{item.level}}</span>
-                      </p>
-                    </li>
-                  </ul>
-                </div>
-              </fa-surface>
-            </fa-view>
+
+      <!-- Menu Background -->
+      <fa-modifier 
+        fa-align="menu.background.align"
+        fa-origin="menu.background.origin"
+        fa-size="menu.background.size">
+        <fa-surface class="large-menu-bg"></fa-surface>
+      </fa-modifier>
+
+      <!-- Stores View -->
+      <fa-modifier
+        ng-show="showStores"
+        fa-align="menu.stores.align"
+        fa-origin="menu.stores.origin"
+        fa-size="menu.stores.size.get()"
+        fa-translate="menu.stores.translate">
+
+        <!-- Background -->
+        <fa-surface class="large-menu-stores-view-bg"
+          fa-background-color="menu.stores.background.color">
+        </fa-surface>
+
+        <!-- Content -->
+        <fa-modifier
+          fa-align="menu.stores.content.align"
+          fa-origin="menu.stores.content.origin"
+          fa-opacity="menu.stores.content.opacity.get()" 
+          fa-size="menu.stores.size.get()">
+
+          <!-- Stores Header -->
+          <fa-modifier
+            fa-size="menu.stores.data.header.size"
+            fa-translate="menu.stores.data.header.translate">
+            <fa-surface class="large-menu-stores-header">
+              <h2>{{menu.stores.data.header.text}}</h2>
+            </fa-surface>
           </fa-modifier>
+
+          <!-- Stores Grid -->
+          <fa-modifier
+            fa-size="menu.stores.data.grid.size"
+            fa-translate="menu.stores.data.grid.translate">
+            <fa-grid-layout 
+              fa-options="menu.stores.data.grid.options">
+              <fa-surface class="large-menu-store-grid"
+                ng-repeat="grid in menu.stores.data.grid.grids">
+                <ul>
+                  <li ng-repeat="store in grid" 
+                    ng-click="selectStore(store)">{{store.name}}</li>
+                </ul>
+              </fa-surface>
+            </fa-grid-layout>
+          </fa-modifier>
+
+          <!-- Back to Categories -->
+          <fa-modifier
+            fa-align="menu.stores.goBack.align"
+            fa-translate="menu.stores.goBack.translate">
+            <fa-surface class="large-menu-goBack">
+              <h2 ng-click="backToCategories()">{{menu.stores.goBack.text}}</h2>
+            </fa-surface>
+          </fa-modifier>
+
         </fa-modifier>
-      </fa-scroll-view>
-      </largescreen-directory>
-    </fa-modifier>
+
+      </fa-modifier>
+
+      <!-- Menu Content -->
+      <fa-modifier 
+        fa-align="menu.content.align"
+        fa-origin="menu.content.origin"
+        fa-size="menu.content.size"
+        fa-translate="menu.content.translate">
+
+          <!-- Title -->
+          <fa-modifier
+            fa-size="menu.title.size"
+            fa-translate="menu.title.translate">
+            <fa-surface class="large-menu-title">
+              <h1>{{menu.title.text}}</h1>
+            </fa-surface>
+          </fa-modifier>
+
+          <!-- Home View -->
+          <fa-modifier
+            fa-opacity="menu.home.opacity.get()"
+            fa-translate="menu.home.translate.get()">
+          
+            <!-- Categories Header -->
+            <fa-modifier
+              fa-size="menu.categories.header.size"
+              fa-translate="menu.categories.header.translate">
+              <fa-surface class="large-menu-category-header">
+                <em>{{menu.categories.header.text}}</em>
+              </fa-surface>
+            </fa-modifier>
+
+            <!-- Categories Grid -->
+            <fa-modifier
+              fa-size="menu.categories.grid.size"
+              fa-translate="menu.categories.grid.translate">
+              <fa-grid-layout 
+                fa-options="menu.categories.grid.options">
+                <fa-surface class="large-menu-category-grid"
+                  ng-repeat="grid in menu.categories.grid.grids">
+                  <ul>
+                    <li ng-repeat="category in grid" 
+                      ng-click="selectCategory(category.code)">{{category.name}}</li>
+                  </ul>
+                </fa-surface>
+              </fa-grid-layout>
+            </fa-modifier>
+
+            <!-- Divider -->
+            <fa-modifier
+              fa-size="menu.divider.size"
+              fa-translate="menu.divider.translate">
+              <fa-surface class="large-menu-divider"
+                fa-background-color="menu.divider.bgColor">
+              </fa-surface>
+            </fa-modifier>
+
+            <!-- Fake Search -->
+            <fa-modifier>
+
+              <!-- Search Icon -->
+              <fa-modifier
+                fa-size="menu.searchIcon.size" 
+                fa-translate="menu.searchIcon.translate">
+                <fa-image-surface 
+                  fa-click="selectSearch()"
+                  fa-image-url="search-icon.png"
+                  class="large-menu-search-icon">
+                </fa-image-surface>
+              </fa-modifier>
+
+              <!-- Text -->
+              <fa-modifier 
+                fa-size="search.options.query.text.size" 
+                fa-translate="search.options.query.text.translate">
+                <fa-surface class="search-query-text largescreen"
+                  fa-click="selectSearch()">
+                  <h1 class="searchBox"></h1>
+                </fa-surface>
+              </fa-modifier>
+
+              <!-- Placeholder -->
+              <fa-modifier 
+                fa-size="search.options.query.text.size" 
+                fa-translate="search.options.query.text.translate">
+                <fa-surface class="search-query-placeholder"
+                  fa-click="selectSearch()">
+                  <h2>{{search.options.query.placeholder.text}}</h2>
+                </fa-surface>
+              </fa-modifier>
+
+            </fa-modifier>
+            
+          </fa-modifier>
+
+        </fa-modifier>
+
+      </fa-modifier>
+
+      <!-- Search -->
+      <fa-modifier
+        ng-show="showSearch"
+        fa-align="menu.search.align"
+        fa-origin="menu.search.origin"
+        fa-size="menu.search.size.get()"
+        fa-translate="menu.search.translate.get()">
+
+        <!-- Background -->
+        <fa-surface class="large-menu-search-view-bg"
+          fa-background-color="menu.search.background.color">
+        </fa-surface>
+
+        <fa-modifier
+          fa-opacity="menu.search.content.opacity.get()">
+
+          <!-- Back to Categories -->
+          <fa-modifier
+            fa-align="menu.search.goBack.align"
+            fa-translate="menu.search.goBack.translate">
+            <fa-surface class="large-menu-goBack">
+              <h2 ng-click="backToCategories()">{{menu.search.goBack.text}}</h2>
+            </fa-surface>
+          </fa-modifier>
+
+          <!-- Search -->
+          <largescreen-sidebar-search></largescreen-sidebar-search>
+        
+        </fa-modifier>
+
+      </fa-modifier>
 
     </fa-view>
 
@@ -40,5 +210,5 @@
 
 </fa-view>
 
-<largescreen-sidebar></largescreen-sidebar>
+<!-- <largescreen-sidebar></largescreen-sidebar> -->
 <largescreen-weather></largescreen-weather>
