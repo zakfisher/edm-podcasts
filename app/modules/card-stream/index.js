@@ -11,60 +11,54 @@ module.exports = angular.module("CardStream", [])
   self.shown = false;
 
   self.setStore = function (store) {
-    self.currentStore = store;
-    try {
-      var jibestreamStore = JMap.getDestinationByClientId(store.id.toString());
-      var data = JMap.storage.maps.building.getMapsWithDirections(store.id.toString());
-      console.log('jibestream data', data);
-      self.currentStore.textDirections = data.textDirections;
+    var jibestreamStore = false,
+      jibestreamData = false;
 
-      console.log('\n\nDIRECTIONS TO', self.currentStore.name);
+    self.directionList = false;
+    self.currentStore = store;
+
+    //Get Jibestream data for store
+    try {
+      jibestreamStore = JMap.getDestinationByClientId(store.id.toString());
+      data = JMap.storage.maps.building.getMapsWithDirections(store.id.toString());
+      console.log('jibestream data', data);
+    } catch (e) {
+      console.warn('Could not get jibestream data for store', store.id, e);
+    }
+
+    //Get Directions and maps if data available from jibestream
+    if (jibestreamStore && data) {
+      self.currentStore.textDirections = data.textDirections;
       var previousDirection = false;
       var concatenatedDirection = false;
       var directionList = [];
-
       data.textDirections.forEach(function (direction) {
-
-        var nearPoint = direction.nearPoint || {};
-
+        console.log('\n', direction);
+        var nearPoint = direction.nearPoint || {
+          name: 'nope'
+        };
         var directionObject = {
           direction: direction.direction,
-          intensity: "Go " + direction.intensity,
+          mover: direction.mover,
+          intensity: direction.intensity,
           near: nearPoint.name,
-          distance: direction.distance
+          distance: Math.floor(direction.distance * 3.28084)
         };
-
         //If the direction is too similar to the previous, concatenate them
         if (previousDirection.direction == direction.direction) {
           direction.distance += previousDirection.distance;
           directionList[directionList.length - 1] = direction;
         } else {
-          directionList.push(direction);
+          directionList.push(directionObject);
         }
-
-        switch (directionObject.direction) {
-        case 'end':
-          console.log('arrive at', store.name);
-          break;
-        case 'floordown':
-          console.log('take elevator');
-          break;
-        default:
-          console.log(directionObject.intensity, directionObject.direction, "near", directionObject.near);
-        }
-
         previousDirection = direction;
       });
-
-      console.log('\n\n');
-
       console.log('shorter directions', directionList);
-
+      self.currentStore.directionList = directionList;
+      //Get Maps
       self.currentStore.maps = data.svgs;
-      console.log('directions', self.getDirections(data.textDirections, 'test'));
-    } catch (e) {
-      console.warn('Could not get jibestream data for store', store.id, e);
     }
+
     self.relatedStores = StoreService.getRelatedStoresOf(store);
   };
 
