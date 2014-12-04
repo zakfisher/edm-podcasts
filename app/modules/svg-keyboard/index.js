@@ -7,7 +7,12 @@ module.exports = angular.module('keyboard', [])
     restrict: 'E',
     template: require('./keyboard.html'),
     replace: true,
-    controller: function ($scope) {
+    controller: function ($rootScope, $scope) {
+      $rootScope.resetSearchInput = function() {
+        $scope.string = "";
+        $scope.keyFire('delete');
+      };
+
       $scope.keyFire = function (k) {
         switch (k) {
           case 'space':

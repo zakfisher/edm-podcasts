@@ -326,3 +326,6 @@
 .wf-holiday-hours:before {
   content: "\e001";
 }
+.wf-arrow-left:before {
+  content: "\e002";
+}

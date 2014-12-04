@@ -7,7 +7,6 @@ module.exports = angular.module('WeatherService', [])
 
 .service('WeatherService', function ($http, Preloader) {
   var self = {};
-
   self.cache = function(next) {
     var weatherTask = Preloader.createTask('Get Weather');
     $http({

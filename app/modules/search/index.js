@@ -2,7 +2,7 @@
 
 module.exports = angular.module('Search', [])
 
-.controller('Search', function ($scope, $famous, StoreService, CardStream, LargescreenMenu) {
+.controller('Search', function ($rootScope, $scope, $famous, StoreService, CardStream, LargescreenMenu) {
   console.log("Search Module");
   var EventHandler = $famous['famous/core/EventHandler'];
   $scope.myEventHandler = new EventHandler();
@@ -37,7 +37,20 @@ module.exports = angular.module('Search', [])
     }
   });
 
+  var Transitionable = $famous['famous/transitions/Transitionable'];
+
   $scope.search = {};
+
+  $rootScope.keyboard = {
+    fadeIn: function(duration) {
+      $scope.search.options.keyboard.opacity.set(1, {duration: duration});
+      $scope.search.options.keyboard.translate.set([0, 400, 0], {duration: duration});
+    },
+    fadeOut: function(duration) {
+      $scope.search.options.keyboard.opacity.set(0, {duration: duration});
+      $scope.search.options.keyboard.translate.set([0, 300, 0], {duration: duration});
+    }
+  };
 
   if ($scope.isLargescreen) {
     $scope.search.options = {
@@ -49,6 +62,10 @@ module.exports = angular.module('Search', [])
         headerSize: 150, 
         footerSize: 370
       },
+      searchIcon: {
+        size:      [62, 59],
+        translate: [50, -55, 0]
+      },
       query: {
         background: {
           bgColor:   'black',
@@ -56,7 +73,7 @@ module.exports = angular.module('Search', [])
         },
         text: {
           size:      [500, 50],
-          translate: [100, -45, 0]
+          translate: [150, -45, 0]
         },
         placeholder: {
           text: 'Start Typing'
@@ -66,18 +83,20 @@ module.exports = angular.module('Search', [])
         bgColor: '#231f20',
         grid: {
           size:      [750, 500],
-          translate: [50, -100, 0],
+          translate: [50, -120, 0],
           options: {
             dimensions: [3, 1], // columns, rows
           }
         }
       },
       keyboard: {
-        bgColor:   '#231f20',
+        bgColor:   'transparent',
+        // bgColor:   '#231f20',
         align:     [0.5, 0],
         origin:    [0.5, 0],
         size:      [750, 250],
-        translate: [0, 400, 1]
+        opacity:   new Transitionable(0),
+        translate: new Transitionable([0, 300, 0])
       }
     };
   }

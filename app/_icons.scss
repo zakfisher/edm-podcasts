@@ -2,11 +2,11 @@
 
 @font-face {
   font-family: "wf-icons";
-  src:url("/assets/wf-icons/fonts/wf-icons.eot");
-  src:url("/assets/wf-icons/fonts/wf-icons.eot?#iefix") format("embedded-opentype"),
-  url("/assets/wf-icons/fonts/wf-icons.woff") format("woff"),
-  url("/assets/wf-icons/fonts/wf-icons.ttf") format("truetype"),
-  url("/assets/wf-icons/fonts/wf-icons.svg#wf-icons") format("svg");
+  src:url("/wf-icons/fonts/wf-icons.eot");
+  src:url("/wf-icons/fonts/wf-icons.eot?#iefix") format("embedded-opentype"),
+  url("/wf-icons/fonts/wf-icons.woff") format("woff"),
+  url("/wf-icons/fonts/wf-icons.ttf") format("truetype"),
+  url("/wf-icons/fonts/wf-icons.svg#wf-icons") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -324,4 +324,7 @@
 }
 .wf-holiday-hours:before {
   content: "\e001";
+}
+.wf-arrow-left:before {
+  content: "\e002";
 }

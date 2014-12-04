@@ -25,7 +25,7 @@ module.exports = angular.module('Largescreen', [])
   return self;
 })
 
-.controller('Largescreen', function ($scope, $famous, $http, $timeout, CategoryService, KioskMenu, StoreService, CardStream, LargescreenMenu) {
+.controller('Largescreen', function ($rootScope, $scope, $famous, $timeout, CategoryService, KioskMenu, StoreService, CardStream, LargescreenMenu) {
   KioskMenu.hide();
   CardStream.isLarge = true;
 
@@ -39,7 +39,6 @@ module.exports = angular.module('Largescreen', [])
   ///// METHODS /////
   $scope.selectSearch = function () {
     if ($scope.lock) return false;
-    console.log('dub the fudgies');
     $scope.menu.home.opacity.set(0, {duration : duration});
     $scope.fadeSearchViewIn();
     $scope.showSearch = true;
@@ -111,9 +110,13 @@ module.exports = angular.module('Largescreen', [])
 
   $scope.fadeSearchViewIn = function(next) {
     next = next || function() {};
+    $rootScope.resetSearchInput();
     $scope.menu.search.size.set([menuWidth, 900], {duration : duration, curve : 'easeInOut'});
     $scope.menu.search.translate.set([0, 530, 0], {duration : duration, curve : 'easeInOut'}, next);
-    $scope.menu.search.content.opacity.set(1, {duration : duration*(1)});
+    $scope.menu.search.content.opacity.set(1, {duration : duration});
+    $timeout(function() {
+      $rootScope.keyboard.fadeIn(duration*(0.5));
+    }, duration*(0.5));
   };
 
   $scope.fadeSearchViewOut = function(next) {
@@ -121,6 +124,7 @@ module.exports = angular.module('Largescreen', [])
     $scope.menu.search.size.set([menuWidth, 0], {duration : duration, curve : 'easeInOut'});
     $scope.menu.search.translate.set([0, 1000, 0], {duration : duration, curve : 'easeInOut'}, next);
     $scope.menu.search.content.opacity.set(0, {duration : duration});
+    $rootScope.keyboard.fadeOut(duration*(0.3));
   };
 
   ///// STYLES /////
@@ -178,7 +182,7 @@ module.exports = angular.module('Largescreen', [])
   };
 
   $scope.menu.searchIcon = {
-    size:      [62, 59],
+    size:      [70, 70],
     translate: [0, 750, 0]
   };
 
@@ -204,9 +208,16 @@ module.exports = angular.module('Largescreen', [])
       opacity: new Transitionable(0)
     },
     goBack: {
-      text:      'Return to Categories',
       align:     [0, 1],
-      translate: [50, 0, 0]
+      translate: [50, 15, 0],
+      icon: {
+        size:      [70, 70],
+        translate: [0, 0, 0]
+      },
+      text: {
+        value:     'Return to Categories',
+        translate: [80, -8, 0]
+      }
     },
     data: {
       header: {
@@ -237,10 +248,17 @@ module.exports = angular.module('Largescreen', [])
       opacity: new Transitionable(0)
     },
     goBack: {
-      text:      'Return to Categories',
       align:     [0, 1],
-      translate: [50, 0, 0]
-    },
+      translate: [50, 15, 0],
+      icon: {
+        size:      [70, 70],
+        translate: [0, 0, 0]
+      },
+      text: {
+        value:     'Return to Categories',
+        translate: [80, -8, 0]
+      }
+    }
   };
 
   $scope.search = {
@@ -248,7 +266,7 @@ module.exports = angular.module('Largescreen', [])
       query: {
         text: {
           size:      [500, 50],
-          translate: [100, 750, 0.09]
+          translate: [100, 760, 0.09]
         },
         placeholder: {
           text: 'Search for a store'

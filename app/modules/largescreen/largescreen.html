@@ -64,9 +64,27 @@
           <fa-modifier
             fa-align="menu.stores.goBack.align"
             fa-translate="menu.stores.goBack.translate">
-            <fa-surface class="large-menu-goBack">
-              <h2 ng-click="backToCategories()">{{menu.stores.goBack.text}}</h2>
-            </fa-surface>
+            
+            <!-- Icon -->
+            <fa-modifier
+              fa-size="menu.stores.goBack.icon.size"
+              fa-translate="menu.stores.goBack.icon.translate">
+
+              <fa-surface class="large-menu-back-icon"
+                fa-click="backToCategories()">
+                <div class="wf-arrow-left"></div>
+              </fa-surface>
+
+            </fa-modifier>
+
+            <!-- Text -->
+            <fa-modifier
+              fa-translate="menu.stores.goBack.text.translate">
+              <fa-surface class="large-menu-goBack">
+                <h2 ng-click="backToCategories()">{{menu.stores.goBack.text.value}}</h2>
+              </fa-surface>
+            </fa-modifier>
+
           </fa-modifier>
 
         </fa-modifier>
@@ -190,9 +208,27 @@
           <fa-modifier
             fa-align="menu.search.goBack.align"
             fa-translate="menu.search.goBack.translate">
-            <fa-surface class="large-menu-goBack">
-              <h2 ng-click="backToCategories()">{{menu.search.goBack.text}}</h2>
-            </fa-surface>
+            
+            <!-- Icon -->
+            <fa-modifier
+              fa-size="menu.search.goBack.icon.size"
+              fa-translate="menu.search.goBack.icon.translate">
+
+              <fa-surface class="large-menu-back-icon"
+                fa-click="backToCategories()">
+                <div class="wf-arrow-left"></div>
+              </fa-surface>
+
+            </fa-modifier>
+
+            <!-- Text -->
+            <fa-modifier
+              fa-translate="menu.search.goBack.text.translate">
+              <fa-surface class="large-menu-goBack">
+                <h2 ng-click="backToCategories()">{{menu.search.goBack.text.value}}</h2>
+              </fa-surface>
+            </fa-modifier>
+
           </fa-modifier>
 
           <!-- Search -->
