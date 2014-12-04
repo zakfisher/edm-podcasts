@@ -2,7 +2,7 @@
 
 module.exports = angular.module('Search', [])
 
-.controller('Search', function ($scope, $famous, StoreService, CardStream, LargescreenSidebar) {
+.controller('Search', function ($scope, $famous, StoreService, CardStream, LargescreenMenu) {
   console.log("Search Module");
   var EventHandler = $famous['famous/core/EventHandler'];
   $scope.myEventHandler = new EventHandler();
@@ -30,17 +30,20 @@ module.exports = angular.module('Search', [])
       results = JMap.getSearchByQuery(newValue);
     }
     if ($scope.isLargescreen) {
-      $scope.results = LargescreenSidebar.arrayToGrid(results, 3);
+      $scope.results = LargescreenMenu.arrayToGrid(results, 3);
     }
     else {
       $scope.results = results;
     }
   });
 
+  $scope.search = {};
+
   if ($scope.isLargescreen) {
-    $scope.options = {
-      size: [undefined, 500],
-      translate: [0, 800, 0],
+    $scope.search.options = {
+      active:    true,
+      size:      [undefined, 500],
+      translate: [0, 100, 0],
       layout: {
         direction:  1, 
         headerSize: 150, 
@@ -52,18 +55,18 @@ module.exports = angular.module('Search', [])
           translate: [0, 0, -1]
         },
         text: {
-          size: [500, 100],
-          translate: [100, 55, 0]
+          size:      [500, 50],
+          translate: [100, -45, 0]
         },
         placeholder: {
-          text: 'Search for a store'
+          text: 'Start Typing'
         }
       },
       results: {
         bgColor: '#231f20',
         grid: {
-          size:      [undefined, 500],
-          translate: [0, 0, 0],
+          size:      [750, 500],
+          translate: [50, -100, 0],
           options: {
             dimensions: [3, 1], // columns, rows
           }
@@ -73,15 +76,15 @@ module.exports = angular.module('Search', [])
         bgColor:   '#231f20',
         align:     [0.5, 0],
         origin:    [0.5, 0],
-        size:      [0.6*1055, 0.6*370],
-        translate: [-20, 500, 1]
+        size:      [750, 250],
+        translate: [0, 400, 1]
       }
     };
-    console.log('options', $scope.options);
   }
   else {
-    $scope.options = {
-      size: [undefined, undefined],
+    $scope.search.options = {
+      active:    true,
+      size:      [undefined, undefined],
       translate: [0, 0, 0],
       layout: {
         direction:  1, 
@@ -94,7 +97,7 @@ module.exports = angular.module('Search', [])
           translate: [0, 0, -1]
         },
         text: {
-          size: [undefined, 100],
+          size:      [undefined, 100],
           translate: [0, 0, 0]
         },
         placeholder: {

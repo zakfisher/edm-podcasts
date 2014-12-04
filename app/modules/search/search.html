@@ -1,25 +1,25 @@
 <fa-modifier
-  fa-size="options.size"
-  fa-translate="options.translate">
+  fa-size="search.options.size"
+  fa-translate="search.options.translate">
   <fa-header-footer-layout 
-    fa-options="options.layout">
+    fa-options="search.options.layout">
     
     <!-- Query -->
     <fa-view>
 
       <!-- Background -->
       <fa-modifier 
-        fa-translate="options.query.background.translate">
+        fa-translate="search.options.query.background.translate">
         <fa-surface class="search-query-background"
           ng-class="{largescreen:window.isLargescreen}"
-          fa-background-color="options.query.background.bgColor">
+          fa-background-color="search.options.query.background.bgColor">
         </fa-surface>
       </fa-modifier>
 
       <!-- Text -->
       <fa-modifier 
-        fa-size="options.query.text.size" 
-        fa-translate="options.query.text.translate">
+        fa-size="search.options.query.text.size" 
+        fa-translate="search.options.query.text.translate">
         <fa-surface class="search-query-text"
           ng-class="{largescreen:isLargescreen}">
           <h1 class="searchBox" 
@@ -29,68 +29,72 @@
           <h1 class="searchBox" 
             ng-show="isLargescreen"
             ng-bind="string" 
-            style="color: #fff"></h1>
+            style="color: #000"></h1>
         </fa-surface>
       </fa-modifier>
 
       <!-- Placeholder -->
       <fa-modifier 
-        fa-size="options.query.text.size" 
-        fa-translate="options.query.text.translate">
+        fa-size="search.options.query.text.size" 
+        fa-translate="search.options.query.text.translate">
         <fa-surface class="search-query-placeholder">
-          <h2 ng-show="isLargescreen && string.length == 0">{{options.query.placeholder.text}}</h2>
+          <h2 ng-show="isLargescreen && string.length == 0">{{search.options.query.placeholder.text}}</h2>
         </fa-surface>
       </fa-modifier>
 
     </fa-view>
 
     <fa-view>
+      <fa-modifier ng-if="search.options.active">
 
-      <!-- Results (small screen) -->
-      <fa-modifier ng-if="!isLargescreen">
-        <fa-surface class="search-results"
-          fa-background-color="options.results.bgColor">
-          <h2 ng-show="results.length > 0">Stores</h2>
-          <h2 ng-repeat="result in results" 
-            style="color: #fff" 
-            ng-bind-html="result.name" 
-            ng-click="handleResultClick(result)"></h2>
-        </fa-surface>
-      </fa-modifier>
-
-      <!-- Results (large screen) -->
-      <fa-modifier
-        ng-if="isLargescreen"
-        fa-size="options.results.grid.size"
-        fa-translate="options.results.grid.translate">
-        <fa-grid-layout 
-          fa-options="options.results.grid.options">
-            <fa-surface class="search-results largescreen"
-              ng-repeat="column in results">
-              <h2 ng-repeat="result in column" 
-                style="color: #fff" 
-                ng-bind-html="result.name" 
-                ng-click="handleResultClick(result)"></h2>
+        <!-- Results (small screen) -->
+        <fa-modifier ng-if="!isLargescreen">
+          <fa-surface class="search-results"
+            fa-background-color="search.options.results.bgColor">
+            <h2 ng-show="results.length > 0">Stores</h2>
+            <h2 ng-repeat="result in results" 
+              style="color: #fff" 
+              ng-bind-html="result.name" 
+              ng-click="handleResultClick(result)"></h2>
           </fa-surface>
-        </fa-grid-layout>
-      </fa-modifier>
+        </fa-modifier>
 
+        <!-- Results (large screen) -->
+        <fa-modifier
+          ng-if="isLargescreen"
+          fa-size="search.options.results.grid.size"
+          fa-translate="search.options.results.grid.translate">
+          <fa-grid-layout 
+            fa-options="search.options.results.grid.options">
+              <fa-surface class="search-results largescreen"
+                ng-repeat="column in results">
+                <h2 ng-repeat="result in column" 
+                  style="color: #000" 
+                  ng-bind-html="result.name" 
+                  ng-click="handleResultClick(result)"></h2>
+            </fa-surface>
+          </fa-grid-layout>
+        </fa-modifier>
+      
+      </fa-modifier>
     </fa-view>
 
     <!-- Keyboard -->
     <fa-view>
-      <fa-surface fa-background-color="options.keyboard.bgColor">
-      </fa-surface>
-      <fa-modifier 
-        fa-align="options.keyboard.align" 
-        fa-origin="options.keyboard.origin" 
-        fa-size="options.keyboard.size" 
-        fa-translate="options.keyboard.translate">
-        <fa-surface class="search-keyboard"
-          ng-class="{largescreen:window.isLargescreen}"
-          fa-background-color="options.keyboard.bgColor">
-          <keyboard model="string"></keyboard>
+      <fa-modifier ng-if="search.options.active">
+        <fa-surface fa-background-color="search.options.keyboard.bgColor">
         </fa-surface>
+        <fa-modifier 
+          fa-align="search.options.keyboard.align" 
+          fa-origin="search.options.keyboard.origin" 
+          fa-size="search.options.keyboard.size" 
+          fa-translate="search.options.keyboard.translate">
+          <fa-surface class="search-keyboard"
+            ng-class="{largescreen:window.isLargescreen}"
+            fa-background-color="search.options.keyboard.bgColor">
+            <keyboard model="string"></keyboard>
+          </fa-surface>
+        </fa-modifier>
       </fa-modifier>
     </fa-view>
 
