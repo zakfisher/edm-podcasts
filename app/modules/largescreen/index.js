@@ -1,6 +1,6 @@
 module.exports = angular.module('Largescreen', [])
 
-.service('LargescreenDirectory', function ($rootScope) {
+.service('LargescreenMenu', function ($rootScope) {
   var self = {};
 
   self.selectedFloor = false;
@@ -14,129 +14,249 @@ module.exports = angular.module('Largescreen', [])
     }, 25000);
   };
 
-  self.categoryIndex = {};
-  self.goToCategory = function (code) {
-    self.scrollView.goToPage(self.categoryIndex[code]);
+  self.arrayToGrid = function(array, numOfColumns) {
+    var count = array.length;
+    var grid1 = array.splice(0, count/numOfColumns + 1), 
+        grid2 = array.splice(0, count/numOfColumns + 1), 
+        grid3 = array;
+    return [grid1, grid2, grid3];
   };
 
   return self;
 })
 
-
-.controller('Largescreen', function ($scope, $famous, $http, CategoryService, KioskMenu, StoreService, CardStream, LargescreenDirectory) {
+.controller('Largescreen', function ($scope, $famous, $http, $timeout, CategoryService, KioskMenu, StoreService, CardStream, LargescreenMenu) {
   KioskMenu.hide();
   CardStream.isLarge = true;
-  $scope.directory = LargescreenDirectory;
 
-  var EventHandler = $famous['famous/core/EventHandler'];
-  $scope.myEventHandler = new EventHandler();
+  var categories = CategoryService.getCategories();
 
-  $scope.gridItemHeight = 40;
-  $scope.columnCount = 3;
-  $scope.itemsPerPage = 85;
-  $scope.pageWidth = 850;
-  $scope.pageGutter = 50;
-  $scope.pageInset = 150;
-  $scope.scrollViewSize = [window.innerWidth - $scope.pageInset, undefined];
-  $scope.directory.allStores = [];
+  var duration = 200;
+  var menuWidth = 850;
+  var storeViewHeight = 900;
+  var storeLimit = 54;
 
-
-  $scope.directory.categories = CategoryService.getCategories();
-  $scope.directory.categories.forEach(function (category) {
-    $scope.directory.allStores.push({
-      'name': category.name,
-      'category': true,
-      'code': category.code
-    });
-    StoreService.getStoresByCategory(category.code).forEach(function (store) {
-      $scope.directory.allStores.push(store);
-    });
-  });
-
-  $scope.options = {
-    myScrollView: {
-      direction: 0,
-      paginated: true,
-      speedLimit: 100,
-      drag: 0,
-      margin: 50
-    }
+  ///// METHODS /////
+  $scope.selectSearch = function () {
+    if ($scope.lock) return false;
+    console.log('dub the fudgies');
+    $scope.menu.home.opacity.set(0, {duration : duration});
+    $scope.fadeSearchViewIn();
+    $scope.showSearch = true;
+    $scope.lock = true;
+    $timeout(function() {
+      $scope.lock = false;
+    }, duration);
   };
 
-  $scope.getGridHeight = function (items) {
-    var height = Math.ceil(items.length / $scope.columnCount) * $scope.gridItemHeight;
-    console.log('grid height', height);
-    return height;
-  };
-
-  var groups = [];
-  var group = [];
-  var count = 0;
-  // Split items into pages
-  // @todo: make this less heinous.
-  $scope.directory.allStores.forEach(function (store, i) {
-    group.push(store);
-    count++;
-    if (count === $scope.itemsPerPage || i === $scope.directory.allStores.length - 1) {
-      var items = group.slice(0);
-
-      // Split page items into columns
-      var itemsPerColumn = Math.ceil($scope.itemsPerPage / 3);
-      var columnItemsCount = 0;
-      var columns = [];
-      var column = [];
-
-      items.forEach(function (item, i) {
-
-        item.pageNumber = groups.length;
-        if (item.category) {
-          $scope.directory.categoryIndex[item.code] = groups.length;
-        }
-        column.push(item);
-        columnItemsCount++;
-        if (columnItemsCount === itemsPerColumn || i === items.length - 1) {
-          columns.push(column.slice(0));
-          column = [];
-          columnItemsCount = 0;
-        }
-      });
-      groups.push({
-        items: items,
-        columns: columns,
-        gridHeight: $scope.getGridHeight(items),
-        gridOptions: {
-          dimensions: [$scope.columnCount, Math.ceil(items.length / $scope.columnCount)],
-          direction: 0
-        }
-      });
-      group = [];
-      count = 0;
-    }
-  });
-  console.log('Index', $scope.directory.categoryIndex);
-  console.log('All stores', $scope.directory.allStores);
-
-  $scope.directory.pages = groups;
-  // $scope.directory.selectFloor("2");
-
-
-  $scope.handleItemClick = function (item) {
+  $scope.selectStore = function (item) {
+    if ($scope.lock) return false;
     CardStream.setStore(item);
     CardStream.show();
   };
 
-})
+  $scope.selectCategory = function (code) {
+    if ($scope.lock) return false;
+    var category = CategoryService.getCategoryByCode(code);
+    var stores = StoreService.getStoresByCategory(code);
+    stores = stores.splice(0, storeLimit);
+    $scope.menu.stores.data.header.text = category.name;
+    $scope.menu.stores.data.grid.grids = LargescreenMenu.arrayToGrid(stores, 3);
+    $scope.showStores = true;
+    // Set lock to prevent accidental store click during animation
+    $scope.lock = true;
+    $timeout(function() {
+      $scope.lock = false;
+    }, duration);
+    $scope.fadeHomeViewOut();
+    $scope.fadeStoresViewIn();
+  };
 
-//Link up the famo.us scrollview renderNode to the directory scope in a postlink function, where it's available.
-.directive('largescreenDirectory', function ($famous) {
-  return {
-    restrict: 'E',
-    link: {
-      post: function ($scope) {
-        $scope.directory.scrollView = $famous.find('#largeDirectoryScrollView')[0].renderNode;
+  $scope.backToCategories = function() {
+    if ($scope.lock) return false;
+    $scope.fadeHomeViewIn();
+    if ($scope.showStores) $scope.fadeStoresViewOut();
+    if ($scope.showSearch) $scope.fadeSearchViewOut();
+    $scope.lock = true;
+    $timeout(function() {
+      $scope.showStores = false;
+      $scope.showSearch = false;
+      $scope.lock = false;
+    }, duration);
+  };
+
+  $scope.fadeHomeViewOut = function(next) {
+    next = next || function() {};
+    $scope.menu.home.opacity.set(0, {duration : duration});
+    $scope.menu.home.translate.set([0, storeViewHeight, 0], {duration : duration, curve : 'easeInOut'}, next);
+  };
+
+  $scope.fadeHomeViewIn = function(next) {
+    next = next || function() {};
+    $scope.menu.home.opacity.set(1, {duration : duration});
+    $scope.menu.home.translate.set([0, 0, 0], {duration : duration, curve : 'easeInOut'}, next);
+  };
+
+  $scope.fadeStoresViewIn = function(next) {
+    next = next || function() {};
+    $scope.menu.stores.size.set([menuWidth, storeViewHeight], {duration : duration}, next);
+    $scope.menu.stores.content.opacity.set(1, {duration : duration*(1.5)});
+  };
+
+  $scope.fadeStoresViewOut = function(next) {
+    next = next || function() {};
+    $scope.menu.stores.size.set([menuWidth, 0], {duration : duration, curve : 'easeInOut'});
+    $scope.menu.stores.content.opacity.set(0, {duration : duration}, next);
+  };
+
+  $scope.fadeSearchViewIn = function(next) {
+    next = next || function() {};
+    $scope.menu.search.size.set([menuWidth, 900], {duration : duration, curve : 'easeInOut'});
+    $scope.menu.search.translate.set([0, 530, 0], {duration : duration, curve : 'easeInOut'}, next);
+    $scope.menu.search.content.opacity.set(1, {duration : duration*(1)});
+  };
+
+  $scope.fadeSearchViewOut = function(next) {
+    next = next || function() {};
+    $scope.menu.search.size.set([menuWidth, 0], {duration : duration, curve : 'easeInOut'});
+    $scope.menu.search.translate.set([0, 1000, 0], {duration : duration, curve : 'easeInOut'}, next);
+    $scope.menu.search.content.opacity.set(0, {duration : duration});
+  };
+
+  ///// STYLES /////
+  $scope.showStores = false;
+  $scope.showSearch = false;
+  $scope.lock = false;
+
+  $scope.layout = {
+    options: {
+      direction: 1, 
+      headerSize: 240, 
+      footerSize: 155
+    }
+  };
+
+  $scope.menu.background = {
+    align:  [0.5, 0],
+    origin: [0.5, 0],
+    size:   [menuWidth, undefined]
+  };
+
+  $scope.menu.content = {
+    align:     [0.5, 0],
+    origin:    [0.5, 0],
+    size:      [menuWidth-100, undefined],
+    translate: [0, 300, 0]
+  };
+
+  $scope.menu.title = {
+    text:      'Store Directory',
+    size:      [undefined, 240],
+    translate: [0, 0, 0]
+  };
+
+  $scope.menu.categories = {
+    header: {
+      text:      'Select a Category',
+      size:      [undefined, 30],
+      translate: [0, 270, 0]
+    },
+    grid: {
+      size:      [700, 400],
+      translate: [30, 290, 0],
+      options: {
+        dimensions: [3, 1] // columns, rows
+      },
+      grids: LargescreenMenu.arrayToGrid(categories, 3)
+    }
+  };
+
+  $scope.menu.divider = {
+    bgColor:   "#f4f4f4",
+    size:      [undefined, 1],
+    translate: [0, 720, 0]
+  };
+
+  $scope.menu.searchIcon = {
+    size:      [62, 59],
+    translate: [0, 750, 0]
+  };
+
+  ///// VIEWS /////
+  var Transitionable = $famous['famous/transitions/Transitionable'];
+
+  $scope.menu.home = {
+    opacity: new Transitionable(1),
+    translate: new Transitionable([0, 0, 0])
+  };
+
+  $scope.menu.stores = {
+    align:     [0.5, 0],
+    origin:    [0.5, 0],
+    size:      new Transitionable([menuWidth, 0]),
+    translate: [0, 530, 0],
+    background: {
+      color: '#ebeced'
+    },
+    content: {
+      align:   [0.5, 0],
+      origin:  [0.5, 0],
+      opacity: new Transitionable(0)
+    },
+    goBack: {
+      text:      'Return to Categories',
+      align:     [0, 1],
+      translate: [50, 0, 0]
+    },
+    data: {
+      header: {
+        size:      [undefined, 30],
+        translate: [50, 0, 0]
+      },
+      grid: {
+        size:      [menuWidth-100, 830],
+        translate: [70, 50, 0],
+        options: {
+          dimensions: [3, 1] // columns, rows
+        }
       }
     }
   };
+
+  $scope.menu.search = {
+    align:     [0.5, 0],
+    origin:    [0.5, 0],
+    size:      new Transitionable([menuWidth, 0]),
+    translate: new Transitionable([0, 1000, 0]),
+    background: {
+      color: '#ebeced'
+    },
+    content: {
+      align:   [0.5, 0],
+      origin:  [0.5, 0],
+      opacity: new Transitionable(0)
+    },
+    goBack: {
+      text:      'Return to Categories',
+      align:     [0, 1],
+      translate: [50, 0, 0]
+    },
+  };
+
+  $scope.search = {
+    options: {
+      query: {
+        text: {
+          size:      [500, 50],
+          translate: [100, 750, 0.09]
+        },
+        placeholder: {
+          text: 'Search for a store'
+        }
+      }
+    }
+  };
+
 })
 
 //Routes / States
