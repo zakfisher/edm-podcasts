@@ -13,9 +13,25 @@
             <div style="background-size: cover; background-position: center; height: 15em; background-image: url({{cardStream.currentStore._links.store_front.href}}); background-color: #444;">
             </div>
             <div style="padding: 3em">
-              <p>Description: {{cardStream.currentStore.description}}</p>
-              <h3>Level: {{cardStream.currentStore.level}}</h3>
-              <h3>Shop Number: {{cardStream.currentStore.shop_number}}</h3>
+              <ol>
+                <li ng-repeat="direction in cardStream.currentStore.directionList" ng-if="direction.near">
+                  <span ng-if="direction.direction == 'left' || direction.direction == 'right'">
+                    Turn {{direction.direction}} at <strong>{{direction.near}}</strong> then continue for {{direction.distance}} feet
+                  </span>
+                  <span ng-if="direction.direction == 'straight'">
+                    Continue straight past <strong>{{direction.near}}</strong> for {{direction.distance}} feet
+                  </span>
+                  <span ng-if="direction.direction == 'floordown'">
+                    Take the <strong>{{direction.mover}}</strong> down.
+                  </span>
+                  <span ng-if="direction.direction == 'floorup'">
+                    Take the <strong>{{direction.mover}}</strong> up.
+                  </span>
+                  <span ng-if="direction.direction == 'end'">
+                    Arrive at {{cardStream.currentStore.name}}
+                  </span>
+                </li>
+              </ol>
               <div class="miniMap" ng-repeat="map in cardStream.currentStore.maps">
                 <inject-svg element="map" ng-click="cardStream.showCurrentStoreOnMap()"></inject-svg>
               </div>
