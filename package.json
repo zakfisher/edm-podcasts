@@ -30,7 +30,8 @@
     "stringify": "latest",
     "gulp-livereload": "latest",
     "jshint-stylish": "latest",
-    "gulp-watch": "latest"
+    "gulp-watch": "latest",
+    "newrelic": "latest"
   },
   "engines": {
     "node": "0.10.x"
