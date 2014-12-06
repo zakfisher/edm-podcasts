@@ -22,16 +22,15 @@ var app = angular.module('wfWayfinding', [
   // Kiosk App Modules
   // '.name' is provided by angular.module, index.js is picked up as the included file
   require('./modules/map').name,
-  require('./modules/largescreen').name,
-  require('./modules/largescreen-sidebar').name,
-  require('./modules/largescreen-weather').name,
-  require('./modules/dining').name,
   require('./modules/search').name,
+  require('./modules/dining').name,
   require('./modules/shopping').name,
   require('./modules/services').name,
   require('./modules/events').name,
   require('./modules/directory').name,
   require('./modules/jibestream-map').name,
+  require('./modules/largescreen').name,
+  require('./modules/largescreen-weather').name,
 
   // Custom Services
   require('./modules/category-service').name,
