@@ -74,6 +74,7 @@ module.exports = angular.module('Largescreen', [])
     var category = CategoryService.getCategoryByCode(code);
     var stores = StoreService.getStoresByCategory(code);
     stores = stores.splice(0, storeLimit);
+    console.log('stores', stores);
     $scope.menu.stores.data.header.text = category.name;
     $scope.menu.stores.data.grid.grids = LargescreenMenu.arrayToGrid(stores, 3);
     $scope.showStores = true;
@@ -86,6 +87,10 @@ module.exports = angular.module('Largescreen', [])
     $scope.fadeStoresViewIn();
   };
 
+  $scope.selectFloor = function (floor) {
+    $scope.activeFloor = floor.level;
+  };
+
   $scope.backToCategories = function() {
     if ($scope.lock) return false;
     $scope.fadeHomeViewIn();
@@ -96,6 +101,7 @@ module.exports = angular.module('Largescreen', [])
       $scope.showStores = false;
       $scope.showSearch = false;
       $scope.lock = false;
+      $scope.activeFloor = false;
     }, duration);
   };
 
@@ -143,6 +149,7 @@ module.exports = angular.module('Largescreen', [])
   };
 
   ///// VIEWS /////
+  $scope.activeFloor = false;
   $scope.showStores = false;
   $scope.showSearch = false;
   $scope.lock = false;
