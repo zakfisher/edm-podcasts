@@ -333,18 +333,53 @@ g.active {
     padding: 0;
 
     li {
-      color: #262223;
-      font-size: 26px;
-      line-height: 46px;
+      color: black;
+      font-size: 28px;
+      line-height: 30px;
       letter-spacing: 1px;
+      margin: 0 0 20px 0;
+      padding-right: 30px;
     }
   }
 }
 
-.large-menu-store-header {
+.large-menu-stores-header {
   h2 {
     color: black;
     letter-spacing: 1px;
+  }
+}
+
+.large-menu-floors-header,
+.large-menu-floors-grid,
+.large-menu-floor {
+  z-index: 20;
+}
+
+.large-menu-floor {
+  border-radius: 100px;
+  background: #bbb;
+  color: white;
+  height: 50px;
+  width: 50px;
+
+  p, h1 {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  p {
+    padding-top: 7px;
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 30px;
+    margin-top: -10px;
+    font-family: georgia;
+    font-weight: normal;
   }
 }
 
@@ -354,9 +389,10 @@ g.active {
     padding: 0;
 
     li {
-      color: #262223;
-      font-size: 22px;
-      line-height: 28px;
+      font-family: 'Flama', 'helvetica neue', 'helvetica', 'arial', 'sans';
+      color: #666;
+      font-size: 16px;
+      line-height: 18px;
       letter-spacing: 1px;
       padding-right: 20px;
       margin-bottom: 15px;
@@ -368,8 +404,7 @@ g.active {
 .large-menu-category-header,
 .large-menu-category-grid,
 .large-menu-divider,
-.large-menu-search-icon,
-.large-menu-stores-view  {
+.large-menu-search-icon {
   z-index: 11;
 }
 

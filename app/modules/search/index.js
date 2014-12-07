@@ -28,13 +28,22 @@ module.exports = angular.module('Search', [])
       results = [];
     } else if (newValue !== oldValue) {
       results = JMap.getSearchByQuery(newValue);
+      var filteredResults = [];
+      results.forEach(function(result) {
+        if (result !== undefined) {
+          filteredResults.push(result);
+        }
+      });
+      results = filteredResults;
     }
+    console.log('map results', results);
     if ($scope.isLargescreen) {
       $scope.results = LargescreenMenu.arrayToGrid(results, 3);
     }
     else {
       $scope.results = results;
     }
+    console.log('results', $scope.results);
   });
 
   var Transitionable = $famous['famous/transitions/Transitionable'];

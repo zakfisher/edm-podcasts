@@ -2,13 +2,13 @@
   "name": "wayfinding_prototype",
   "version": "0.0.15",
   "description": "Westfield Wayfinding Protytype",
-  "main": "app/server/index.js",
+  "main": "app/server.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/westfield/wayfinding_kiosk.git"
   },
   "scripts": {
-    "start": "node app/server/index.js",
+    "start": "node app/server.js",
     "postinstall": "gulp build"
   },
   "dependencies": {

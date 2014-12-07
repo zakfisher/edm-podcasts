@@ -15,11 +15,20 @@ module.exports = angular.module('Largescreen', [])
   };
 
   self.arrayToGrid = function(array, numOfColumns) {
-    var count = array.length;
-    var grid1 = array.splice(0, count/numOfColumns + 1), 
-        grid2 = array.splice(0, count/numOfColumns + 1), 
-        grid3 = array;
-    return [grid1, grid2, grid3];
+    var grid = [];
+    var k = 0;
+    var count = Math.floor(array.length / numOfColumns);
+    for (var i = 0; i < numOfColumns; i++) {
+      grid.push([]);
+      for (var j = 0; j < count; j++) {
+        var item = array[k];
+        if (item !== undefined) {
+          grid[i].push(item);
+          k++;
+        }
+      }
+    }
+    return grid;
   };
 
   return self;
@@ -28,13 +37,19 @@ module.exports = angular.module('Largescreen', [])
 .controller('Largescreen', function ($rootScope, $scope, $famous, $timeout, CategoryService, KioskMenu, StoreService, CardStream, LargescreenMenu) {
   KioskMenu.hide();
   CardStream.isLarge = true;
-
+  
+  var Transitionable = $famous['famous/transitions/Transitionable'];
+  
   var categories = CategoryService.getCategories();
+  var floors = [
+    {level: 1},
+    {level: 2}
+  ];
 
   var duration = 200;
   var menuWidth = 850;
   var storeViewHeight = 900;
-  var storeLimit = 54;
+  var storeLimit = 90;
 
   ///// METHODS /////
   $scope.selectSearch = function () {
@@ -127,7 +142,7 @@ module.exports = angular.module('Largescreen', [])
     $rootScope.keyboard.fadeOut(duration*(0.3));
   };
 
-  ///// STYLES /////
+  ///// VIEWS /////
   $scope.showStores = false;
   $scope.showSearch = false;
   $scope.lock = false;
@@ -138,6 +153,11 @@ module.exports = angular.module('Largescreen', [])
       headerSize: 240, 
       footerSize: 155
     }
+  };
+
+  $scope.menu.home = {
+    opacity: new Transitionable(1),
+    translate: new Transitionable([0, 0, 0])
   };
 
   $scope.menu.background = {
@@ -163,7 +183,7 @@ module.exports = angular.module('Largescreen', [])
     header: {
       text:      'Select a Category',
       size:      [undefined, 30],
-      translate: [0, 270, 0]
+      translate: [0, 250, 0]
     },
     grid: {
       size:      [700, 400],
@@ -181,17 +201,50 @@ module.exports = angular.module('Largescreen', [])
     translate: [0, 720, 0]
   };
 
-  $scope.menu.searchIcon = {
-    size:      [70, 70],
-    translate: [0, 750, 0]
+  $scope.menu.fakeSearch = {
+    icon: {
+      size:      [70, 70],
+      translate: [0, 750, 0]
+    },
+    query: {
+      text: {
+        size:      [500, 50],
+        translate: [100, 760, 0.09]
+      },
+      placeholder: {
+        text: 'Search for a store'
+      }
+    }
   };
 
-  ///// VIEWS /////
-  var Transitionable = $famous['famous/transitions/Transitionable'];
+  $scope.goBack = {
+    align:     [0, 1],
+    translate: [50, 15, 0],
+    icon: {
+      size:      [60, 60],
+      translate: [0, 5, 0]
+    },
+    text: {
+      value:     'Return to Categories',
+      translate: [80, -8, 0]
+    }
+  };
 
-  $scope.menu.home = {
-    opacity: new Transitionable(1),
-    translate: new Transitionable([0, 0, 0])
+  $scope.menu.floors = {
+    align: [1, 0],
+    size: [300, 50],
+    translate: [-280, 20, 0],
+    header: {
+      text: 'Tap to show stores on:'
+    },
+    grid: {
+      size:      [floors.length*60, 60],
+      translate: [0, 30, 0], 
+      options: {
+        dimensions: [floors.length, 1] // columns, rows
+      },
+      grids: LargescreenMenu.arrayToGrid(floors, floors.length)
+    }
   };
 
   $scope.menu.stores = {
@@ -207,18 +260,6 @@ module.exports = angular.module('Largescreen', [])
       origin:  [0.5, 0],
       opacity: new Transitionable(0)
     },
-    goBack: {
-      align:     [0, 1],
-      translate: [50, 15, 0],
-      icon: {
-        size:      [70, 70],
-        translate: [0, 0, 0]
-      },
-      text: {
-        value:     'Return to Categories',
-        translate: [80, -8, 0]
-      }
-    },
     data: {
       header: {
         size:      [undefined, 30],
@@ -226,12 +267,13 @@ module.exports = angular.module('Largescreen', [])
       },
       grid: {
         size:      [menuWidth-100, 830],
-        translate: [70, 50, 0],
+        translate: [70, 100, 0],
         options: {
           dimensions: [3, 1] // columns, rows
         }
       }
-    }
+    },
+    goBack: $scope.goBack
   };
 
   $scope.menu.search = {
@@ -247,34 +289,8 @@ module.exports = angular.module('Largescreen', [])
       origin:  [0.5, 0],
       opacity: new Transitionable(0)
     },
-    goBack: {
-      align:     [0, 1],
-      translate: [50, 15, 0],
-      icon: {
-        size:      [70, 70],
-        translate: [0, 0, 0]
-      },
-      text: {
-        value:     'Return to Categories',
-        translate: [80, -8, 0]
-      }
-    }
+    goBack: $scope.goBack
   };
-
-  $scope.search = {
-    options: {
-      query: {
-        text: {
-          size:      [500, 50],
-          translate: [100, 760, 0.09]
-        },
-        placeholder: {
-          text: 'Search for a store'
-        }
-      }
-    }
-  };
-
 })
 
 //Routes / States
