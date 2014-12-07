@@ -66,9 +66,10 @@
 
                 <fa-surface class="large-menu-floors-grid"
                   ng-repeat="grid in menu.floors.grid.grids">
-                  <div class="large-menu-floor" 
-                    ng-class="{active:false}"
+                  <div 
                     ng-repeat="floor in grid" 
+                    class="large-menu-floor" 
+                    ng-class="{active:(activeFloor == floor.level)}"
                     ng-click="selectFloor(floor)">
                     <p>Floor</p>
                     <h1>{{floor.level}}</h1>
@@ -90,7 +91,10 @@
                 ng-repeat="grid in menu.stores.data.grid.grids">
                 <ul>
                   <li ng-repeat="store in grid" 
-                    ng-click="selectStore(store)">{{store.name}}</li>
+                    ng-click="selectStore(store)">
+                    <div class="floor-indicator" ng-if="(store.level == activeFloor)"></div>
+                    {{store.name}}
+                  </li>
                 </ul>
               </fa-surface>
             </fa-grid-layout>
