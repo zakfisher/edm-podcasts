@@ -44,6 +44,43 @@
             </fa-surface>
           </fa-modifier>
 
+          <!-- Floor Selection -->
+          <fa-modifier
+            fa-align="menu.floors.align"
+            fa-size="menu.floors.size"
+            fa-translate="menu.floors.translate">
+
+            <!-- Header-->
+            <fa-modifier>
+              <fa-surface class="large-menu-floors-header">
+                <em>{{menu.floors.header.text}}</em>
+              </fa-surface>
+            </fa-modifier>
+
+            <!-- Floors -->
+            <fa-modifier
+              fa-size="menu.floors.grid.size"
+              fa-translate="menu.floors.grid.translate">
+              <fa-grid-layout 
+                fa-options="menu.floors.grid.options">
+
+                <fa-surface class="large-menu-floors-grid"
+                  ng-repeat="grid in menu.floors.grid.grids">
+                  <div 
+                    ng-repeat="floor in grid" 
+                    class="large-menu-floor" 
+                    ng-class="{active:(activeFloor == floor.level)}"
+                    ng-click="selectFloor(floor)">
+                    <p>Floor</p>
+                    <h1>{{floor.level}}</h1>
+                  </div>
+                </fa-surface>
+
+              </fa-grid-layout>
+            </fa-modifier>
+
+          </fa-modifier>
+
           <!-- Stores Grid -->
           <fa-modifier
             fa-size="menu.stores.data.grid.size"
@@ -54,7 +91,10 @@
                 ng-repeat="grid in menu.stores.data.grid.grids">
                 <ul>
                   <li ng-repeat="store in grid" 
-                    ng-click="selectStore(store)">{{store.name}}</li>
+                    ng-click="selectStore(store)">
+                    <div class="floor-indicator" ng-if="(store.level == activeFloor)"></div>
+                    {{store.name}}
+                  </li>
                 </ul>
               </fa-surface>
             </fa-grid-layout>
@@ -151,8 +191,8 @@
 
               <!-- Search Icon -->
               <fa-modifier
-                fa-size="menu.searchIcon.size" 
-                fa-translate="menu.searchIcon.translate">
+                fa-size="menu.fakeSearch.icon.size" 
+                fa-translate="menu.fakeSearch.icon.translate">
                 <fa-surface 
                   fa-click="selectSearch()"
                   class="large-menu-search-icon">
@@ -162,8 +202,8 @@
 
               <!-- Text -->
               <fa-modifier 
-                fa-size="search.options.query.text.size" 
-                fa-translate="search.options.query.text.translate">
+                fa-size="menu.fakeSearch.query.text.size" 
+                fa-translate="menu.fakeSearch.query.text.translate">
                 <fa-surface class="search-query-text largescreen"
                   fa-click="selectSearch()">
                   <h1 class="searchBox"></h1>
@@ -172,11 +212,11 @@
 
               <!-- Placeholder -->
               <fa-modifier 
-                fa-size="search.options.query.text.size" 
-                fa-translate="search.options.query.text.translate">
+                fa-size="menu.fakeSearch.query.text.size" 
+                fa-translate="menu.fakeSearch.query.text.translate">
                 <fa-surface class="search-query-placeholder"
                   fa-click="selectSearch()">
-                  <h2>{{search.options.query.placeholder.text}}</h2>
+                  <h2>{{menu.fakeSearch.query.placeholder.text}}</h2>
                 </fa-surface>
               </fa-modifier>
 
