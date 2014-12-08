@@ -31,3 +31,4 @@ Currently the app is managed with the westfield.andriod@gmail.com account (that'
 Also in this package is a node-express server pointed to app/public. Used in prototyping for serving up framer.js interactive wireframe prototypes and local testing of app.
 
     node app/server
+
