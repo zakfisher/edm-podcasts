@@ -496,6 +496,14 @@ g.active .key-background {
 
 .cardstream-card {
   padding-bottom: 40px; }
+  .cardstream-card .header {
+    position: relative; }
+    .cardstream-card .header .close {
+      position: absolute;
+      right: 5px;
+      top: 7px; }
+      .cardstream-card .header .close .wf-remove {
+        font-size: 30px; }
   .cardstream-card h2 {
     background-color: #d7d0c7;
     margin: 0;

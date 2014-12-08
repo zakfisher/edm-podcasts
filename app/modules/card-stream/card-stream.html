@@ -1,17 +1,44 @@
 <fa-view ng-if="cardStream.shown">
 
-  <fa-modifier fa-translate="[0,0,10]" fa-opacity="0.95">
-    <fa-surface fa-background-color="'rgba(0,0,0,0.8)'" ng-if="cardStream.shown" fa-click="cardStream.hide()"></fa-surface>
+  <!-- Overlay -->
+  <fa-modifier 
+    fa-translate="[0,0,10]" 
+    fa-opacity="0.95">
+    <fa-surface 
+      fa-background-color="'rgba(0,0,0,0.8)'" 
+      ng-if="cardStream.shown" 
+      fa-click="cardStream.hide()">
+    </fa-surface>
   </fa-modifier>
 
-  <fa-modifier fa-size="[1000, 1000]" fa-align="[0.5, 0.5]" fa-origin="[0.5, 0.5]" fa-scale="[0.7,0.7]" fa-translate="cardStream.boxTransitionable.get()">
+  <!-- Content -->
+  <fa-modifier 
+    fa-size="[1000, 1000]" 
+    fa-align="[0.5, 0.5]" 
+    fa-origin="[0.5, 0.5]" 
+    fa-scale="[0.7,0.7]" 
+    fa-translate="cardStream.boxTransitionable.get()">
     <fa-sequential-layout>
       <fa-view>
-        <fa-modifier fa-size="[undefined, 1000]">
-          <fa-surface fa-background-color="'#fff'" class="cardstream-card">
-            <h2 class="light-title">{{cardStream.currentStore.name}}</h2>
-            <div style="background-size: cover; background-position: center; height: 15em; background-image: url({{cardStream.currentStore._links.store_front.href}}); background-color: #444;">
+
+        <!-- Store Info -->
+        <fa-modifier 
+          fa-size="[undefined, 1000]">
+          <fa-surface 
+            fa-background-color="'#fff'" 
+            class="cardstream-card">
+
+            <!-- Header -->
+            <div class="header">
+              <div class="close" fa-click="cardStream.hide()">
+                <div class="wf-remove"></div>
+              </div>
+              <h2 class="light-title">{{cardStream.currentStore.name}}</h2>
+              <div style="background-size: cover; background-position: center; height: 15em; background-image: url({{cardStream.currentStore._links.store_front.href}}); background-color: #444;">
+              </div>
             </div>
+
+            <!-- Directions -->
             <div style="padding: 3em">
               <ol>
                 <li ng-repeat="direction in cardStream.currentStore.directionList" ng-if="direction.near">
@@ -36,10 +63,13 @@
                 <inject-svg element="map" ng-click="cardStream.showCurrentStoreOnMap()"></inject-svg>
               </div>
             </div>
+
           </fa-surface>
         </fa-modifier>
+
       </fa-view>
 
+      <!-- Related Stores Header -->
       <fa-view ng-if="cardStream.isLarge">
           <fa-modifier fa-size="[undefined, 150]">
             <fa-surface fa-click="cardStream.hide()">
@@ -48,6 +78,7 @@
           </fa-modifier>
       </fa-view>
 
+      <!-- Related Stores Content -->
       <fa-view ng-if="cardStream.isLarge">
         <fa-modifier fa-size="[undefined, 320]">
           <fa-grid-layout fa-options="{dimensions:[2,1], gutterSize: [20, 20]}">

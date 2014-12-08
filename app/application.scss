@@ -6,13 +6,13 @@ $red: #ed1f26;
 
 
 body {
-    margin: 0;
-    font-family: 'FlamaCondensed', 'helvetica neue', 'helvetica', 'arial', 'sans';
-    font-weight: 500;
-    color: #222;
-    background-color: #000;
-    // background-image: url('/dev-bg.png');
-    color: #4D4E4C;
+  margin: 0;
+  font-family: 'FlamaCondensed', 'helvetica neue', 'helvetica', 'arial', 'sans';
+  font-weight: 500;
+  color: #222;
+  background-color: #000;
+  // background-image: url('/dev-bg.png');
+  color: #4D4E4C;
 }
 
 * {
@@ -271,6 +271,19 @@ g.active {
 
 .cardstream-card {
   padding-bottom: 40px;
+  
+  .header {
+    position: relative;
+    .close {
+      position: absolute;
+      right: 5px;
+      top: 7px;
+      .wf-remove {
+        font-size: 30px;
+      }
+    }
+  }
+  
   h2 {
     background-color: #d7d0c7;
     margin: 0;
