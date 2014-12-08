@@ -1,7 +1,6 @@
 module.exports = angular.module('KioskScreenSaver', [])
 
 .run(function (KioskScreenSaver) {
-  console.log('setup screensaver');
   window.addEventListener('touchstart', KioskScreenSaver.resetTimeout);
 })
 
@@ -12,6 +11,7 @@ module.exports = angular.module('KioskScreenSaver', [])
     slideDuration = 7000,
     saverInterval,
     Easing = $famous['famous/transitions/Easing'],
+    Timer = $famous['famous/utilities/Timer'],
     Transitionable = $famous['famous/transitions/Transitionable'];
   imgs = [
       '/screensaver/Guess_1.jpg',
@@ -72,8 +72,8 @@ module.exports = angular.module('KioskScreenSaver', [])
   };
 
   self.resetTimeout = function () {
-    clearTimeout(saverTimeoutFunction);
-    saverTimeoutFunction = setTimeout(function () {
+    Timer.clear(saverTimeoutFunction);
+    saverTimeoutFunction = Timer.setTimeout(function () {
         self.run();
         $rootScope.$apply();
       },
@@ -81,7 +81,7 @@ module.exports = angular.module('KioskScreenSaver', [])
   };
 
   self.run = function () {
-    saverInterval = $interval(function () {
+    saverInterval = Timer.setInterval(function () {
       if (self.activeImage === (self.imgs.length - 1)) {
         self.activateImage(0);
       } else {
@@ -93,7 +93,8 @@ module.exports = angular.module('KioskScreenSaver', [])
 
   self.exit = function () {
     self.isRunning = false;
-    $interval.cancel(saverInterval);
+    // $interval.cancel(saverInterval);
+    Timer.clear(saverInterval);
     self.resetTimeout();
   };
 
