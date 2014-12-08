@@ -1,4 +1,8 @@
-module.exports = angular.module('KioskScreensaver', [])
+module.exports = angular.module('KioskScreenSaver', [])
+
+.service('KioskScreenSaver', function () {
+
+})
 
 .directive('kioskScreensaver', function () {
   return {

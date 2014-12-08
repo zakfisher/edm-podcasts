@@ -1,6 +1,6 @@
 module.exports = angular.module('KioskMasterCtrl', [])
 
-.controller('KioskMasterCtrl', function ($scope, $famous, $timeout) {
+.controller('KioskMasterCtrl', function ($scope, $famous, $timeout, KioskScreenSaver) {
 
   var Transitionable = $famous['famous/transitions/Transitionable'];
   var Easing = $famous['famous/transitions/Easing'];
@@ -10,23 +10,23 @@ module.exports = angular.module('KioskMasterCtrl', [])
 
   $scope.uiComeForward = function () {
     $scope.masterOpacity.set(1, {
-      duration: 500,
-      curve: Easing.inOutBack
+      duration: 500
+      // curve: Easing.inOutBack
     });
     $scope.masterPosition.set([0, 0, 0], {
-      duration: 500,
-      curve: Easing.inOutBack
+      duration: 500
+      // curve: Easing.inOutBack
     });
   };
 
   $scope.uiGoBack = function () {
     $scope.masterOpacity.set(0, {
-      duration: 500,
-      curve: Easing.inOutBack
+      duration: 500
+      // curve: Easing.inOutBack
     });
     $scope.masterPosition.set([0, 0, -1000], {
-      duration: 500,
-      curve: Easing.inOutBack
+      duration: 500
+      // curve: Easing.inOutBack
     });
   };
 
