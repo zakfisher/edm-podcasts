@@ -21,6 +21,7 @@ var app = angular.module('wfWayfinding', [
 
   // Kiosk App Modules
   // '.name' is provided by angular.module, index.js is picked up as the included file
+  require('./modules/kiosk-master-controller').name,
   require('./modules/map').name,
   require('./modules/search').name,
   require('./modules/dining').name,
@@ -28,6 +29,7 @@ var app = angular.module('wfWayfinding', [
   require('./modules/services').name,
   require('./modules/events').name,
   require('./modules/directory').name,
+  require('./modules/kiosk-screensaver').name,
   require('./modules/jibestream-map').name,
   require('./modules/largescreen').name,
   require('./modules/largescreen-weather').name,
@@ -145,15 +147,18 @@ angular.bootstrap(document, ['wfWayfinding']);
 
 // Disable Right Click
 function disableRightClick() {
-  document.oncontextmenu=RightMouseDown;
-  document.onmousedown = mouseDown; 
+  document.oncontextmenu = RightMouseDown;
+  document.onmousedown = mouseDown;
 
   function mouseDown(e) {
-      if (e.which==3) { //righClick
-        e.preventDefault();
-      }
+    if (e.which == 3) { //righClick
+      e.preventDefault();
+    }
   }
-  function RightMouseDown() { return false; }
+
+  function RightMouseDown() {
+    return false;
+  }
 }
 
 // disableRightClick();
