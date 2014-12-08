@@ -8,7 +8,7 @@ module.exports = angular.module('KioskScreenSaver', [])
 .service('KioskScreenSaver', function ($timeout, $rootScope, $famous, $interval) {
   var self = {},
     saverTimeoutFunction,
-    saverTimeout = 10000,
+    saverTimeout = 30000,
     slideDuration = 7000,
     saverInterval,
     Easing = $famous['famous/transitions/Easing'],
@@ -77,7 +77,7 @@ module.exports = angular.module('KioskScreenSaver', [])
         self.run();
         $rootScope.$apply();
       },
-      10000);
+      saverTimeout);
   };
 
   self.run = function () {

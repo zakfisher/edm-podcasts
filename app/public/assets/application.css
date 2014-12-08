@@ -386,6 +386,16 @@ webview {
   left: 0;
   right: 0; }
 
+.screensaver-touch {
+  border-radius: 50%;
+  background-color: #ed1f26; }
+  .screensaver-touch h1 {
+    color: #fff;
+    text-align: center;
+    line-height: 500px;
+    margin: 0;
+    padding: 0; }
+
 .menu-item {
   background-color: #c7242e;
   color: #fff;
