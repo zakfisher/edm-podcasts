@@ -33,8 +33,8 @@
               <div class="close" fa-click="cardStream.hide()">
                 <div class="wf-remove"></div>
               </div>
-              <h2 class="light-title">{{cardStream.currentStore.name}}</h2>
-              <div style="background-size: cover; background-position: center; height: 15em; background-image: url({{cardStream.currentStore._links.store_front.href}}); background-color: #444;">
+            <h2 class="light-title">{{cardStream.currentStore.name}}</h2>
+            <div style="background-size: cover; background-position: center; height: 15em; background-image: url({{cardStream.currentStore.storeFrontImage}}); background-color: #444;">
               </div>
             </div>
 
@@ -63,10 +63,8 @@
                 <inject-svg element="map" ng-click="cardStream.showCurrentStoreOnMap()"></inject-svg>
               </div>
             </div>
-
           </fa-surface>
         </fa-modifier>
-
       </fa-view>
 
       <!-- Related Stores Header -->

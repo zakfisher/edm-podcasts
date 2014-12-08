@@ -1,6 +1,6 @@
 module.exports = angular.module("CardStream", [])
 
-.service("CardStream", function ($famous, Map, StoreService, $state) {
+.service("CardStream", function ($famous, Map, StoreService, $state, config) {
   var self = {};
 
   var Transitionable = $famous['famous/transitions/Transitionable'];
@@ -16,6 +16,13 @@ module.exports = angular.module("CardStream", [])
 
     self.directionList = false;
     self.currentStore = store;
+
+    //Set fallback images for store
+    if (self.currentStore._links.store_front.href) {
+      self.currentStore.storeFrontImage = self.currentStore._links.store_front.href;
+    } else {
+      self.currentStore.storeFrontImage = config.placeholderContent.storeFront;
+    }
 
     //Get Jibestream data for store
     try {

@@ -61,6 +61,10 @@ app.value('config', {
   },
   kioskID: 2348576,
   initialState: 0,
+  placeholderContent: {
+    storeFront: '/placeholder/valleyFair.jpg',
+    logo: '/placeholder/logo.png'
+  },
   states: [
     {
       title: 'Map',
@@ -102,7 +106,6 @@ app.value('config', {
     // },
   ]
 });
-
 
 
 // Basic routes based on config
