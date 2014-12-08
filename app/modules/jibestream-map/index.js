@@ -3,25 +3,25 @@ module.exports = angular.module('JibestreamMap', [])
 
 .run(function (Preloader, StoreService, CardStream, $rootScope, Map) {
   // Preload maps api data
-  // var JMapInitTask = Preloader.createTask("Jibestream Bootstrap");
-  // JMap.initMapsStandAlone("http://jibestream2.cloudapp.net:8082", {
-  //   deviceId: 126092,
-  //   languageCode: "en"
-  // });
-  // JMap.addListener("StandAloneMapsReady", function () {
-  //   JMapInitTask.resolve();
-  // });
+  var JMapInitTask = Preloader.createTask("Jibestream Bootstrap");
+  JMap.initMapsStandAlone("http://jibestream2.cloudapp.net:8082", {
+    deviceId: 126092,
+    languageCode: "en"
+  });
+  JMap.addListener("StandAloneMapsReady", function () {
+    JMapInitTask.resolve();
+  });
 
-  // var JMapConfigTask = Preloader.createTask("Load Jibestream Config");
-  // $.ajax({
-  //   url: "/components/jibestream-sdk/jibestreamConfig.json",
-  //   type: "GET",
-  //   dataType: "json",
-  //   complete: function (response) {
-  //     JMap._stylingData = JSON.parse(response.responseText);
-  //     JMapConfigTask.resolve();
-  //   }
-  // });
+  var JMapConfigTask = Preloader.createTask("Load Jibestream Config");
+  $.ajax({
+    url: "/components/jibestream-sdk/jibestreamConfig.json",
+    type: "GET",
+    dataType: "json",
+    complete: function (response) {
+      JMap._stylingData = JSON.parse(response.responseText);
+      JMapConfigTask.resolve();
+    }
+  });
   var showStoreCardFromDestination = function (e, destination) {
     var store = StoreService.getStoreById(destination.clientId);
     if (store) {
