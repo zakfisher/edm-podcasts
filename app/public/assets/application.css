@@ -324,8 +324,7 @@ body {
   font-family: 'FlamaCondensed', 'helvetica neue', 'helvetica', 'arial', 'sans';
   font-weight: 500;
   color: #222;
-  background-color: #222;
-  background-image: url('/dev-bg.png');
+  background-color: #000;
   color: #4D4E4C; }
 
 * {
@@ -386,6 +385,16 @@ webview {
   top: 0;
   left: 0;
   right: 0; }
+
+.screensaver-touch {
+  border-radius: 50%;
+  background-color: #ed1f26; }
+  .screensaver-touch h1 {
+    color: #fff;
+    text-align: center;
+    line-height: 500px;
+    margin: 0;
+    padding: 0; }
 
 .menu-item {
   background-color: #c7242e;

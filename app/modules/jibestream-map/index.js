@@ -22,7 +22,6 @@ module.exports = angular.module('JibestreamMap', [])
       JMapConfigTask.resolve();
     }
   });
-
   var showStoreCardFromDestination = function (e, destination) {
     var store = StoreService.getStoreById(destination.clientId);
     if (store) {

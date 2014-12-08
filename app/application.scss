@@ -10,8 +10,8 @@ body {
     font-family: 'FlamaCondensed', 'helvetica neue', 'helvetica', 'arial', 'sans';
     font-weight: 500;
     color: #222;
-    background-color: #222;
-    background-image: url('/dev-bg.png');
+    background-color: #000;
+    // background-image: url('/dev-bg.png');
     color: #4D4E4C;
 }
 
@@ -90,6 +90,22 @@ webview {
   top: 0;
   left: 0;
   right: 0;
+}
+
+
+// Screensaver
+// ----------------------------------------------------------------------
+
+.screensaver-touch {
+  border-radius: 50%;
+  background-color: $red;
+  h1 {
+    color: #fff;
+    text-align: center;
+    line-height: 500px;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 
