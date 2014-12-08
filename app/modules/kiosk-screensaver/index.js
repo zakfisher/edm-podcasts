@@ -4,7 +4,7 @@ module.exports = angular.module('KioskScreenSaver', [])
   window.addEventListener('touchstart', KioskScreenSaver.resetTimeout);
 })
 
-.service('KioskScreenSaver', function ($timeout, $rootScope, $famous, $interval) {
+.service('KioskScreenSaver', function ($rootScope, $famous) {
   var self = {},
     saverTimeoutFunction,
     saverTimeout = 30000,
@@ -93,7 +93,6 @@ module.exports = angular.module('KioskScreenSaver', [])
 
   self.exit = function () {
     self.isRunning = false;
-    // $interval.cancel(saverInterval);
     Timer.clear(saverInterval);
     self.resetTimeout();
   };
