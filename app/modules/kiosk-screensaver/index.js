@@ -5,27 +5,95 @@ module.exports = angular.module('KioskScreenSaver', [])
   window.addEventListener('touchstart', KioskScreenSaver.resetTimeout);
 })
 
-.service('KioskScreenSaver', function ($timeout, $rootScope) {
+.service('KioskScreenSaver', function ($timeout, $rootScope, $famous, $interval) {
   var self = {},
     saverTimeoutFunction,
-    saverTimeout;
+    saverTimeout = 10000,
+    slideDuration = 7000,
+    saverInterval,
+    Easing = $famous['famous/transitions/Easing'],
+    Transitionable = $famous['famous/transitions/Transitionable'];
+  imgs = [
+      '/screensaver/Guess_1.jpg',
+      '/screensaver/Guess_2.jpg',
+      '/screensaver/Guess_3.jpg',
+      '/screensaver/Guess_4.jpg',
+      '/screensaver/Guess_5.jpg',
+      '/screensaver/IT_1.jpg',
+      '/screensaver/IT_2.jpg',
+      '/screensaver/IT_3.jpg',
+      '/screensaver/VC_1.jpg',
+      '/screensaver/VC_2.jpg',
+      '/screensaver/VC_3.jpg',
+      '/screensaver/VC_4.jpg'
+    ];
 
-  saverTimeout = 10000;
+  self.imgs = [];
+  self.activeImage = false;
+
+  imgs.forEach(function (img) {
+    self.imgs.push({
+      url: img,
+      active: true,
+      opacity: new Transitionable(0),
+      scale: new Transitionable([1.2, 1.2]),
+      translate: new Transitionable([0, 0, -10])
+    });
+  });
+
+  self.activateImage = function (n) {
+    var img = self.imgs[n];
+    if (img && n !== self.activeImage) {
+      self.deactivateImage(self.activeImage);
+      img.active = true;
+      img.opacity.set(1, {
+        duration: slideDuration / 2
+      });
+      img.scale.set([1.2, 1.2]);
+      img.scale.set([1, 1], {
+        duration: slideDuration * 1.1
+      });
+      img.translate.set([(Math.random() * 500) - 250, (Math.random() * 500) - 250]);
+      img.translate.set([0, 0], {
+        duration: slideDuration * 1.1
+      });
+      self.activeImage = n;
+    }
+  };
+
+  self.deactivateImage = function (n) {
+    if (n !== false) {
+      self.imgs[n].opacity.set(0, {
+        duration: slideDuration
+      }, function () {
+        self.imgs[n].active = false;
+      });
+    }
+  };
 
   self.resetTimeout = function () {
     clearTimeout(saverTimeoutFunction);
     saverTimeoutFunction = setTimeout(function () {
-      self.run();
-      $rootScope.$apply();
-    }, 10000);
+        self.run();
+        $rootScope.$apply();
+      },
+      10000);
   };
 
   self.run = function () {
+    saverInterval = $interval(function () {
+      if (self.activeImage === (self.imgs.length - 1)) {
+        self.activateImage(0);
+      } else {
+        self.activateImage(self.activeImage + 1);
+      }
+    }, slideDuration);
     self.isRunning = true;
   };
 
   self.exit = function () {
     self.isRunning = false;
+    $interval.cancel(saverInterval);
     self.resetTimeout();
   };
 
@@ -33,6 +101,7 @@ module.exports = angular.module('KioskScreenSaver', [])
     saverTimeout = n;
   };
 
+  self.activateImage(0);
   self.resetTimeout();
 
   return self;
