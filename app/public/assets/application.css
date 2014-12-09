@@ -471,9 +471,6 @@ webview {
 .txt-reversed {
   color: #fff !important; }
 
-.directoryStoreSurface {
-  opacity: 0.9 !important; }
-
 svg text {
   pointer-events: none; }
 
