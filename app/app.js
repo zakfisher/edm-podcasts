@@ -117,14 +117,20 @@ app.config(function ($urlRouterProvider, $locationProvider) {
   $urlRouterProvider.otherwise('/');
 });
 
-app.run(function ($state, Preloader, $q, KioskService) {
+app.run(function ($state, Preloader, $q, KioskService, $rootScope, config) {
+
+  // $rootScope.globalConfig = config;
 
   if (window.innerHeight > window.innerWidth) {
     window.isLargescreen = true;
+    config.isLargescreen = true;
     window.initialView = 'largescreen';
+    config.initialState = 'largescreen';
   } else {
     window.isLargescreen = false;
+    config.isLargescreen = false;
     window.initialView = 'kioskmap';
+    config.initialState = 'kioskmap';
   };
 
   $state.go('preloader');
