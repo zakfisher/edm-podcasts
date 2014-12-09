@@ -8,11 +8,12 @@ module.exports = angular.module('KioskScreenSaver', [])
   var self = {},
     saverTimeoutFunction,
     saverTimeout = 30000,
-    slideDuration = 7000,
+    slideDuration = 14000,
     saverInterval,
     Easing = $famous['famous/transitions/Easing'],
     Timer = $famous['famous/utilities/Timer'],
     Transitionable = $famous['famous/transitions/Transitionable'];
+
   imgs = [
       '/screensaver/Guess_1.jpg',
       '/screensaver/Guess_2.jpg',
@@ -51,11 +52,11 @@ module.exports = angular.module('KioskScreenSaver', [])
       });
       img.scale.set([1.2, 1.2]);
       img.scale.set([1, 1], {
-        duration: slideDuration * 1.1
+        duration: slideDuration / 2
       });
       img.translate.set([(Math.random() * 500) - 250, (Math.random() * 500) - 250]);
       img.translate.set([0, 0], {
-        duration: slideDuration * 1.1
+        duration: slideDuration / 2
       });
       self.activeImage = n;
     }
@@ -101,8 +102,10 @@ module.exports = angular.module('KioskScreenSaver', [])
     saverTimeout = n;
   };
 
+  // if (window.isLargescreen) {
   self.activateImage(0);
   self.resetTimeout();
+  // }
 
   return self;
 })
