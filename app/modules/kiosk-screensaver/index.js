@@ -4,11 +4,11 @@ module.exports = angular.module('KioskScreenSaver', [])
   window.addEventListener('touchstart', KioskScreenSaver.resetTimeout);
 })
 
-.service('KioskScreenSaver', function ($rootScope, $famous) {
+.service('KioskScreenSaver', function ($rootScope, $famous, config, $state, Preloader, CardStream) {
   var self = {},
     saverTimeoutFunction,
     saverTimeout = 30000,
-    slideDuration = 14000,
+    slideDuration = 16000,
     saverInterval,
     Easing = $famous['famous/transitions/Easing'],
     Timer = $famous['famous/utilities/Timer'],
@@ -48,15 +48,15 @@ module.exports = angular.module('KioskScreenSaver', [])
       self.deactivateImage(self.activeImage);
       img.active = true;
       img.opacity.set(1, {
-        duration: slideDuration / 2
+        duration: slideDuration / 4
       });
       img.scale.set([1.2, 1.2]);
       img.scale.set([1, 1], {
-        duration: slideDuration / 2
+        duration: slideDuration / 4
       });
       img.translate.set([(Math.random() * 500) - 250, (Math.random() * 500) - 250]);
       img.translate.set([0, 0], {
-        duration: slideDuration / 2
+        duration: slideDuration / 4
       });
       self.activeImage = n;
     }
@@ -93,6 +93,7 @@ module.exports = angular.module('KioskScreenSaver', [])
   };
 
   self.exit = function () {
+
     self.isRunning = false;
     Timer.clear(saverInterval);
     self.resetTimeout();
@@ -102,10 +103,10 @@ module.exports = angular.module('KioskScreenSaver', [])
     saverTimeout = n;
   };
 
-  // if (window.isLargescreen) {
   self.activateImage(0);
-  self.resetTimeout();
-  // }
+  Preloader.whenFinished().then(function () {
+    self.resetTimeout();
+  });
 
   return self;
 })
