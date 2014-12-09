@@ -16,7 +16,7 @@
         </fa-surface>
       </fa-modifier>
 
-      <!-- Search -->
+      <!-- Search Icon -->
       <fa-modifier
         ng-if="isLargescreen"
         fa-size="search.options.searchIcon.size" 
@@ -29,64 +29,64 @@
 
       <!-- Text -->
       <fa-modifier 
+        fa-align="search.options.query.text.align" 
+        fa-origin="search.options.query.text.origin" 
         fa-size="search.options.query.text.size" 
         fa-translate="search.options.query.text.translate">
         <fa-surface class="search-query-text"
           ng-class="{largescreen:isLargescreen}">
           <h1 class="searchBox" 
             ng-if="!isLargescreen"
-            ng-bind="string + '|'" 
-            style="color: #fff"></h1>
+            ng-bind="string + '|'"></h1>
           <h1 class="searchBox" 
             ng-if="isLargescreen"
-            ng-bind="string" 
-            style="color: #000"></h1>
+            ng-bind="string"></h1>
         </fa-surface>
       </fa-modifier>
 
       <!-- Placeholder -->
       <fa-modifier 
-        fa-size="search.options.query.text.size" 
-        fa-translate="search.options.query.text.translate">
+        fa-align="search.options.query.placeholder.align" 
+        fa-origin="search.options.query.placeholder.origin" 
+        fa-size="search.options.query.placeholder.size" 
+        fa-translate="search.options.query.placeholder.translate">
         <fa-surface class="search-query-placeholder">
-          <h2 ng-if="isLargescreen && string.length == 0">{{search.options.query.placeholder.text}}</h2>
+          <h2 ng-if="string.length == 0">{{search.options.query.placeholder.text}}</h2>
         </fa-surface>
       </fa-modifier>
 
     </fa-view>
 
+    <!-- Results -->
     <fa-view>
-      <fa-modifier ng-if="search.options.active">
+      <fa-modifier
+        ng-if="search.options.active"
+        fa-align="search.options.results.grid.align"
+        fa-origin="search.options.results.grid.origin"
+        fa-size="search.options.results.grid.size"
+        fa-translate="search.options.results.grid.translate">
+        
+        <!-- Result Grid -->
+        <fa-grid-layout 
+          ng-if="results.length > 0"
+          fa-options="search.options.results.grid.options">
+            <fa-surface class="search-results" ng-class="{largescreen:isLargescreen}"
+              ng-repeat="column in results">
+              <div ng-repeat="result in column">
+                <h1 ng-if="!isLargescreen && ($index == 0) && result.isStore">Stores</h1>
+                <h1 ng-if="!isLargescreen && ($index == 0) && result.isFood">Food</h1>
+                <h2 ng-bind-html="result.name" ng-click="handleResultClick(result)"></h2>
+              </div>
+          </fa-surface>
+        </fa-grid-layout>
 
-        <!-- Results (small screen) -->
-        <fa-modifier ng-if="!isLargescreen">
-          <fa-surface class="search-results"
-            fa-background-color="search.options.results.bgColor">
-            <h2 ng-show="results.length > 0">Stores</h2>
-            <h2 ng-repeat="result in results" 
-              style="color: #fff" 
-              ng-bind-html="result.name" 
-              ng-click="handleResultClick(result)"></h2>
+        <!-- No results -->
+        <fa-modifier ng-if="(results.length === 0) && (string.length > 0)">
+          <fa-surface class="search-results" ng-class="{largescreen:isLargescreen}">
+            <h1>Sorry, no stores found.</h1>
           </fa-surface>
         </fa-modifier>
 
-        <!-- Results (large screen) -->
-        <fa-modifier
-          ng-if="isLargescreen"
-          fa-size="search.options.results.grid.size"
-          fa-translate="search.options.results.grid.translate">
-          <fa-grid-layout 
-            fa-options="search.options.results.grid.options">
-              <fa-surface class="search-results largescreen"
-                ng-repeat="column in results">
-                <h2 ng-repeat="result in column" 
-                  style="color: #000" 
-                  ng-bind-html="result.name" 
-                  ng-click="handleResultClick(result)"></h2>
-            </fa-surface>
-          </fa-grid-layout>
-        </fa-modifier>
-      
       </fa-modifier>
     </fa-view>
 

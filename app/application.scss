@@ -243,17 +243,6 @@ g.active {
   }
 }
 
-.searchBox {
-  border-bottom: 2px solid $red;
-  width: 60%;
-  margin: 30px auto;
-  padding: 20px 1em;
-  line-height: 1;
-  text-align: center;
-}
-
-
-
 // Jibestream
 // ----------------------------------------------------------------------
 
@@ -424,7 +413,7 @@ g.active {
   }
 }
 
-.large-menu-store-grid {
+.large-menu-stores-grid {
   ul {
     list-style-type: none;
     padding: 0;
@@ -470,7 +459,7 @@ g.active {
 }
 
 .large-menu-stores-header,
-.large-menu-store-grid,
+.large-menu-stores-grid,
 .large-menu-goBack {
   z-index: 14;
 }
@@ -508,56 +497,6 @@ g.active {
   z-index: 16;
 }
 
-.search-query-text,
-.search-query-placeholder,
-.search-results {
-  z-index: 15;
-}
-
-.search-query-text {
-  &.largescreen {
-    h1.searchBox {
-      text-align: left;
-      padding: 0;
-      margin: 0;
-      width: auto;
-      font-size: 40px;
-      height: 50px;
-    }
-  }
-}
-
-.search-query-placeholder {
-  h2 {
-    font-size: 30px;
-    font-size: 36px;
-    font-weight: 500;
-    margin: 0;
-    color: #6d7072;
-    height: 50px;
-    text-transform: uppercase;
-  }
-  &.largescreen {
-
-  }
-}
-
-.search-results {
-  h2 {
-    text-align: center;
-  }
-  &.largescreen {
-    overflow: hidden;
-    h2 {
-      margin-right: 20px;
-      text-align: left;
-    }
-  }
-}
-
-.search-keyboard {
-  z-index: 20;
-}
 
 // Large Screen Weather
 // ----------------------------------------------------------------------
@@ -584,4 +523,86 @@ g.active {
     font-size: 40px;
     font-weight: 500;
   }
+}
+
+
+// Search
+// ----------------------------------------------------------------------
+
+.search-query-text,
+.search-query-placeholder,
+.search-results {
+  z-index: 15;
+}
+
+.search-query-text {
+  h1.searchBox {
+    color: white;
+    border-bottom: 2px solid $red;
+    margin: 30px auto;
+    padding: 20px 1em;
+    line-height: 1;
+    text-align: left;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  &.largescreen {
+    h1.searchBox {
+      color: black;
+      padding: 0;
+      margin: 0;
+      font-size: 40px;
+      height: 50px;
+    }
+  }
+}
+
+.search-query-placeholder {
+  h2 {
+    font-size: 30px;
+    font-size: 36px;
+    font-weight: 500;
+    margin: 0;
+    color: #6d7072;
+    height: 50px;
+    text-transform: uppercase;
+  }
+  &.largescreen {
+
+  }
+}
+
+.search-results {
+  h1 {
+    color: $red;
+    margin: 0;
+    margin-top: 30px;
+    font-size: 50px;
+    font-weight: 100;
+    letter-spacing: 3px;
+  }
+  h2 {
+    color: white;
+    font-size: 44px;
+    font-weight: 100;
+    margin: 22px 0;
+  }
+  &.largescreen {
+    overflow: hidden;
+    h2 {
+      font-family: 'Flama', 'helvetica neue', 'helvetica', 'arial', 'sans';
+      color: #666;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 18px;  
+      letter-spacing: 1px;
+      padding-right: 20px;
+      margin-bottom: 15px; 
+    }
+  }
+}
+
+.search-keyboard {
+  z-index: 20;
 }
