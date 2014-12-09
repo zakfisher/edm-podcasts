@@ -396,13 +396,20 @@ webview {
     margin: 0;
     padding: 0; }
 
-.menu-item {
+.menu-item-bg {
   background-color: #c7242e;
+  border: 1px solid black; }
+  .menu-item-bg.noBottomBorder {
+    border-bottom: none; }
+  .menu-item-bg.active {
+    background-color: #160808; }
+  .menu-item-bg.disabled {
+    background-color: #666; }
+
+.menu-item {
   color: #fff;
   text-align: right;
   box-sizing: border-box;
-  padding: 2rem;
-  border: 1px solid #000;
   border-top: none;
   cursor: default; }
   .menu-item * {
@@ -410,10 +417,6 @@ webview {
     -webkit-transition: opacity 0.3s; }
   .menu-item .inactive {
     opacity: 0; }
-  .menu-item.active {
-    background-color: #160808; }
-  .menu-item.disabled {
-    background-color: #666; }
   .menu-item h1 {
     margin: 0 0 10px 0;
     padding: 0;
