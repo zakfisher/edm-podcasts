@@ -1,12 +1,14 @@
 module.exports = angular.module('KioskMasterCtrl', [])
 
-.controller('KioskMasterCtrl', function ($scope, $famous, $timeout, KioskScreenSaver) {
+.controller('KioskMasterCtrl', function ($scope, $famous, $timeout, KioskScreenSaver, config) {
 
   var Transitionable = $famous['famous/transitions/Transitionable'];
   var Easing = $famous['famous/transitions/Easing'];
 
   $scope.masterPosition = new Transitionable([0, 0, -1000]);
   $scope.masterOpacity = new Transitionable(0);
+
+  $scope.globalConfig = config;
 
   $scope.uiComeForward = function () {
     $scope.masterOpacity.set(1, {
