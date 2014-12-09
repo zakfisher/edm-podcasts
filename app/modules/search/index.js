@@ -37,11 +37,48 @@ module.exports = angular.module('Search', [])
       results = filteredResults;
     }
     console.log('map results', results);
+
+    // Large Screen Results
     if ($scope.isLargescreen) {
-      $scope.results = LargescreenMenu.arrayToGrid(results, 3);
+      $scope.results = (results.length === 0) ? [] : LargescreenMenu.arrayToGrid(results, 3);
     }
+
+    // Small Screen Results
+    // - filter by store or restaurant
     else {
-      $scope.results = results;
+      var foodResults = [];
+      var storeResults = [];
+
+      results.forEach(function(result) {
+        if (result.category.indexOf('Food & Drink') > -1) {
+          result.isFood = true;
+          foodResults.push(result);
+        }
+        else {
+          result.isStore = true;
+          storeResults.push(result);
+        }
+      });
+      
+      // Both stores & food
+      if (storeResults.length > 0 && foodResults.length > 0) {
+        $scope.results = [storeResults, foodResults];
+      }
+
+      // Neither stores nor food
+      if (storeResults.length === 0 && foodResults.length === 0) {
+        $scope.results = [];
+      }
+
+      // Only Stores
+      if (storeResults.length > 0 && foodResults.length === 0) {
+        $scope.results = [storeResults, []];
+      }
+
+      // Only Food
+      if (storeResults.length === 0 && foodResults.length > 0) {
+        $scope.results = [foodResults, []];
+      }
     }
     console.log('results', $scope.results);
   });
@@ -85,12 +122,16 @@ module.exports = angular.module('Search', [])
           translate: [150, -45, 0]
         },
         placeholder: {
+          size:      [500, 50],
+          translate: [150, -45, 0],
           text: 'Start Typing'
         }
       },
       results: {
         bgColor: '#231f20',
         grid: {
+          align:     [0, 0],
+          origin:    [0, 0],
           size:      [750, 500],
           translate: [50, -120, 0],
           options: {
@@ -125,20 +166,28 @@ module.exports = angular.module('Search', [])
           translate: [0, 0, -1]
         },
         text: {
-          size:      [undefined, 100],
+          align:     [0.5, 0],
+          origin:    [0.5, 0],
+          size:      [1100, 100],
           translate: [0, 0, 0]
         },
         placeholder: {
+          align:     [0.5, 0],
+          origin:    [0.5, 0],
+          size:      [1100, 100],
+          translate: [100, 70, 0],
           text: 'Search for a store'
         }
       },
       results: {
         bgColor: 'black',
         grid: {
-          size:      [undefined, 500],
+          align:     [0.5, 0],
+          origin:    [0.5, 0],
+          size:      [960, 500],
           translate: [0, 0, 0],
           options: {
-            dimensions: [3, 1], // columns, rows
+            dimensions: [2, 1], // columns, rows
           }
         }
       },
@@ -153,7 +202,7 @@ module.exports = angular.module('Search', [])
   }
 })
 
-.directive('largescreenSidebarSearch', function() {
+.directive('largescreenSearch', function() {
   return {
     restrict: 'E',
     template: require('./search.html'),
