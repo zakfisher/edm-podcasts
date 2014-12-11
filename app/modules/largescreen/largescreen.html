@@ -1,6 +1,6 @@
 <fa-view>
   <fa-image-surface fa-image-url="bigBG.jpg"></fa-image-surface>
-  <fa-header-footer-layout 
+  <fa-header-footer-layout
     fa-options="layout.options">
 
     <fa-view></fa-view>
@@ -8,7 +8,7 @@
     <fa-view>
 
       <!-- Menu Background -->
-      <fa-modifier 
+      <fa-modifier
         fa-align="menu.background.align"
         fa-origin="menu.background.origin"
         fa-size="menu.background.size">
@@ -24,15 +24,17 @@
         fa-translate="menu.stores.translate">
 
         <!-- Background -->
+        <fa-modifier fa-translate="[0,0,-0.1]">
         <fa-surface class="large-menu-stores-view-bg"
           fa-background-color="menu.stores.background.color">
         </fa-surface>
+        </fa-modifier>
 
         <!-- Content -->
         <fa-modifier
           fa-align="menu.stores.content.align"
           fa-origin="menu.stores.content.origin"
-          fa-opacity="menu.stores.content.opacity.get()" 
+          fa-opacity="menu.stores.content.opacity.get()"
           fa-size="menu.stores.size.get()">
 
           <!-- Stores Header -->
@@ -61,14 +63,14 @@
             <fa-modifier
               fa-size="menu.floors.grid.size"
               fa-translate="menu.floors.grid.translate">
-              <fa-grid-layout 
+              <fa-grid-layout
                 fa-options="menu.floors.grid.options">
 
                 <fa-surface class="large-menu-floors-grid"
                   ng-repeat="grid in menu.floors.grid.grids">
-                  <div 
-                    ng-repeat="floor in grid" 
-                    class="large-menu-floor" 
+                  <div
+                    ng-repeat="floor in grid"
+                    class="large-menu-floor"
                     ng-class="{active:(activeFloor == floor.level)}"
                     ng-click="selectFloor(floor)">
                     <p>Floor</p>
@@ -85,12 +87,12 @@
           <fa-modifier
             fa-size="menu.stores.data.grid.size"
             fa-translate="menu.stores.data.grid.translate">
-            <fa-grid-layout 
+            <fa-grid-layout
               fa-options="menu.stores.data.grid.options">
               <fa-surface class="large-menu-stores-grid"
                 ng-repeat="grid in menu.stores.data.grid.grids">
                 <ul>
-                  <li ng-repeat="store in grid" 
+                  <li ng-repeat="store in grid"
                     ng-click="selectStore(store)">
                     <div class="floor-indicator" ng-if="(store.level == activeFloor)"></div>
                     {{store.name}}
@@ -104,7 +106,7 @@
           <fa-modifier
             fa-align="menu.stores.goBack.align"
             fa-translate="menu.stores.goBack.translate">
-            
+
             <!-- Icon -->
             <fa-modifier
               fa-size="menu.stores.goBack.icon.size"
@@ -132,7 +134,7 @@
       </fa-modifier>
 
       <!-- Menu Content -->
-      <fa-modifier 
+      <fa-modifier
         fa-align="menu.content.align"
         fa-origin="menu.content.origin"
         fa-size="menu.content.size"
@@ -151,7 +153,7 @@
           <fa-modifier
             fa-opacity="menu.home.opacity.get()"
             fa-translate="menu.home.translate.get()">
-          
+
             <!-- Categories Header -->
             <fa-modifier
               fa-size="menu.categories.header.size"
@@ -165,12 +167,12 @@
             <fa-modifier
               fa-size="menu.categories.grid.size"
               fa-translate="menu.categories.grid.translate">
-              <fa-grid-layout 
+              <fa-grid-layout
                 fa-options="menu.categories.grid.options">
                 <fa-surface class="large-menu-category-grid"
                   ng-repeat="grid in menu.categories.grid.grids">
                   <ul>
-                    <li ng-repeat="category in grid" 
+                    <li ng-repeat="category in grid"
                       ng-click="selectCategory(category.code)">{{category.name}}</li>
                   </ul>
                 </fa-surface>
@@ -191,9 +193,9 @@
 
               <!-- Search Icon -->
               <fa-modifier
-                fa-size="menu.fakeSearch.icon.size" 
+                fa-size="menu.fakeSearch.icon.size"
                 fa-translate="menu.fakeSearch.icon.translate">
-                <fa-surface 
+                <fa-surface
                   fa-click="selectSearch()"
                   class="large-menu-search-icon">
                   <div class="wf-wire-search"></div>
@@ -201,8 +203,8 @@
               </fa-modifier>
 
               <!-- Text -->
-              <fa-modifier 
-                fa-size="menu.fakeSearch.query.text.size" 
+              <fa-modifier
+                fa-size="menu.fakeSearch.query.text.size"
                 fa-translate="menu.fakeSearch.query.text.translate">
                 <fa-surface class="search-query-text largescreen"
                   fa-click="selectSearch()">
@@ -211,8 +213,8 @@
               </fa-modifier>
 
               <!-- Placeholder -->
-              <fa-modifier 
-                fa-size="menu.fakeSearch.query.text.size" 
+              <fa-modifier
+                fa-size="menu.fakeSearch.query.text.size"
                 fa-translate="menu.fakeSearch.query.text.translate">
                 <fa-surface class="search-query-placeholder"
                   fa-click="selectSearch()">
@@ -221,7 +223,7 @@
               </fa-modifier>
 
             </fa-modifier>
-            
+
           </fa-modifier>
 
         </fa-modifier>
@@ -248,7 +250,7 @@
           <fa-modifier
             fa-align="menu.search.goBack.align"
             fa-translate="menu.search.goBack.translate">
-            
+
             <!-- Icon -->
             <fa-modifier
               fa-size="menu.search.goBack.icon.size"
@@ -273,7 +275,7 @@
 
           <!-- Search -->
           <largescreen-search></largescreen-search>
-        
+
         </fa-modifier>
 
       </fa-modifier>
