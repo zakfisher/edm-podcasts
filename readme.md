@@ -12,6 +12,8 @@ First ensure you have npm, bower and gulp installed globally. Then
   	bower install
   	gulp watch
 
+That will handle the builds, to run a local server run `node app/server`
+
 Note: There is currently a bug in gulp-watch which causes it to crash adding new directories to the watch path. If this happens, you just need to fire it up again with `gulp watch`
 
 ###Building HTML5 chrome app
