@@ -1,6 +1,6 @@
 module.exports = angular.module('LoadingScreen', [])
 
-.service('Preloader', function ($q, $rootScope) {
+.service('Preloader', function ($q) {
   var Preloader = {};
   var tasks = [];
 

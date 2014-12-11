@@ -5,7 +5,7 @@ module.exports = angular.module('WeatherService', [])
   WeatherService.cache();
 })
 
-.service('WeatherService', function ($http, Preloader) {
+.service('WeatherService', function ($http) {
   var self = {};
 
   self.cache = function (next) {
@@ -21,7 +21,9 @@ module.exports = angular.module('WeatherService', [])
     }).success(function (r) {
       self.setWeather(r);
       // weatherTask.resolve();
-      if (typeof next === 'function') next();
+      if (typeof next === 'function') {
+        next();
+      }
     });
   };
 

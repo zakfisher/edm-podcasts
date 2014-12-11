@@ -38,7 +38,7 @@ module.exports = angular.module('JibestreamMap', [])
   JMap.addListener("SHOW_DESTINATION", showStoreCardFromDestination);
 
   //Only show map on map view. @todo unhack this
-  $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+  $rootScope.$on('$stateChangeStart', function (event, toState) {
     if (toState.name === 'kioskmap') {
       Map.show();
     } else {

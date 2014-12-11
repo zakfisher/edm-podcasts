@@ -56,7 +56,7 @@ module.exports = angular.module('KioskMenu', [])
   };
 
   //Keep menu highlighting accurate with state
-  $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+  $rootScope.$on('$stateChangeStart', function (event, toState) {
     menu.activeMenuItem = toState.name;
   });
 

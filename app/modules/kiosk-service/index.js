@@ -1,7 +1,5 @@
 module.exports = angular.module('KioskService', [])
 
-.run(function (KioskService) {})
-
 .service("KioskService", function ($http) {
 
   var self = {};

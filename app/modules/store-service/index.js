@@ -37,7 +37,7 @@ module.exports = angular.module('StoreService', [])
   };
 
   self.getStoreById = function (_id) {
-    var results, store;
+    var results;
     results = filterFilter(self.stores, {
       'id': _id
     });
