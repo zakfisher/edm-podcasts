@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node app/server.js",
     "postinstall": "gulp build",
-    "dev": "gulp start",
+    "dev": "gulp start"
   },
   "dependencies": {
     "express": "~3.4.x",
