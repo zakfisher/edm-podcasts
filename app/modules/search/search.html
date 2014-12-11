@@ -16,13 +16,24 @@
         </fa-surface>
       </fa-modifier>
 
+      <!-- Clear -->
+      <fa-modifier
+        ng-if="string.length > 0"
+        fa-size="search.options.query.clear.size" 
+        fa-translate="search.options.query.clear.translate">
+        <fa-surface class="search-query-clear"
+          fa-background-color="search.options.query.clear.bgColor"
+          fa-click="search.clear()">
+          <div class="wf-remove"></div>
+        </fa-surface>
+      </fa-modifier>
+
       <!-- Search Icon -->
       <fa-modifier
         ng-if="isLargescreen"
         fa-size="search.options.searchIcon.size" 
         fa-translate="search.options.searchIcon.translate">
-        <fa-surface 
-          class="large-menu-search-icon">
+        <fa-surface class="large-menu-search-icon">
           <div class="wf-wire-search"></div>
         </fa-surface>
       </fa-modifier>
