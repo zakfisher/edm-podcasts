@@ -1,0 +1,32 @@
+
+// Map
+// ----------------------------------------------------------------------
+
+.map-container {
+  background-color: #c1cdd3;
+}
+
+.map-level-selector-surface.active {
+  background-color: rgba(0,0,0,0.8);
+}
+
+.map-level-selector-surface {
+  background-color: rgba(100,100,100,0.8);
+}
+
+.map-level-selector {
+  color: #fff;
+  text-transform: uppercase;
+  text-align: center;
+  padding-top: 35%;
+}
+
+.st3:hover{
+  fill: #fff;
+}
+
+/**** Pop Up ****/
+#popup-render-container{
+  display:none;
+}
+

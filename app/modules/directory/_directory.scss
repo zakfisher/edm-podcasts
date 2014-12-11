@@ -1,0 +1,41 @@
+// Directory
+// ----------------------------------------------------------------------
+
+.directoryCategory {
+  border-right: 25px solid #dfdfde;
+}
+
+.directoryCategory h3 {
+  font-weight: 200;
+  font-size: 32px;
+  color: #fff;
+  padding-left: 180px;
+  letter-spacing: 4px;
+  white-space: nowrap;
+}
+
+.directoryCategory.active h3{
+  font-weight: 700;
+  color: #c7242e !important;
+}
+
+.directory-no-logo-text {
+  font-size: 300%;
+  color: #656667;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  line-height: 200px;
+}
+
+.txt-center {
+  text-align: center;
+}
+
+.txt-reversed {
+  color: #fff !important;
+}
+
+.directoryStoreSurface {
+  opacity: 0.9 !important;
+}
