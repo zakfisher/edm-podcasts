@@ -29,11 +29,11 @@ module.exports = angular.module('Directory', [])
       };
 
       $scope.setStoresList = function () {
+        //Gets stores, and then shrinks the array into groups the size of groupLength
         var groupedList = [],
           groupLength = 2,
           length,
           stores;
-
         if ($scope.filterCategory) {
           console.log('getting stores by filter category', $scope.filterCategory);
           stores = StoreService.getStoresByCategory($scope.filterCategory);
