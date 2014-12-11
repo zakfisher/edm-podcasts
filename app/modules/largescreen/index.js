@@ -67,6 +67,8 @@ module.exports = angular.module('Largescreen', [])
       $timeout(function () {
         $scope.lock = false;
       }, duration);
+    } else {
+      return false;
     }
   };
 
@@ -74,11 +76,13 @@ module.exports = angular.module('Largescreen', [])
     if (!$scope.lock) {
       CardStream.setStore(item);
       CardStream.show();
+    } else {
+      return false;
     }
   };
 
   $scope.selectCategory = function (code) {
-    if ($scope.lock) {
+    if (!$scope.lock) {
       var category = CategoryService.getCategoryByCode(code);
       var stores = StoreService.getStoresByCategory(code);
       stores = stores.splice(0, storeLimit);
@@ -93,6 +97,8 @@ module.exports = angular.module('Largescreen', [])
       }, duration);
       $scope.fadeHomeViewOut();
       $scope.fadeStoresViewIn();
+    } else {
+      return false;
     }
   };
 
@@ -101,7 +107,7 @@ module.exports = angular.module('Largescreen', [])
   };
 
   $scope.backToCategories = function () {
-    if ($scope.lock) {
+    if (!$scope.lock) {
       $scope.fadeHomeViewIn();
       if ($scope.showStores) {
         $scope.fadeStoresViewOut();
@@ -116,6 +122,8 @@ module.exports = angular.module('Largescreen', [])
         $scope.lock = false;
         $scope.activeFloor = false;
       }, duration);
+    } else {
+      return false;
     }
   };
 
