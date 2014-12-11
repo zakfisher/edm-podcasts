@@ -10,11 +10,11 @@ First ensure you have npm, bower and gulp installed globally. Then
 
   	npm install
   	bower install
-  	gulp watch
+  	gulp start
 
-That will handle the builds, to run a local server run `node app/server`
+That will watch and build the app, run a local server at 9292, and run livereloard.
 
-Note: There is currently a bug in gulp-watch which causes it to crash adding new directories to the watch path. If this happens, you just need to fire it up again with `gulp watch`
+Note: There is currently a bug in gulp-watch which causes it to crash adding new directories to the watch path. If this happens, you just need to fire it up again with `gulp start`
 
 ###Building HTML5 chrome app
 
@@ -30,6 +30,6 @@ Currently the app is managed with the westfield.andriod@gmail.com account (that'
 
 ###Node express server
 
-Also in this package is a node-express server pointed to app/public. Used in prototyping for serving up framer.js interactive wireframe prototypes and local testing of app.
+Also in this package is a node-express server pointed to app/public. Used in prototyping for serving up framer.js interactive wireframe prototypes and local testing of app. This is also run from `gulp start`
 
     node app/server

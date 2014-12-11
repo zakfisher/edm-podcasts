@@ -10,6 +10,7 @@ var gulp = require('gulp'),
   jshint = require('gulp-jshint'),
   livereload = require('gulp-livereload'),
   browserify = require('gulp-browserify'),
+  nodemon = require('gulp-nodemon'),
   stylish = require('jshint-stylish'),
   brfs = require('brfs'),
   stringify = require('stringify'),
@@ -152,7 +153,15 @@ gulp.task('default', function () {
 
 gulp.task('build', ['clean', 'sass', 'lint', 'app-js', 'images']);
 
-gulp.task('watch', function () {
+gulp.task('start', function () {
+  nodemon({
+    script: 'app/server.js',
+    ext: 'html js',
+    env: {
+      'NODE_ENV': 'development'
+    },
+    ignore: ['ignored.js']
+  });
   livereload.listen();
   watch('app/**/*.scss', function () {
     gulp.start('sass');

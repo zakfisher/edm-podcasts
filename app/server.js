@@ -1,5 +1,6 @@
-//Express server for dev
-require('newrelic');
+if (process.env.NODE_ENV !== 'development') {
+  require('newrelic');
+}
 
 var express = require('express')
 var app = express();
