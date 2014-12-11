@@ -29,22 +29,22 @@ module.exports = angular.module('Directory', [])
       };
 
       $scope.setStoresList = function () {
-        var groupedList = [];
-        var stores;
+        //Gets stores, and then shrinks the array into groups the size of groupLength
+        var groupedList = [],
+          groupLength = 2,
+          length,
+          stores;
         if ($scope.filterCategory) {
           console.log('getting stores by filter category', $scope.filterCategory);
           stores = StoreService.getStoresByCategory($scope.filterCategory);
         } else {
           stores = StoreService.getStores();
         }
-        stores.forEach(function (store, i) {
-          if (i % 2) {
-            var group = [];
-            group.push(stores[i]);
-            group.push(stores[i - 1]);
-            groupedList.push(group);
-          }
-        });
+        length = Math.ceil(stores.length / groupLength);
+        for (var i = 0; i < length; i++) {
+          groupedList.push(stores.slice(i * groupLength, (i + 1) * groupLength));
+        }
+        console.log('Set stores to', groupedList);
         $scope.storesList = groupedList;
       };
 

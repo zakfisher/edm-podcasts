@@ -1,4 +1,4 @@
-<fa-header-footer-layout 
+<fa-header-footer-layout
   fa-options="{direction: 0, headerSize: 680, footerSize: 160}">
 
   <!-- Category Filters -->
@@ -21,22 +21,21 @@
   <fa-view>
 
     <!-- Background -->
-    <fa-modifier>
+    <fa-modifier fa-translate="[0,0,-0.1]">
       <fa-surface class="directoryResultsBackground" fa-background-color="'#fff'"></fa-surface>
     </fa-modifier>
 
     <!-- Content -->
-    <fa-scroll-view 
+    <fa-scroll-view
       fa-pipe-from="resultsEventHandler">
-      <!-- Put stores in a 2 by 1 grid in each listing -->
       <fa-view ng-repeat="storeGroup in storesList">
-        <fa-modifier 
+        <fa-modifier
           fa-size="[undefined, 240]">
-          <fa-grid-layout 
+          <fa-grid-layout
             fa-options="{dimensions:[2,1]}">
             <fa-surface class="txt-center directoryStoreSurface"
-              fa-pipe-to="resultsEventHandler" 
-              ng-repeat="store in storeGroup" 
+              fa-pipe-to="resultsEventHandler"
+              ng-repeat="store in storeGroup"
               fa-click="handleStoreClick(store)">
               <img ng-if="store._links.logo.href" ng-src="{{store._links.logo.href}}" height="200px"/>
               <p class="directory-no-logo-text" ng-if="!store._links.logo.href" >{{store.name}}</p>

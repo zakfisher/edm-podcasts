@@ -1,17 +1,18 @@
 module.exports = angular.module('CategoryService', [])
 
 // Preload categories on boot
-.run(function ($http, Preloader, CategoryService) {
+.run(function ($http, Preloader, CategoryService, config) {
   var categoriesTask = Preloader.createTask('Get Categories');
   $http({
     method: 'GET',
     cache: true,
-    // url: 'http://api.westfield.io/api/category/master/store-categories/valleyfair.json'
-    url: '/cache-data/categories.json'
+    url: 'http://api.westfield.io/api/category/master/store-categories/' + config.centre.id + '.json'
+    // url: '/cache-data/categories.json'
   }).success(function (r) {
     CategoryService.setCategories(r);
     categoriesTask.resolve();
   });
+
 })
 
 .service('CategoryService', function (filterFilter) {
