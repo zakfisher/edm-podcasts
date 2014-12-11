@@ -90,13 +90,74 @@ h3 {
     opacity: 1;
     -webkit-transition: opacity 0.3s; }
 
-.searchBox {
+.search-query-text, .search-query-placeholder, .search-results {
+  z-index: 15; }
+
+.search-query-clear {
+  border-radius: 100px;
+  z-index: 16; }
+  .search-query-clear div.wf-remove {
+    font-size: 24px;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0; }
+
+.search-query-text h1.searchBox {
+  color: white;
   border-bottom: 2px solid #da291c;
-  width: 60%;
   margin: 30px auto;
   padding: 20px 1em;
   line-height: 1;
-  text-align: center; }
+  text-align: left;
+  text-transform: uppercase;
+  font-weight: 500; }
+.search-query-text.largescreen h1.searchBox {
+  color: black;
+  padding: 0;
+  margin: 0;
+  font-size: 40px;
+  height: 50px; }
+
+.search-query-placeholder h2 {
+  font-size: 30px;
+  font-size: 36px;
+  font-weight: 500;
+  margin: 0;
+  color: #6d7072;
+  height: 50px;
+  text-transform: uppercase; }
+
+.search-results h1 {
+  color: #da291c;
+  margin: 0;
+  margin-top: 30px;
+  font-size: 50px;
+  font-weight: 100;
+  letter-spacing: 3px; }
+.search-results h2 {
+  color: white;
+  font-size: 44px;
+  font-weight: 100;
+  margin: 22px 0; }
+.search-results.largescreen {
+  overflow: hidden; }
+  .search-results.largescreen h2 {
+    font-family: 'Flama', 'helvetica neue', 'helvetica', 'arial', 'sans';
+    color: #666;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 18px;
+    letter-spacing: 1px;
+    padding-right: 20px;
+    margin-bottom: 15px; }
+
+.search-keyboard {
+  z-index: 20; }
 
 .directoryCategory {
   border-right: 25px solid #dfdfde; }
@@ -347,37 +408,6 @@ g.active .key-background {
 .large-menu-search-icon {
   font-size: 70px;
   z-index: 16; }
-
-.search-query-text, .search-query-placeholder, .search-results {
-  z-index: 15; }
-
-.search-query-text.largescreen h1.searchBox {
-  text-align: left;
-  padding: 0;
-  margin: 0;
-  width: auto;
-  font-size: 40px;
-  height: 50px; }
-
-.search-query-placeholder h2 {
-  font-size: 30px;
-  font-size: 36px;
-  font-weight: 500;
-  margin: 0;
-  color: #6d7072;
-  height: 50px;
-  text-transform: uppercase; }
-
-.search-results h2 {
-  text-align: center; }
-.search-results.largescreen {
-  overflow: hidden; }
-  .search-results.largescreen h2 {
-    margin-right: 20px;
-    text-align: left; }
-
-.search-keyboard {
-  z-index: 20; }
 
 @font-face {
   font-family: "wf-icons";
