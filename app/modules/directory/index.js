@@ -34,8 +34,6 @@ module.exports = angular.module('Directory', [])
           length,
           stores;
 
-        myvariable = "yes";
-
         if ($scope.filterCategory) {
           console.log('getting stores by filter category', $scope.filterCategory);
           stores = StoreService.getStoresByCategory($scope.filterCategory);

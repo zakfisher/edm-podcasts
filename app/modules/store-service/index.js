@@ -8,8 +8,8 @@ module.exports = angular.module('StoreService', [])
     $http({
       method: 'GET',
       cache: true,
-      url: "http://api.westfield.io/api/store/master/stores.json?centre_id=" + config.centre.id + "&country=us&per_page=all"
-      // url: "/cache-data/stores.json"
+      url: 'http://api.westfield.io/api/store/master/stores.json?centre_id=' + config.centre.id + '&country=us&per_page=all'
+      // url: '/cache-data/stores.json'
     }).success(function (r) {
       StoreService.setStores(r);
       storesTask.resolve();
