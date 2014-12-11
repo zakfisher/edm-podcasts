@@ -10,7 +10,7 @@ module.exports = angular.module('Map', [])
 
   $scope.levels = {
     1: {
-      description: "TEST"
+      description: 'TEST'
     }
   };
 

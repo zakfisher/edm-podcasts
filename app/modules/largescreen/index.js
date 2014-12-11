@@ -252,7 +252,7 @@ module.exports = angular.module('Largescreen', [])
   };
 
   $scope.menu.divider = {
-    bgColor: "#f4f4f4",
+    bgColor: '#f4f4f4',
     size: [undefined, 1],
     translate: [0, 720, 0]
   };

@@ -6,7 +6,7 @@ module.exports = angular.module('CentreService', [])
   $http({
     method: 'GET',
     cache: true,
-    url: "http://api.westfield.io/api/centre/master/centres/valleyfair.json"
+    url: 'http://api.westfield.io/api/centre/master/centres/valleyfair.json'
   }).success(function (r) {
     CentreService.setCentre(r);
     centreTask.resolve();

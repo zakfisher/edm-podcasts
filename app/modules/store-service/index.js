@@ -9,8 +9,8 @@ module.exports = angular.module('StoreService', [])
     $http({
       method: 'GET',
       cache: true,
-      // url: "http://api.westfield.io/api/store/master/stores.json?centre_id=valleyfair&country=us&per_page=all"
-      url: "/cache-data/stores.json"
+      // url: 'http://api.westfield.io/api/store/master/stores.json?centre_id=valleyfair&country=us&per_page=all'
+      url: '/cache-data/stores.json'
     }).success(function (r) {
       StoreService.setStores(r);
       storesTask.resolve();
@@ -24,7 +24,7 @@ module.exports = angular.module('StoreService', [])
 
 })
 
-.service("StoreService", function ($http, filterFilter) {
+.service('StoreService', function ($http, filterFilter) {
 
   var self = {};
 

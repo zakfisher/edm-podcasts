@@ -1,6 +1,6 @@
-module.exports = angular.module("CardStream", [])
+module.exports = angular.module('CardStream', [])
 
-.service("CardStream", function ($famous, Map, StoreService, $state, config) {
+.service('CardStream', function ($famous, Map, StoreService, $state, config) {
   var self = {};
 
   var Transitionable = $famous['famous/transitions/Transitionable'];
@@ -99,7 +99,7 @@ module.exports = angular.module("CardStream", [])
       self.hide();
       $state.go('kioskmap');
       setTimeout(function () {
-        Map.building.startWayFinding("start", jibestreamStore, false);
+        Map.building.startWayFinding('start', jibestreamStore, false);
         console.log('show jibestream store on map', jibestreamStore);
       }, 1000);
     }
@@ -114,24 +114,24 @@ module.exports = angular.module("CardStream", [])
   return self;
 })
 
-.directive("injectSvg", function () {
+.directive('injectSvg', function () {
   return {
-    restrict: "E",
-    template: "<span></span>",
+    restrict: 'E',
+    template: '<span></span>',
     replace: true,
     scope: {
-      svgElement: "=element"
+      svgElement: '=element'
     },
     controller: function ($scope, $element) {
-      console.log("svg element", $scope.svgElement);
+      console.log('svg element', $scope.svgElement);
       $element.append($scope.svgElement);
     }
   };
 })
 
-.directive("cardStream", function (CardStream) {
+.directive('cardStream', function (CardStream) {
   return {
-    restrict: "E",
+    restrict: 'E',
     template: require('./card-stream.html'),
     controller: function ($scope) {
       $scope.cardStream = CardStream;

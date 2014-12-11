@@ -113,7 +113,7 @@ module.exports = angular.module('KioskScreenSaver', [])
 
 .directive('kioskScreensaver', function () {
   return {
-    restrict: "E",
+    restrict: 'E',
     template: require('./screensaver.html'),
     controller: function ($scope, $famous, $timeout, KioskScreenSaver) {
 

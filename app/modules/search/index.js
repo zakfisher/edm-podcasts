@@ -3,12 +3,12 @@
 module.exports = angular.module('Search', [])
 
 .controller('Search', function ($rootScope, $scope, $famous, StoreService, CardStream, LargescreenMenu) {
-  console.log("Search Module");
+  console.log('Search Module');
   var EventHandler = $famous['famous/core/EventHandler'];
   $scope.myEventHandler = new EventHandler();
   $scope.isLargescreen = window.isLargescreen;
 
-  $scope.string = "";
+  $scope.string = '';
   //onKeyboard change provided by svg keyboard directive in search.html
   $scope.onKeyboardChange = function (a) {
     $scope.string = a;
@@ -29,7 +29,7 @@ module.exports = angular.module('Search', [])
     } else if (newValue !== oldValue) {
       results = JMap.getSearchByQuery(newValue);
       var filteredResults = [];
-      results.forEach(function(result) {
+      results.forEach(function (result) {
         if (result !== undefined) {
           filteredResults.push(result);
         }
@@ -49,17 +49,16 @@ module.exports = angular.module('Search', [])
       var foodResults = [];
       var storeResults = [];
 
-      results.forEach(function(result) {
+      results.forEach(function (result) {
         if (result.category.indexOf('Food & Drink') > -1) {
           result.isFood = true;
           foodResults.push(result);
-        }
-        else {
+        } else {
           result.isStore = true;
           storeResults.push(result);
         }
       });
-      
+
       // Both stores & food
       if (storeResults.length > 0 && foodResults.length > 0) {
         $scope.results = [storeResults, foodResults];
@@ -88,41 +87,49 @@ module.exports = angular.module('Search', [])
   $scope.search = {};
 
   $rootScope.keyboard = {
-    fadeIn: function(duration) {
-      $scope.search.options.keyboard.opacity.set(1, {duration: duration});
-      $scope.search.options.keyboard.translate.set([0, 400, 0], {duration: duration});
+    fadeIn: function (duration) {
+      $scope.search.options.keyboard.opacity.set(1, {
+        duration: duration
+      });
+      $scope.search.options.keyboard.translate.set([0, 400, 0], {
+        duration: duration
+      });
     },
-    fadeOut: function(duration) {
-      $scope.search.options.keyboard.opacity.set(0, {duration: duration});
-      $scope.search.options.keyboard.translate.set([0, 300, 0], {duration: duration});
+    fadeOut: function (duration) {
+      $scope.search.options.keyboard.opacity.set(0, {
+        duration: duration
+      });
+      $scope.search.options.keyboard.translate.set([0, 300, 0], {
+        duration: duration
+      });
     }
   };
 
   if ($scope.isLargescreen) {
     $scope.search.options = {
-      active:    true,
-      size:      [undefined, 500],
+      active: true,
+      size: [undefined, 500],
       translate: [0, 100, 0],
       layout: {
-        direction:  1, 
-        headerSize: 150, 
+        direction: 1,
+        headerSize: 150,
         footerSize: 370
       },
       searchIcon: {
-        size:      [62, 59],
+        size: [62, 59],
         translate: [50, -55, 0]
       },
       query: {
         background: {
-          bgColor:   'black',
+          bgColor: 'black',
           translate: [0, 0, -1]
         },
         text: {
-          size:      [500, 50],
+          size: [500, 50],
           translate: [150, -45, 0]
         },
         placeholder: {
-          size:      [500, 50],
+          size: [500, 50],
           translate: [150, -45, 0],
           text: 'Start Typing'
         }
@@ -130,9 +137,9 @@ module.exports = angular.module('Search', [])
       results: {
         bgColor: '#231f20',
         grid: {
-          align:     [0, 0],
-          origin:    [0, 0],
-          size:      [750, 500],
+          align: [0, 0],
+          origin: [0, 0],
+          size: [750, 500],
           translate: [50, -120, 0],
           options: {
             dimensions: [3, 1], // columns, rows
@@ -140,41 +147,40 @@ module.exports = angular.module('Search', [])
         }
       },
       keyboard: {
-        bgColor:   'transparent',
+        bgColor: 'transparent',
         // bgColor:   '#231f20',
-        align:     [0.5, 0],
-        origin:    [0.5, 0],
-        size:      [750, 250],
-        opacity:   new Transitionable(0),
+        align: [0.5, 0],
+        origin: [0.5, 0],
+        size: [750, 250],
+        opacity: new Transitionable(0),
         translate: new Transitionable([0, 300, 0])
       }
     };
-  }
-  else {
+  } else {
     $scope.search.options = {
-      active:    true,
-      size:      [undefined, undefined],
+      active: true,
+      size: [undefined, undefined],
       translate: [0, 0, 0],
       layout: {
-        direction:  1, 
-        headerSize: 150, 
+        direction: 1,
+        headerSize: 150,
         footerSize: 370
       },
       query: {
         background: {
-          bgColor:   'black',
+          bgColor: 'black',
           translate: [0, 0, -1]
         },
         text: {
-          align:     [0.5, 0],
-          origin:    [0.5, 0],
-          size:      [1100, 100],
+          align: [0.5, 0],
+          origin: [0.5, 0],
+          size: [1100, 100],
           translate: [0, 0, 0]
         },
         placeholder: {
-          align:     [0.5, 0],
-          origin:    [0.5, 0],
-          size:      [1100, 100],
+          align: [0.5, 0],
+          origin: [0.5, 0],
+          size: [1100, 100],
           translate: [100, 70, 0],
           text: 'Search for a store'
         }
@@ -182,9 +188,9 @@ module.exports = angular.module('Search', [])
       results: {
         bgColor: 'black',
         grid: {
-          align:     [0.5, 0],
-          origin:    [0.5, 0],
-          size:      [960, 500],
+          align: [0.5, 0],
+          origin: [0.5, 0],
+          size: [960, 500],
           translate: [0, 0, 0],
           options: {
             dimensions: [2, 1], // columns, rows
@@ -192,17 +198,17 @@ module.exports = angular.module('Search', [])
         }
       },
       keyboard: {
-        bgColor:   'black',
-        align:     [0.5, 0],
-        origin:    [0.5, 0],
-        size:      [1055, 370],
-        translate: [0,0,1]
+        bgColor: 'black',
+        align: [0.5, 0],
+        origin: [0.5, 0],
+        size: [1055, 370],
+        translate: [0, 0, 1]
       }
     };
   }
 })
 
-.directive('largescreenSearch', function() {
+.directive('largescreenSearch', function () {
   return {
     restrict: 'E',
     template: require('./search.html'),

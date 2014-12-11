@@ -9,14 +9,14 @@ module.exports = angular.module('keyboard', [])
     replace: true,
     controller: function ($rootScope, $scope) {
       $rootScope.resetSearchInput = function () {
-        $scope.string = "";
+        $scope.string = '';
         $scope.keyFire('delete');
       };
 
       $scope.keyFire = function (k) {
         switch (k) {
         case 'space':
-          $scope.string += " ";
+          $scope.string += ' ';
           break;
         case 'delete':
           $scope.string = $scope.string.substring(0, $scope.string.length - 1);
