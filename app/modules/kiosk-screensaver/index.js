@@ -103,6 +103,7 @@ module.exports = angular.module('KioskScreenSaver', [])
     saverTimeout = n;
   };
 
+  //Activate
   self.activateImage(0);
   Preloader.whenFinished().then(function () {
     self.resetTimeout();
