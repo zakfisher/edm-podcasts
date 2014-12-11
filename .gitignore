@@ -1,8 +1,10 @@
 .DS_Store
+newrelic_agent.log
 node_modules
 node_modules/**/*
 /dist
 app/public/assets/app.js
 **/*/Thumbs.db
 *.orig
-newrelic_agent.log
+
+
