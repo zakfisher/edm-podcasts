@@ -4,7 +4,7 @@ module.exports = angular.module('JibestreamMap', [])
 .run(function (Preloader, StoreService, CardStream, $rootScope, Map) {
   // Preload maps api data
   var JMapInitTask = Preloader.createTask("Jibestream Bootstrap");
-  JMap.initMapsStandAlone("http://jibestream2.cloudapp.net:8082", {
+  JMap.initMapsStandAlone("http://jswestfield.cloudapp.net", {
     deviceId: 126092,
     languageCode: "en"
   });
