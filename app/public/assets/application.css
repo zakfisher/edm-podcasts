@@ -350,10 +350,10 @@ g.active .key-background {
   .large-menu-floor.active {
     background: #da291c; }
 
-.large-menu-store-grid ul {
+.large-menu-stores-grid ul {
   list-style-type: none;
   padding: 0; }
-  .large-menu-store-grid ul li {
+  .large-menu-stores-grid ul li {
     font-family: 'Flama', 'helvetica neue', 'helvetica', 'arial', 'sans';
     color: #666;
     font-size: 16px;
@@ -362,7 +362,7 @@ g.active .key-background {
     padding-right: 20px;
     margin-bottom: 15px;
     position: relative; }
-    .large-menu-store-grid ul li div.floor-indicator {
+    .large-menu-stores-grid ul li div.floor-indicator {
       position: absolute;
       height: 8px;
       width: 8px;

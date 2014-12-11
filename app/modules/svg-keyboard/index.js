@@ -9,7 +9,6 @@ module.exports = angular.module('keyboard', [])
     replace: true,
     controller: function ($rootScope, $scope) {
       $rootScope.resetSearchInput = function () {
-        console.log('reset search input');
         $scope.string = '';
         $scope.keyFire('delete');
       };
