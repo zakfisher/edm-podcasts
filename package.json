@@ -9,7 +9,8 @@
   },
   "scripts": {
     "start": "node app/server.js",
-    "postinstall": "gulp build"
+    "postinstall": "gulp build",
+    "dev": "gulp start",
   },
   "dependencies": {
     "express": "~3.4.x",
@@ -19,6 +20,7 @@
     "gulp-browserify": "latest",
     "gulp-json-editor": "latest",
     "gulp-sass": "latest",
+    "gulp-nodemon": "latest",
     "gulp-ruby-sass": "latest",
     "gulp-zip": "latest",
     "gulp-concat": "latest",
