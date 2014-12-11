@@ -41,7 +41,8 @@ gulp.task('sass', function () {
   return gulp.src(['./app/application.scss'])
     .pipe(plumber())
     .pipe(sass({
-      loadPath: ['./app/modules/**']
+      loadPath: ['./app/modules/**'],
+      errLogToConsole: true
     }))
     .pipe(gulp.dest('./app/public/assets'));
 });
