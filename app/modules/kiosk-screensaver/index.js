@@ -4,17 +4,16 @@ module.exports = angular.module('KioskScreenSaver', [])
   window.addEventListener('touchstart', KioskScreenSaver.resetTimeout);
 })
 
-.service('KioskScreenSaver', function ($rootScope, $famous, config, $state, Preloader, CardStream) {
+.service('KioskScreenSaver', function ($rootScope, $famous, config, $state, Preloader) {
   var self = {},
     saverTimeoutFunction,
     saverTimeout = 30000,
     slideDuration = 16000,
     saverInterval,
-    Easing = $famous['famous/transitions/Easing'],
     Timer = $famous['famous/utilities/Timer'],
     Transitionable = $famous['famous/transitions/Transitionable'];
 
-  imgs = [
+  var imgs = [
       '/screensaver/Guess_1.jpg',
       '/screensaver/Guess_2.jpg',
       '/screensaver/Guess_3.jpg',
@@ -114,12 +113,11 @@ module.exports = angular.module('KioskScreenSaver', [])
 
 .directive('kioskScreensaver', function () {
   return {
-    restrict: "E",
+    restrict: 'E',
     template: require('./screensaver.html'),
     controller: function ($scope, $famous, $timeout, KioskScreenSaver) {
 
       var Transitionable = $famous['famous/transitions/Transitionable'];
-      var Easing = $famous['famous/transitions/Easing'];
 
       $scope.saverPosition = new Transitionable([0, 0, 200]);
       $scope.saverOpacity = new Transitionable(0);

@@ -10,7 +10,7 @@ module.exports = angular.module('Map', [])
 
   $scope.levels = {
     1: {
-      description: "TEST"
+      description: 'TEST'
     }
   };
 
@@ -23,7 +23,7 @@ module.exports = angular.module('Map', [])
   };
 
   $scope.map = Map;
-  $scope.$watch('map.building.floors', function(a, b){
+  $scope.$watch('map.building.floors', function (a) {
     $scope.levels = a;
     $scope.setLevel($scope.levels[Object.keys(a)[0]]);
   });

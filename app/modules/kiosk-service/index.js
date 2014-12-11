@@ -1,8 +1,6 @@
 module.exports = angular.module('KioskService', [])
 
-.run(function (KioskService) {})
-
-.service("KioskService", function ($http) {
+.service('KioskService', function ($http) {
 
   var self = {};
 
@@ -11,10 +9,10 @@ module.exports = angular.module('KioskService', [])
     var state = {
       destination: destination
     };
-    console.log("attempting to save state", state);
+    console.log('attempting to save state', state);
     $http({
       headers: {
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json'
       },
       method: 'PUT',
       dataType: 'json',

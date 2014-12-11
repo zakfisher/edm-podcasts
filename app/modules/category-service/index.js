@@ -6,8 +6,8 @@ module.exports = angular.module('CategoryService', [])
   $http({
     method: 'GET',
     cache: true,
-    // url: "http://api.westfield.io/api/category/master/store-categories/valleyfair.json"
-    url: "/cache-data/categories.json"
+    // url: 'http://api.westfield.io/api/category/master/store-categories/valleyfair.json'
+    url: '/cache-data/categories.json'
   }).success(function (r) {
     CategoryService.setCategories(r);
     categoriesTask.resolve();
@@ -27,9 +27,8 @@ module.exports = angular.module('CategoryService', [])
   };
 
   self.getChildCategoriesOf = function (parentCode) {
-    var childCategories,
-      filteredCategories,
-      parentCategory;
+    var filteredCategories;
+
     filteredCategories = filterFilter(self.categories, {
       'code': parentCode
     });
@@ -40,8 +39,8 @@ module.exports = angular.module('CategoryService', [])
 
   self.getCategoryByCode = function (code) {
     var categoryModel = false;
-    self.categories.forEach(function(category, i) {
-      if (category.code == code) {
+    self.categories.forEach(function (category) {
+      if (category.code === code) {
         categoryModel = category;
         return;
       }

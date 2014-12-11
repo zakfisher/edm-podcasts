@@ -50,7 +50,9 @@ gulp.task('sass', function () {
 gulp.task('lint', function () {
   return gulp.src(paths.modules + '/**/*.js')
     .pipe(plumber())
-    .pipe(jshint())
+    .pipe(jshint({
+      lookup: true
+    }))
     .pipe(jshint.reporter(stylish))
     .pipe(notify(function (file) {
       if (file.jshint.success) {

@@ -3,13 +3,13 @@
 module.exports = angular.module('Dining', [])
 
 .controller('Dining', function ($scope, $famous, $http, CategoryService) {
-  $scope.directoryTitle = "Dining";
+  $scope.directoryTitle = 'Dining';
 
   // @todo check how hungry this is on memory. Looks ripe for optimisation.
   $scope.categories = CategoryService.getChildCategoriesOf('fooddrink');
   $scope.categories.unshift({
-    name: "All Dining Choices",
-    code: "fooddrink"
+    name: 'All Dining Choices',
+    code: 'fooddrink'
   });
 
   $scope.currentCategoryName = 'All Dining Choices';
