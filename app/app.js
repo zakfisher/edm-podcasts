@@ -54,8 +54,8 @@ var app = angular.module('wfWayfinding', [
 
 app.value('config', {
   centre: {
-    title: 'World Trade Centre',
-    style: 'premium'
+    title: 'Valley Fair',
+    id: 'valleyfair'
   },
   kioskID: 2348576,
   initialState: 0,

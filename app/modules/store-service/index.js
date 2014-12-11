@@ -1,16 +1,15 @@
 module.exports = angular.module('StoreService', [])
 
-.run(function (StoreService, Preloader, $http) {
+.run(function (StoreService, Preloader, $http, config) {
 
   //Preload Stores on boot
   var storesTask = Preloader.createTask('Get Stores');
   var getStores = function () {
-    console.log('trying to get stores');
     $http({
       method: 'GET',
       cache: true,
-      // url: 'http://api.westfield.io/api/store/master/stores.json?centre_id=valleyfair&country=us&per_page=all'
-      url: '/cache-data/stores.json'
+      url: "http://api.westfield.io/api/store/master/stores.json?centre_id=" + config.centre.id + "&country=us&per_page=all"
+      // url: "/cache-data/stores.json"
     }).success(function (r) {
       StoreService.setStores(r);
       storesTask.resolve();
@@ -19,6 +18,7 @@ module.exports = angular.module('StoreService', [])
       console.warn('could not get stores!');
     });
   };
+
 
   getStores();
 
@@ -51,6 +51,7 @@ module.exports = angular.module('StoreService', [])
     stores = filterFilter(self.stores, {
       'category_codes': category
     });
+    console.log('Found some stores', stores);
     return stores;
   };
 

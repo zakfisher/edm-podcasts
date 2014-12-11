@@ -1,13 +1,16 @@
 module.exports = angular.module('LoadingScreen', [])
 
-.service('Preloader', function ($q) {
-  var Preloader = {};
-  var tasks = [];
+.service('Preloader', function ($q, $rootScope) {
+  var Preloader = {},
+    tasklist = [];
+
+  Preloader.tasks = {};
 
   Preloader.createTask = function (description) {
     console.log('Registered task', description);
     var deferred = $q.defer();
-    tasks.push(deferred.promise);
+    tasklist.push(deferred.promise);
+    Preloader.tasks[description] = deferred.promise;
     deferred.promise
       .then(function () {
         console.log('completed', description);
@@ -16,7 +19,7 @@ module.exports = angular.module('LoadingScreen', [])
   };
 
   Preloader.whenFinished = function () {
-    return $q.all(tasks);
+    return $q.all(tasklist);
   };
 
   return Preloader;
