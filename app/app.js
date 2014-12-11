@@ -26,7 +26,6 @@ var app = angular.module('wfWayfinding', [
   require('./modules/search').name,
   require('./modules/dining').name,
   require('./modules/shopping').name,
-  require('./modules/services').name,
   require('./modules/events').name,
   require('./modules/directory').name,
   require('./modules/kiosk-screensaver').name,

@@ -1,0 +1,25 @@
+
+// Typography
+// ----------------------------------------------------------------------
+
+h1 {
+  font-size: 70px;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.bigLightText {
+  font-family: 'Flama', 'helvetica neue', 'helvetica', 'arial', 'sans';
+  color: #c7242e;
+  text-transform: uppercase;
+  font-weight: 100;
+  font-size: 600%;
+  line-height: 1.15;
+  margin: 0;
+  padding: 0;
+}

@@ -1,0 +1,48 @@
+// Menu
+// ----------------------------------------------------------------------
+
+.menu-item {
+  background-color: #c7242e;
+  color: #fff;
+  text-align: right;
+  box-sizing: border-box;
+  padding: 2rem;
+  border: 1px solid #000;
+  border-top: none;
+  // border-top: none;
+  cursor: default;
+
+  * {
+    cursor: default;
+    -webkit-transition: opacity 0.3s;
+  }
+
+  .inactive {
+    opacity: 0;
+  }
+
+  &.active {
+    background-color: #160808;
+  }
+
+  &.disabled {
+    background-color: #666;
+
+  }
+
+  h1 {
+    margin: 0 0 10px 0;
+    padding: 0;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 1;
+    -webkit-transition: opacity 0.3s;
+  }
+
+  h3 {
+    margin: 0;
+    padding: 0;
+    opacity: 1;
+    -webkit-transition: opacity 0.3s;
+  }
+}
