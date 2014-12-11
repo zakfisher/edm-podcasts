@@ -1,15 +1,25 @@
 // Menu
 // ----------------------------------------------------------------------
 
+.menu-item-bg {
+  background-color: $brand;
+  border: 1px solid black;
+  &.noBottomBorder {
+    border-bottom: none;
+  }
+  &.active {
+    background-color: #160808;
+  }
+  &.disabled {
+    background-color: #666;
+  }
+}
+
 .menu-item {
-  background-color: #c7242e;
   color: #fff;
   text-align: right;
   box-sizing: border-box;
-  padding: 2rem;
-  border: 1px solid #000;
   border-top: none;
-  // border-top: none;
   cursor: default;
 
   * {
@@ -19,15 +29,6 @@
 
   .inactive {
     opacity: 0;
-  }
-
-  &.active {
-    background-color: #160808;
-  }
-
-  &.disabled {
-    background-color: #666;
-
   }
 
   h1 {

@@ -14,7 +14,7 @@
 
 .large-menu-title {
   h1 {
-    color: $red;
+    color: $brand;
     font-size: 80px;
     line-height: 80px;
     text-transform: uppercase;
@@ -91,7 +91,7 @@
   }
 
   &.active {
-    background: $red;
+    background: $brand;
   }
 }
 
@@ -115,7 +115,7 @@
         height: 8px;
         width: 8px;
         border-radius: 100px;
-        background: $red;
+        background: $brand;
         top: 6px;
         left: -15px;
       }
@@ -162,7 +162,7 @@
   position: absolute;
 
   .wf-arrow-left:before {
-    color: $red;
+    color: $brand;
     position: absolute;
     margin: auto;
     top: 0;
