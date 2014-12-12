@@ -86,9 +86,9 @@ module.exports = angular.module('Largescreen', [])
       var category = CategoryService.getCategoryByCode(code);
       var stores = StoreService.getStoresByCategory(code);
       stores = stores.splice(0, storeLimit);
-      console.log('stores', stores);
       $scope.menu.stores.data.header.text = category.name;
-      $scope.menu.stores.data.grid.grids = LargescreenMenu.arrayToGrid(stores, 3);
+      var grid = LargescreenMenu.arrayToGrid(stores, 3);
+      $scope.menu.stores.data.grid.grids = grid;
       $scope.showStores = true;
       // Set lock to prevent accidental store click during animation
       $scope.lock = true;
