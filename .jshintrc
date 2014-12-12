@@ -68,7 +68,7 @@
     "couch"         : false,    // CouchDB
     "devel"         : true,     // Development/debugging (alert, confirm, etc)
     "dojo"          : false,    // Dojo Toolkit
-    "jasmine"       : false,    // Jasmine
+    "jasmine"       : true,    // Jasmine
     "jquery"        : true,    // jQuery
     "mocha"         : true,     // Mocha
     "mootools"      : false,    // MooTools
@@ -83,5 +83,11 @@
     "yui"           : false,    // Yahoo User Interface
 
     // Custom Globals
-    "globals"       : {"angular": true, "module": true, "JMap": true, "require": true}        // additional predefined global variables
+    "globals"       : {
+        "angular": true,
+        "module": true,
+        "JMap": true,
+        "require": true,
+        "browser": true
+    }
 }
