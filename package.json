@@ -33,7 +33,9 @@
     "gulp-livereload": "latest",
     "jshint-stylish": "latest",
     "gulp-watch": "latest",
-    "newrelic": "latest"
+    "newrelic": "latest",
+    "forecast.io": "0.0.9",
+    "util": "^0.10.3"
   },
   "engines": {
     "node": "0.10.x"
