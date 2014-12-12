@@ -4,7 +4,7 @@ module.exports = angular.module('Directory', [])
   return {
     restrict: 'E',
     template: require('./directory.html'),
-    controller: function ($scope, $famous, filterFilter, $filter, KioskService, StoreService, CardStream) {
+    controller: function ($scope, $famous, filterFilter, $filter, KioskService, Kiosk, StoreService, CardStream) {
 
       $scope.directoryLayoutOptions = {};
 

@@ -68,6 +68,8 @@ module.exports = angular.module('JibestreamMap', [])
     $rootScope.mapShow = false;
   };
 
+  // Kiosk.on('reset', self.reset);
+
   return self;
 
 })
