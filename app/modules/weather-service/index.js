@@ -5,25 +5,24 @@ module.exports = angular.module('WeatherService', [])
   WeatherService.cache();
 })
 
-.service('WeatherService', function ($http) {
+.service('WeatherService', function ($http, Preloader) {
   var self = {};
 
   self.cache = function (next) {
-    // var weatherTask = Preloader.createTask('Get Weather');
+    var weatherTask = Preloader.createTask('Get Weather');
     $http({
-      cache: false,
       method: 'GET',
-      url: 'http://api.openweathermap.org/data/2.5/weather?lat=38.990622&lon=-76.544522'
-      // url: '/cache-data/weather.json'
-      // api/latitude,longitude
-      // method: 'JSONP',
-      // url: 'https://api.forecast.io/forecast/9e39cf0f631c2bd05927bd364942a3e6/38.990622,-76.544522'
+      cache: true,
+      url: '/weather'
     }).success(function (r) {
+      console.log('weather', r);
       self.setWeather(r);
-      // weatherTask.resolve();
+      weatherTask.resolve();
       if (typeof next === 'function') {
         next();
       }
+    }).error(function () {
+      console.warn('could not get weather!');
     });
   };
 
@@ -36,14 +35,11 @@ module.exports = angular.module('WeatherService', [])
   };
 
   self.getCurrentTemp = function () {
-    var kelvin = self.weather.main.temp;
-    var celcius = kelvin - 273.15;
-    var fahrenheit = celcius * 9 / 5 + 32;
-    return Math.floor(fahrenheit);
+    return Math.floor(self.weather.currently.temperature);
   };
 
   self.getSummary = function () {
-    return self.weather.weather[0].description;
+    return self.weather.currently.summary;
   };
 
   return self;
