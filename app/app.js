@@ -59,7 +59,9 @@ app.value('config', {
   },
   kioskID: 2348576,
   initialState: 0,
+  resetTimeout: 60000,
   screensaver: false,
+  screensaverTimeout: 30000,
   placeholderContent: {
     storeFront: '/placeholder/valleyFair.jpg',
     logo: '/placeholder/logo.png'

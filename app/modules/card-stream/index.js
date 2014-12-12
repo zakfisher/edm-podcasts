@@ -1,6 +1,6 @@
 module.exports = angular.module('CardStream', [])
 
-.service('CardStream', function ($famous, Map, StoreService, $state, config) {
+.service('CardStream', function ($famous, Map, StoreService, $state, config, Kiosk) {
   var self = {};
 
   var Transitionable = $famous['famous/transitions/Transitionable'];
@@ -110,6 +110,8 @@ module.exports = angular.module('CardStream', [])
       self.scope.$apply();
     }
   };
+
+  Kiosk.on('reset', self.hide);
 
   return self;
 })
