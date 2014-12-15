@@ -20,10 +20,11 @@ module.exports = angular.module('LargescreenWeather', [])
         });
       }
       displayWeather();
+      // Update weather once a minute
       $interval(function() {
         WeatherService.cache();
         displayWeather();
-      }, 5000);
+      }, 60000);
     }
   };
 })

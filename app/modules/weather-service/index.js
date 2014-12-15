@@ -12,12 +12,12 @@ module.exports = angular.module('WeatherService', [])
     var weatherTask = Preloader.createTask('Get Weather');
     $http({
       method: 'GET',
-      cache: true,
+      cache: false,
       url: '/weather'
     }).success(function (r) {
-      console.log('weather', r);
       self.setWeather(r);
       weatherTask.resolve();
+      console.log('weather', self.getCurrentTemp(), self.getSummary());
       if (typeof next === 'function') {
         next();
       }
