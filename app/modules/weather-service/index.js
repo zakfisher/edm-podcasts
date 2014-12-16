@@ -5,16 +5,12 @@ module.exports = angular.module('WeatherService', [])
   WeatherService.cache();
 })
 
-.service('WeatherService', function ($http, Preloader) {
+.service('WeatherService', function ($http, Preloader, config) {
   var self = {};
 
   self.cache = function (next) {
     var weatherTask = Preloader.createTask('Get Weather');
-    $http({
-      method: 'GET',
-      cache: false,
-      url: '/weather'
-    }).success(function (r) {
+    $.getJSON('https://api.forecast.io/forecast/' + config.forecastIOapiKey + '/' + config.centre.lat + ',' + config.centre.lon + '?callback=?', function (r) {
       self.setWeather(r);
       weatherTask.resolve();
       console.log('weather', self.getCurrentTemp(), self.getSummary());

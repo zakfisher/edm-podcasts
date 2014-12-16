@@ -55,8 +55,11 @@ var app = angular.module('wfWayfinding', [
 app.value('config', {
   centre: {
     title: 'Valley Fair',
-    id: 'valleyfair'
+    id: 'valleyfair',
+    lat: 37.325087,
+    lon: -121.946273
   },
+  forecastIOapiKey: '9e39cf0f631c2bd05927bd364942a3e6',
   kioskID: 2348576,
   initialState: 0,
   resetTimeout: 60000,
