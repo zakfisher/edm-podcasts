@@ -34,7 +34,7 @@ module.exports = angular.module('Largescreen', [])
   return self;
 })
 
-.controller('Largescreen', function ($rootScope, $scope, $famous, $timeout, CategoryService, KioskMenu, StoreService, CardStream, LargescreenMenu) {
+.controller('Largescreen', function ($rootScope, $scope, $famous, $timeout, CategoryService, KioskMenu, StoreService, CardStream, LargescreenMenu, Kiosk) {
   KioskMenu.hide();
   CardStream.isLarge = true;
 
@@ -354,6 +354,69 @@ module.exports = angular.module('Largescreen', [])
       opacity: new Transitionable(0)
     },
     goBack: $scope.goBack
+  };
+
+  ///// RESET LOGIC /////
+  Kiosk.on('reset', function () {
+    $scope.backToCategories();
+    $rootScope.resetSearchInput();
+  }, $scope);
+})
+
+.directive('currentTime', function($interval, dateFilter) {
+  return {
+    controller: function($scope) {
+      // $scope.format = 'M/d/yy h:mm:ss a';
+      $scope.format = 'h:mm a';
+    },
+    link: function($scope, element, attrs) {
+      var format,
+          timeoutId;
+
+      function updateTime() {
+        element.text(dateFilter(new Date(), $scope.format));
+      }
+
+      $scope.$watch(attrs.myCurrentTime, function(value) {
+        format = value;
+        updateTime();
+      });
+
+      element.on('$destroy', function() {
+        $interval.cancel(timeoutId);
+      });
+
+      // Update time every second
+      timeoutId = $interval(updateTime, 1000);
+    }
+  };
+})
+
+.directive('largescreenWeather', function (WeatherService, $interval) {
+  return {
+    restrict: 'E',
+    template: require('./largescreen-weather.html'),
+    controller: function($scope) {
+      $scope.weather = {
+        alignment: [1, 0],
+        origin: [1, 0],
+        size: [400, 200],
+        translation: [-20, 20, 0]
+      };
+      function displayWeather() {
+        var currentTemp = WeatherService.getCurrentTemp();
+        var summary = WeatherService.getSummary();
+        angular.extend($scope.weather, {
+          currentTemp: currentTemp,
+          summary: summary
+        });
+      }
+      displayWeather();
+      // Update weather once a minute
+      $interval(function() {
+        WeatherService.cache(displayWeather);
+      }, 60000);
+    }
   };
 })
 

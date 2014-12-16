@@ -30,7 +30,6 @@ var app = angular.module('wfWayfinding', [
   require('./modules/kiosk-screensaver').name,
   require('./modules/jibestream-map').name,
   require('./modules/largescreen').name,
-  require('./modules/largescreen-weather').name,
 
   // Custom Services
   require('./modules/category-service').name,
