@@ -160,7 +160,7 @@ gulp.task('start', function () {
     env: {
       'NODE_ENV': 'development'
     },
-    ignore: ['ignored.js']
+    ignore: ['app/public/**/*']
   });
   livereload.listen();
   watch('app/**/*.scss', function () {
