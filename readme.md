@@ -38,6 +38,7 @@ Also in this package is a node-express server pointed to app/public. This is als
 Bower is configured for installing packages to app/public/components, but packages are checked in to keep things simple, and to allow for non-bower packages to also live in components, such as Jibestream's SDK.
 
 ---
+
 ##Testing
 
 ###Unit tests
