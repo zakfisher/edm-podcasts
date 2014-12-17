@@ -45,11 +45,11 @@ Bower is configured for installing packages to app/public/components, but packag
 
 Setup:
 
-    npm install -g karma-cli
+    npm install
 
 Run:
 
-    karma start --single-run karma.conf.js
+    gulp test
 
 ###End to end tests
 

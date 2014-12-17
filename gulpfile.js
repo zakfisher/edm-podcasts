@@ -13,6 +13,7 @@ var gulp = require('gulp'),
   nodemon = require('gulp-nodemon'),
   stylish = require('jshint-stylish'),
   brfs = require('brfs'),
+  karma = require('karma').server,
   stringify = require('stringify'),
   zip = require('gulp-zip'),
   notify = require('gulp-notify'),
@@ -147,9 +148,9 @@ gulp.task('zip', function () {
 
 //Tasks
 gulp.task('default', function () {
-  console.log('\n\nAvailable Gulp Tasks:\n\nbuild: js, lint, sass etc.\nwatch: builds on file change, livereload support\nrelease, release-minor, release-major: zips up app package to ./dist\n\n');
+  console.log('\n\nAvailable Gulp Tasks:\n\nbuild: js, lint, sass etc.\nstart: builds on file change, livereload support\nrelease, release-minor, release-major: zips up app package to ./dist\n\n');
   console.log('See gulpfile.js for more\n\n');
-})
+});
 
 gulp.task('build', ['clean', 'sass', 'lint', 'app-js', 'images']);
 
@@ -175,4 +176,11 @@ gulp.task('start', function () {
   watch('app/public/**', function () {
     livereload.changed();
   });
+});
+
+gulp.task('test', function (done) {
+  karma.start({
+    configFile: __dirname + '/karma.conf.js',
+    singleRun: true
+  }, done);
 });

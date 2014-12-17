@@ -20,15 +20,15 @@ module.exports = function (config) {
     ],
 
     frameworks: ['jasmine'],
+    singleRun: true,
 
     browsers: ['Chrome'],
 
     plugins: [
       'karma-jasmine',
       'karma-chrome-launcher'
-    ],
+    ]
 
-    singleRun: true
 
   });
 };
