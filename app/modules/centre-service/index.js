@@ -3,20 +3,22 @@ module.exports = angular.module('CentreService', [])
 // Preload centre on boot
 .run(function (Preloader, CentreService) {
   var centreTask = Preloader.createTask('Get Centre');
-  CentreService.preload().success(centreTask.resolve());
+  CentreService.preload().then(centreTask.resolve());
 })
 
-.service('CentreService', function ($http) {
+.service('CentreService', function ($http, config) {
   var self = {};
 
   self.preload = function () {
-    return $http({
+    var req = $http({
       method: 'GET',
       cache: true,
-      url: 'http://api.westfield.io/api/centre/master/centres/valleyfair.json'
-    }).success(function (r) {
+      url: 'http://api.westfield.io/api/centre/master/centres/' + config.centre.id + '.json'
+    });
+    req.success(function (r) {
       self.setCentre(r);
     });
+    return req;
   };
 
   self.setCentre = function (centre) {
