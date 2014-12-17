@@ -1,7 +1,7 @@
 var gulp = require('gulp'),
   pkg = require('./package.json'),
   chromeAppManifest = require('./app/public/manifest.json'),
-  sass = require('gulp-sass'),
+  sass = require('gulp-ruby-sass'),
   jeditor = require('gulp-json-editor'),
   concat = require('gulp-concat'),
   ngmin = require('gulp-ngmin'),
@@ -44,7 +44,7 @@ gulp.task('sass', function () {
     .pipe(plumber())
     .pipe(sass({
       loadPath: ['./app/modules/**'],
-      errLogToConsole: true
+      // errLogToConsole: true
     }))
     .pipe(gulp.dest('./app/public/assets'));
 });
