@@ -155,7 +155,7 @@ $(document.body).on('mousewheel', function (e) {
   e.stopPropagation();
 });
 
-angular.bootstrap(document, ['wfWayfinding']);
+// angular.bootstrap(document, ['wfWayfinding']);
 
 // Disable Right Click
 function disableRightClick() {
@@ -180,7 +180,6 @@ function disableRightClick() {
 // ----------------------------------------------------------------------
 
 try {
-  console.log('go fullscreen');
   chrome.app.window.current().fullscreen();
   chrome.bluetooth.getDevices(function (x) {
     console.log(x);

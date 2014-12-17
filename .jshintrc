@@ -88,6 +88,7 @@
         "module": true,
         "JMap": true,
         "require": true,
+        "inject": true,
         "browser": true
     }
 }
