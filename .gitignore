@@ -6,5 +6,5 @@ node_modules/**/*
 app/public/assets/*
 **/*/Thumbs.db
 *.orig
-
+.sass-cache
 

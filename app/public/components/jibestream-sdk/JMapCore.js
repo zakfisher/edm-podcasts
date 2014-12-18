@@ -4832,7 +4832,7 @@ else
       this.$holder.append(testOb);
       this.bu_icon = testOb.css("background-image").replace(regx,'$1');
       if (this.bu_icon == 'none') {
-        this.bu_icon = 'http://jibestream2.cloudapp.net:8082/cms/components/label/23987_1_262_yah.png';
+        this.bu_icon = 'http://jswestfield.cloudapp.net/cms/components/label/23987_1_262_yah.png';
       }
       testOb.remove();
     }
@@ -4850,7 +4850,7 @@ else
     //Preload icons and main image.
     this.$image.hide();
     this.imgList = [
-      {loaded: false, src: this.bu_icon || 'http://jibestream2.cloudapp.net:8082/cms/components/label/23987_1_262_yah.png'}, //Icon image
+      {loaded: false, src: this.bu_icon || 'http://jswestfield.cloudapp.net/cms/components/label/23987_1_262_yah.png'}, //Icon image
       {loaded: false, src: this.image_url == ''? this.$image.attr('src') : this.image_url} // Main image
     ];
 
