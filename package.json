@@ -19,7 +19,7 @@
     "brfs": "latest",
     "gulp-browserify": "latest",
     "gulp-json-editor": "latest",
-    "gulp-ruby-sass": "latest",
+    "gulp-sass": "latest",
     "gulp-nodemon": "latest",
     "gulp-ruby-sass": "latest",
     "gulp-zip": "latest",

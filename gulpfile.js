@@ -1,7 +1,7 @@
 var gulp = require('gulp'),
   pkg = require('./package.json'),
   chromeAppManifest = require('./app/public/manifest.json'),
-  sass = require('gulp-ruby-sass'),
+  sass = require('gulp-sass'),
   jeditor = require('gulp-json-editor'),
   concat = require('gulp-concat'),
   ngmin = require('gulp-ngmin'),
