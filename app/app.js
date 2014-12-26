@@ -14,7 +14,8 @@ var dependencies = [
   // Modules
   require('./modules/kiosk').name,
   require('./modules/preloader').name,
-  require('./public/components/westfield-icons').name
+  require('./modules/westfield-icons').name
+
 ];
 
 // Launch App
@@ -36,6 +37,28 @@ var app = angular.module('wfWayfinding', dependencies)
     behaviors.disableMousewheel();
 
   });
+
+
+
+
+
+// app.run(function ($state, Preloader, $q, KioskService, $rootScope, config) {
+
+//   // $rootScope.globalConfig = config;
+
+  
+
+//   $state.go('preloader');
+//   KioskService.saveState(false);
+//   // Backdoor to switch to largescreen view
+//   $(window).on('keydown', function (e) {
+//     if (e.keyCode === 76) {
+//       $state.go('largescreen');
+//     }
+//   });
+
+// });
+
 
 
 
@@ -62,29 +85,3 @@ var app = angular.module('wfWayfinding', dependencies)
 // require('./modules/menu').name,
 
 
-
-
-
-
-
-
-
-
-
-
-// app.run(function ($state, Preloader, $q, KioskService, $rootScope, config) {
-
-//   // $rootScope.globalConfig = config;
-
-  
-
-//   $state.go('preloader');
-//   KioskService.saveState(false);
-//   // Backdoor to switch to largescreen view
-//   $(window).on('keydown', function (e) {
-//     if (e.keyCode === 76) {
-//       $state.go('largescreen');
-//     }
-//   });
-
-// });
