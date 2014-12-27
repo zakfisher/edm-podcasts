@@ -30,7 +30,7 @@ module.exports = function ($stateProvider, $urlRouterProvider) {
 
     .state('preloader', {
       url: '/',
-      template: require('../ui/states/preloader/view.html'),
+      template: require('./ui/states/preloader/view.html'),
       controller: 'PreloaderCtrl'
     })
 
@@ -40,13 +40,13 @@ module.exports = function ($stateProvider, $urlRouterProvider) {
 
     .state('tall/categories', {
       url: '/tall/categories',
-      template: require('../ui/states/tall.categories/view.html'),
+      template: require('./ui/states/tall.categories/view.html'),
       controller: 'PreloaderCtrl'
     })
 
     .state('tall/search', {
       url: '/tall/search',
-      template: require('../ui/states/tall.search/view.html'),
+      template: require('./ui/states/tall.search/view.html'),
       controller: 'PreloaderCtrl'
     })
 
@@ -56,37 +56,37 @@ module.exports = function ($stateProvider, $urlRouterProvider) {
 
     .state('wide/map', {
       url: '/wide/map',
-      template: require('../ui/states/wide.map/view.html'),
+      template: require('./ui/states/wide.map/view.html'),
       controller: 'PreloaderCtrl'
     })
 
     .state('wide/search', {
       url: '/wide/search',
-      template: require('../ui/states/wide.search/view.html'),
+      template: require('./ui/states/wide.search/view.html'),
       controller: 'PreloaderCtrl'
     })
 
     .state('wide/shopping', {
       url: '/wide/shopping',
-      template: require('../ui/states/wide.shopping/view.html'),
+      template: require('./ui/states/wide.shopping/view.html'),
       controller: 'PreloaderCtrl'
     })
 
     .state('wide/dining', {
       url: '/wide/dining',
-      template: require('../ui/states/wide.dining/view.html'),
+      template: require('./ui/states/wide.dining/view.html'),
       controller: 'PreloaderCtrl'
     })
 
     .state('wide/services', {
       url: '/wide/services',
-      template: require('../ui/states/wide.services/view.html'),
+      template: require('./ui/states/wide.services/view.html'),
       controller: 'PreloaderCtrl'
     })
 
     .state('wide/events', {
       url: '/wide/events',
-      template: require('../ui/states/wide.events/view.html'),
+      template: require('./ui/states/wide.events/view.html'),
       controller: 'PreloaderCtrl'
     });
 

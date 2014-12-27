@@ -5,13 +5,10 @@ var dependencies = [
   'ngResource',
   'ngSanitize',
   'ngTouch',
-
-  // Config
   require('./core/config').name,
   require('./core/utils').name,
-
-  // UI
-  require('./ui').name
+  require('./core/api').name,
+  require('./core/ui').name
 ];
 
 // Launch App
