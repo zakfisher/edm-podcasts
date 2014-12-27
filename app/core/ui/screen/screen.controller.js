@@ -1,5 +1,7 @@
-module.exports = function ($scope, $famous, $timeout, config) {
-  $scope.screen = config.screen;
+module.exports = function ($scope, Preloader, Hardware) {
+  Preloader.whenFinished().then(function () {
+    $scope.size = Hardware.get().screen.size;
+  });
 
   // var Transitionable = $famous['famous/transitions/Transitionable'];
 

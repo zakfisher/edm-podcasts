@@ -4,6 +4,17 @@ module.exports = angular.module('wfScreen', [])
 .controller('TallscreenCtrl', require('./tall/tall.screen.controller'))
 .controller('WidescreenCtrl', require('./wide/wide.screen.controller'))
 
+.service('Tallscreen', require('./tall/tall.screen.service'))
+.service('Widescreen', require('./wide/wide.screen.service'))
+
+.directive('screen', function() {
+  return {
+    restrict: 'E',
+    template: require('./screen.html'),
+    controller: 'ScreenCtrl'
+  }
+})
+
 .directive('tallscreen', function() {
   return {
     restrict: 'E',

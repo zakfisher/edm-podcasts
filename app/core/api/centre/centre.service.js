@@ -1,23 +1,23 @@
-module.exports = function ($http, config) {
+module.exports = function ($http, Hardware) {
   var self = {};
 
-  self.preload = function (centre) {
+  self.preload = function () {
     var req = $http({
       method: 'GET',
       cache: true,
-      url: 'http://api.westfield.io/api/centre/master/centres/' + centre + '.json'
+      url: 'http://api.westfield.io/api/centre/master/centres/' + Hardware.get().centre.id + '.json'
     });
     req.success(function (r) {
-      self.setCentre(r);
+      self.set(r);
     });
     return req;
   };
 
-  self.setCentre = function (centre) {
+  self.set = function (centre) {
     self.centre = centre;
   };
 
-  self.getCentre = function () {
+  self.get = function () {
     return self.centre;
   };
 

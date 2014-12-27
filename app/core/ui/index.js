@@ -4,7 +4,8 @@ var dependencies = [
   // Services
   require('./services/kiosk').name,
   
-  // States
+  // Screen & States
+  require('./screen').name,
   require('./states/preloader').name,
   require('./states/tall.categories').name,
   require('./states/tall.search').name,
@@ -15,9 +16,8 @@ var dependencies = [
   require('./states/wide.services').name,
   require('./states/wide.events').name,
 
-  // Directives
-  require('./directives/screen').name,
-  require('./directives/icon').name
+  // Components
+  require('./components/icon').name
 ];
 
 var initialView = {
@@ -27,19 +27,19 @@ var initialView = {
 
 module.exports = angular.module('wfUI', dependencies)
 
-.run(function($state, behaviors, config, Preloader) {
-
-  // Set Global Behaviors
-  behaviors.disableRightClick();
-  behaviors.disableMousewheel();
+.run(function($state, Behavior, Hardware, Preloader) {
 
   // Go To Initial State
   $state.go('preloader');
   Preloader.whenFinished().then(function () {
-    $state.go(initialView[config.hardware.screen.size]);
-  //   // $rootScope.mapReady = true;
-  //   // KioskMenu.show();
+    // $state.go(initialView[Hardware.get().screen.size]);
+  // //   // $rootScope.mapReady = true;
+  // //   // KioskMenu.show();
   });
+
+  // Set Global Behaviors
+  Behavior.disableRightClick();
+  Behavior.disableMousewheel();
 
 });
 

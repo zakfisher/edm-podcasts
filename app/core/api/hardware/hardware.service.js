@@ -1,4 +1,4 @@
-module.exports = function ($http, config) {
+module.exports = function ($http) {
   var self = {};
 
   self.preload = function () {
@@ -11,7 +11,6 @@ module.exports = function ($http, config) {
     req.success(function (r) {
       var height = window.innerHeight;
       var width = window.innerWidth;
-      var size = height > width ? 'tall' : 'wide';
       r = {
         macAddress: '1234567890',
         centre: {
@@ -23,19 +22,19 @@ module.exports = function ($http, config) {
         screen: {
           height: height,
           width: width,
-          size: size
+          size: height > width ? 'tall' : 'wide'
         }
       };
-      self.setHardware(r);
+      self.set(r);
     });
     return req;
   };
 
-  self.setHardware = function (hardware) {
+  self.set = function (hardware) {
     self.hardware = hardware;
   };
 
-  self.getHardware = function () {
+  self.get = function () {
     return self.hardware;
   };
 

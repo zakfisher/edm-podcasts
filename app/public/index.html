@@ -22,10 +22,9 @@
     <script src="/components/new-relic.js"></script>
     <script src="/assets/app.js"></script>
   </head>
-  <body ng-controller="ScreenCtrl">
+  <body>
     <fa-app fa-perspective="250">
-      <tallscreen ng-if="screen.size === 'tall'"></tallscreen>
-      <widescreen ng-if="screen.size === 'wide'"></widescreen>
+      <screen></screen>
     </fa-app>
   </body>
 </html>

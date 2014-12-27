@@ -1,14 +1,14 @@
 module.exports = angular.module('wfUtils', [])
 
-.value('behaviors', {
+.value('Behavior', {
 
 	disableMousewheel: function() {
-    $(document.body).on('mousewheel', function (e) {
+    	$(document.body).on('mousewheel', function (e) {
 		  console.log('mousewheel is disabled');
 		  e.preventDefault();
 		  e.stopPropagation();
 		});
-  },
+  	},
 
 	disableRightClick: function() {
 	  document.oncontextmenu = RightMouseDown;

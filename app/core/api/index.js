@@ -1,52 +1,30 @@
 // Global API Dependencies
 var dependencies = [
+  require('./categories').name,
   require('./centre').name,
   require('./hardware').name,
 ];
 
 module.exports = angular.module('wfAPI', dependencies)
-
 .service('API', require('./api.service'))
 
-// Fetch data and store in config
-.run(function (API, config) {
+.run(function(API) {
 
   // Get Hardware
-  API.getHardware(function(hardware) {
-    config.hardware = hardware;
+  API.fetchHardware(function(hardware) {
 
-    // Get centre using centre id from hardware
-    API.getCentre(function(centre) {
-      config.centre = centre;
+    // Get centre (using centre id from hardware)
+    API.fetchCentre();
 
-      // Get stores, etc. from centre
-      // API.get
-    });
+    // Get categories (using centre id from hardware)
+    API.fetchCategories();
+
+    // Screen-specific data calls
+    switch (hardware.screen.size) {
+    	case 'tall': break;
+    	case 'wide': break;
+    }
+
   });
 
 });
-
-
-
-
-
-// require('./modules/map').name,
-// require('./modules/search').name,
-// require('./modules/dining').name,
-// require('./modules/shopping').name,
-// require('./modules/directory').name,
-// require('./modules/kiosk-screensaver').name,
-// require('./modules/jibestream-map').name,
-// require('./modules/largescreen').name,
-
-// // Custom Services
-// require('./modules/category-service').name,
-// require('./modules/centre-service').name,
-// require('./modules/weather-service').name,
-// require('./modules/kiosk-service').name,
-// require('./modules/store-service').name,
-
-// 
-// require('./modules/svg-keyboard').name,
-// require('./modules/card-stream').name,
-// require('./modules/menu').name,
