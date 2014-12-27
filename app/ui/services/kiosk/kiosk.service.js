@@ -28,7 +28,7 @@ module.exports = function ($rootScope, $famous, config, $state) {
   };
 
   service.on('reset', function () {
-    $state.go(config.initialState);
+    $state.go(config.initialView);
   });
 
   $(window).on('touchstart', service.resetTimeout);

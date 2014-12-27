@@ -10,12 +10,8 @@ var dependencies = [
   require('./core/config').name,
   require('./core/utils').name,
 
-  // Modules
-  require('./modules/screen').name,
-  require('./modules/kiosk').name,
-  require('./modules/preloader').name,
-  require('./modules/westfield-icons').name
-
+  // UI
+  require('./ui').name
 ];
 
 // Launch App
@@ -25,18 +21,12 @@ var app = angular.module('wfWayfinding', dependencies)
   .config(require('./core/routes'))
 
   // Init
-  .run(function($state, behaviors, config) {
+  .run(function(config) {
     
     // Debug
     require('./core/chrome.setup');
     var pkg = require('../package.json');
     console.log('Launched:', Date(), 'Version: ', pkg.version);
-
-    // Set Global Behaviors
-    behaviors.disableRightClick();
-    behaviors.disableMousewheel();
-
-    $state.go('preloader');
   });
 
 
@@ -59,30 +49,3 @@ var app = angular.module('wfWayfinding', dependencies)
 //   });
 
 // });
-
-
-
-
-
-// require('./modules/map').name,
-// require('./modules/search').name,
-// require('./modules/dining').name,
-// require('./modules/shopping').name,
-// require('./modules/directory').name,
-// require('./modules/kiosk-screensaver').name,
-// require('./modules/jibestream-map').name,
-// require('./modules/largescreen').name,
-
-// // Custom Services
-// require('./modules/category-service').name,
-// require('./modules/centre-service').name,
-// require('./modules/weather-service').name,
-// require('./modules/kiosk-service').name,
-// require('./modules/store-service').name,
-
-// 
-// require('./modules/svg-keyboard').name,
-// require('./modules/card-stream').name,
-// require('./modules/menu').name,
-
-

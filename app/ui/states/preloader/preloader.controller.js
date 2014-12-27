@@ -1,4 +1,4 @@
-module.exports = function ($scope, $famous, $state, config, Preloader) {
+module.exports = function ($scope, $famous) {
 
   var Transitionable = $famous['famous/transitions/Transitionable'];
   var Timer = $famous['famous/utilities/Timer'];
@@ -13,10 +13,4 @@ module.exports = function ($scope, $famous, $state, config, Preloader) {
     var adjustedSpeed = parseFloat($scope.spinner.speed) / 800;
     $scope.rotateY.set($scope.rotateY.get() + adjustedSpeed);
   }, 1);
-
-  Preloader.whenFinished().then(function () {
-    $state.go(config.initialView);
-    // $rootScope.mapReady = true;
-    // KioskMenu.show();
-  });
 };
