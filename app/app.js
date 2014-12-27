@@ -9,9 +9,9 @@ var dependencies = [
   // Config
   require('./core/config').name,
   require('./core/utils').name,
-  require('./core/screen').name,
 
   // Modules
+  require('./modules/screen').name,
   require('./modules/kiosk').name,
   require('./modules/preloader').name,
   require('./modules/westfield-icons').name
@@ -36,6 +36,7 @@ var app = angular.module('wfWayfinding', dependencies)
     behaviors.disableRightClick();
     behaviors.disableMousewheel();
 
+    $state.go('preloader');
   });
 
 
