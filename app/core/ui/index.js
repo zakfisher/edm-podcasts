@@ -2,6 +2,7 @@
 var dependencies = [
   
   // Services
+  require('./services/behaviors').name,
   require('./services/kiosk').name,
   require('./services/transitions').name,
   
@@ -23,7 +24,7 @@ var dependencies = [
 
 module.exports = angular.module('wfUI', dependencies)
 
-.run(function($timeout, $state, config, Behavior, Hardware, Preloader) {
+.run(function($timeout, $state, config, Behaviors, Hardware, Preloader) {
 
   // Go To Initial State
   $state.go('preloader');
@@ -34,8 +35,8 @@ module.exports = angular.module('wfUI', dependencies)
   });
 
   // Set Global Behaviors
-  Behavior.disableRightClick();
-  Behavior.disableMousewheel();
+  Behaviors.disableRightClick();
+  Behaviors.disableMousewheel();
 
 });
 
