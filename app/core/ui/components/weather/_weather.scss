@@ -1,25 +1,37 @@
 .weather {
   color: white;
-  text-align: right;
 
-  h1, h2, h3 {
-    @include font(flama);
-    margin: 0;
-  }
+  &.tall {}
 
-  h1 {
-    font-size: 70px;
-    font-weight: 500;
-    margin-bottom: -10px;
-  }
+  &.wide {}
 
-  h2 {
-    font-weight: 600;
-    text-transform: capitalize;
-  }
 
-  h3 {
-    font-size: 40px;
-    font-weight: 500;
-  }
+
+
+
+
+  // Old Styles
+  // color: white;
+  // text-align: right;
+
+  // h1, h2, h3 {
+  //   @include font(flama);
+  //   margin: 0;
+  // }
+
+  // h1 {
+  //   font-size: 70px;
+  //   font-weight: 500;
+  //   margin-bottom: -10px;
+  // }
+
+  // h2 {
+  //   font-weight: 600;
+  //   text-transform: capitalize;
+  // }
+
+  // h3 {
+  //   font-size: 40px;
+  //   font-weight: 500;
+  // }
 }

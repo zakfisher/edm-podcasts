@@ -1,4 +1,4 @@
-module.exports = function($scope, $interval, config, Weather, Preloader, API) {
+module.exports = function($scope, $interval, config, Weather, Preloader, API, Hardware) {
   
   $scope.weather = {
     alignment: [1, 0],
@@ -12,6 +12,11 @@ module.exports = function($scope, $interval, config, Weather, Preloader, API) {
 
   // Display weather and set update interval
   Preloader.whenFinished().then(function() {
+    var hardware = Hardware.get();
+    $scope.class = {
+      tall: hardware.screen.size === 'tall', 
+      wide: hardware.screen.size === 'wide'
+    };
     Weather.display();
     $interval(Weather.update, config.UI.weatherInterval);
   });

@@ -1,6 +1,9 @@
-<fa-modifier fa-translate="weather.translation" fa-align="weather.alignment" fa-origin="weather.origin" fa-size="weather.size">
-	<fa-surface class="weather">
-		<time></time>
+<fa-modifier 
+	fa-translate="weather.translation" 
+	fa-align="weather.alignment" 
+	fa-origin="weather.origin" 
+	fa-size="weather.size">
+	<fa-surface class="weather" ng-class="class">
 		<h2>{{weather.summary}}</h2>
 		<h3>{{weather.currentTemp}}&deg;F</h3>
 	</fa-surface>

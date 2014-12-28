@@ -1,0 +1,13 @@
+// Helper Classes
+// ----------------------------------------------------------------------
+.txt-center {
+  text-align: center;
+}
+
+.txt-reversed {
+  color: #fff !important;
+}
+
+.dbl-sided {
+  @include backface-visibility(visible !important);
+}

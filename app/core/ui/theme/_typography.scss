@@ -1,75 +1,150 @@
-
 // Typography
 // ----------------------------------------------------------------------
-.text {
-  margin: 0;
-  padding: 0;
+@mixin font($font, $size, $weight) {
+
+  // Font Family
+  @if $font == flama {
+    font-family: 'Flama', 'helvetica neue', 'helvetica', 'arial', 'sans';
+  } 
+  @else if $font == condensed {
+    font-family: 'FlamaCondensed', 'helvetica neue', 'helvetica', 'arial', 'sans';
+  } 
+  @else if $font == georgia {
+    font-family: 'Georgia', 'serif';
+  } 
+
+  // Font Size (in pixels, convert to rems)
+  // 1rem = 16px
+  font-size: rem($size);
+
+  // Font Weight
+  font-weight: $weight;
 }
 
-.bold-header {
-  @extend .text;
-  @include font(condensed);
-  font-size: 28px;
-  letter-spacing: 1px;
-  line-height: 30px;
+$large:  48;
+$medium: 32;
+$small:  24;
+
+$bold:   600;
+$normal: 300;
+$light:  100;
+
+.flama {
+
+  &.large {
+    &.bold {
+      @include font(flama, $large, $bold);
+    }
+    &.normal {
+      @include font(flama, $large, $normal);
+    }
+    &.light {
+      @include font(flama, $large, $light);
+    }
+  }
+
+  &.medium {
+    &.bold {
+      @include font(flama, $medium, $bold);
+    }
+    &.normal {
+      @include font(flama, $medium, $normal);
+    }
+    &.light {
+      @include font(flama, $medium, $light);
+    }
+  }
+
+  &.small {
+    &.bold {
+      @include font(flama, $small, $bold);
+    }
+    &.normal {
+      @include font(flama, $small, $normal);
+    }
+    &.light {
+      @include font(flama, $small, $light);
+    }
+  }
+
 }
 
-.big-light-text {
-  @extend .text;
-  @include font(flama);
-  color: $brand;
-  text-transform: uppercase;
-  font-weight: 100;
-  font-size: 600%;
-  line-height: 1.15;
+.condensed {
+
+  &.large {
+    &.bold {
+      @include font(condensed, $large, $bold);
+    }
+    &.normal {
+      @include font(condensed, $large, $normal);
+    }
+    &.light {
+      @include font(condensed, $large, $light);
+    }
+  }
+
+  &.medium {
+    &.bold {
+      @include font(condensed, $medium, $bold);
+    }
+    &.normal {
+      @include font(condensed, $medium, $normal);
+    }
+    &.light {
+      @include font(condensed, $medium, $light);
+    }
+  }
+
+  &.small {
+    &.bold {
+      @include font(condensed, $small, $bold);
+    }
+    &.normal {
+      @include font(condensed, $small, $normal);
+    }
+    &.light {
+      @include font(condensed, $small, $light);
+    }
+  }
+
 }
 
-.big-red-header {
-  @extend .text;
-  @include font(condensed);
-  color: $brand;
-  font-size: 80px;
-  font-weight: 100;
-  line-height: 80px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
+.georgia {
 
-.big-white-header {
-  @extend .text;
-  @include font(condensed);
-  color: white;
-  font-size: 70px;
-  font-weight: 600;
-}
+  &.large {
+    &.bold {
+      @include font(georgia, $large, $bold);
+    }
+    &.normal {
+      @include font(georgia, $large, $normal);
+    }
+    &.light {
+      @include font(georgia, $large, $light);
+    }
+  }
 
-.small-italic-header {
-  @extend .text;
-  @include font(flama);
-  color: #4d4d4d;
-  font-size: 18px;
-  line-height: 24px;
-  letter-spacing: 1px;
-}
+  &.medium {
+    &.bold {
+      @include font(georgia, $medium, $bold);
+    }
+    &.normal {
+      @include font(georgia, $medium, $normal);
+    }
+    &.light {
+      @include font(georgia, $medium, $light);
+    }
+  }
 
-.logo-alt-text {
-  @extend .text;
-  color: #656667;
-  font-size: 300%;
-  line-height: 200px;
-  text-align: center;
-}
+  &.small {
+    &.bold {
+      @include font(georgia, $small, $bold);
+    }
+    &.normal {
+      @include font(georgia, $small, $normal);
+    }
+    &.light {
+      @include font(georgia, $small, $light);
+    }
+  }
 
-.input-text {
-  @extend .text;
-  @include font(condensed);
-  border-bottom: 2px solid $brand;
-  font-size: 40px;
-  font-weight: 500;
-  line-height: 50px;
-  // margin: 30px auto;
-  // padding: 20px 1em;
-  // line-height: 1;
-  // text-align: left;
-  text-transform: uppercase;
 }
