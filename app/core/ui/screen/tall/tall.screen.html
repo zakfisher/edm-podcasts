@@ -1,17 +1,37 @@
-<div ui-view></div>
+<fa-view>
 
-<!-- <fa-modifier 
-	fa-translate="masterPosition.get()" 
-	fa-opacity="masterOpacity.get()">
+	<!-- Background Image -->
+	<fa-modifier fa-opacity="opacity.get()">
+		<fa-image-surface fa-image-url="bigBG.jpg"></fa-image-surface>
+	</fa-modifier>
 
-	<fa-view>
-	  <fa-surface ng-if="mapReady" ng-show="mapShow">
-	    <jmap></jmap>
-	  </fa-surface>
-	</fa-view>
+  <!-- Layout -->
+  <fa-header-footer-layout fa-options="layout.options">
 
-	<div ui-view></div>
-	<kioskmenu></kioskmenu>
-	<card-stream></card-stream>
-</fa-modifier>
-<kiosk-screensaver ng-if="globalConfig.screensaver"></kiosk-screensaver> -->
+    <!-- Header -->
+    <fa-view>
+    	<!-- <weather></weather> -->
+    </fa-view>
+
+    <!-- Content -->
+    <fa-view>
+
+      <!-- Background -->
+      <fa-modifier
+        fa-align="content.background.align"
+        fa-origin="content.background.origin"
+        fa-size="content.background.size">
+        <fa-surface class="tallscreen-bg"></fa-surface>
+      </fa-modifier>
+
+      <!-- Current State -->
+      <div ui-view></div>
+
+    </fa-view>
+
+    <!-- Footer -->
+    <fa-view></fa-view>
+
+  </fa-header-footer-layout>
+
+</fa-view>

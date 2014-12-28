@@ -1,14 +1,19 @@
 module.exports = angular.module('wfConfig', [])
 
 .value('config', {
-  forecastIOapiKey: '9e39cf0f631c2bd05927bd364942a3e6',
-  kioskID: 2348576,
-  resetTimeout: 60000,
-  screensaver: false,
-  screensaverTimeout: 30000,
-  placeholderContent: {
-    storeFront: '/placeholder/valleyFair.jpg',
-    logo: '/placeholder/logo.png'
+  API: {
+    kioskID: 2348576,
+    forecastIOapiKey: '9e39cf0f631c2bd05927bd364942a3e6'
+  },
+  UI: {
+    preloaderTimeout: 3000,
+    resetTimeout: 60000,
+    screensaver: false,
+    screensaverTimeout: 30000,
+    placeholderContent: {
+      storeFront: '/placeholder/valleyFair.jpg',
+      logo: '/placeholder/logo.png'
+    }
   },
   states: [
     {

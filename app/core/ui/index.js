@@ -3,38 +3,34 @@ var dependencies = [
   
   // Services
   require('./services/kiosk').name,
+  require('./services/transitions').name,
   
   // Screen & States
   require('./screen').name,
   require('./states/preloader').name,
-  require('./states/tall.categories').name,
-  require('./states/tall.search').name,
-  require('./states/wide.map').name,
-  require('./states/wide.search').name,
-  require('./states/wide.shopping').name,
-  require('./states/wide.dining').name,
-  require('./states/wide.services').name,
-  require('./states/wide.events').name,
+  require('./states/tall/categories').name,
+  require('./states/tall/search').name,
+  require('./states/wide/map').name,
+  require('./states/wide/search').name,
+  require('./states/wide/shopping').name,
+  require('./states/wide/dining').name,
+  require('./states/wide/services').name,
+  require('./states/wide/events').name,
 
   // Components
   require('./components/icon').name
 ];
 
-var initialView = {
-  'tall': 'tall/categories',
-  'wide': 'wide/map'
-};
-
 module.exports = angular.module('wfUI', dependencies)
 
-.run(function($state, Behavior, Hardware, Preloader) {
+.run(function($timeout, $state, config, Behavior, Hardware, Preloader) {
 
   // Go To Initial State
   $state.go('preloader');
   Preloader.whenFinished().then(function () {
-    // $state.go(initialView[Hardware.get().screen.size]);
-  // //   // $rootScope.mapReady = true;
-  // //   // KioskMenu.show();
+    $timeout(function() {
+      $state.go(Hardware.get().screen.size);
+    }, config.UI.preloaderTimeout);
   });
 
   // Set Global Behaviors
@@ -44,7 +40,8 @@ module.exports = angular.module('wfUI', dependencies)
 });
 
 
-
+// //   // $rootScope.mapReady = true;
+// //   // KioskMenu.show();
 
 
 // require('./modules/map').name,

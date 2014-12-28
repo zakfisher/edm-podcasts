@@ -1,26 +1,32 @@
-<fa-view>
-  <fa-modifier 
-    fa-origin="[.5, .5]" 
-    fa-align="[0.5, 0.5]" 
-    fa-rotate-y="rotateY.get()">
+<fa-modifier 
+  fa-translate="translate.get()" 
+  fa-opacity="opacity.get()">
 
-    <!-- Front face -->
-    <fa-surface 
-      fa-size="[true, true]" 
-      fa-color="'rgb(255,255,250)'">
-      <img class="logo" src="/w.png" style="width: 150px; height: 150px;" />
-    </fa-surface>
-
-    <!-- Back face:  same image, rotated pi radians -->
+  <fa-view>
     <fa-modifier 
-      fa-rotate-y="3.14159">
-      
+      fa-origin="[.5, .5]" 
+      fa-align="[0.5, 0.5]" 
+      fa-rotate-y="rotateY.get()">
+
+      <!-- Front face -->
       <fa-surface 
         fa-size="[true, true]" 
         fa-color="'rgb(255,255,250)'">
         <img class="logo" src="/w.png" style="width: 150px; height: 150px;" />
       </fa-surface>
-      
+
+      <!-- Back face:  same image, rotated pi radians -->
+      <fa-modifier 
+        fa-rotate-y="3.14159">
+        
+        <fa-surface 
+          fa-size="[true, true]" 
+          fa-color="'rgb(255,255,250)'">
+          <img class="logo" src="/w.png" style="width: 150px; height: 150px;" />
+        </fa-surface>
+        
+      </fa-modifier>
     </fa-modifier>
-  </fa-modifier>
-</fa-view>
+  </fa-view>
+
+</fa-modifier>
