@@ -1,11 +1,11 @@
 // Libraries
 @import "public/components/bourbon/dist/bourbon";
 
-// Global Styles
-@import "core/ui/core/mixins";
-@import "core/ui/core/base";
-@import "core/ui/core/famous";
-@import "core/ui/core/typography";
+// Theme
+@import "core/ui/theme/mixins";
+@import "core/ui/theme/base";
+@import "core/ui/theme/famous";
+@import "core/ui/theme/typography";
 
 // UI Components
 @import "core/ui/components/weather/weather";
