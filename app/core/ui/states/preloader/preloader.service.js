@@ -1,14 +1,33 @@
-module.exports = function ($q) {
-  var Preloader = {},
-    tasklist = [];
+module.exports = function ($q, $famous, Transitions) {
+  var self = {}, tasklist = [], scope = {};
+  self.tasks = {};
 
-  Preloader.tasks = {};
+  self.supply = function(scope) {
+    self.scope = scope;
+  };
 
-  Preloader.createTask = function (description) {
+  self.spin = function() {
+    var Timer = $famous['famous/utilities/Timer'];
+    //run function on every tick of the Famo.us engine
+    Timer.every(function () {
+      var adjustedSpeed = parseFloat(self.scope.spinner.speed) / 800;
+      self.scope.rotateY.set(self.scope.rotateY.get() + adjustedSpeed);
+    }, 1);
+  };
+
+  self.show = function() {
+    Transitions.comeForward(self.scope);
+  };
+
+  self.hide = function() {
+    Transitions.goBack(self.scope);
+  };
+
+  self.createTask = function (description) {
     console.log('Registered task', description);
     var deferred = $q.defer();
     tasklist.push(deferred.promise);
-    Preloader.tasks[description] = deferred.promise;
+    self.tasks[description] = deferred.promise;
     deferred.promise
       .then(function () {
         console.log('completed', description);
@@ -16,9 +35,9 @@ module.exports = function ($q) {
     return deferred;
   };
 
-  Preloader.whenFinished = function () {
+  self.whenFinished = function () {
     return $q.all(tasklist);
   };
 
-  return Preloader;
+  return self;
 };
