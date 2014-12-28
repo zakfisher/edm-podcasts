@@ -10,7 +10,7 @@ module.exports = function ($famous, $scope, Preloader, TallCategories) {
   TallCategories.supply($scope);
 
   // Fade in view
-	Preloader.whenFinished().then(function() {
+  Preloader.whenFinished().then(function() {
     TallCategories.show();
   });
 

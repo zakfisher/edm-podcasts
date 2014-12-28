@@ -1,0 +1,32 @@
+// Generics + Base Styles
+// ----------------------------------------------------------------------
+$brand: #da291c;
+
+* {
+  cursor: default;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+body {
+  @include font(condensed);
+  background-color: #000;
+  color: #4D4E4C;
+  font-weight: 500;
+  margin: 0;
+}
+
+
+// Helper Classes
+// ----------------------------------------------------------------------
+.txt-center {
+  text-align: center;
+}
+
+.txt-reversed {
+  color: #fff !important;
+}

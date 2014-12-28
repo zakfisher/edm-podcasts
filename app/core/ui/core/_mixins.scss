@@ -1,0 +1,26 @@
+// Mixins
+// ----------------------------------------------------------------------
+@mixin border-radius($radii) {
+    @include prefixer(border-radius, $radii, webkit moz ms o spec);
+}
+
+@mixin font($font) {
+  @if $font == flama {
+    font-family: 'Flama', 'helvetica neue', 'helvetica', 'arial', 'sans';
+  } 
+  @else if $font == condensed {
+    font-family: 'FlamaCondensed', 'helvetica neue', 'helvetica', 'arial', 'sans';
+  } 
+  @else if $font == georgia {
+    font-family: 'Georgia', 'serif';
+  } 
+}
+
+@mixin vertical-horizontal-center() {
+  position: absolute;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}

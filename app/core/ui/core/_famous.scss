@@ -1,0 +1,19 @@
+// Famo.us Integration
+// ----------------------------------------------------------------------
+
+fa-app {
+  @include vertical-horizontal-center();
+  position: fixed !important;
+}
+
+webview {
+ @include size(100%);
+}
+
+.dbl-sided {
+  @include backface-visibility(visible !important);
+}
+
+.full-screen {
+  @extend fa-app;
+}

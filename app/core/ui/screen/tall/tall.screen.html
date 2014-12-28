@@ -10,7 +10,17 @@
 
     <!-- Header -->
     <fa-view>
-    	<weather></weather>
+
+      <!-- Time -->
+      <fa-modifier fa-opacity="opacity.get()">
+        <time></time>
+      </fa-modifier>
+
+      <!-- Weather -->
+      <fa-modifier fa-opacity="opacity.get()">
+        <weather></weather>
+      </fa-modifier>
+
     </fa-view>
 
     <!-- Content -->
@@ -18,10 +28,15 @@
 
       <!-- Background -->
       <fa-modifier
+        fa-opacity="opacity.get()"
         fa-align="content.background.align"
         fa-origin="content.background.origin"
         fa-size="content.background.size">
-        <fa-surface class="tallscreen-bg"></fa-surface>
+        
+        <fa-surface class="tallscreen-bg"
+          fa-background-color="content.background.color">
+        </fa-surface>
+        
       </fa-modifier>
 
       <!-- Current State -->

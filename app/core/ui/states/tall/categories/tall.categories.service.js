@@ -6,7 +6,7 @@ module.exports = function (Transitions) {
   };
 
   self.show = function() {
-	Transitions.fadeIn(self.scope);
+    Transitions.fadeIn(self.scope);
   };
 
   self.hide = function() {

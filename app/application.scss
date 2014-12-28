@@ -1,12 +1,11 @@
-@import "_modules/core/base";
-@import "_modules/core/famous";
-@import "_modules/core/typography";
-@import "_modules/menu/menu";
-@import "_modules/search/search";
-@import "_modules/directory/directory";
-@import "_modules/kiosk-screensaver/screensaver";
-@import "_modules/jibestream-map/map";
-@import "_modules/svg-keyboard/keyboard";
-@import "_modules/card-stream/card-stream";
-@import "_modules/largescreen/largescreen-home";
-@import "_modules/largescreen/largescreen-weather";
+// Libraries
+@import "public/components/bourbon/dist/bourbon";
+
+// Global Styles
+@import "core/ui/core/mixins";
+@import "core/ui/core/base";
+@import "core/ui/core/famous";
+@import "core/ui/core/typography";
+
+// UI Components
+@import "core/ui/components/weather/weather";
