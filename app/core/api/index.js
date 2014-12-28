@@ -3,6 +3,7 @@ var dependencies = [
   require('./categories').name,
   require('./centre').name,
   require('./hardware').name,
+  require('./jmap').name,
   require('./stores').name,
   require('./weather').name,
 ];
@@ -30,7 +31,12 @@ module.exports = angular.module('wfAPI', dependencies)
           // Get weather (using latitude, longitude from centre)
           API.fetchWeather();
         break;
-        case 'wide': break;
+        case 'wide': 
+          // Get map
+          API.fetchJibestreamMap(function(x) {
+            console.log('xxxxxxx', x);
+          });
+        break;
       }
 
     });

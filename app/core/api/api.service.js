@@ -50,6 +50,28 @@ module.exports = function (Preloader, Hardware, Centre, Categories, Stores, Weat
     });
   };
 
+  self.fetchJibestreamMap = function(next) {
+    var JMapInitTask = Preloader.createTask('Jibestream Bootstrap');
+    JMap.initMapsStandAlone('http://jswestfield.cloudapp.net', {
+      deviceId: 126092,
+      languageCode: 'en'
+    });
+    JMap.addListener('StandAloneMapsReady', function () {
+      JMapInitTask.resolve();
+    });
+    var JMapConfigTask = Preloader.createTask('Load Jibestream Config');
+    $.ajax({
+      url: '/components/jibestream-sdk/jibestreamConfig.json',
+      type: 'GET',
+      dataType: 'json',
+      complete: function (response) {
+        JMap._stylingData = JSON.parse(response.responseText);
+        JMapConfigTask.resolve();
+        if (typeof next === 'function') next(response);
+      }
+    });
+  };
+
   return self;
 
 };

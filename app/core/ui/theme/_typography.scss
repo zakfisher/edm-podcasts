@@ -1,8 +1,22 @@
-// Typography
+/* Typography
 // ----------------------------------------------------------------------
-@mixin font($font, $size, $weight) {
+// This font factory creates font variations based on size and weight.
+// Common styles are defined once, and @extend is used for inheritance.
+*
+*  Example
+*
+*    h1 {
+*      @extend .font;
+*      or @extend .font.size;
+*      or @extend .font.size.weight;
+*    }
+*
+// ---------------------------------------------------------------------- */
+$fonts:        flama, condensed, georgia;
+$fontSizes:    (large, 48), (medium, 32), (small, 24);
+$fontWeights:  (bold, 600), (normal, 300), (light, 100);
 
-  // Font Family
+@mixin fontFamily($font) {
   @if $font == flama {
     font-family: 'Flama', 'helvetica neue', 'helvetica', 'arial', 'sans';
   } 
@@ -12,139 +26,44 @@
   @else if $font == georgia {
     font-family: 'Georgia', 'serif';
   } 
-
-  // Font Size (in pixels, convert to rems)
-  // 1rem = 16px
-  font-size: rem($size);
-
-  // Font Weight
-  font-weight: $weight;
 }
 
-$large:  48;
-$medium: 32;
-$small:  24;
+////////////////////////////
+// Create font variations //
+////////////////////////////
 
-$bold:   600;
-$normal: 300;
-$light:  100;
-
-.flama {
-
-  &.large {
-    &.bold {
-      @include font(flama, $large, $bold);
+@mixin makeFont($font) {
+  .#{$font} { 
+    @include fontFamily($font);
+  }
+  @each $size, $v in $fontSizes {  
+    .#{$font}.#{$size} {
+      @extend .#{$font};
+      @extend .#{$size}-size;
     }
-    &.normal {
-      @include font(flama, $large, $normal);
-    }
-    &.light {
-      @include font(flama, $large, $light);
+    @each $weight, $w in $fontWeights {  
+      .#{$font}.#{$size}.#{$weight}  { 
+        @extend .#{$font}.#{$size};
+        @extend .#{$weight}-weight;
+      }
     }
   }
-
-  &.medium {
-    &.bold {
-      @include font(flama, $medium, $bold);
-    }
-    &.normal {
-      @include font(flama, $medium, $normal);
-    }
-    &.light {
-      @include font(flama, $medium, $light);
-    }
-  }
-
-  &.small {
-    &.bold {
-      @include font(flama, $small, $bold);
-    }
-    &.normal {
-      @include font(flama, $small, $normal);
-    }
-    &.light {
-      @include font(flama, $small, $light);
-    }
-  }
-
 }
 
-.condensed {
-
-  &.large {
-    &.bold {
-      @include font(condensed, $large, $bold);
-    }
-    &.normal {
-      @include font(condensed, $large, $normal);
-    }
-    &.light {
-      @include font(condensed, $large, $light);
-    }
+@mixin makeFonts() {
+  // Define Font Sizes (in pixels, convert to rems), 1rem = 16px
+  @each $size, $value in $fontSizes {  
+    .#{$size}-size { font-size: rem($value); }
   }
-
-  &.medium {
-    &.bold {
-      @include font(condensed, $medium, $bold);
-    }
-    &.normal {
-      @include font(condensed, $medium, $normal);
-    }
-    &.light {
-      @include font(condensed, $medium, $light);
-    }
+  // Define Font Weights
+  @each $weight, $value in $fontWeights {  
+    .#{$weight}-weight { font-weight: $value; }
   }
-
-  &.small {
-    &.bold {
-      @include font(condensed, $small, $bold);
-    }
-    &.normal {
-      @include font(condensed, $small, $normal);
-    }
-    &.light {
-      @include font(condensed, $small, $light);
-    }
+  // Init
+  @each $font in $fonts {  
+    @include makeFont($font);
   }
-
 }
 
-.georgia {
+@include makeFonts();
 
-  &.large {
-    &.bold {
-      @include font(georgia, $large, $bold);
-    }
-    &.normal {
-      @include font(georgia, $large, $normal);
-    }
-    &.light {
-      @include font(georgia, $large, $light);
-    }
-  }
-
-  &.medium {
-    &.bold {
-      @include font(georgia, $medium, $bold);
-    }
-    &.normal {
-      @include font(georgia, $medium, $normal);
-    }
-    &.light {
-      @include font(georgia, $medium, $light);
-    }
-  }
-
-  &.small {
-    &.bold {
-      @include font(georgia, $small, $bold);
-    }
-    &.normal {
-      @include font(georgia, $small, $normal);
-    }
-    &.light {
-      @include font(georgia, $small, $light);
-    }
-  }
-
-}
