@@ -6,6 +6,11 @@ var dependencies = [
   require('./services/kiosk').name,
   require('./services/transitions').name,
   
+  // UI Components
+  require('./components/icon').name,
+  require('./components/time').name,
+  require('./components/weather').name,
+
   // Screen & States
   require('./screen').name,
   require('./states/preloader').name,
@@ -17,11 +22,6 @@ var dependencies = [
   require('./states/wide/dining').name,
   require('./states/wide/services').name,
   require('./states/wide/events').name,
-
-  // UI Components
-  require('./components/icon').name,
-  require('./components/time').name,
-  require('./components/weather').name,
 ];
 
 module.exports = angular.module('wfUI', dependencies)

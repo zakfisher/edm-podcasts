@@ -8,16 +8,11 @@ module.exports = angular.module('wfTime', [])
   return {
   	restrict: 'E',
   	template: require('./time.html'),
-    controller: function($scope) {
-      // $scope.format = 'M/d/yy h:mm:ss a';
-      $scope.format = 'h:mm a';
-    },
+    controller: 'TimeCtrl',
     link: function($scope, element, attrs) {
-      var format,
-          timeoutId;
+      var format, timeoutId;
 
       function updateTime() {
-      	console.log('halala');
         element.text(dateFilter(new Date(), $scope.format));
       }
 
