@@ -7,6 +7,7 @@ module.exports = angular.module('wfConfig', [])
   },
   UI: {
     preloaderTimeout: 3000,
+    weatherInterval: 5000,
     resetTimeout: 60000,
     screensaver: false,
     screensaverTimeout: 30000,

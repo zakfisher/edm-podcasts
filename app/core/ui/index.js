@@ -19,7 +19,8 @@ var dependencies = [
   require('./states/wide/events').name,
 
   // Components
-  require('./components/icon').name
+  require('./components/icon').name,
+  require('./components/weather').name,
 ];
 
 module.exports = angular.module('wfUI', dependencies)

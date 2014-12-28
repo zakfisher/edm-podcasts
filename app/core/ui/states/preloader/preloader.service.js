@@ -1,5 +1,6 @@
 module.exports = function ($q, $famous, Transitions) {
-  var self = {}, tasklist = [], scope = {};
+  var self = {}, tasklist = [];
+  
   self.tasks = {};
 
   self.supply = function(scope) {

@@ -3,6 +3,7 @@ var dependencies = [
   require('./categories').name,
   require('./centre').name,
   require('./hardware').name,
+  require('./weather').name,
 ];
 
 module.exports = angular.module('wfAPI', dependencies)
@@ -13,17 +14,21 @@ module.exports = angular.module('wfAPI', dependencies)
   // Get Hardware
   API.fetchHardware(function(hardware) {
 
-    // Get centre (using centre id from hardware)
-    API.fetchCentre();
-
     // Get categories (using centre id from hardware)
     API.fetchCategories();
 
-    // Screen-specific data calls
-    switch (hardware.screen.size) {
-    	case 'tall': break;
-    	case 'wide': break;
-    }
+    // Get centre (using centre id from hardware)
+    API.fetchCentre(function(centre) {
+
+      // Screen-specific data calls
+      switch (hardware.screen.size) {
+        case 'tall': 
+          API.fetchWeather();
+        break;
+        case 'wide': break;
+      }
+
+    });
 
   });
 

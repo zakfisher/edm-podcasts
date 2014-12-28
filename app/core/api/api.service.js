@@ -1,4 +1,4 @@
-module.exports = function (Preloader, Hardware, Centre, Categories) {
+module.exports = function (Preloader, Hardware, Centre, Categories, WeatherAPI) {
   var self = {};
 
   self.fetchHardware = function(next) {
@@ -11,6 +11,15 @@ module.exports = function (Preloader, Hardware, Centre, Categories) {
     });
   };
   
+  self.fetchWeather = function(next) {
+    var weatherTask = Preloader.createTask('Get Weather');
+    WeatherAPI.preload(function(weather) {
+      weatherTask.resolve();
+      console.log('weather', weather);
+      if (typeof next === 'function') next(weather);
+    });
+  };
+
   self.fetchCentre = function(next) {
     var centreTask = Preloader.createTask('Get Centre');
     Centre.preload().then(function() {
