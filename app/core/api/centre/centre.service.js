@@ -10,6 +10,9 @@ module.exports = function ($http, Hardware) {
     req.success(function (r) {
       self.set(r);
     });
+    req.error(function () {
+      console.warn('Could not get centre!');
+    });
     return req;
   };
 

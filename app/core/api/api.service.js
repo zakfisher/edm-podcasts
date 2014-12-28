@@ -1,4 +1,4 @@
-module.exports = function (Preloader, Hardware, Centre, Categories, WeatherAPI) {
+module.exports = function (Preloader, Hardware, Centre, Categories, Stores, WeatherAPI) {
   var self = {};
 
   self.fetchHardware = function(next) {
@@ -37,6 +37,16 @@ module.exports = function (Preloader, Hardware, Centre, Categories, WeatherAPI) 
       var categories = Categories.get();
       console.log('categories', categories);
       if (typeof next === 'function') next(categories);
+    });
+  };
+
+  self.fetchStores = function(next) {
+    var storesTask = Preloader.createTask('Get Stores');
+    Stores.preload().then(function() {
+      storesTask.resolve();
+      var stores = Stores.get();
+      console.log('stores', stores);
+      if (typeof next === 'function') next(stores);
     });
   };
 

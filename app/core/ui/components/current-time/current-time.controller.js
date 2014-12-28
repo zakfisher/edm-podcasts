@@ -7,7 +7,6 @@ module.exports = function($scope, $interval, CurrentTime, Preloader, Hardware) {
   // Update time every second
   $interval(CurrentTime.update, 1000);
 
-  // Display weather and set update interval
   Preloader.whenFinished().then(function() {
     var hardware = Hardware.get();
     $scope.class = {

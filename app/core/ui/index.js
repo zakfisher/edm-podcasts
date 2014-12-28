@@ -9,6 +9,7 @@ var dependencies = [
   // UI Components
   require('./components/icon').name,
   require('./components/current-time').name,
+  require('./components/jmap').name,
   require('./components/weather').name,
 
   // Screen & States
