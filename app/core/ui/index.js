@@ -1,7 +1,7 @@
 // Global UI Dependencies
 var dependencies = [
   
-  // Services
+  // UI Services
   require('./services/behaviors').name,
   require('./services/kiosk').name,
   require('./services/transitions').name,
@@ -18,8 +18,9 @@ var dependencies = [
   require('./states/wide/services').name,
   require('./states/wide/events').name,
 
-  // Components
+  // UI Components
   require('./components/icon').name,
+  require('./components/time').name,
   require('./components/weather').name,
 ];
 
