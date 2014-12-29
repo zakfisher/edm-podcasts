@@ -12,10 +12,25 @@
 *    }
 *
 // ---------------------------------------------------------------------- */
-$fonts:        flama, condensed, georgia;
-$fontSizes:    (large, 48), (medium, 32), (small, 24);
-$fontWeights:  (bold, 600), (normal, 300), (light, 100);
+$fonts:       
+  flama, condensed, georgia;
 
+$fontSizes:   
+  (xxxlarge, 100), 
+  (xxlarge,  72), 
+  (xlarge,   64), 
+  (large,    48), 
+  (medium,   32), 
+  (small,    24);
+
+$fontWeights: 
+  (bold,     500), 
+  (normal,   300), 
+  (light,    100);
+
+////////////////////////////
+// Create font variations //
+////////////////////////////
 @mixin fontFamily($font) {
   @if $font == flama {
     font-family: 'Flama', 'helvetica neue', 'helvetica', 'arial', 'sans';
@@ -27,10 +42,6 @@ $fontWeights:  (bold, 600), (normal, 300), (light, 100);
     font-family: 'Georgia', 'serif';
   } 
 }
-
-////////////////////////////
-// Create font variations //
-////////////////////////////
 
 @mixin makeFont($font) {
   .#{$font} { 

@@ -1,2 +1,19 @@
-// Tall Screen Categories
+// Tall Categories
 // ----------------------------------------------------------------------
+.tall-categories-title {
+	@extend .flama.small.normal;
+	font-style: italic;
+}
+
+.tall-categories-list {
+	@extend .condensed.medium.bold;
+	color: black;
+
+	li {
+		margin-bottom: 20px;
+	}
+}
+
+.tall-categories-search {
+	border-top: 1px solid #f4f4f4;
+}

@@ -2,8 +2,9 @@
 
 	<!-- Background Image -->
 	<fa-modifier fa-opacity="opacity.get()">
-		<fa-image-surface class="tallscreen-bg-image"
-      fa-image-url="bigBG.jpg"></fa-image-surface>
+		<fa-image-surface class="tall-bg-image"
+      fa-image-url="bigBG.jpg">
+    </fa-image-surface>
 	</fa-modifier>
 
   <!-- Layout -->
@@ -11,17 +12,13 @@
 
     <!-- Header -->
     <fa-view>
-
-      <!-- Current Time -->
-      <fa-modifier fa-opacity="opacity.get()">
+      <fa-modifier 
+        fa-opacity="opacity.get()"
+        fa-size="header.size"
+        fa-translate="header.translate">
         <current-time></current-time>
-      </fa-modifier>
-
-      <!-- Weather -->
-      <fa-modifier fa-opacity="opacity.get()">
         <weather></weather>
       </fa-modifier>
-
     </fa-view>
 
     <!-- Content -->
@@ -30,12 +27,24 @@
       <!-- Background -->
       <fa-modifier
         fa-opacity="opacity.get()"
-        fa-align="content.background.align"
-        fa-origin="content.background.origin"
-        fa-size="content.background.size">
+        fa-align="background.align"
+        fa-origin="background.origin"
+        fa-size="background.size">
         
         <fa-surface class="tall-bg"
-          fa-background-color="content.background.color">
+          fa-background-color="background.color">
+        </fa-surface>
+        
+      </fa-modifier>
+
+      <!-- Title -->
+      <fa-modifier
+        fa-opacity="opacity.get()"
+        fa-size="title.size"
+        fa-translate="title.translate">
+        
+        <fa-surface class="tall-title">
+          {{title.text}}
         </fa-surface>
         
       </fa-modifier>

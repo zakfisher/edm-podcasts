@@ -6,7 +6,7 @@ module.exports = function(API, WeatherAPI) {
   };
 
   self.display = function() {
-    angular.extend(self.scope.weather, {
+    angular.extend(self.scope, {
       currentTemp: WeatherAPI.getCurrentTemp(),
       summary: WeatherAPI.getSummary()
     });

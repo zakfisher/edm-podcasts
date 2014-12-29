@@ -1,8 +1,7 @@
 .current-time {
-	color: white;
-
-  &.tall {}
-
-  &.wide {}
-
+  &.tall {
+    @extend .flama.xxlarge.bold;
+    color: white;
+    text-align: right;
+  }
 }

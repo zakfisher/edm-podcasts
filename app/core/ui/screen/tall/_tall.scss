@@ -3,3 +3,8 @@
 .tall-bg {
 	@include border-radius(50px);
 }
+
+.tall-title {
+	@extend .condensed.xxxlarge.normal;
+	color: $brand;
+}

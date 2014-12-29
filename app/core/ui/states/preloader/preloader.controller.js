@@ -1,4 +1,4 @@
-module.exports = function ($scope, $famous, Preloader) {
+module.exports = function ($scope, $famous, $timeout, $state, config, Hardware, Preloader) {
 
   var Transitionable = $famous['famous/transitions/Transitionable'];
 
@@ -20,9 +20,12 @@ module.exports = function ($scope, $famous, Preloader) {
   // Fade spinner in
   Preloader.show();
 
-  // Fade spinner out
+  // Fade spinner out, go to initial view
   Preloader.whenFinished().then(function() {
     Preloader.hide();
+    $timeout(function() {
+      $state.go(Hardware.get().screen.size);
+    }, config.UI.preloaderTimeout);
   });
 
 };

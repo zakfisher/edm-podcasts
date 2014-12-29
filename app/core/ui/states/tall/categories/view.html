@@ -1,9 +1,40 @@
 <fa-view>
+	<fa-modifier
+		fa-opacity="opacity.get()"
+		fa-size="state.size"
+		fa-translate="state.translate">
 
-  <fa-modifier fa-opacity="opacity.get()">
-    <fa-surface>
-    	<h1 ng-bind="title"></h1>
-    </fa-surface>
-  </fa-modifier>
+	  <!-- Title -->
+	  <fa-modifier
+	  	fa-size="title.size">
+	    <fa-surface class="tall-categories-title">
+	    	{{title.text}}
+	    </fa-surface>
+	  </fa-modifier>
 
+	  <!-- Category List -->
+	  <fa-modifier
+	  	fa-size="grid.size"
+	  	fa-translate="grid.translate">
+	    <fa-grid-layout
+        fa-options="grid.options">
+        <fa-surface class="tall-categories-list"
+          ng-repeat="column in grid.columns">
+          <ul>
+            <li ng-repeat="category in column" ng-bind="category.name"></li>
+          </ul>
+        </fa-surface>
+      </fa-grid-layout>
+	  </fa-modifier>
+
+	  <!-- Search -->
+    <fa-modifier
+      fa-size="search.size"
+      fa-translate="search.translate">
+      <fa-surface class="tall-categories-search">
+      Search
+      </fa-surface>
+    </fa-modifier>
+
+	</fa-modifier>
 </fa-view>

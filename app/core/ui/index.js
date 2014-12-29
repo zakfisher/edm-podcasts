@@ -27,15 +27,10 @@ var dependencies = [
 
 module.exports = angular.module('wfUI', dependencies)
 
-.run(function($timeout, $state, config, Behaviors, Hardware, Preloader) {
+.run(function($state, config, Behaviors, Preloader) {
 
   // Go To Initial State
   $state.go('preloader');
-  Preloader.whenFinished().then(function () {
-    $timeout(function() {
-      $state.go(Hardware.get().screen.size);
-    }, config.UI.preloaderTimeout);
-  });
 
   // Set Global Behaviors
   Behaviors.disableRightClick();

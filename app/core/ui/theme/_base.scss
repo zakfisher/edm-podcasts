@@ -6,10 +6,11 @@ $brand: #da291c;
   cursor: default;
   margin: 0;
   padding: 0;
+  list-style-type: none;
   @include user-select(none);
 }
 
 body {
   background-color: #000;
-  @extend .georgia.large.bold;
+  color: #666;
 }

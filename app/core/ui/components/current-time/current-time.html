@@ -1,3 +1,8 @@
-<fa-surface class="current-time" ng-class="class">
-	<h1 ng-bind="time"></h1>
-</fa-surface>
+<!-- Current Time -->
+<fa-modifier
+	fa-size="currentTime.size"
+	fa-translate="currentTime.translate">
+	<fa-surface class="current-time" ng-class="class">
+		{{time}}
+	</fa-surface>
+</fa-modifier>
