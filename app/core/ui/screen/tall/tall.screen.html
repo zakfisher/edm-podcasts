@@ -19,10 +19,17 @@
         <current-time></current-time>
         <weather></weather>
       </fa-modifier>
+
     </fa-view>
 
     <!-- Content -->
     <fa-view>
+
+      <!-- States -->
+      <div ui-view></div>
+      <div ui-view="categories" ng-if="states.categories.active"></div>
+      <div ui-view="search" ng-if="states.search.active"></div>
+      <div ui-view="stores" ng-if="states.stores.active"></div>
 
       <!-- Background -->
       <fa-modifier
@@ -48,9 +55,6 @@
         </fa-surface>
         
       </fa-modifier>
-
-      <!-- Current State -->
-      <div ui-view></div>
 
     </fa-view>
 

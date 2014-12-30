@@ -1,13 +1,4 @@
-module.exports = function (Transitions) {
-  var self = {};
-
-  self.supply = function(scope) {
-  	self.scope = scope;
-  };
-
-  self.show = function() {
-  	Transitions.fadeIn(self.scope);
-  };
-
+module.exports = function (Screen) {
+  var self = Screen.extend();
   return self;
 };

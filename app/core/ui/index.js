@@ -6,23 +6,24 @@ var dependencies = [
   require('./services/kiosk').name,
   require('./services/transitions').name,
   
-  // UI Components
-  require('./components/icon').name,
-  require('./components/current-time').name,
-  require('./components/jmap').name,
-  require('./components/weather').name,
+  // UI Elements
+  require('./elements/icon').name,
+  require('./elements/current-time').name,
+  require('./elements/jmap').name,
+  require('./elements/weather').name,
 
   // Screen & States
   require('./screen').name,
-  require('./states/preloader').name,
-  require('./states/tall/categories').name,
-  require('./states/tall/search').name,
-  require('./states/wide/map').name,
-  require('./states/wide/search').name,
-  require('./states/wide/shopping').name,
-  require('./states/wide/dining').name,
-  require('./states/wide/services').name,
-  require('./states/wide/events').name,
+  require('./screen/states/preloader').name,
+  require('./screen/states/tall/categories').name,
+  require('./screen/states/tall/search').name,
+  require('./screen/states/tall/stores').name,
+  require('./screen/states/wide/map').name,
+  require('./screen/states/wide/search').name,
+  require('./screen/states/wide/shopping').name,
+  require('./screen/states/wide/dining').name,
+  require('./screen/states/wide/services').name,
+  require('./screen/states/wide/events').name,
 ];
 
 module.exports = angular.module('wfUI', dependencies)

@@ -16,6 +16,7 @@ module.exports = angular.module('wfConfig', [])
       logo: '/placeholder/logo.png'
     }
   },
+  // States should be provided by hardware data
   states: [
     {
       title: 'Map',

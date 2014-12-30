@@ -4,6 +4,7 @@ module.exports = angular.module('wfScreen', [])
 .controller('TallscreenCtrl', require('./tall/tall.screen.controller'))
 .controller('WidescreenCtrl', require('./wide/wide.screen.controller'))
 
+.service('Screen', require('./screen.service'))
 .service('Tallscreen', require('./tall/tall.screen.service'))
 .service('Widescreen', require('./wide/wide.screen.service'))
 

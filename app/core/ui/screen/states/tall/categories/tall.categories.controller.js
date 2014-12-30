@@ -2,6 +2,9 @@ module.exports = function ($famous, $scope, Utils, Preloader, Categories, TallCa
 
 	var Transitionable = $famous['famous/transitions/Transitionable'];
 
+  $scope.screen = Tallscreen;
+  $scope.screen.getState('stores').test();
+
   $scope.duration = 500;
   $scope.opacity = new Transitionable(0);
 

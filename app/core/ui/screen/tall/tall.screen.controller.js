@@ -1,6 +1,21 @@
-module.exports = function ($famous, $scope, Tallscreen, Preloader) {
+module.exports = function ($famous, $scope, $state, Tallscreen, TallCategories, TallStores, TallSearch) {
 
   var Transitionable = $famous['famous/transitions/Transitionable'];
+
+  $scope.states = {
+    categories: {
+      active: true,
+      service: TallCategories
+    },
+    search: {
+      active: false,
+      service: TallSearch
+    },
+    stores: {
+      active: false,
+      service: TallStores
+    }
+  };
 
   $scope.opacity = new Transitionable(0);
   $scope.duration = 500;
@@ -8,13 +23,13 @@ module.exports = function ($famous, $scope, Tallscreen, Preloader) {
   $scope.layout = {
     options: {
       direction:  1,
-      headerSize: 240,
-      footerSize: 155
+      headerSize: 260,
+      footerSize: 150
     }
   };
 
   $scope.header = {
-    size:      [window.innerWidth-100, 240],
+    size:      [window.innerWidth-100, $scope.layout.options.headerSize],
     translate: [50, 0, 0]
   };
 
@@ -35,7 +50,7 @@ module.exports = function ($famous, $scope, Tallscreen, Preloader) {
   };
 
   $scope.background = {
-    color: 'rgba(255, 255, 255, .8)',
+    color:  'rgba(255, 255, 255, .8)',
     align:  [0.5, 0],
     origin: [0.5, 0],
     size:   [window.innerWidth-220, undefined]

@@ -21,7 +21,11 @@
         <fa-surface class="tall-categories-list"
           ng-repeat="column in grid.columns">
           <ul>
-            <li ng-repeat="category in column" ng-bind="category.name"></li>
+            <li ng-repeat="category in column">
+              <a ui-sref="tall/categories({categoryCode:category.code})">
+                {{category.name}}
+              </a>
+            </li>
           </ul>
         </fa-surface>
       </fa-grid-layout>
