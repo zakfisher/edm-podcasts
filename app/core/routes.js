@@ -36,7 +36,7 @@ module.exports = function ($stateProvider, $urlRouterProvider) {
 
     .state('preloader', {
       url: '/',
-      template: require('./ui/screen/states/preloader/view.html'),
+      template: require('./ui/screen/preloader/view.html'),
       controller: 'PreloaderCtrl'
     })
 
@@ -50,15 +50,15 @@ module.exports = function ($stateProvider, $urlRouterProvider) {
       url: '/tall/:view/:categoryCode',
       views: {
         'categories': {
-          template: require('./ui/screen/states/tall/categories/view.html'),
+          template: require('./ui/screen/tall/states/categories/view.html'),
           controller: 'TallCategoriesCtrl',
         },
         'stores': {
-          template: require('./ui/screen/states/tall/stores/view.html'),
+          template: require('./ui/screen/tall/states/stores/view.html'),
           controller: 'TallStoresCtrl'
         },
         'search': {
-          template: require('./ui/screen/states/tall/search/view.html'),
+          template: require('./ui/screen/tall/states/search/view.html'),
           controller: 'TallCategoriesCtrl',
         }
       }

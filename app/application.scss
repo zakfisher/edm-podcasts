@@ -18,12 +18,12 @@
 @import "core/ui/screen/wide/wide";
 
 // UI States
-@import "core/ui/screen/states/tall/categories/categories";
-@import "core/ui/screen/states/tall/search/search";
-@import "core/ui/screen/states/tall/stores/stores";
-@import "core/ui/screen/states/wide/dining/dining";
-@import "core/ui/screen/states/wide/events/events";
-@import "core/ui/screen/states/wide/map/map";
-@import "core/ui/screen/states/wide/search/search";
-@import "core/ui/screen/states/wide/services/services";
-@import "core/ui/screen/states/wide/shopping/shopping";
+@import "core/ui/screen/tall/states/categories/categories";
+@import "core/ui/screen/tall/states/search/search";
+@import "core/ui/screen/tall/states/stores/stores";
+@import "core/ui/screen/wide/states/dining/dining";
+@import "core/ui/screen/wide/states/events/events";
+@import "core/ui/screen/wide/states/map/map";
+@import "core/ui/screen/wide/states/search/search";
+@import "core/ui/screen/wide/states/services/services";
+@import "core/ui/screen/wide/states/shopping/shopping";

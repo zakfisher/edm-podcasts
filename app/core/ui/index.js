@@ -12,18 +12,8 @@ var dependencies = [
   require('./elements/jmap').name,
   require('./elements/weather').name,
 
-  // Screen & States
-  require('./screen').name,
-  require('./screen/states/preloader').name,
-  require('./screen/states/tall/categories').name,
-  require('./screen/states/tall/search').name,
-  require('./screen/states/tall/stores').name,
-  require('./screen/states/wide/map').name,
-  require('./screen/states/wide/search').name,
-  require('./screen/states/wide/shopping').name,
-  require('./screen/states/wide/dining').name,
-  require('./screen/states/wide/services').name,
-  require('./screen/states/wide/events').name,
+  // Screen (& states)
+  require('./screen').name
 ];
 
 module.exports = angular.module('wfUI', dependencies)

@@ -1,4 +1,10 @@
-module.exports = angular.module('wfScreen', [])
+var dependencies = [
+  require('./preloader').name,
+  require('./tall/states').name,
+  require('./wide/states').name
+];
+
+module.exports = angular.module('wfScreen', dependencies)
 
 .controller('ScreenCtrl',     require('./screen.controller'))
 .controller('TallscreenCtrl', require('./tall/tall.screen.controller'))
