@@ -43,6 +43,7 @@
   "author": "Dan Sim",
   "devDependencies": {
     "angular-mocks": "^1.3.7",
+    "getmac": "^1.0.6",
     "jasmine-core": "^2.1.3",
     "karma": "latest",
     "karma-chrome-launcher": "^0.1.7",
