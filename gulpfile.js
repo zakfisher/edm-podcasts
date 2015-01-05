@@ -17,6 +17,8 @@ var gulp = require('gulp'),
   stringify = require('stringify'),
   zip = require('gulp-zip'),
   notify = require('gulp-notify'),
+  shell = require('gulp-shell'),
+  server = require('gulp-develop-server'),
   watch = require('gulp-watch');
 
 var paths = {
@@ -155,6 +157,14 @@ gulp.task('default', function () {
 gulp.task('build', ['clean', 'sass', 'lint', 'app-js', 'images']);
 
 gulp.task('start', function () {
+
+  // Mock Kiosk Hardware Server
+  // (uses a different server launcher because gulp-develop-server and gulp-nodemon both only support a single server instance)
+  server.listen({
+    path: './app/kiosk-mock-server.js'
+  });
+
+  // App Server
   nodemon({
     script: 'app/server.js',
     ext: 'html js',
@@ -163,7 +173,9 @@ gulp.task('start', function () {
     },
     ignore: ['app/public/**/*']
   });
+
   livereload.listen();
+
   watch('app/**/*.scss', function () {
     gulp.start('sass');
   });
@@ -172,6 +184,9 @@ gulp.task('start', function () {
   });
   gulp.watch(['app/app.js', 'app/modules/**/*.js', 'app/modules/**/*.html'], function () {
     gulp.start(['lint', 'app-js']);
+  });
+  gulp.watch('app/*.js', function () {
+    server.restart();
   });
   watch('app/public/**', function () {
     livereload.changed();
