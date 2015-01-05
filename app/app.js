@@ -120,9 +120,12 @@ app.config(function ($urlRouterProvider, $locationProvider) {
   $urlRouterProvider.otherwise('/');
 });
 
-app.run(function ($state, Preloader, $q, KioskService, $rootScope, config) {
+app.run(function ($state, Preloader, $q, KioskService, $rootScope, config, $http) {
 
-  // $rootScope.globalConfig = config;
+  $http.get('http://127.0.0.1:8082/kiosk').success(function (r) {
+    console.log('\n\nKIOSK HARDWARE', r);
+  });
+
 
   if (window.innerHeight > window.innerWidth) {
     window.isLargescreen = true;

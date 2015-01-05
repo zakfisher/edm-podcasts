@@ -29,17 +29,13 @@ app.get('/', function (req, res) {
 });
 
 app.get('/kiosk', function (req, res) {
-  if (!MAC) {
-    require('getmac').getMac(function (err, macAddress) {
-      if (!err) {
-        MAC = macAddress;
-      } else {
-        MAC = false;
-      }
+  require('getmac').getMac(function (err, macAddress) {
+    if (!err && !MAC) {
+      MAC = macAddress;
+    }
+    res.json({
+      id: MAC
     });
-  }
-  res.json({
-    MAC: MAC
   });
 });
 

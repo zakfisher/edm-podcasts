@@ -161,7 +161,7 @@ gulp.task('start', function () {
   // Mock Kiosk Hardware Server
   // (uses a different server launcher because gulp-develop-server and gulp-nodemon both only support a single server instance)
   server.listen({
-    path: './app/kiosk-mock-server.js'
+    path: './app/kiosk-hardware-server.js'
   });
 
   // App Server
