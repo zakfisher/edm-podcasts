@@ -24,7 +24,8 @@ module.exports = function ($scope, $famous, $timeout, $state, config, Hardware, 
   Preloader.whenFinished().then(function() {
     Preloader.hide();
     $timeout(function() {
-      $state.go(Hardware.get().screen.size);
+      var size = Hardware.get().screen.size;
+      $state.go(size + '/' + config.UI.defaultState[size]);
     }, config.UI.preloaderTimeout);
   });
 

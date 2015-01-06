@@ -6,6 +6,10 @@ module.exports = angular.module('wfConfig', [])
     forecastIOapiKey: '9e39cf0f631c2bd05927bd364942a3e6'
   },
   UI: {
+    defaultState: {
+      tall: 'categories',
+      wide: 'map'
+    },
     preloaderTimeout: 500,
     weatherInterval: 5000,
     resetTimeout: 60000,

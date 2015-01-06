@@ -22,7 +22,7 @@
           ng-repeat="column in grid.columns">
           <ul>
             <li ng-repeat="category in column">
-              <a ui-sref="tall/categories({categoryCode:category.code})">
+              <a ng-click="service.selectCategory(category.code)">
                 {{category.name}}
               </a>
             </li>

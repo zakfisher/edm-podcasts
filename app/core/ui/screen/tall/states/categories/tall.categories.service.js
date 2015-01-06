@@ -1,4 +1,4 @@
-module.exports = function ($state, Transitions) {
+module.exports = function (Tallscreen, Transitions) {
   var self = {};
 
   self.supply = function(scope) {
@@ -11,6 +11,15 @@ module.exports = function ($state, Transitions) {
 
   self.hide = function() {
   	Transitions.fadeOut(self.scope);
+  };
+
+  self.selectCategory = function(code) {
+    Tallscreen.go('tall/categories', {categoryId: code});
+
+    // Display Stores By Category
+    // - get stores
+    // - show stores view
+    Tallscreen.getState('stores').show();
   };
 
   return self;

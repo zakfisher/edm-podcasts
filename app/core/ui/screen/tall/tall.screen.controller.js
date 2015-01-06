@@ -1,22 +1,26 @@
-module.exports = function ($famous, $scope, $state, Tallscreen, TallCategories, TallStores, TallSearch) {
-
+module.exports = function ($famous, $scope, $timeout, config, Preloader, Tallscreen, TallCategories, TallStores, TallSearch) {
+  
   var Transitionable = $famous['famous/transitions/Transitionable'];
 
+  // State Settings
+  // - this allows states to access each other
+  var defaultState = $scope.defaultState = config.UI.defaultState['tall'];
   $scope.states = {
     categories: {
-      active: true,
+      active: (defaultState == 'categories'),
       service: TallCategories
     },
     search: {
-      active: false,
+      active: (defaultState == 'search'),
       service: TallSearch
     },
     stores: {
-      active: false,
+      active: (defaultState == 'stores'),
       service: TallStores
     }
   };
 
+  // Display Settings
   $scope.opacity = new Transitionable(0);
   $scope.duration = 500;
 
@@ -64,4 +68,10 @@ module.exports = function ($famous, $scope, $state, Tallscreen, TallCategories, 
 
   // Supply $scope to Tallscreen Service
   Tallscreen.supply($scope);
+
+  // Fade in screen when default state is ready
+  Preloader.whenFinished().then(function() {
+    $timeout(Tallscreen.show, config.UI.preloaderTimeout + 100);
+  });
+
 };

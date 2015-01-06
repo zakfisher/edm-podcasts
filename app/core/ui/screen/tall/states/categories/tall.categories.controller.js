@@ -1,10 +1,12 @@
-module.exports = function ($famous, $scope, Utils, Preloader, Categories, TallCategories, Tallscreen) {
+module.exports = function ($famous, $scope, Utils, Preloader, Categories, TallCategories) {
 
 	var Transitionable = $famous['famous/transitions/Transitionable'];
 
-  $scope.screen = Tallscreen;
-  $scope.screen.getState('stores').test();
+  // Supply $scope to TallCategories Service
+  $scope.service = TallCategories;
+  $scope.service.supply($scope);
 
+  // Display Settings
   $scope.duration = 500;
   $scope.opacity = new Transitionable(0);
 
@@ -31,14 +33,9 @@ module.exports = function ($famous, $scope, Utils, Preloader, Categories, TallCa
     translate: [0, window.innerHeight-1100, 0]
   };
 
-  // Supply $scope to TallCategories Service
-  TallCategories.supply($scope);
-
-  // Fade in view
+  // API Dependencies
   Preloader.whenFinished().then(function() {
     $scope.grid.columns = Utils.arrayToColumns(Categories.get(), 3);
-    Tallscreen.show();
-    TallCategories.show();
   });
 
 };

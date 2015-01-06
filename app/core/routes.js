@@ -27,6 +27,21 @@ module.exports = function ($stateProvider, $urlRouterProvider) {
   // State Configurations //
   //////////////////////////
 
+  var tallViews = {
+    'categories': {
+      template: require('./ui/screen/tall/states/categories/view.html'),
+      controller: 'TallCategoriesCtrl',
+    },
+    'stores': {
+      template: require('./ui/screen/tall/states/stores/view.html'),
+      controller: 'TallStoresCtrl'
+    },
+    'search': {
+      template: require('./ui/screen/tall/states/search/view.html'),
+      controller: 'TallCategoriesCtrl',
+    }
+  };
+
   // Use $stateProvider to configure your states.
   $stateProvider
 
@@ -46,22 +61,17 @@ module.exports = function ($stateProvider, $urlRouterProvider) {
     // * <div ui-view>'s must all live in screen template.
     // * States are managed by the screen service, and
     //   states must go through the screen to access one another.
-    .state('tall', {
-      url: '/tall/:view/:categoryCode',
-      views: {
-        'categories': {
-          template: require('./ui/screen/tall/states/categories/view.html'),
-          controller: 'TallCategoriesCtrl',
-        },
-        'stores': {
-          template: require('./ui/screen/tall/states/stores/view.html'),
-          controller: 'TallStoresCtrl'
-        },
-        'search': {
-          template: require('./ui/screen/tall/states/search/view.html'),
-          controller: 'TallCategoriesCtrl',
-        }
-      }
+    .state('tall/categories', {
+      url: '/tall/categories/:categoryId',
+      views: tallViews
+    })
+    .state('tall/search', {
+      url: '/tall/search/:query',
+      views: tallViews
+    })
+    .state('tall/stores', {
+      url: '/tall/stores/:storeId',
+      views: tallViews
     })
 
     ////////////////////////
