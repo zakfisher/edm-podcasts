@@ -24,9 +24,13 @@ var app = angular.module('wfWayfinding', dependencies)
     require('./core/chrome.setup');
     var pkg = require('../package.json');
     console.log('Launched:', Date(), 'Version: ', pkg.version);
+
   });
 
 
+// $http.get('http://127.0.0.1:8082/kiosk').success(function (r) {
+//   console.log('\n\nKIOSK HARDWARE', r);
+// });
 
 
 
