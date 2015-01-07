@@ -25,23 +25,15 @@
     <!-- Content -->
     <fa-view>
 
-      <!-- States -->
-      <div ui-view></div>
-      <div ui-view="categories" ng-if="states.categories.active"></div>
-      <div ui-view="search" ng-if="states.search.active"></div>
-      <div ui-view="stores" ng-if="states.stores.active"></div>
-
       <!-- Background -->
       <fa-modifier
         fa-opacity="opacity.get()"
         fa-align="background.align"
         fa-origin="background.origin"
         fa-size="background.size">
-        
         <fa-surface class="tall-bg"
           fa-background-color="background.color">
         </fa-surface>
-        
       </fa-modifier>
 
       <!-- Title -->
@@ -49,11 +41,27 @@
         fa-opacity="opacity.get()"
         fa-size="title.size"
         fa-translate="title.translate">
-        
         <fa-surface class="tall-title">
           {{title.text}}
         </fa-surface>
-        
+      </fa-modifier>
+
+      <!-- States -->
+      <div ui-view></div>
+      <div ui-view="categories" ng-if="states.categories.active"></div>
+      <div ui-view="search" ng-if="states.search.active"></div>
+      <div ui-view="stores" ng-if="states.stores.active"></div>
+
+      <!-- Go Back -->
+      <fa-modifier
+        fa-opacity="opacity.get()"
+        fa-size="goBack.size"
+        fa-translate="goBack.translate">
+        <fa-surface class="tall-go-back" ng-if="currentState != defaultState" 
+          fa-background-color="'yellow'"
+          fa-click="service.goToDefaultState()">
+          {{goBack.text}}
+        </fa-surface>
       </fa-modifier>
 
     </fa-view>

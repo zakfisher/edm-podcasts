@@ -2,20 +2,26 @@ module.exports = function ($famous, $scope, $timeout, config, Preloader, Tallscr
   
   var Transitionable = $famous['famous/transitions/Transitionable'];
 
+  // Supply $scope to Tallscreen Service
+  $scope.service = Tallscreen;
+  $scope.service.supply($scope);
+
+  // Set current state to default state
+  $scope.defaultState = $scope.currentState = config.UI.defaultState['tall'];
+
   // State Settings
   // - this allows states to access each other
-  var defaultState = $scope.defaultState = config.UI.defaultState['tall'];
   $scope.states = {
     categories: {
-      active: (defaultState == 'categories'),
+      active: ($scope.defaultState == 'categories'),
       service: TallCategories
     },
     search: {
-      active: (defaultState == 'search'),
+      active: ($scope.defaultState == 'search'),
       service: TallSearch
     },
     stores: {
-      active: (defaultState == 'stores'),
+      active: ($scope.defaultState == 'stores'),
       service: TallStores
     }
   };
@@ -66,8 +72,11 @@ module.exports = function ($famous, $scope, $timeout, config, Preloader, Tallscr
     translate: [180, 100, 0]
   };
 
-  // Supply $scope to Tallscreen Service
-  Tallscreen.supply($scope);
+  $scope.goBack = {
+    text:      'Back to Categories',
+    size:      [500, 50],
+    translate: [180, window.innerHeight-500, 0]
+  };
 
   // Fade in screen when default state is ready
   Preloader.whenFinished().then(function() {

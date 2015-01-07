@@ -5,10 +5,6 @@ module.exports = function (Transitions) {
   	self.scope = scope;
   };
 
-  self.test = function() {
-    console.log('TallStores.test() accessed via Tallscreen.getState(\'stores\').test() from TallCategoriesCtrl');
-  };
-
   self.show = function() {
     Transitions.fadeIn(self.scope);
   };
@@ -18,7 +14,7 @@ module.exports = function (Transitions) {
   };
 
   self.selectStore = function(store) {
-
+    console.log('selected store', store);
   };
 
   return self;

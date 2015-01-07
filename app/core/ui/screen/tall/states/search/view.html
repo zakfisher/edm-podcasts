@@ -1,9 +1,14 @@
 <fa-view>
+  <fa-modifier
+    fa-opacity="opacity.get()"
+    fa-size="state.size"
+    fa-translate="state.translate">
 
-  <fa-modifier>
-    <fa-surface>
-    	<h1 ng-bind="title"></h1>
-    </fa-surface>
+    <!-- Search -->
+    <search></search>
+
+    <!-- Keyboard -->
+    <keyboard></keyboard>
+
   </fa-modifier>
-
 </fa-view>

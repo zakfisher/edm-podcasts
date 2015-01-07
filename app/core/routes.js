@@ -32,13 +32,13 @@ module.exports = function ($stateProvider, $urlRouterProvider) {
       template: require('./ui/screen/tall/states/categories/view.html'),
       controller: 'TallCategoriesCtrl',
     },
+    'search': {
+      template: require('./ui/screen/tall/states/search/view.html'),
+      controller: 'TallSearchCtrl',
+    },
     'stores': {
       template: require('./ui/screen/tall/states/stores/view.html'),
       controller: 'TallStoresCtrl'
-    },
-    'search': {
-      template: require('./ui/screen/tall/states/search/view.html'),
-      controller: 'TallCategoriesCtrl',
     }
   };
 
@@ -62,7 +62,7 @@ module.exports = function ($stateProvider, $urlRouterProvider) {
     // * States are managed by the screen service, and
     //   states must go through the screen to access one another.
     .state('tall/categories', {
-      url: '/tall/categories',
+      url: '/tall/categories/:categoryId',
       views: tallViews
     })
     .state('tall/search', {
@@ -70,7 +70,7 @@ module.exports = function ($stateProvider, $urlRouterProvider) {
       views: tallViews
     })
     .state('tall/stores', {
-      url: '/tall/stores/:categoryId',
+      url: '/tall/stores/:storeId',
       views: tallViews
     })
 

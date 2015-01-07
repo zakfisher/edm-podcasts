@@ -7,9 +7,11 @@ var dependencies = [
   require('./services/transitions').name,
   
   // UI Elements
-  require('./elements/icon').name,
   require('./elements/current-time').name,
+  // require('./elements/floor-selector').name,
+  require('./elements/keyboard').name,
   require('./elements/jmap').name,
+  require('./elements/search').name,
   require('./elements/weather').name,
 
   // Screen (& states)
@@ -24,7 +26,7 @@ module.exports = angular.module('wfUI', dependencies)
   $state.go('preloader');
 
   // Set Global Behaviors
-  Behaviors.disableRightClick();
+  // Behaviors.disableRightClick();
   Behaviors.disableMousewheel();
 
 });

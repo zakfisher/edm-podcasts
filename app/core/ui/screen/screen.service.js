@@ -29,6 +29,7 @@ module.exports = function ($timeout, $state, $stateParams, config, Transitions) 
 	  };
  
 	  self.changeState = function(state, stateParams, from, to) {
+	  	self.scope.currentState = to;
 
 	  	// Change url without triggering hard refresh
 	  	$state.go(state, stateParams, { location: true, inherit: false, notify: false });

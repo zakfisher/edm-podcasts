@@ -30,7 +30,22 @@ module.exports = function ($famous, $scope, Utils, Preloader, Categories, TallCa
 
   $scope.search = {
     size:      [undefined, 200],
-    translate: [0, window.innerHeight-1100, 0]
+    translate: [0, window.innerHeight-1100, 0],
+    border: {
+      show: true
+    },
+    icon: {
+      size: [70, 70],
+      translate: [0, 30, 0],
+      click: $scope.service.selectSearch
+    },
+    query: {
+      size: [500, 70],
+      translate: [100, 30, 0],
+      input: '',
+      placeholder: 'SEARCH FOR A STORE',
+      click: $scope.service.selectSearch
+    }
   };
 
   // API Dependencies

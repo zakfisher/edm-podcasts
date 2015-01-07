@@ -1,0 +1,32 @@
+<fa-modifier
+  fa-size="search.size"
+  fa-translate="search.translate">
+  
+  <!-- Border -->
+  <fa-modifier>
+	  <fa-surface class="search-border" ng-class="class" ng-if="search.border.show">
+	  </fa-surface>
+  </fa-modifier>
+
+	<!-- Icon -->
+  <fa-modifier
+  	fa-translate="search.icon.translate">
+  	<fa-image-surface class="search-icon" ng-class="class" 
+      fa-click="search.icon.click()"
+  		fa-image-url="/components/westfield-icons/wire-search.svg"
+  		fa-size="search.icon.size">
+    </fa-image-surface>
+  </fa-modifier>
+
+	<!-- Query -->
+  <fa-modifier
+    fa-size="search.query.size"
+    fa-translate="search.query.translate">
+	  <fa-surface class="search-query" ng-class="class"
+      fa-click="search.query.click()">
+      <p ng-if="search.query.input.length > 0">{{search.query.input}}</p>
+	  	<p ng-if="search.query.input.length == 0">{{search.query.placeholder}}</p>
+	  </fa-surface>
+  </fa-modifier>
+
+</fa-modifier>

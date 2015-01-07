@@ -1,2 +1,7 @@
 // Tall Screen Search
 // ----------------------------------------------------------------------
+.tall-search-title {
+	@extend .flama.small.normal;
+	font-style: italic;
+	z-index: 100;
+}

@@ -14,11 +14,11 @@ module.exports = function (Tallscreen, Transitions) {
   };
 
   self.selectCategory = function(categoryCode) {
-    Tallscreen.changeState('tall/stores', {categoryId: categoryCode}, 'categories', 'stores');
+    Tallscreen.changeState('tall/categories', {categoryId: categoryCode}, 'categories', 'stores');
   };
 
   self.selectSearch = function() {
-    Tallscreen.changeState('tall/search', {query: 'hello!'}, 'categories', 'search');
+    Tallscreen.changeState('tall/search', {query: self.scope.search.query.input}, 'categories', 'search');
   };
 
   return self;

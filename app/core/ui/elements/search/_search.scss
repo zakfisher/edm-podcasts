@@ -1,0 +1,24 @@
+.search-border {
+	z-index: 100;
+
+	&.tall {
+		border-top: 1px solid #f4f4f4;
+	}
+	
+}
+
+.search-icon {
+	z-index: 101;
+}
+
+.search-query {
+	z-index: 101;
+
+	&.tall {
+		border-bottom: 1px solid $brand;
+		p {
+			@extend .condensed.large.bold;
+		}
+	}
+
+}

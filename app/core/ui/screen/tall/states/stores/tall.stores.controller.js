@@ -16,8 +16,7 @@ module.exports = function ($famous, $scope, $stateParams, Utils, Preloader, Cate
 	};
 
 	$scope.title = {
-    size: [undefined, 0],
-    text: 'Ramalama Dingdong'
+    size: [undefined, 0]
   };
 
   $scope.grid = {
