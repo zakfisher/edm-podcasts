@@ -8,6 +8,7 @@
 .tall-categories-list {
 	@extend .condensed.medium.bold;
 	color: black;
+	z-index: 100;
 
 	li {
 		margin-bottom: 20px;

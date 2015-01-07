@@ -1,2 +1,26 @@
-// Tall Category
+// Tall Stores
 // ----------------------------------------------------------------------
+.tall-stores-title,
+.tall-stores-list {
+	z-index: 100;
+}
+
+.tall-stores-title {
+	@extend .flama.small.normal;
+	font-style: italic;
+}
+
+.tall-stores-list {
+	@extend .flama.small.normal;
+	color: black;
+	z-index: 100;
+
+	li {
+		margin-right: 20px;
+		margin-bottom: 20px;
+	}
+}
+
+.tall-stores-search {
+	border-top: 1px solid #f4f4f4;
+}

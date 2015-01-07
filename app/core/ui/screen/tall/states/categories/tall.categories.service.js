@@ -13,13 +13,12 @@ module.exports = function (Tallscreen, Transitions) {
   	Transitions.fadeOut(self.scope);
   };
 
-  self.selectCategory = function(code) {
-    Tallscreen.go('tall/categories', {categoryId: code});
+  self.selectCategory = function(categoryCode) {
+    Tallscreen.changeState('tall/stores', {categoryId: categoryCode}, 'categories', 'stores');
+  };
 
-    // Display Stores By Category
-    // - get stores
-    // - show stores view
-    Tallscreen.getState('stores').show();
+  self.selectSearch = function() {
+    Tallscreen.changeState('tall/search', {query: 'hello!'}, 'categories', 'search');
   };
 
   return self;

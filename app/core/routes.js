@@ -62,7 +62,7 @@ module.exports = function ($stateProvider, $urlRouterProvider) {
     // * States are managed by the screen service, and
     //   states must go through the screen to access one another.
     .state('tall/categories', {
-      url: '/tall/categories/:categoryId',
+      url: '/tall/categories',
       views: tallViews
     })
     .state('tall/search', {
@@ -70,7 +70,7 @@ module.exports = function ($stateProvider, $urlRouterProvider) {
       views: tallViews
     })
     .state('tall/stores', {
-      url: '/tall/stores/:storeId',
+      url: '/tall/stores/:categoryId',
       views: tallViews
     })
 

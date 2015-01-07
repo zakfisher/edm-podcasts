@@ -1,12 +1,8 @@
-module.exports = function ($state, $stateParams, Transitions) {
+module.exports = function ($timeout, $state, $stateParams, config, Transitions) {
 	var me = {};
 
 	me.extend = function() {
 	  var self = {};
-
-	  self.go = function(state, stateParams) {
-	  	$state.go(state, stateParams, { location: true, inherit: false, notify: false });
-	  };
 
 	  self.supply = function(scope) {
 	  	self.scope = scope;
@@ -24,10 +20,32 @@ module.exports = function ($state, $stateParams, Transitions) {
 
 	  self.showState = function(state) {
 	    self.scope.states[state].active = true;
+	    return self;
 	  };
 
 	  self.hideState = function(state) {
 	    self.scope.states[state].active = false;
+	    return self;
+	  };
+ 
+	  self.changeState = function(state, stateParams, from, to) {
+
+	  	// Change url without triggering hard refresh
+	  	$state.go(state, stateParams, { location: true, inherit: false, notify: false });
+
+	  	// Show new <div ui-view>
+	    self.showState(to);
+	    
+	    // Hide old <div ui-view>
+			$timeout(function() {
+		    self.hideState(from);
+			}, 1000);
+
+			// State change animations
+			$timeout(function() {
+		    self.getState(from).hide();
+		    self.getState(to).show();
+			}, 100);
 	  };
 
 	  return self;

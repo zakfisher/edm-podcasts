@@ -18,7 +18,7 @@ var dependencies = [
 
 module.exports = angular.module('wfUI', dependencies)
 
-.run(function($state, config, Behaviors, Preloader) {
+.run(function($state, config, Behaviors) {
 
   // Go To Initial State
   $state.go('preloader');

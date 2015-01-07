@@ -10,7 +10,7 @@ module.exports = function($scope, $interval, config, Weather, Preloader, API, Ha
       tall: hardware.screen.size === 'tall', 
       wide: hardware.screen.size === 'wide'
     };
-    Weather.display();
+    Weather.update();
     $interval(Weather.update, config.UI.weatherInterval);
   });
 

@@ -1,6 +1,6 @@
 module.exports = function ($famous, $scope, Utils, Preloader, Categories, TallCategories) {
 
-	var Transitionable = $famous['famous/transitions/Transitionable'];
+  var Transitionable = $famous['famous/transitions/Transitionable'];
 
   // Supply $scope to TallCategories Service
   $scope.service = TallCategories;

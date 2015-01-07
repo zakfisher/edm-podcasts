@@ -17,5 +17,9 @@ module.exports = function (Transitions) {
   	Transitions.fadeOut(self.scope);
   };
 
+  self.selectStore = function(store) {
+
+  };
+
   return self;
 };
