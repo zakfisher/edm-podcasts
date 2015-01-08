@@ -33,7 +33,12 @@ module.exports = function ($famous, $scope, $stateParams, Utils, Preloader, Cate
 		var categoryCode = $stateParams.categoryId;
 		if (categoryCode.length > 0) {
 			$scope.title.text = Categories.getCategoryByCode(categoryCode).name;
-			$scope.grid.columns = Utils.arrayToColumns(Stores.getStoresByCategory(categoryCode), 3);
+			var stores = Stores.getStoresByCategory(categoryCode);
+			// If less than 3 stores, grid won't display any
+			while (stores.length < 3) {
+				stores.push({});
+			}
+			$scope.grid.columns = Utils.arrayToColumns(stores, 3);
 		}
 	});
 };
