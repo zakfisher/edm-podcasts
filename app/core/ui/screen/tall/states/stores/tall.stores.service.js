@@ -17,5 +17,9 @@ module.exports = function (Transitions) {
     console.log('selected store', store);
   };
 
+  self.selectFloor = function(floor) {
+    self.scope.activeFloor = floor.level;
+  };
+
   return self;
 };

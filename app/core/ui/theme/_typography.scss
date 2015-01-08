@@ -21,7 +21,9 @@ $fontSizes:
   (xlarge,   64), 
   (large,    48), 
   (medium,   32), 
-  (small,    24);
+  (small,    24),
+  (xsmall,   18),
+  (xxsmall,  14);
 
 $fontWeights: 
   (bold,     500), 
@@ -35,10 +37,10 @@ $fontWeights:
   @if $font == flama {
     font-family: 'Flama', 'helvetica neue', 'helvetica', 'arial', 'sans';
   } 
-  @else if $font == condensed {
+  @if $font == condensed {
     font-family: 'FlamaCondensed', 'helvetica neue', 'helvetica', 'arial', 'sans';
   } 
-  @else if $font == georgia {
+  @if $font == georgia {
     font-family: 'Georgia', 'serif';
   } 
 }
@@ -53,7 +55,7 @@ $fontWeights:
       @extend .#{$size}-size;
     }
     @each $weight, $w in $fontWeights {  
-      .#{$font}.#{$size}.#{$weight}  { 
+      .#{$font}.#{$size}.#{$weight} { 
         @extend .#{$font}.#{$size};
         @extend .#{$weight}-weight;
       }

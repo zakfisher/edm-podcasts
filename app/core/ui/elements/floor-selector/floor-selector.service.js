@@ -1,4 +1,4 @@
-module.exports = function(API, WeatherAPI) {
+module.exports = function() {
   var self = {};
 
   self.supply = function(scope) {

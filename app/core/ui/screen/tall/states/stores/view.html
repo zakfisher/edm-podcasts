@@ -13,13 +13,7 @@
 	  </fa-modifier>
 
 	  <!-- Floor Selector -->
-	  <!-- <fa-modifier
-      fa-size="floorSelector.size"
-      fa-translate="floorSelector.translate">
-      <fa-surface class="tall-categories-floor-selector">
-      	<floor-selector></floor-selector>
-      </fa-surface>
-    </fa-modifier> -->
+	  <floor-selector></floor-selector>
 
 	  <!-- Stores List -->
 	  <fa-modifier
@@ -32,7 +26,7 @@
           <ul>
             <li ng-repeat="store in column">
               <a ng-click="service.selectStore(store)">
-	              <!-- <div class="floor-indicator" ng-if="(store.level == activeFloor)"></div> -->
+	              <div class="floor-indicator" ng-if="(store.level == activeFloor)"></div>
 	              {{store.name}}
               </a>
             </li>

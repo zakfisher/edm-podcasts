@@ -18,6 +18,17 @@
 	li {
 		margin-right: 20px;
 		margin-bottom: 20px;
+		position: relative;
+
+    div.floor-indicator {
+      position: absolute;
+      @include border-radius(100px);
+      @include size(8px);
+      background: $brand;
+      top: 14px;
+      left: -15px;
+    }
+
 	}
 }
 

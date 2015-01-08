@@ -8,7 +8,7 @@ var dependencies = [
   
   // UI Elements
   require('./elements/current-time').name,
-  // require('./elements/floor-selector').name,
+  require('./elements/floor-selector').name,
   require('./elements/keyboard').name,
   require('./elements/jmap').name,
   require('./elements/search').name,
