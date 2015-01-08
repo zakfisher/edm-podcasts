@@ -1,8 +1,8 @@
-module.exports = function (Transitions) {
+module.exports = function (Widescreen, Transitions) {
   var self = {};
 
   self.supply = function(scope) {
-  	self.scope = scope;
+    self.scope = scope;
   };
 
   self.show = function() {
@@ -10,7 +10,7 @@ module.exports = function (Transitions) {
   };
 
   self.hide = function() {
-  	Transitions.fadeOut(self.scope);
+    Transitions.fadeOut(self.scope);
   };
 
   return self;

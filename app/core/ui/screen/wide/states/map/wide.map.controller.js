@@ -1,17 +1,17 @@
 module.exports = function ($famous, $scope, Preloader, WideMap) {
-
 	var Transitionable = $famous['famous/transitions/Transitionable'];
 
-  $scope.title = 'Map';
+  // Supply $scope to WideMap Service
+  $scope.service = WideMap;
+  $scope.service.supply($scope);
+
+  // Display Settings
   $scope.duration = 500;
   $scope.opacity = new Transitionable(0);
 
-  // Supply $scope to WideMap Service
-  WideMap.supply($scope);
-
-  // Fade in view
+  // API Dependencies
   Preloader.whenFinished().then(function() {
-    WideMap.show();
+
   });
 
 };
