@@ -1,4 +1,4 @@
-module.exports = function (Transitions) {
+module.exports = function (Transitions, Tallscreen) {
   var self = {};
 
   self.supply = function(scope) {
@@ -19,6 +19,10 @@ module.exports = function (Transitions) {
 
   self.selectFloor = function(floor) {
     self.scope.activeFloor = floor.level;
+  };
+
+  self.goBack = function() {
+    Tallscreen.changeState('tall/categories', {}, 'stores', 'categories');
   };
 
   return self;

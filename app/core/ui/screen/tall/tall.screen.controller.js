@@ -74,7 +74,7 @@ module.exports = function ($famous, $scope, $timeout, config, Preloader, Tallscr
 
   $scope.goBack = {
     text:      'Back to Categories',
-    size:      [500, 50],
+    size:      [200, 50],
     translate: [180, window.innerHeight-500, 0]
   };
 

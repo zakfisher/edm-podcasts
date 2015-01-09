@@ -6,9 +6,7 @@
 *  Example
 *
 *    h1 {
-*      @extend .font;
-*      or @extend .font.size;
-*      or @extend .font.size.weight;
+*      @extend .font.size.weight;
 *    }
 *
 // ---------------------------------------------------------------------- */
@@ -46,17 +44,14 @@ $fontWeights:
 }
 
 @mixin makeFont($font) {
-  .#{$font} { 
+  .#{$font}-family { 
     @include fontFamily($font);
   }
   @each $size, $v in $fontSizes {  
-    .#{$font}.#{$size} {
-      @extend .#{$font};
-      @extend .#{$size}-size;
-    }
     @each $weight, $w in $fontWeights {  
       .#{$font}.#{$size}.#{$weight} { 
-        @extend .#{$font}.#{$size};
+        @extend .#{$font}-family;
+        @extend .#{$size}-size;
         @extend .#{$weight}-weight;
       }
     }
@@ -72,7 +67,7 @@ $fontWeights:
   @each $weight, $value in $fontWeights {  
     .#{$weight}-weight { font-weight: $value; }
   }
-  // Init
+  // Define Font Families
   @each $font in $fonts {  
     @include makeFont($font);
   }

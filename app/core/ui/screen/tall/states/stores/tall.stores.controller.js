@@ -1,10 +1,9 @@
-module.exports = function ($famous, $scope, $stateParams, Utils, Preloader, Categories, Stores, TallStores) {
+module.exports = function ($timeout, $famous, $scope, $stateParams, Utils, Preloader, Categories, Stores, TallStores) {
 
 	var Transitionable = $famous['famous/transitions/Transitionable'];
 
 	// Supply $scope to TallStores Service
-	$scope.service = TallStores;
-	$scope.service.supply($scope);
+	TallStores.supply($scope);
 
 	// Display Settings
 	$scope.duration = 500;
@@ -20,19 +19,8 @@ module.exports = function ($famous, $scope, $stateParams, Utils, Preloader, Cate
     size: [undefined, 0]
   };
 
-  $scope.activeFloor = false;
-
-  $scope.floorSelector = {
-  	size:      [0, 0],
-  	header: {
-      size:      [300, 30],
-      translate: [0, 0, 0],
-      text:      'Tap to show stores on:'
-    },
-  	click: $scope.service.selectFloor
-  };
-
-  $scope.grid = {
+  $scope.selectStore = TallStores.selectStore;
+  $scope.stores = {
     size:      [undefined, window.innerHeight-1200],
     translate: [0, 100, 0],
     options: {
@@ -40,8 +28,23 @@ module.exports = function ($famous, $scope, $stateParams, Utils, Preloader, Cate
     }
   };
 
+  $scope.activeFloor = false;
+  $scope.floorSelector = {
+  	size:      [0, 0],
+  	header: {
+      size:      [300, 30],
+      translate: [0, 0, 0],
+      text:      'Tap to show stores on:'
+    },
+    grid: {
+      translate: [0, 30, 0]
+    },
+  	click: TallStores.selectFloor
+  };
+
 	// API Dependencies
 	Preloader.whenFinished().then(function() {
+
 		// Get Stores By Category
 		var categoryCode = $stateParams.categoryId;
 		if (categoryCode.length > 0) {
@@ -51,7 +54,7 @@ module.exports = function ($famous, $scope, $stateParams, Utils, Preloader, Cate
 			var stores = Stores.getStoresByCategory(categoryCode);
 			// If less than 3 stores, grid won't display any
 			while (stores.length < 3) stores.push({});
-			$scope.grid.columns = Utils.arrayToColumns(stores, 3);
+			$scope.stores.columns = Utils.arrayToColumns(stores, 3);
 
 			// Floor Selector Settings
 			// @todo: get floors from jibestream api
@@ -60,19 +63,16 @@ module.exports = function ($famous, $scope, $stateParams, Utils, Preloader, Cate
 		    { level: 2 }
 		  ];
 		  $scope.floorSelector.translate = [2*(stateWidth/3), 0, 0];
-		  $scope.floorSelector.grid = {
-		  	size: [floors.length * 60, 50],
-	      translate: [0, 30, 0],
-	      options: {
-	        dimensions: [floors.length, 1] // columns, rows
-	      },
-	      columns: Utils.arrayToColumns(floors, floors.length)
-	    };
+		  $scope.floorSelector.grid.size = [floors.length * 60, 50];
+		  $scope.floorSelector.grid.options = {
+		    dimensions: [floors.length, 1] // columns, rows
+		  };
+		  $scope.floorSelector.grid.columns = Utils.arrayToColumns(floors, floors.length);
 		}
 
 		// If no category code is specified, redirect back to categories view
 		else {
-			// $scope.service.selectGoBack();
+			$timeout(TallStores.goBack, 1000);
 		}
 
 	});

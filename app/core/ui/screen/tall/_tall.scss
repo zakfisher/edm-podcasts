@@ -10,5 +10,7 @@
 }
 
 .tall-go-back {
+	@extend .condensed.medium.bold;
+	color: black;
 	z-index: 102;
 }
