@@ -2,6 +2,8 @@ module.exports = function($scope, Keyboard, Preloader, Hardware) {
 
   // Supply $scope to Keyboard Service
   Keyboard.supply($scope);
+  
+  Keyboard.clearString();
 
   Preloader.whenFinished().then(function() {
     var hardware = Hardware.get();

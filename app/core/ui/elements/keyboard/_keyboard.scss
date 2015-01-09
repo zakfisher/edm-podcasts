@@ -2,13 +2,15 @@
 // ----------------------------------------------------------------------
 .keyboard {
 
-	g.active {
-	  .key-background {
-	    fill: #c7242e;
-	  }
-	}
-
 	&.tall {
 		z-index: 100;
+
+		g {
+			&.active {
+			  .key-background {
+			    fill: #c7242e;
+			  }
+			}
+		}
 	}
 }

@@ -1,8 +1,9 @@
-module.exports = function (Tallscreen, Transitions) {
+module.exports = function (Tallscreen, Transitions, Search) {
   var self = {};
 
   self.supply = function(scope) {
   	self.scope = scope;
+    Search.bindToKeyboard(scope);
   };
 
   self.show = function() {

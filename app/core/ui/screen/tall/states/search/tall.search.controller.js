@@ -1,4 +1,4 @@
-module.exports = function ($famous, $scope, TallSearch) {
+module.exports = function ($famous, $scope, Preloader, TallSearch) {
 
   var Transitionable = $famous['famous/transitions/Transitionable'];
 
@@ -24,9 +24,9 @@ module.exports = function ($famous, $scope, TallSearch) {
       click: $scope.service.selectSearch
     },
     query: {
+      input: '',
       size: [500, 70],
       translate: [100, 30, 0],
-      input: '',
       placeholder: 'SEARCH FOR A STORE',
       click: $scope.service.selectSearch
     }

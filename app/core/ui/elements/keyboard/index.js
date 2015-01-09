@@ -17,5 +17,5 @@ module.exports = angular.module('wfKeyboard', [])
   return {
     restrict: 'A',
     controller: 'KeyboardKeyCtrl'
-	};
+  };
 });

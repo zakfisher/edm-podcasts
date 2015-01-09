@@ -29,6 +29,9 @@ module.exports = function ($timeout, $state, $stateParams, config, Transitions) 
 	  };
  
 	  self.changeState = function(state, stateParams, from, to) {
+	  	if (self.scope.screenLock) return false;
+	  	
+	  	self.scope.screenLock = true;
 	  	self.scope.currentState = to;
 
 	  	// Change url without triggering hard refresh
@@ -39,14 +42,19 @@ module.exports = function ($timeout, $state, $stateParams, config, Transitions) 
 	    
 	    // Hide old <div ui-view>
 			$timeout(function() {
-		    self.hideState(from);
+		   	 self.hideState(from);
 			}, 1000);
 
 			// State change animations
 			$timeout(function() {
-		    self.getState(from).hide();
-		    self.getState(to).show();
+	    	self.getState(from).hide();
+	    	self.getState(to).show();
 			}, 100);
+
+			// Unlock screen (so we can change states again)
+			$timeout(function() {
+	    	self.scope.screenLock = false;
+			}, config.UI.preloaderTimeout);
 	  };
 
 	  return self;
