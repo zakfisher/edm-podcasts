@@ -1,5 +1,5 @@
 module.exports = function (Screen) {
-  var self = Screen.extend();
+  var self = Screen;
 
   self.goToDefaultState = function() {
   	if (self.scope.defaultState == self.scope.currentState) return false;
