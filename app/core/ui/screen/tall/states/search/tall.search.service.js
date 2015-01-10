@@ -1,4 +1,4 @@
-module.exports = function (Tallscreen, Transitions, Utils, Search) {
+module.exports = function (Tallscreen, Transitions, Utils, Search, Keyboard) {
   var self = {};
 
   self.supply = function(scope) {
@@ -16,6 +16,7 @@ module.exports = function (Tallscreen, Transitions, Utils, Search) {
   };
 
   self.findStores = function() {
+    self.scope.search.query.input = Keyboard.getString();
     if (self.scope.search.query.input == '') {
       self.scope.stores.columns = [];
       return;
