@@ -1,20 +1,18 @@
 module.exports = function($famous, Utils, Screen, Keyboard, Stores) {
   var self = {};
-  self.oldString = '';
-  self.newString = '';
 
   self.supply = function(scope) {
     self.scope = scope;
   };
 
   self.bindToKeyboard = function(scope) {
-  	var Timer = $famous['famous/utilities/Timer'];
+    var Timer = $famous['famous/utilities/Timer'];
   	Timer.every(function () {
-      self.newString = Keyboard.getString();
+      scope.search.query.input = Keyboard.getString();
       // Since we're updating the search query every 1ms,
       // let's only execute a search if the query has changed.
-      if (self.newString != self.oldString) {
-      	scope.search.query.input = self.oldString = self.newString;
+      if (scope.search.query.input != self.oldString) {
+      	self.oldString = scope.search.query.input;
 	    	scope.search.execute();
 	    	if (Screen.bindUrlToSearchQuery) {
 	      	Screen.changeUrl(scope.search.url, {query:scope.search.query.input});
@@ -24,6 +22,7 @@ module.exports = function($famous, Utils, Screen, Keyboard, Stores) {
   };
 
   self.getStoresByQuery = function(query, options) {
+    console.log('SEARCHING FOR', query);
     var defaultOptions = {
       searchByStoreName: true,
       searchByCategoryCodes: true

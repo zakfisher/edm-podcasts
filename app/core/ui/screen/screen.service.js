@@ -1,5 +1,6 @@
 module.exports = function ($timeout, $state, $stateParams, config, Transitions) {
   var self = {};
+  self.screenLock = false;
   self.bindUrlToSearchQuery = false;
 
   self.supply = function(scope) {
@@ -31,9 +32,9 @@ module.exports = function ($timeout, $state, $stateParams, config, Transitions) 
   };
 
   self.changeState = function(state, stateParams, from, to) {
-  	if (self.scope.screenLock) return false;
+    if (self.screenLock) return;
   	
-  	self.scope.screenLock = true;
+  	self.screenLock = true;
   	self.scope.currentState = to;
 
   	// Change url without triggering hard refresh
@@ -42,21 +43,19 @@ module.exports = function ($timeout, $state, $stateParams, config, Transitions) 
   	// Show new <div ui-view>
     self.showState(to);
     
+    // State change animations
+    $timeout(function() {
+        self.getState(from).hide();
+        self.getState(to).show();
+    }, 100);
+
     // Hide old <div ui-view>
+    // Unlock screen (so we can change states again)
 		$timeout(function() {
 	   	 self.hideState(from);
+       self.screenLock = false;
 		}, 1000);
 
-		// State change animations
-		$timeout(function() {
-	    	self.getState(from).hide();
-	    	self.getState(to).show();
-		}, 100);
-
-		// Unlock screen (so we can change states again)
-		$timeout(function() {
-    		self.scope.screenLock = false;
-		}, config.UI.preloaderTimeout);
   };
 
   return self;

@@ -1,4 +1,4 @@
-module.exports = function ($famous, $scope, Preloader, TallSearch) {
+module.exports = function ($famous, $scope, Preloader, TallSearch, Keyboard) {
 
   var Transitionable = $famous['famous/transitions/Transitionable'];
 

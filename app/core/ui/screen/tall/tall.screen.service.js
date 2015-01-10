@@ -1,4 +1,4 @@
-module.exports = function (Screen) {
+module.exports = function (Screen, Keyboard) {
   var self = Screen;
 
   self.goToDefaultState = function() {
