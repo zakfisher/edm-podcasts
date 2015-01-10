@@ -1,5 +1,6 @@
 module.exports = function ($timeout, $state, $stateParams, config, Transitions) {
   var self = {};
+  self.bindUrlToSearchQuery = false;
 
   self.supply = function(scope) {
   	self.scope = scope;

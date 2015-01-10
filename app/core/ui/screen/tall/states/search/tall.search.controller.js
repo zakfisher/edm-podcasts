@@ -16,25 +16,34 @@ module.exports = function ($famous, $scope, Preloader, TallSearch) {
   };
 
   $scope.search = {
+    execute:   $scope.service.findStores,
+    url:       'tall/search',
     size:      [undefined, 200],
     translate: [0, 0, 0],
     icon: {
       size: [70, 70],
-      translate: [0, 30, 0],
-      click: $scope.service.selectSearch
+      translate: [0, 30, 0]
     },
     query: {
-      input: '',
       size: [500, 70],
       translate: [100, 30, 0],
-      placeholder: 'SEARCH FOR A STORE',
-      click: $scope.service.selectSearch
+      input: '',
+      placeholder: 'SEARCH FOR A STORE'
     }
   };
 
   $scope.keyboard = {
   	size:      [undefined, 250],
   	translate: [0, window.innerHeight-1200, 0]
+  };
+
+  $scope.selectStore = TallSearch.selectStore;
+  $scope.stores = {
+    size:      [undefined, window.innerHeight-1200],
+    translate: [0, 120, 0],
+    options: {
+      dimensions: [3, 1] // columns, rows
+    }
   };
 
 };
