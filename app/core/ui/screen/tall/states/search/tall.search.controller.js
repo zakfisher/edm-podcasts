@@ -37,7 +37,7 @@ module.exports = function ($famous, $scope, Preloader, TallSearch, Keyboard) {
   	translate: [0, window.innerHeight-1200, 0]
   };
 
-  $scope.selectStore = TallSearch.selectStore;
+  $scope.selectStore = $scope.service.selectStore;
   $scope.stores = {
     size:      [undefined, window.innerHeight-1200],
     translate: [0, 120, 0],
