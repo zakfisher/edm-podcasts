@@ -5,8 +5,8 @@ var dependencies = [
   'ngResource',
   'ngSanitize',
   'ngTouch',
-  // require('./core/config').name,
-  // require('./core/utils').name,
+  require('./core/config').name,
+  require('./core/utils').name,
   // require('./core/api').name,
   // require('./core/ui').name
 ];

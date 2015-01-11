@@ -1,4 +1,4 @@
-module.exports = angular.module('wfUtils', [])
+module.exports = angular.module('EDMutils', [])
 
 .value('Utils', {
 
