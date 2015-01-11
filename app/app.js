@@ -5,20 +5,20 @@ var dependencies = [
   'ngResource',
   'ngSanitize',
   'ngTouch',
-  require('./core/config').name,
-  require('./core/utils').name,
-  require('./core/api').name,
-  require('./core/ui').name
+  // require('./core/config').name,
+  // require('./core/utils').name,
+  // require('./core/api').name,
+  // require('./core/ui').name
 ];
 
 // Launch App
-var app = angular.module('wfWayfinding', dependencies)
+var app = angular.module('EDMpodcasts', dependencies)
 
   // Set Routes
-  .config(require('./core/routes'))
+  // .config(require('./core/routes'))
 
   // Init
-  .run(function(config) {
+  .run(function() {
     
     // Debug
     require('./core/chrome.setup');
@@ -26,27 +26,3 @@ var app = angular.module('wfWayfinding', dependencies)
     console.log('Launched:', Date(), 'Version: ', pkg.version);
 
   });
-
-
-// $http.get('http://127.0.0.1:8082/kiosk').success(function (r) {
-//   console.log('\n\nKIOSK HARDWARE', r);
-// });
-
-
-
-// app.run(function ($state, Preloader, $q, KioskService, $rootScope, config) {
-
-//   // $rootScope.globalConfig = config;
-
-  
-
-//   $state.go('preloader');
-//   KioskService.saveState(false);
-//   // Backdoor to switch to largescreen view
-//   $(window).on('keydown', function (e) {
-//     if (e.keyCode === 76) {
-//       $state.go('largescreen');
-//     }
-//   });
-
-// });

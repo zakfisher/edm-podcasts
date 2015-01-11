@@ -1,14 +1,14 @@
-// @mixin selection {
-//   $before-colons: "";
+@mixin selection {
+  $before-colons: "";
 
-//   @if & {
-//     $before-colons: "&"
-//   }
+  @if & {
+    $before-colons: "&"
+  }
 
-//   #{$before-colons}::selection {
-//     @content;
-//   }
-//   #{$before-colons}::-moz-selection {
-//     @content;
-//   }
-// }
+  #{$before-colons}::selection {
+    @content;
+  }
+  #{$before-colons}::-moz-selection {
+    @content;
+  }
+}
