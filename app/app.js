@@ -8,7 +8,7 @@ var dependencies = [
   require('./core/config').name,
   require('./core/utils').name,
   // require('./core/api').name,
-  // require('./core/ui').name
+  require('./core/ui').name
 ];
 
 // Launch App

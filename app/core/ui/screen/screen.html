@@ -1,2 +1,17 @@
-<tallscreen ng-if="size === 'tall'"></tallscreen>
-<widescreen ng-if="size === 'wide'"></widescreen>
+<fa-app fa-perspective="250">
+	<fa-view>
+
+		<!-- Persistent Elements -->
+		<fa-modifier>
+		    <fa-surface>
+		    screen!
+		    </fa-surface>
+		</fa-modifier>
+		
+		<!-- Current State -->
+		<fa-modifier>
+			<div ui-view></div>
+		</fa-modifier>
+
+	</fa-view>
+</fa-app>

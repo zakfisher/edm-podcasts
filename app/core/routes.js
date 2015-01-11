@@ -10,16 +10,30 @@ module.exports = function ($stateProvider, $urlRouterProvider) {
   // Redirects and Otherwise //
   /////////////////////////////
 
-  // Use $urlRouterProvider to configure any redirects (when) and invalid urls (otherwise).
+  // Redirects
   $urlRouterProvider
-
-    // The `when` method says if the url is ever the 1st param, then redirect to the 2nd param
-    // Here we are just setting up some convenience urls.
-    // .when('/c?id', '/contacts/:id')
-    // .when('/user/:id', '/contacts/:id')
-
-    // If the url is ever invalid, e.g. '/asdf', then redirect to '/' aka the home state
-    // Route fallback to home rather than 404'ing
+    .when('/search', '/search/')
     .otherwise('/');
+
+  // States
+  $stateProvider
+
+    .state("screen", {
+      url: "/",
+      template: require('./ui/screen/screen.html'),
+      abstract: true
+    })
     
+    // Set Home Screen
+    .state("screen.home", {
+      url: "",
+      template: require('./ui/screen/search/search.html')
+    })
+
+    .state("screen.search", {
+      url: "search/:query",
+      template: require('./ui/screen/search/search.html')
+    })
+    ;
+
 };
