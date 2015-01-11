@@ -15,6 +15,10 @@
     "tests"
   ],
   "dependencies": {
-    "famous-angular": "latest"
+    "famous-angular": "latest",
+    "bourbon": "~4.1.0"
+  },
+  "devDependencies": {
+    "bourbon": "~4.1.0"
   }
 }
