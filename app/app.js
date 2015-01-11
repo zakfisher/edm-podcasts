@@ -15,7 +15,7 @@ var dependencies = [
 var app = angular.module('EDMpodcasts', dependencies)
 
   // Set Routes
-  // .config(require('./core/routes'))
+  .config(require('./core/routes'))
 
   // Init
   .run(function() {

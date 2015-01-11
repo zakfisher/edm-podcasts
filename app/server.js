@@ -2,7 +2,7 @@ var express = require('express')
 var app = express();
 var routes = require('./routes');
 
-app.set('port', (process.env.PORT || 9292));
+app.set('port', (process.env.PORT || 4200));
 app.use(express.logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded());
